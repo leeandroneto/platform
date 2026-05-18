@@ -14,15 +14,18 @@ Pesquisa 07 sugere ritmo conservador (Gymdesk solo levou ~24 meses até $40k MRR
 ## Consequences
 
 **Positivo:**
+
 - Pressão real força foco em outcomes vs feature porn
 - Validação rápida do modelo agência-first
 - Receita real antes de queimar runway
 
 **Negativo:**
+
 - Risco burnout (solo-founder playbook: 54% rate; preditor #1 de failure)
 - Mitigação fundador-side: peer group, cap 16h, dia off semanal
 - Risco de aceitar cliente errado pra bater meta (mitigação: gates qualitativos em cada sprint)
 
 **Neutro:**
+
 - Sanity check pesquisa 07 §14 documentado (realista solo+AI BR é 14-24 meses; 4 meses é otimista mas factível com warm network forte)
 - Gate M4 bloqueia M5 se MRR<R$1.5k, setup>4h, NPS<40

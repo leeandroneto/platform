@@ -1,0 +1,33 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · indoor_phase}
+    Q1 -->|starting| BranchInit[🟢 Branch: Iniciante]
+    Q1 -->|freeride| BranchFree[🟡 Branch: Freerider]
+    Q1 -->|structured| BranchPerf[🔵 Branch: Performance]
+    Q1 -->|competitive| BranchPerf
+    BranchInit --> Q2
+    BranchFree --> Q2
+    BranchPerf --> Q2
+    Q2[Q2 · bottleneck] --> Q3[Q3 · trainer_setup]
+    Q3 --> Q4{Q4 · power_data}
+    Q4 -->|known_recent / known_old / estimated| Q5[Q5 · ftp_value]
+    Q4 -->|no_ftp| Q6
+    Q5 --> Q6[Q6 · weekly_volume]
+    Q6 --> Q7{Q7 · health_conditions}
+    Q7 -->|safe| PN
+    Q7 -->|cardiac / hypertension / surgery| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchMid fill:#fff9c4,stroke:#f9a825
+    classDef branchAdv fill:#e3f2fd,stroke:#1565c0
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q4,Q7 decision
+    class Safety safety
+    class BranchInit branch
+    class BranchFree branchMid
+    class BranchPerf branchAdv
+    class Basics,PN,Goal,Contact universal

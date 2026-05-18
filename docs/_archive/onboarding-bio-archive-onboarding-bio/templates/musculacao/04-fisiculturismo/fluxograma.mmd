@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · phase}
+    Q1 -->|volume| BranchVol[🟢 Branch: Ganho de massa]
+    Q1 -->|definicao| BranchDef[🔵 Branch: Definição]
+    Q1 -->|transicao| BranchTrans[🟡 Branch: Transição]
+    BranchVol --> Q2
+    BranchDef --> Q2
+    BranchTrans --> Q2
+    Q2[Q2 · experience] --> Q3[Q3 · competition_intent]
+    Q3 --> Q4[Q4 · bottleneck]
+    Q4 --> Q5[Q5 · body_tracking]
+    Q5 --> Q6{Q6 · health_conditions}
+    Q6 -->|nenhuma| PN
+    Q6 -->|cardiaca / renal / articular / transtorno_alimentar| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchBlue fill:#e3f2fd,stroke:#1565c0
+    classDef branchYellow fill:#fffde7,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchVol branch
+    class BranchDef branchBlue
+    class BranchTrans branchYellow
+    class Basics,PN,Goal,Contact universal

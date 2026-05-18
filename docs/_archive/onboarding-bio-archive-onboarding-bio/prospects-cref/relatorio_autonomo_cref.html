@@ -1,0 +1,670 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+
+  .rel-wrap {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--color-text-primary);
+    padding: 2rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .rel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .rel-header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0 0 4px;
+    line-height: 1.2;
+  }
+  .rel-header-left p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+  .rel-badge {
+    background: #e1f5ee;
+    color: #0f6e56;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .rel-profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .rel-profile-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .rel-profile-card .label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .rel-profile-card .value {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+    margin: 1.5rem 0 0.75rem;
+    font-weight: 500;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .metric-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .metric-card .m-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+  }
+  .metric-card .m-value {
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .metric-card .m-sub {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+  .metric-card.green .m-value {
+    color: #0f6e56;
+  }
+  .metric-card.red .m-value {
+    color: #a32d2d;
+  }
+  .metric-card.amber .m-value {
+    color: #854f0b;
+  }
+
+  .swot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .swot-card {
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .swot-card.f {
+    background: #e1f5ee;
+  }
+  .swot-card.fr {
+    background: #faece7;
+  }
+  .swot-card.o {
+    background: #e6f1fb;
+  }
+  .swot-card.a {
+    background: #faeeda;
+  }
+  .swot-card h4 {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .swot-card.f h4 {
+    color: #0f6e56;
+  }
+  .swot-card.fr h4 {
+    color: #993c1d;
+  }
+  .swot-card.o h4 {
+    color: #185fa5;
+  }
+  .swot-card.a h4 {
+    color: #854f0b;
+  }
+  .swot-card ul {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--color-text-primary);
+  }
+  .swot-card ul li {
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .persona-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .persona-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #eeedfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 16px;
+    color: #534ab7;
+    flex-shrink: 0;
+  }
+  .persona-info {
+    flex: 1;
+  }
+  .persona-info h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .persona-info p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0 0 10px;
+  }
+  .persona-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-size: 11px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 20px;
+    padding: 3px 10px;
+    color: var(--color-text-secondary);
+  }
+
+  .price-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .price-card {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 10px;
+    padding: 14px;
+    background: var(--color-background-primary);
+    text-align: center;
+  }
+  .price-card.highlight {
+    border: 2px solid #0f6e56;
+  }
+  .price-card .p-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+  }
+  .price-card .p-value {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .price-card .p-rec {
+    font-size: 11px;
+    margin-top: 6px;
+    color: #0f6e56;
+    font-weight: 500;
+  }
+  .price-card.highlight .p-value {
+    color: #0f6e56;
+  }
+
+  .breakeven-bar-wrap {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+  }
+  .bar-track {
+    height: 10px;
+    background: var(--color-background-primary);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .bar-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .bar-info .atual {
+    color: #0f6e56;
+    font-weight: 500;
+  }
+  .bar-info .meta {
+    color: var(--color-text-secondary);
+  }
+
+  .concorrencia-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .conc-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .conc-card h4 {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    color: var(--color-text-secondary);
+  }
+  .conc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .conc-item:last-child {
+    border-bottom: none;
+  }
+  .conc-item .detalhe {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  .churn-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .churn-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .churn-card h4 {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0 0 10px;
+    color: var(--color-text-secondary);
+  }
+  .motivo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .motivo .barra {
+    height: 6px;
+    border-radius: 3px;
+  }
+  .motivo .pct {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-left: auto;
+  }
+
+  .acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .acao-card {
+    border-left: 3px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    background: var(--color-background-secondary);
+  }
+  .acao-card.p1 {
+    border-color: #d85a30;
+  }
+  .acao-card.p2 {
+    border-color: #ba7517;
+  }
+  .acao-card.p3 {
+    border-color: #1d9e75;
+  }
+  .acao-card .prioridade {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .acao-card.p1 .prioridade {
+    color: #d85a30;
+  }
+  .acao-card.p2 .prioridade {
+    color: #ba7517;
+  }
+  .acao-card.p3 .prioridade {
+    color: #1d9e75;
+  }
+  .acao-card .acao-titulo {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .acao-card .acao-desc {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .footer {
+    border-top: 0.5px solid var(--color-border-tertiary);
+    margin-top: 2rem;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer p {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+</style>
+
+<h2 class="sr-only">Relatório de análise de negócios para autônomo do CREF</h2>
+
+<div class="rel-wrap">
+  <div class="rel-header">
+    <div class="rel-header-left">
+      <h1>Relatório de Análise<br /><em>de Negócios</em></h1>
+      <p>Profissional Autônomo — CREF 012345-G/SP</p>
+      <span class="rel-badge"
+        ><i class="ti ti-check" aria-hidden="true"></i> Gerado em maio 2026</span
+      >
+    </div>
+    <div style="text-align: right">
+      <div
+        style="
+          font-family: 'DM Serif Display', serif;
+          font-size: 22px;
+          font-weight: 400;
+          line-height: 1;
+        "
+      >
+        Carlos Mendes
+      </div>
+      <div style="font-size: 13px; color: var(--color-text-secondary); margin-top: 4px">
+        Personal Trainer · 4 anos de atuação
+      </div>
+      <div style="font-size: 13px; color: var(--color-text-secondary)">
+        Domicílio + Ao ar livre · São Paulo/SP
+      </div>
+    </div>
+  </div>
+
+  <div class="rel-profile">
+    <div class="rel-profile-card">
+      <div class="label">Especialidade</div>
+      <div class="value">Funcional & Emagrecimento</div>
+    </div>
+    <div class="rel-profile-card">
+      <div class="label">Público principal</div>
+      <div class="value">Mulheres 30–50 anos</div>
+    </div>
+    <div class="rel-profile-card">
+      <div class="label">Canal de captação</div>
+      <div class="value">Indicação (70%) + Instagram</div>
+    </div>
+  </div>
+
+  <div class="section-title">Indicadores financeiros</div>
+  <div class="metrics">
+    <div class="metric-card green">
+      <div class="m-label">Receita mensal</div>
+      <div class="m-value">R$ 7.200</div>
+      <div class="m-sub">18 alunos ativos</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">Ticket médio</div>
+      <div class="m-value">R$ 400</div>
+      <div class="m-sub">por aluno/mês</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="m-label">Custos fixos</div>
+      <div class="m-value">R$ 2.800</div>
+      <div class="m-sub">transporte + MEI + outros</div>
+    </div>
+    <div class="metric-card green">
+      <div class="m-label">Margem líquida</div>
+      <div class="m-value">61%</div>
+      <div class="m-sub">R$ 4.400 / mês</div>
+    </div>
+  </div>
+
+  <div class="section-title">Análise SWOT</div>
+  <div class="swot-grid">
+    <div class="swot-card f">
+      <h4><i class="ti ti-shield-check" aria-hidden="true" style="font-size: 14px"></i> Forças</h4>
+      <ul>
+        <li>Alta taxa de indicação (70%)</li>
+        <li>Especialização em nicho claro</li>
+        <li>Boa retenção (média 8 meses)</li>
+      </ul>
+    </div>
+    <div class="swot-card fr">
+      <h4>
+        <i class="ti ti-alert-triangle" aria-hidden="true" style="font-size: 14px"></i> Fraquezas
+      </h4>
+      <ul>
+        <li>Sem presença digital estruturada</li>
+        <li>Não emite nota fiscal regularmente</li>
+        <li>Sem contrato formal com alunos</li>
+      </ul>
+    </div>
+    <div class="swot-card o">
+      <h4>
+        <i class="ti ti-trending-up" aria-hidden="true" style="font-size: 14px"></i> Oportunidades
+      </h4>
+      <ul>
+        <li>Crescimento de treinos ao ar livre</li>
+        <li>Aulas online para aumentar escala</li>
+        <li>Parcerias com nutricionistas</li>
+      </ul>
+    </div>
+    <div class="swot-card a">
+      <h4><i class="ti ti-cloud-storm" aria-hidden="true" style="font-size: 14px"></i> Ameaças</h4>
+      <ul>
+        <li>Sazonalidade (jul/dez queda)</li>
+        <li>Concorrência com preço baixo</li>
+        <li>Dependência de poucos alunos</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Persona do aluno ideal</div>
+  <div class="persona-card">
+    <div class="persona-avatar">AM</div>
+    <div class="persona-info">
+      <h3>Ana, 38 anos — Analista de RH</h3>
+      <p>
+        Mãe de 2 filhos, pouco tempo, quer emagrecer 10kg e ter mais disposição. Prefere treinos
+        perto de casa. Valoriza resultado e atenção personalizada.
+      </p>
+      <div class="persona-tags">
+        <span class="tag">Emagrecimento</span>
+        <span class="tag">Saúde</span>
+        <span class="tag">Flexibilidade de horário</span>
+        <span class="tag">Indicação de amiga</span>
+        <span class="tag">Renda média-alta</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Análise de precificação</div>
+  <div class="price-row">
+    <div class="price-card">
+      <div class="p-label">Mercado básico</div>
+      <div class="p-value">R$ 250</div>
+      <div class="p-rec" style="color: var(--color-text-secondary)">Abaixo do seu perfil</div>
+    </div>
+    <div class="price-card highlight">
+      <div class="p-label">Você cobra</div>
+      <div class="p-value">R$ 400</div>
+      <div class="p-rec">Posicionamento adequado</div>
+    </div>
+    <div class="price-card">
+      <div class="p-label">Potencial premium</div>
+      <div class="p-value">R$ 600</div>
+      <div class="p-rec" style="color: #185fa5">Com estrutura digital</div>
+    </div>
+  </div>
+
+  <div class="section-title">Ponto de equilíbrio</div>
+  <div class="breakeven-bar-wrap">
+    <div class="bar-label">
+      <span>Alunos mínimos para cobrir custos</span>
+      <span>7 alunos = break-even</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" style="width: 72%; background: #1d9e75"></div>
+    </div>
+    <div class="bar-info">
+      <span class="atual"><i class="ti ti-users" aria-hidden="true"></i> 18 alunos atuais</span>
+      <span class="meta">Margem de segurança: 11 alunos</span>
+    </div>
+  </div>
+
+  <div class="section-title">Concorrência</div>
+  <div class="concorrencia-row">
+    <div class="conc-card">
+      <h4>Personals na sua região</h4>
+      <div class="conc-item"><span>Preço mínimo</span><span class="detalhe">R$ 200/mês</span></div>
+      <div class="conc-item"><span>Preço médio</span><span class="detalhe">R$ 350/mês</span></div>
+      <div class="conc-item">
+        <span>Preço premium</span><span class="detalhe">R$ 700+/mês</span>
+      </div>
+      <div class="conc-item">
+        <span>Você vs. mercado</span
+        ><span style="font-size: 12px; color: #0f6e56; font-weight: 500">Acima da média ✓</span>
+      </div>
+    </div>
+    <div class="conc-card">
+      <h4>Seu diferencial percebido</h4>
+      <div class="conc-item"><span>Especialização em emagrecimento</span></div>
+      <div class="conc-item"><span>Atendimento domiciliar</span></div>
+      <div class="conc-item"><span>Relacionamento próximo</span></div>
+      <div class="conc-item"><span style="color: #993c1d">Falta: presença no Instagram</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">Retenção e churn</div>
+  <div class="churn-wrap">
+    <div class="churn-card">
+      <h4>Motivos de cancelamento</h4>
+      <div class="motivo">
+        <span style="min-width: 120px">Financeiro</span>
+        <div class="barra" style="width: 45%; background: #f0997b"></div>
+        <span class="pct">45%</span>
+      </div>
+      <div class="motivo">
+        <span style="min-width: 120px">Falta de tempo</span>
+        <div class="barra" style="width: 30%; background: #fac775"></div>
+        <span class="pct">30%</span>
+      </div>
+      <div class="motivo">
+        <span style="min-width: 120px">Atingiu objetivo</span>
+        <div class="barra" style="width: 15%; background: #9fe1cb"></div>
+        <span class="pct">15%</span>
+      </div>
+      <div class="motivo">
+        <span style="min-width: 120px">Outros</span>
+        <div class="barra" style="width: 10%; background: #d3d1c7"></div>
+        <span class="pct">10%</span>
+      </div>
+    </div>
+    <div class="churn-card">
+      <h4>Indicadores de retenção</h4>
+      <div class="conc-item">
+        <span>Permanência média</span
+        ><span class="detalhe" style="color: #0f6e56; font-weight: 500">8 meses ✓</span>
+      </div>
+      <div class="conc-item">
+        <span>Taxa de churn mensal</span><span class="detalhe" style="color: #854f0b">8% ⚠</span>
+      </div>
+      <div class="conc-item">
+        <span>Faz reavaliações?</span><span class="detalhe" style="color: #993c1d">Não ✗</span>
+      </div>
+      <div class="conc-item">
+        <span>Tem plano de fidelização?</span
+        ><span class="detalhe" style="color: #993c1d">Não ✗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Top 3 ações prioritárias</div>
+  <div class="acoes">
+    <div class="acao-card p1">
+      <div class="prioridade">Prioridade 1 — Urgente</div>
+      <div class="acao-titulo">Implantar reavaliações bimestrais</div>
+      <p class="acao-desc">
+        Alunos sem resultado visível são os que mais cancelam. Reavaliações mostram evolução,
+        aumentam engajamento e reduzem churn em até 30%.
+      </p>
+    </div>
+    <div class="acao-card p2">
+      <div class="prioridade">Prioridade 2 — Importante</div>
+      <div class="acao-titulo">Criar perfil profissional no Instagram</div>
+      <p class="acao-desc">
+        Você depende 70% de indicações — ótimo, mas frágil. Ter presença digital multiplica o
+        alcance dessas indicações e atrai novos alunos passivamente.
+      </p>
+    </div>
+    <div class="acao-card p3">
+      <div class="prioridade">Prioridade 3 — Crescimento</div>
+      <div class="acao-titulo">Testar pacote premium a R$ 550/mês</div>
+      <p class="acao-desc">
+        Com seu diferencial e retenção acima da média, há espaço para reposicionar o preço. Oferecer
+        um pacote completo (avaliação + planilha + suporte via app) justifica o aumento.
+      </p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Relatório gerado automaticamente com base nas respostas do formulário</p>
+    <p style="color: var(--color-text-tertiary)">Confidencial · Uso exclusivo do profissional</p>
+  </div>
+</div>

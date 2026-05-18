@@ -6,11 +6,12 @@
 
 ---
 
-## 1. Service Worker — Serwist (_CONFLITOS #14)
+## 1. Service Worker — Serwist (\_CONFLITOS #14)
 
 **Decisão:** `@serwist/next` 9.x + `@serwist/turbopack` 9.5+.
 
 Razões:
+
 - Ativamente mantido, TS-first, drop-in App Router Next 16
 - `@serwist/turbopack` (v9.5+) suporta nativo Turbopack default Next 16
 - Comunidade trata como sucessor de facto do `next-pwa` (abandonado dez/2022)
@@ -26,41 +27,43 @@ Razões:
 
 **Fallback documentado:** se Serwist quebrar em Turbopack durante bootstrap → ADR fallback `next build --webpack`. Não inventar solução nova.
 
-Detalhes: _CONFLITOS #14 + pesquisa 12 §A.
+Detalhes: \_CONFLITOS #14 + pesquisa 12 §A.
 
 ---
 
 ## 2. Cache strategy matrix
 
-| Resource | Strategy | TTL / cap | Notas |
-|---|---|---|---|
-| HTML routes (`/aluno/*`) | **NetworkFirst** (3s timeout) → cache → `/~offline` | 24h, max 32 entries | `cacheOnNavigation: true`, navigation preload on |
-| Static JS `/_next/static/*` | **CacheFirst** (immutable, hashed) | 30 dias, max 64 | Safe — Next emite content-hashed names |
-| CSS incl. per-tenant `theme.css` | **StaleWhileRevalidate** | 7 dias, max 32 | Tenant theme muda; SWR mantém UI instant |
-| Supabase Storage imagens | **CacheFirst** + `ExpirationPlugin` + `cacheableResponse:{statuses:[0,200]}` | 30 dias, max 200 (~30-40 MB cap) | Range/206 NÃO cachear (opaque partials blow quota iOS) |
-| Bunny Stream `.m3u8` | **NetworkOnly** (ou NetworkFirst 1s, cache 5s) | 5-10s | Manifest muda; nunca cache long |
-| Bunny Stream `.ts`/`.m4s` segments | **NetworkOnly** | — | Browser HTTP cache + Bunny CDN cuidam; Cache API não lida bem com 206 |
-| API GET `/api/programs/[id]` | **StaleWhileRevalidate** + mirror em IndexedDB | 1h, max 50 | SW retorna cached + UI hidrata de IDB pra true offline |
-| API mutations (POST/PATCH/DELETE) | **NetworkOnly** + intercept failure → enqueue IDB | n/a | Nunca cachear mutation responses |
-| Supabase REST `*/rest/v1/*` reads | **NetworkFirst** (2s) | 5min, max 50 | Auth headers vary per user — TTL curto |
-| Supabase REST writes / `/auth/v1/*` | **NetworkOnly** | n/a | Nunca cachear tokens ou writes |
-| `manifest.webmanifest` + `/icons/*` | **CacheFirst** | 30 dias | Part of precache, content-hashed via build revision |
-| `/~offline` fallback page | **Precached** | per build | Servido quando navigation + cache miss |
+| Resource                            | Strategy                                                                     | TTL / cap                        | Notas                                                                 |
+| ----------------------------------- | ---------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------- |
+| HTML routes (`/aluno/*`)            | **NetworkFirst** (3s timeout) → cache → `/~offline`                          | 24h, max 32 entries              | `cacheOnNavigation: true`, navigation preload on                      |
+| Static JS `/_next/static/*`         | **CacheFirst** (immutable, hashed)                                           | 30 dias, max 64                  | Safe — Next emite content-hashed names                                |
+| CSS incl. per-tenant `theme.css`    | **StaleWhileRevalidate**                                                     | 7 dias, max 32                   | Tenant theme muda; SWR mantém UI instant                              |
+| Supabase Storage imagens            | **CacheFirst** + `ExpirationPlugin` + `cacheableResponse:{statuses:[0,200]}` | 30 dias, max 200 (~30-40 MB cap) | Range/206 NÃO cachear (opaque partials blow quota iOS)                |
+| Bunny Stream `.m3u8`                | **NetworkOnly** (ou NetworkFirst 1s, cache 5s)                               | 5-10s                            | Manifest muda; nunca cache long                                       |
+| Bunny Stream `.ts`/`.m4s` segments  | **NetworkOnly**                                                              | —                                | Browser HTTP cache + Bunny CDN cuidam; Cache API não lida bem com 206 |
+| API GET `/api/programs/[id]`        | **StaleWhileRevalidate** + mirror em IndexedDB                               | 1h, max 50                       | SW retorna cached + UI hidrata de IDB pra true offline                |
+| API mutations (POST/PATCH/DELETE)   | **NetworkOnly** + intercept failure → enqueue IDB                            | n/a                              | Nunca cachear mutation responses                                      |
+| Supabase REST `*/rest/v1/*` reads   | **NetworkFirst** (2s)                                                        | 5min, max 50                     | Auth headers vary per user — TTL curto                                |
+| Supabase REST writes / `/auth/v1/*` | **NetworkOnly**                                                              | n/a                              | Nunca cachear tokens ou writes                                        |
+| `manifest.webmanifest` + `/icons/*` | **CacheFirst**                                                               | 30 dias                          | Part of precache, content-hashed via build revision                   |
+| `/~offline` fallback page           | **Precached**                                                                | per build                        | Servido quando navigation + cache miss                                |
 
-Detalhes: _CONFLITOS #14 + pesquisa 12 §B.
+Detalhes: \_CONFLITOS #14 + pesquisa 12 §B.
 
 ---
 
-## 3. IndexedDB queue — `idb-keyval` (_CONFLITOS #15)
+## 3. IndexedDB queue — `idb-keyval` (\_CONFLITOS #15)
 
 **Decisão:** `idb-keyval` (~600B gzip) pra mutation queue + program cache simples dia 1.
 
 Razões:
+
 - Minimalista — cobre 1º cliente MVP sem schema complexo
 - Decisão fechada em `_CONFLITOS.md #15`
 - Resolve caso real: aluno no metrô marca 24 séries em 60min, 8 caem por 4G dropado → IDB queue persiste
 
 **Gatilho pra migrar pra Dexie 4.x [I]:**
+
 - Schema cresce >3 stores
 - Precisa `useLiveQuery` pra re-render automático em SW writes
 - Multi-step migrations com `db.version(N).upgrade()`
@@ -70,6 +73,7 @@ Quando migrar: pesquisa 12 §C tem receita Dexie pronta (typed `EntityTable<T,'i
 ### 3.1 Schema queue dia 1 (idb-keyval)
 
 Chaves usadas:
+
 - `queue:component_progress` — array de `MutationRow`
 - `queue:check_in` — array de `MutationRow`
 - `cache:program:${id}` — JSON serializado (snapshot + last_used_at)
@@ -78,6 +82,7 @@ Chaves usadas:
 - `meta:push_subscribed` — boolean
 
 `MutationRow shape`:
+
 ```
 {
   idempotency_key: string,    // crypto.randomUUID() no momento do user action
@@ -96,6 +101,7 @@ Chaves usadas:
 ### 3.2 Storage budget estimado
 
 Por aluno:
+
 - 1 cached program (12 semanas, ~80 components, video metadata): **80-150 KB JSON**
 - 30 dias queued progress (3-5/day, ~400B each): **30-60 KB**
 - 30 dias check-ins (1/day, ~300B): **9 KB**
@@ -115,11 +121,11 @@ Confortável sob iOS ~50 MB Cache API soft cap. Far below IDB soft quota (Safari
 
 ### 4.1 Background Sync API status (mai/2026)
 
-| Plataforma | Status |
-|---|---|
-| Chromium Android/desktop | ✅ full support |
+| Plataforma                  | Status                                                                      |
+| --------------------------- | --------------------------------------------------------------------------- |
+| Chromium Android/desktop    | ✅ full support                                                             |
 | **iOS Safari 18/19/26 PWA** | ❌ **não suportado** (Background Sync, Periodic, Background Fetch — nenhum) |
-| Firefox desktop/Android | ❌ atrás de flag |
+| Firefox desktop/Android     | ❌ atrás de flag                                                            |
 
 ### 4.2 Estratégia (funciona em todos)
 
@@ -142,10 +148,10 @@ Confortável sob iOS ~50 MB Cache API soft cap. Far below IDB soft quota (Safari
 
 ### 4.4 Conflict resolution
 
-| Caso | Estratégia | Razão |
-|---|---|---|
-| `component_progress` | Server-wins on identity (idempotency_key colide → 200); timestamp **client-authoritative** (`completed_at` do device quando aluno tapou) | Postgres `INSERT ... ON CONFLICT (idempotency_key) DO NOTHING` |
-| `check_in` (1 por dia per student) | Server-wins on `(student_id, local_date)` UNIQUE; colide → 200 com canonical row; client overwrite local | Sem merge — check-ins são simples |
+| Caso                              | Estratégia                                                                                                                               | Razão                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `component_progress`              | Server-wins on identity (idempotency_key colide → 200); timestamp **client-authoritative** (`completed_at` do device quando aluno tapou) | Postgres `INSERT ... ON CONFLICT (idempotency_key) DO NOTHING` |
+| `check_in` (1 por dia per client) | Server-wins on `(client_id, local_date)` UNIQUE; colide → 200 com canonical row; client overwrite local                                  | Sem merge — check-ins são simples                              |
 
 **Nunca** client-wins pra esses casos — desync risk alto pra SaaS com auditable training history.
 
@@ -177,7 +183,7 @@ Confortável sob iOS ~50 MB Cache API soft cap. Far below IDB soft quota (Safari
    - `100dvh` (não `100vh`) pra full-height layouts
    - **`input font-size ≥ 16px`** pra prevenir auto-zoom-on-focus
 
-Detalhes: _CONFLITOS #14 + pesquisa 12 §E.
+Detalhes: \_CONFLITOS #14 + pesquisa 12 §E.
 
 ---
 
@@ -188,6 +194,7 @@ iOS Safari **não** suporta `navigator.virtualKeyboard` (só Chromium 94+). iOS 
 **API correta iOS:** `window.visualViewport` com listeners `resize` + `scroll`.
 
 `lib/hooks/use-keyboard-inset.ts`:
+
 - Retorna `inset` = pixels do layout viewport ocultos pelo teclado
 - Usa `requestAnimationFrame` pra throttle
 - Aplica como `style={{ paddingBottom: inset }}` no container de toolbar/save button
@@ -207,10 +214,12 @@ Padrão pra forms do editor (workout, programa, branding, landing):
 - Em falha de rede → queue IDB → retransmite em reconexão
 
 `useAutoPersist<T>(key, value)` hook:
+
 - Salva em IDB chave `autosave:${key}` no `pagehide` + `visibilitychange → hidden`
 - Restaura ao mount se houver versão local mais nova que server
 
 Combinação:
+
 - **Critical mutations** (workout completion, check-in submission) → IDB queue + retransmite
 - **Form drafts** (editor texto, programa em construção) → autosave 800ms + IDB backup
 
@@ -220,13 +229,13 @@ Combinação:
 
 Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela necessidade do desafit (proposta comercial), não cópia de outro app.
 
-| Tab | Conteúdo | Por quê |
-|---|---|---|
-| **Início** | Hoje + streak + próximo evento agendado | Engajamento diário, primeira tela após login |
-| **Programa** | Estrutura completa: módulos, componentes destravados/bloqueados, navegação dia a dia | Aluno entende onde tá no programa |
-| **Agenda** | Calendário com tudo agendado: live, call individual, encontro presencial, deadline tarefa, check-in semanal | Acomoda formatos presencial/híbrido naturalmente; sem ela, eventos ficam escondidos |
-| **Chatbot** | Chatbot nutricional IA (Pacote C) + dúvidas sobre programa via IA | Schema dia 1; UI ativa conforme tier; tab presente mesmo em Pacote A/B mostrando estado bloqueado + upgrade CTA |
-| **Perfil** | Settings, pagamento, **progresso** (peso, fotos antes/depois, métricas, gamificação), suporte, sair | Progresso fica no Perfil pra liberar slot pra Chatbot — métricas são "info pessoal" mais que ação diária |
+| Tab          | Conteúdo                                                                                                    | Por quê                                                                                                         |
+| ------------ | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Início**   | Hoje + streak + próximo evento agendado                                                                     | Engajamento diário, primeira tela após login                                                                    |
+| **Programa** | Estrutura completa: módulos, componentes destravados/bloqueados, navegação dia a dia                        | Aluno entende onde tá no programa                                                                               |
+| **Agenda**   | Calendário com tudo agendado: live, call individual, encontro presencial, deadline tarefa, check-in semanal | Acomoda formatos presencial/híbrido naturalmente; sem ela, eventos ficam escondidos                             |
+| **Chatbot**  | Chatbot nutricional IA (Pacote C) + dúvidas sobre programa via IA                                           | Schema dia 1; UI ativa conforme tier; tab presente mesmo em Pacote A/B mostrando estado bloqueado + upgrade CTA |
+| **Perfil**   | Settings, pagamento, **progresso** (peso, fotos antes/depois, métricas, gamificação), suporte, sair         | Progresso fica no Perfil pra liberar slot pra Chatbot — métricas são "info pessoal" mais que ação diária        |
 
 **Sem chat 1:1 com profissional (D-G37):** comunicação prof→aluno é one-way assíncrona via push + email. Top-bar PWA tem só logo do tenant + avatar do aluno (sem ícone chat). Notificações sistema ("componente X destravado", "live em 1h") via toast/sonner + badge no avatar (histórico in-app opcional fase 2).
 
@@ -243,9 +252,9 @@ Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela n
 - **Nunca** on load. Ask após **1ª workout completed** com copy "Quer um lembrete amanhã às 7h?"
 - Request DEVE ser dentro de user gesture (iOS estrita)
 - Frequency cap: 1 push/dia útil, max 2 em casos especiais
-- Quiet hours 22h-7h student local TZ (server-side gating)
+- Quiet hours 22h-7h client local TZ (server-side gating)
 
-### 9.2 VAPID per tenant (_CONFLITOS #4)
+### 9.2 VAPID per tenant (\_CONFLITOS #4)
 
 - 1 par VAPID (P-256) **por tenant** stored em `public.tenants.vapid_*` (encrypted via pgcrypto)
 - Razões (RFC 8292):
@@ -254,7 +263,7 @@ Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela n
   - Tenant pode "portar" subscriptions se migrar plataforma (anti lock-in)
   - Custo $0 (par P-256 = 2 strings 88 chars)
 - Cliente fetch public key pra tenant antes de `pushManager.subscribe({ userVisibleOnly: true, applicationServerKey })`
-- Persist subscription `{endpoint, p256dh, auth}` em `public.push_subscriptions(student_id, tenant_id, ...)`
+- Persist subscription `{endpoint, p256dh, auth}` em `public.push_subscriptions(client_id, tenant_id, ...)`
 
 **Cuidado:** rotacionar VAPID invalida TODAS subscriptions desse tenant (alunos perdem push até reaceitar). Rotação só quando absolutamente necessário.
 
@@ -267,6 +276,7 @@ Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela n
 ### 9.4 Notification actions
 
 `[{action:'done', title:'Marcar feito'}, {action:'snooze', title:'Adiar 10 min'}]`:
+
 - `done` enqueue mutation `component_progress` direto via IDB
 - `snooze` agenda server-side re-push após 10min (mais seguro que `setTimeout` em SW que pode ser killed)
 
@@ -310,6 +320,7 @@ Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela n
 ### 10.4 UX visual
 
 Custom bottom-sheet vaul com:
+
 - Trigger: 2ª sessão + 1ª ação significativa (master plan §10.12 — mais conservador)
 - Copy iOS: ilustração do Share → Add to Home Screen
 - Copy Android: 1 botão `Instalar` (primary)
@@ -427,6 +438,6 @@ Pra iOS: **deve** testar em real device após esperar >7 dias, ou após Settings
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — Serwist+Turbopack + idb-keyval queue + foreground flusher + 5 tabs + iOS quirks | Leandro |
+| Data       | Mudança                                                                                          | Aprovador |
+| ---------- | ------------------------------------------------------------------------------------------------ | --------- |
+| 2026-05-17 | Versão inicial — Serwist+Turbopack + idb-keyval queue + foreground flusher + 5 tabs + iOS quirks | Leandro   |

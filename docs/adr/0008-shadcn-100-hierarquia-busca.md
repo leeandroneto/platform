@@ -21,14 +21,17 @@ Antes de criar qualquer componente/lib/abstração: grep no codebase + buscar na
 ## Consequences
 
 **Positivo:**
+
 - Menos bug acidental (lib madura é testada por milhares)
 - Updates de A11y/perf vêm de graça via upgrade
 - Onboarding novo dev rápido (padrões da indústria)
 
 **Negativo:**
+
 - Lib externa = breaking change risk em major bumps
 - Mitigação: Renovate restritivo (D-G62) só PRs minor/patch
 
 **Neutro:**
+
 - Catálogo shadcn ~15 componentes dia 0 (`15-bootstrap-checklist.md §B3`)
 - Custom registrado em ADR (ex: APCA validator não existe pronto = ADR-0009)

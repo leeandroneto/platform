@@ -20,7 +20,7 @@ Memórias (`~/.claude/projects/<hash>/memory/`) complementam mas não são fonte
 
 ## 2. `CLAUDE.md` root (template <200 linhas)
 
-```markdown
+````markdown
 # Claude — contexto do projeto desafit.app
 
 > Carregado no início de toda sessão. **Mantenha curto e atualizado.**
@@ -45,14 +45,14 @@ Identidade completa, decisões, modelo multi-tenant: `docs/blueprint/00-PROJETO.
 
 ## Onde fica cada coisa
 
-| Info | Arquivo canônico |
-|---|---|
-| Regras code carregadas por path | `.claude/rules/*.md` |
-| Constituição imutável | `docs/blueprint/00-PROJETO.md` |
-| Decisões fechadas (ADRs) | `docs/adr/NNNN-*.md` |
-| Blueprints técnicos | `docs/blueprint/NN-*.md` |
-| Schema banco | `docs/blueprint/06-data-model.md` |
-| Histórico arquivado | `docs/_archive/` (referência JIT) |
+| Info                            | Arquivo canônico                  |
+| ------------------------------- | --------------------------------- |
+| Regras code carregadas por path | `.claude/rules/*.md`              |
+| Constituição imutável           | `docs/blueprint/00-PROJETO.md`    |
+| Decisões fechadas (ADRs)        | `docs/adr/NNNN-*.md`              |
+| Blueprints técnicos             | `docs/blueprint/NN-*.md`          |
+| Schema banco                    | `docs/blueprint/06-data-model.md` |
+| Histórico arquivado             | `docs/_archive/` (referência JIT) |
 
 Conflito entre docs → ADR > Blueprint > Master Plan (arquivado) > Memória.
 
@@ -110,6 +110,7 @@ pnpm vitest run         # 100%
 pnpm lint --max-warnings 0   # 0/0
 pnpm build              # verde
 ```
+````
 
 Antes de PR: rodar os 4 acima.
 
@@ -121,7 +122,8 @@ Antes de PR: rodar os 4 acima.
 `renderEmail(el)`. Lista completa: `.claude/rules/abstractions.md`.
 
 Criar abstração nova: 3+ usos + ADR (pesquisa 04 + `_CONFLITOS #18`).
-```
+
+````
 
 Total target: <200 linhas. Updates após cada ADR-significativo. PR muda contexto pra TODA sessão futura — diff explícito no PR description.
 
@@ -144,7 +146,7 @@ paths:
   - "supabase/**/*.{ts,sql}"
   - "messages/**/*.json"
 ---
-```
+````
 
 Conteúdo: tabela language-per-layer + tabela 16 termos banidos com substituto canônico. Mesma fonte de `03-naming-vocab.md`.
 
@@ -155,9 +157,9 @@ Conteúdo: tabela language-per-layer + tabela 16 termos banidos com substituto c
 name: Camadas + Sheriff boundaries
 description: Domain→Data→Hooks→UI, dependência desce nunca sobe
 paths:
-  - "lib/**/*.ts"
-  - "app/**/*.{ts,tsx}"
-  - "components/**/*.{ts,tsx}"
+  - 'lib/**/*.ts'
+  - 'app/**/*.{ts,tsx}'
+  - 'components/**/*.{ts,tsx}'
 ---
 ```
 
@@ -170,8 +172,8 @@ Conteúdo: tabela de camadas + regras de import (referência `04-camadas-imports
 name: Abstrações disponíveis + quando criar nova
 description: Use existente antes de criar. 3+ usos + ADR antes de abstrair.
 paths:
-  - "lib/**/*.ts"
-  - "components/**/*.tsx"
+  - 'lib/**/*.ts'
+  - 'components/**/*.tsx'
 ---
 ```
 
@@ -184,7 +186,7 @@ Conteúdo: lista abstrações + regra "3+ usos similares + ADR".
 name: Domain layer rules
 description: Lógica pura, zero IO, .test.ts obrigatório
 paths:
-  - "lib/domain/**/*.ts"
+  - 'lib/domain/**/*.ts'
 ---
 ```
 
@@ -197,8 +199,8 @@ Conteúdo: zero `import 'react'`, zero `supabase`, `.test.ts` obrigatório, ≤2
 name: Schemas separados public/platform/onboarding
 description: core = multi-marca; onboarding = legado pausado
 paths:
-  - "lib/data/**/*.ts"
-  - "supabase/**/*.sql"
+  - 'lib/data/**/*.ts'
+  - 'supabase/**/*.sql'
 ---
 ```
 
@@ -211,8 +213,8 @@ Conteúdo: `client.schema('platform').from('programs')`. Nunca `client.from('pla
 name: JWT claims + RLS pattern
 description: auth.jwt() ->> 'tenant_id' + RLS wrap (select ...) 100× speedup
 paths:
-  - "supabase/migrations/**/*.sql"
-  - "lib/data/**/*.ts"
+  - 'supabase/migrations/**/*.sql'
+  - 'lib/data/**/*.ts'
 ---
 ```
 
@@ -225,12 +227,13 @@ Conteúdo: nunca recriar `current_professional_id()`; role do aluno é `client` 
 name: Data layer rules
 description: function(client, ...args), lança erro, sem React
 paths:
-  - "lib/data/**/*.ts"
-  - "app/**/actions.ts"
+  - 'lib/data/**/*.ts'
+  - 'app/**/actions.ts'
 ---
 ```
 
 Conteúdo:
+
 - Assinatura: `export async function fnName(client: SupabaseClient, ...args)`
 - Lança `AppError` em vez de retornar `{ ok }` (Result type é em Server Action)
 - Zero JSX, zero hooks, zero `'use client'`
@@ -259,7 +262,7 @@ Configurados em `.claude/hooks/*` + `settings.json` referenciando triggers.
 
 **Trigger:** abertura de cada sessão Claude Code.
 
-**Ação:** lê CLAUDE.md root + injeta na conversa breve resumo: "vocab banido = 16 termos (ver `.claude/rules/naming.md`). schema = platform.* (ADR-0025). decisões = docs/adr/."
+**Ação:** lê CLAUDE.md root + injeta na conversa breve resumo: "vocab banido = 16 termos (ver `.claude/rules/naming.md`). schema = platform.\* (ADR-0025). decisões = docs/adr/."
 
 **Implementação:** script bash echoing texto curto pro stdout do hook.
 
@@ -276,6 +279,7 @@ Configurados em `.claude/hooks/*` + `settings.json` referenciando triggers.
 **Trigger:** antes de Write ou Edit em files de `app/`, `components/`, `lib/`.
 
 **Ação:** grep do conteúdo proposto contra:
+
 - `#[0-9a-f]{3,8}` (hex literal)
 - `rgba?\(` (rgb literal)
 - JSX text node literal sem `t()` wrapper
@@ -291,6 +295,7 @@ Se hit: aborta tool call com mensagem "token bypass detectado / i18n hardcoded d
 (Reforço `14-docs-lifecycle.md §10`)
 
 **Estrutura:**
+
 - `MEMORY.md` — índice (1 linha por memória)
 - `user_*.md` — perfil fundador
 - `feedback_*.md` — guidance preferences
@@ -299,10 +304,11 @@ Se hit: aborta tool call com mensagem "token bypass detectado / i18n hardcoded d
 - `audit_*.md` — reusable prompts
 
 **Lifecycle:**
+
 - Auto-update por Claude Code conforme conversação
 - Revisão semestral pelo fundador (limpar memórias obsoletas)
 - Repo desafit greenfield NASCE com memória virgem (decisão CHUNK 7 transferência) — memória do `onboarding-bio` NÃO migra
-- Vocab banido + decisões + padrões vivem em CLAUDE.md + .claude/rules/* + ADRs, **NÃO** em memória (memória é volátil, fonte de verdade não pode ser)
+- Vocab banido + decisões + padrões vivem em CLAUDE.md + .claude/rules/\* + ADRs, **NÃO** em memória (memória é volátil, fonte de verdade não pode ser)
 
 ---
 
@@ -311,6 +317,7 @@ Se hit: aborta tool call com mensagem "token bypass detectado / i18n hardcoded d
 Não criar dia 0. Adicionar conforme dor real (princípio §39).
 
 Candidatos avaliados pós-bootstrap:
+
 - **`code-reviewer`** — Sonnet 4.6, prompt focado em "audit boundary violations + token bypass + vocab + APCA"
 - **`audit-vocab`** — Haiku 4.5, prompt focado em scan rápido vocab banido pre-commit
 - **`audit-tokens`** — Haiku 4.5, scan hex/rgba/var inline
@@ -323,6 +330,7 @@ Criar cada um exige: justificativa em ADR + ≥3 usos por semana medidos antes d
 ## 7. Custom skills (opcional)
 
 Não criar dia 0. Avaliar quando workflow repetir 5+ vezes:
+
 - `bootstrap-edge-function` — scaffold de Edge Function Deno + AI Gateway + Zod schema + Promptfoo CI
 - `bootstrap-server-action` — scaffold de Server Action + Zod input + Result return + Vitest
 - `migrate-table` — wizard pra criar migration `mcp__supabase__apply_migration` com RLS pattern + indexes
@@ -355,22 +363,18 @@ Configuração em `.claude/mcp.json` ou via CLI Claude Code init.
       "Write(*)",
       "mcp__supabase__*",
       "mcp__shadcn__*",
-      "mcp__context7__*"
+      "mcp__context7__*",
     ],
-    "deny": [
-      "Bash(rm -rf:*)",
-      "Bash(git push --force:*)",
-      "Edit(.env*)"
-    ]
+    "deny": ["Bash(rm -rf:*)", "Bash(git push --force:*)", "Edit(.env*)"],
   },
   "hooks": {
     "SessionStart": ".claude/hooks/load-context.sh",
     "UserPromptSubmit": ".claude/hooks/vocab-warn.sh",
     "PreToolUse": {
       "Write": ".claude/hooks/block-disables.sh",
-      "Edit": ".claude/hooks/block-disables.sh"
-    }
-  }
+      "Edit": ".claude/hooks/block-disables.sh",
+    },
+  },
 }
 ```
 
@@ -402,6 +406,6 @@ Configuração em `.claude/mcp.json` ou via CLI Claude Code init.
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — CLAUDE.md template + 8 rules + 3 hooks + memory pattern | Leandro |
+| Data       | Mudança                                                                  | Aprovador |
+| ---------- | ------------------------------------------------------------------------ | --------- |
+| 2026-05-17 | Versão inicial — CLAUDE.md template + 8 rules + 3 hooks + memory pattern | Leandro   |

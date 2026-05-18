@@ -21,14 +21,17 @@ Tailwind v4 `@theme` OKLCH (2h) · 13 paletas OKLCH (4h) · shadcn ~15 (4h) · M
 ## Consequences
 
 **Positivo:**
+
 - Polish absorvido dia 0 ≠ refator 10× depois
 - Diferencial vs concorrentes BR (visual datado)
 - Reuso 100% dos primitives em todas as features
 
 **Negativo:**
+
 - M0 alongado (2 semanas vs 1)
 - Risco scope creep (cortar confetti foi explícito)
 
 **Neutro:**
+
 - Logo system completo dia 0 inclui ESLint rule bloqueando "desafit"/"desafit.app" literal
 - Hook system (3 hooks Claude Code) ajuda enforce

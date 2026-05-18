@@ -1,0 +1,8 @@
+{
+  "*.{ts,tsx}": [
+    "eslint --max-warnings 0 --no-inline-config --no-warn-ignored --fix",
+    "prettier --write"
+  ],
+  "*.{md,json,yml,yaml,css}": ["prettier --write"],
+  "*.sql": ["prettier --write --plugin prettier-plugin-sql"]
+}

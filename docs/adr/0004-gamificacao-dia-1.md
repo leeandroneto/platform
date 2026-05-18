@@ -14,14 +14,17 @@ Gamificação entra automatizada via formulário + vibe coding (prompt do fundad
 ## Consequences
 
 **Positivo:**
+
 - Time-to-feature: dia 1 vs ~6 semanas de engine pesada
 - Cada tenant pode ter gamificação diferente sem fork de código
 - Pattern reusável pra outras features ("vibe coding internal")
 
 **Negativo:**
+
 - Falta de padrão visual entre tenants (cada um vira fork)
 - Mitigação: 3 templates oficiais (streak / progress bar / badges) como base
 
 **Neutro:**
+
 - Schema `platform.gamification_configs jsonb` em vez de tabelas dedicadas
 - Quando 5+ tenants usarem padrão similar → consolidar em engine via ADR

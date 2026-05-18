@@ -18,6 +18,7 @@ Master plan e pesquisa 09 (lint-enforcement-token-bypass) + memória D-G66 (i18n
 `--max-warnings 0`. Zero `eslint-disable` exceto allowlist registrada neste ADR.
 
 **Allowlist (2 únicos comentários aceitos):**
+
 - `// eslint-disable-next-line jsx-a11y/heading-has-content — block oficial shadcn`
 - `// eslint-disable-next-line react/jsx-no-literals — third-party-component`
 
@@ -26,14 +27,17 @@ Adicionar novo padrão exige novo ADR superseding este.
 ## Consequences
 
 **Positivo:**
+
 - 830 disables do onboarding-bio impossíveis de repetir
 - Defesa em profundidade — falha de regra AST pega no grep
 - CI fail-fast (grep ~3s antes de build pesado)
 
 **Negativo:**
+
 - Custo dia 0: ~12-16h
 - Atrito ocasional pro Claude Code (deve aprender regra ou perguntar)
 
 **Neutro:**
+
 - Detalhado em `13-lint-enforcement.md`
 - ADR-0020 (bundle budgets) é defesa similar pra perf

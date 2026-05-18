@@ -1,0 +1,35 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · injury_phase}
+    Q1 -->|acute| BranchA[🔴 Branch: Aguda]
+    Q1 -->|subacute| Default[Fluxo padrão]
+    Q1 -->|chronic| BranchC[🟠 Branch: Crônica]
+    Q1 -->|returning| BranchR[🟢 Branch: Retornando]
+    BranchA --> Q2
+    Default --> Q2
+    BranchC --> Q2
+    BranchR --> Q2
+    Q2[Q2 · injury_location] --> Q3[Q3 · current_capacity]
+    Q3 -->|cannot_walk| Safety1[🚨 safetyReduced]
+    Q3 -->|walk_only / run_*| Q4
+    Safety1 --> Q4
+    Q4[Q4 · return_blocker] --> Q5[Q5 · injury_history]
+    Q5 --> Q6[Q6 · pre_injury_volume]
+    Q6 --> Q7{Q7 · health_conditions}
+    Q7 -->|stress_fracture / progressive / numbness / cardiac| Safety2[🚨 safetyReduced]
+    Q7 -->|safe| PN
+    Safety2 --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchWarn fill:#fff3e0,stroke:#e65100
+    classDef branchDanger fill:#ffebee,stroke:#c62828
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q7 decision
+    class Safety1,Safety2 safety
+    class BranchR branch
+    class BranchC branchWarn
+    class BranchA branchDanger
+    class Basics,PN,Goal,Contact universal

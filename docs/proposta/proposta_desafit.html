@@ -1,0 +1,2834 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Proposta Comercial — desafit.app</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --accent: #d9531e;
+        --accent-soft: #fff1ea;
+        --accent-border: #f4cbb4;
+        --accent-deep: #a8390d;
+        --ink: #1a1a1a;
+        --ink-soft: #333;
+        --ink-mute: #666;
+        --line: #e8e6e1;
+        --paper: #ffffff;
+        --paper-soft: #f7f5f0;
+        --paper-cream: #faf8f3;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          'Geist',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper-cream);
+        font-size: 15px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .doc {
+        max-width: 880px;
+        margin: 0 auto;
+        background: var(--paper);
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.04);
+      }
+
+      /* TIPOGRAFIA */
+      h1 {
+        font-size: 44px;
+        font-weight: 300;
+        letter-spacing: -1.2px;
+        color: var(--ink);
+        line-height: 1.05;
+      }
+      h2 {
+        font-size: 30px;
+        font-weight: 400;
+        color: var(--ink);
+        letter-spacing: -0.6px;
+        line-height: 1.15;
+      }
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 8px;
+        letter-spacing: -0.2px;
+      }
+      h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      p {
+        margin-bottom: 14px;
+        color: var(--ink-soft);
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 16px;
+        display: inline-block;
+      }
+
+      .lead {
+        font-size: 17px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+
+      ul {
+        margin: 8px 0 16px 20px;
+        padding: 0;
+      }
+      ul li {
+        margin-bottom: 6px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+      }
+      ul li::marker {
+        color: var(--accent);
+      }
+
+      /* ================ CAPA ================ */
+      .cover {
+        padding: 64px 64px 56px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+      }
+      .cover-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 48px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--line);
+      }
+      .cover-brand {
+        font-family: 'Geist Mono', monospace;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 1px;
+      }
+      .cover-tag {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        color: var(--ink-mute);
+      }
+      .cover-mockup {
+        margin: 0 -16px 48px;
+        text-align: center;
+      }
+      .cover-mockup img {
+        width: 100%;
+        max-width: 820px;
+        height: auto;
+        border-radius: 6px;
+      }
+      .cover-mockup-caption {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        color: var(--ink-mute);
+        margin-top: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .cover-title {
+        font-size: 52px;
+        font-weight: 300;
+        letter-spacing: -1.5px;
+        line-height: 1.05;
+        color: var(--ink);
+        margin-bottom: 16px;
+      }
+      .cover-title strong {
+        font-weight: 500;
+        color: var(--accent);
+      }
+      .cover-subtitle {
+        font-size: 18px;
+        color: var(--ink-mute);
+        margin-bottom: 56px;
+      }
+      .cover-meta {
+        border-top: 1px solid var(--line);
+        padding-top: 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        font-size: 13px;
+        color: var(--ink-mute);
+      }
+      .cover-meta strong {
+        color: var(--ink);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+      .cover-meta .right {
+        text-align: right;
+      }
+
+      /* ================ SEÇÕES ================ */
+      section {
+        padding: 80px 64px;
+        border-bottom: 1px solid var(--line);
+      }
+      section:last-child {
+        border-bottom: none;
+      }
+
+      .section-light {
+        background: var(--paper);
+      }
+      .section-cream {
+        background: var(--paper-cream);
+      }
+      .section-soft {
+        background: var(--paper-soft);
+      }
+      .section-accent-soft {
+        background: var(--accent-soft);
+      }
+
+      .section-intro {
+        margin-bottom: 40px;
+      }
+      .section-intro h2 {
+        margin-bottom: 14px;
+      }
+      .section-intro .lead {
+        max-width: 640px;
+      }
+
+      /* ================ FLUXO DE ENTREGA ================ */
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        margin: 32px 0 24px;
+        position: relative;
+      }
+      .flow-step {
+        text-align: center;
+        padding: 24px 12px;
+        position: relative;
+        border-right: 1px dashed var(--line);
+      }
+      .flow-step:last-child {
+        border-right: none;
+      }
+      .flow-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 14px;
+        background: var(--accent-soft);
+        border: 1.5px solid var(--accent-border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-family: 'Geist Mono', monospace;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .flow-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .flow-desc {
+        font-size: 11.5px;
+        color: var(--ink-mute);
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+      .flow-tag {
+        font-family: 'Geist Mono', monospace;
+        font-size: 8.5px;
+        color: var(--accent);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .flow-note {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 13px;
+        color: var(--ink-mute);
+        font-style: italic;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* ================ PACOTES ================ */
+      .pkg-block {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 32px 36px;
+        margin-bottom: 24px;
+        background: var(--paper);
+      }
+      .pkg-block.featured {
+        border: 2px solid var(--accent);
+        background: var(--accent-soft);
+      }
+      .pkg-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .pkg-block.featured .pkg-header {
+        border-bottom-color: var(--accent-border);
+      }
+      .pkg-tag {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--ink-mute);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .pkg-block.featured .pkg-tag {
+        color: var(--accent);
+      }
+      .pkg-name {
+        font-size: 26px;
+        font-weight: 500;
+        color: var(--ink);
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        margin-bottom: 8px;
+      }
+      .pkg-block.featured .pkg-name {
+        color: var(--accent-deep);
+      }
+      .pkg-desc {
+        color: var(--ink-soft);
+        font-size: 14px;
+        max-width: 480px;
+        margin-bottom: 0;
+      }
+      .pkg-price {
+        text-align: right;
+      }
+      .pkg-price-label {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        color: var(--ink-mute);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 4px;
+      }
+      .pkg-price-val {
+        font-size: 36px;
+        font-weight: 300;
+        color: var(--ink);
+        letter-spacing: -1px;
+        line-height: 1;
+      }
+      .pkg-block.featured .pkg-price-val {
+        color: var(--accent);
+      }
+      .pkg-price-note {
+        font-size: 11px;
+        color: var(--ink-mute);
+        margin-top: 4px;
+        font-family: 'Geist Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .pkg-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+      .pkg-body h4 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--ink-mute);
+        font-family: 'Geist Mono', monospace;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .pkg-block.featured .pkg-body h4 {
+        border-bottom-color: var(--accent-border);
+        color: var(--accent);
+      }
+      .pkg-body ul {
+        list-style: none;
+        margin: 0;
+      }
+      .pkg-body ul li {
+        padding: 5px 0 5px 18px;
+        position: relative;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+      }
+      .pkg-body ul li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-size: 12px;
+        top: 5px;
+      }
+
+      .pkg-mensalidade {
+        margin-top: 20px;
+        padding: 14px 18px;
+        background: var(--paper-soft);
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+      .pkg-block.featured .pkg-mensalidade {
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .pkg-mensalidade strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .pkg-bonus {
+        margin-top: 16px;
+        padding: 16px 18px;
+        background: var(--accent);
+        color: white;
+        border-radius: 6px;
+      }
+      .pkg-bonus-label {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+        opacity: 0.85;
+        font-weight: 600;
+      }
+      .pkg-bonus ul {
+        margin: 0;
+        list-style: none;
+      }
+      .pkg-bonus ul li {
+        padding: 3px 0 3px 18px;
+        position: relative;
+        font-size: 13.5px;
+        color: white;
+      }
+      .pkg-bonus ul li::before {
+        content: '✦';
+        position: absolute;
+        left: 0;
+        color: white;
+        opacity: 0.7;
+        font-size: 11px;
+        top: 4px;
+      }
+
+      /* ================ TABELA COMPARATIVA ================ */
+      .compare-wrapper {
+        overflow-x: auto;
+        margin-top: 24px;
+      }
+      table.compare {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      table.compare th {
+        text-align: left;
+        padding: 14px 12px;
+        border-bottom: 2px solid var(--ink);
+        font-weight: 600;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      table.compare th.col-pkg {
+        text-align: center;
+        width: 14%;
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+      }
+      table.compare th.col-pkg.featured {
+        color: var(--accent);
+      }
+      table.compare th .price-mini {
+        font-family: 'Geist Mono', monospace;
+        font-weight: 400;
+        color: var(--ink-mute);
+        font-size: 9.5px;
+        display: block;
+        margin-top: 2px;
+      }
+      table.compare th.col-pkg.featured .price-mini {
+        color: var(--accent);
+      }
+      table.compare td {
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--line);
+        color: var(--ink-soft);
+      }
+      table.compare td.col-pkg {
+        text-align: center;
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 16px;
+      }
+      table.compare td.col-pkg.empty {
+        color: #ccc;
+        font-weight: 400;
+      }
+      table.compare td.col-pkg.featured {
+        background: var(--accent-soft);
+      }
+      table.compare .group-row td {
+        padding-top: 22px;
+        padding-bottom: 6px;
+        font-family: 'Geist Mono', monospace;
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--accent);
+        border-bottom: none;
+        font-weight: 700;
+        background: transparent !important;
+      }
+      table.compare tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* ================ CRONOGRAMA ================ */
+      .timeline {
+        margin-top: 32px;
+        position: relative;
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 28px;
+        top: 28px;
+        bottom: 28px;
+        width: 2px;
+        background: var(--accent-border);
+      }
+      .month {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 24px;
+        margin-bottom: 28px;
+        position: relative;
+      }
+      .month:last-child {
+        margin-bottom: 0;
+      }
+      .month-marker {
+        width: 56px;
+        height: 56px;
+        background: white;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 22px;
+        color: var(--accent);
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 0 0 6px var(--paper-cream);
+      }
+      .month.bonus .month-marker {
+        border-style: dashed;
+        background: var(--accent-soft);
+      }
+      .section-light .month-marker {
+        box-shadow: 0 0 0 6px var(--paper);
+      }
+      .section-soft .month-marker {
+        box-shadow: 0 0 0 6px var(--paper-soft);
+      }
+      .month-card {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px 24px;
+      }
+      .month.bonus .month-card {
+        background: var(--accent-soft);
+        border-color: var(--accent-border);
+      }
+      .month-meta {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+        font-weight: 600;
+      }
+      .month-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: var(--ink);
+        margin-bottom: 12px;
+      }
+      .month-content ul {
+        margin: 0 0 12px 18px;
+        columns: 2;
+        column-gap: 24px;
+      }
+      .month-content ul li {
+        margin-bottom: 4px;
+        font-size: 13px;
+        break-inside: avoid;
+      }
+      .month-result {
+        margin-top: 12px;
+        padding: 10px 14px;
+        background: var(--accent-soft);
+        border-left: 3px solid var(--accent);
+        color: var(--accent-deep);
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 0 4px 4px 0;
+      }
+      .month.bonus .month-result {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      /* ================ ADICIONAIS ================ */
+      .addons-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .addon {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px 22px;
+      }
+      .addon-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 6px;
+        gap: 12px;
+      }
+      .addon-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+      .addon-price {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+      .addon-meta {
+        font-family: 'Geist Mono', monospace;
+        font-size: 9.5px;
+        color: var(--ink-mute);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 10px;
+      }
+      .addon-desc {
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      /* ================ VANTAGENS / BENEFÍCIOS ================ */
+      .benefits {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 32px;
+      }
+      .benefit {
+        padding: 24px 26px;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .benefit-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--accent-soft);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-family: 'Geist Mono', monospace;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 16px;
+      }
+      .benefit-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      .benefit-desc {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+      }
+
+      /* ================ PAGAMENTO ================ */
+      table.payment {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 24px;
+      }
+      table.payment th {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 2px solid var(--ink);
+        font-weight: 600;
+        font-size: 11px;
+        font-family: 'Geist Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+      }
+      table.payment td {
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      table.payment td:first-child {
+        font-weight: 600;
+      }
+      table.payment .featured-row {
+        background: var(--accent-soft);
+      }
+      table.payment .featured-row td:first-child {
+        color: var(--accent);
+      }
+      .mensalidade-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 32px;
+      }
+      .mensalidade-box {
+        padding: 20px 22px;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .mensalidade-box h4 {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+      }
+      .mensalidade-box .val {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .mensalidade-box .when {
+        font-size: 13px;
+        color: var(--ink-mute);
+      }
+
+      /* ================ DUAS COLUNAS check/x ================ */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-top: 24px;
+      }
+      .col h4 {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--accent-border);
+      }
+      .check-list,
+      .x-list {
+        list-style: none;
+        margin: 0;
+      }
+      .check-list li,
+      .x-list li {
+        padding: 8px 0 8px 24px;
+        position: relative;
+        font-size: 13.5px;
+        line-height: 1.5;
+        border-bottom: 1px solid var(--line);
+      }
+      .check-list li:last-child,
+      .x-list li:last-child {
+        border-bottom: none;
+      }
+      .check-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: 700;
+        top: 8px;
+      }
+      .x-list li::before {
+        content: '✕';
+        position: absolute;
+        left: 0;
+        color: var(--ink-mute);
+        font-weight: 500;
+        top: 8px;
+      }
+
+      /* ================ BOX DESTAQUE ================ */
+      .box-accent {
+        background: var(--accent-soft);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 6px 6px 0;
+        padding: 20px 24px;
+        margin: 24px 0;
+      }
+      .box-accent h4 {
+        color: var(--accent);
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .box-accent .check-list li {
+        border-bottom: 1px solid var(--accent-border);
+      }
+
+      /* ================ FAQ ================ */
+      .faq-list {
+        margin-top: 24px;
+      }
+      .faq-item {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 12px;
+      }
+      .faq-item:last-child {
+        border-bottom: none;
+      }
+      .faq-num {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 1.5px;
+        padding-top: 4px;
+        font-weight: 600;
+      }
+      .faq-q {
+        font-weight: 600;
+        color: var(--ink);
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .faq-a {
+        color: var(--ink-soft);
+        font-size: 13.5px;
+        line-height: 1.55;
+      }
+
+      /* ================ MATERIAIS ================ */
+      .materials-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        margin-top: 24px;
+      }
+      .materials-grid ul {
+        list-style: none;
+        margin: 0;
+      }
+      .materials-grid li {
+        padding: 7px 0 7px 22px;
+        position: relative;
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        border-bottom: 1px dashed var(--line);
+      }
+      .materials-grid li::before {
+        content: '•';
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+        font-size: 18px;
+        top: 4px;
+      }
+
+      /* ================ FECHAMENTO ================ */
+      .closing {
+        text-align: center;
+        padding: 100px 64px;
+        background: white;
+      }
+      .closing h2 {
+        font-size: 36px;
+        margin-bottom: 16px;
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .closing p {
+        max-width: 480px;
+        margin: 0 auto 40px;
+        color: var(--ink-mute);
+        font-size: 15px;
+      }
+      .closing-card {
+        max-width: 440px;
+        margin: 0 auto;
+        border-top: 1px solid var(--line);
+        padding-top: 32px;
+      }
+      .closing-card strong {
+        font-size: 16px;
+        color: var(--ink);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .closing-meta {
+        font-size: 13px;
+        color: var(--ink-mute);
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+      .closing-brand {
+        font-family: 'Geist Mono', monospace;
+        font-size: 12px;
+        color: var(--accent);
+        letter-spacing: 3px;
+        font-weight: 700;
+      }
+      .closing-conf {
+        margin-top: 56px;
+        font-family: 'Geist Mono', monospace;
+        font-size: 9px;
+        color: var(--ink-mute);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ============ RESPONSIVO BÁSICO ============ */
+      @media (max-width: 760px) {
+        section,
+        .cover,
+        .closing {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+        .cover-title {
+          font-size: 36px;
+        }
+        h1 {
+          font-size: 32px;
+        }
+        h2 {
+          font-size: 24px;
+        }
+        .pkg-header,
+        .pkg-body,
+        .two-col,
+        .mensalidade-grid,
+        .benefits,
+        .addons-grid,
+        .materials-grid,
+        .cover-meta,
+        .formats-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .flow {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .components-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .month-content ul {
+          columns: 1;
+        }
+      }
+
+      /* ============ CHAT EXAMPLE ============ */
+      .chat-example {
+        margin: 16px 0 8px;
+        padding: 20px 22px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid var(--accent-border);
+      }
+      .chat-msg {
+        margin-bottom: 14px;
+        max-width: 82%;
+      }
+      .chat-msg:last-child {
+        margin-bottom: 0;
+      }
+      .chat-msg.user {
+        margin-left: auto;
+        text-align: right;
+      }
+      .chat-msg.bot {
+        margin-right: auto;
+      }
+      .chat-bubble {
+        display: inline-block;
+        padding: 12px 16px;
+        border-radius: 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        text-align: left;
+      }
+      .chat-msg.user .chat-bubble {
+        background: var(--accent-soft);
+        color: var(--ink);
+        border-bottom-right-radius: 4px;
+      }
+      .chat-msg.bot .chat-bubble {
+        background: var(--accent);
+        color: white;
+        border-bottom-left-radius: 4px;
+      }
+      .chat-label {
+        font-family: 'Geist Mono', monospace;
+        font-size: 9px;
+        color: var(--ink-mute);
+        margin-top: 5px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+
+      /* ============ FORMATOS DE PROGRAMA ============ */
+      .formats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .format-block {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px 22px;
+      }
+      .format-label {
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .format-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .format-items span {
+        padding: 5px 10px;
+        background: var(--paper-cream);
+        border: 1px solid var(--line);
+        border-radius: 100px;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+
+      /* ============ COMPONENTES DO PROGRAMA ============ */
+      .components-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .component {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px 16px;
+        text-align: center;
+      }
+      .component-icon {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 10px;
+        background: var(--accent-soft);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .component-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .component-desc {
+        font-size: 11.5px;
+        color: var(--ink-mute);
+        line-height: 1.4;
+      }
+
+      /* ================ RESPONSIVO ================ */
+      @media (max-width: 960px) {
+        .doc {
+          max-width: 100%;
+        }
+        .pkg-header {
+          grid-template-columns: 1fr;
+        }
+        .pkg-price {
+          text-align: left;
+        }
+        .pkg-body {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        .month-content ul {
+          columns: 1;
+        }
+        .flow {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .flow-step {
+          border-right: none;
+          border-bottom: 1px dashed var(--line);
+          padding: 20px 8px;
+        }
+        .flow-step:nth-child(odd) {
+          border-right: 1px dashed var(--line);
+        }
+        .flow-step:last-child {
+          border-bottom: none;
+        }
+        .formats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .components-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .benefits {
+          grid-template-columns: 1fr;
+        }
+        .addons-grid {
+          grid-template-columns: 1fr;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
+        .materials-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .mensalidade-grid {
+          grid-template-columns: 1fr;
+        }
+        table.payment {
+          font-size: 12px;
+        }
+        table.payment th,
+        table.payment td {
+          padding: 10px 8px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          font-size: 14px;
+        }
+        .cover {
+          padding: 40px 24px 32px;
+        }
+        .cover-title {
+          font-size: 34px;
+          letter-spacing: -0.8px;
+        }
+        .cover-subtitle {
+          font-size: 15px;
+          margin-bottom: 36px;
+        }
+        .cover-meta {
+          grid-template-columns: 1fr;
+          gap: 16px;
+          font-size: 12px;
+        }
+        .cover-meta .right {
+          text-align: left;
+        }
+        .cover-top {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        section {
+          padding: 48px 24px;
+        }
+        h1 {
+          font-size: 32px;
+        }
+        h2 {
+          font-size: 22px;
+        }
+        h3 {
+          font-size: 16px;
+        }
+        .lead {
+          font-size: 15px;
+        }
+        .pkg-block {
+          padding: 24px 20px;
+        }
+        .pkg-name {
+          font-size: 22px;
+        }
+        .pkg-price-val {
+          font-size: 30px;
+        }
+        .flow {
+          grid-template-columns: 1fr;
+        }
+        .flow-step {
+          border-right: none !important;
+          border-bottom: 1px dashed var(--line);
+        }
+        .flow-step:last-child {
+          border-bottom: none;
+        }
+        .formats-grid {
+          grid-template-columns: 1fr;
+        }
+        .components-grid {
+          grid-template-columns: 1fr;
+        }
+        .timeline::before {
+          left: 18px;
+        }
+        .month {
+          grid-template-columns: 40px 1fr;
+          gap: 16px;
+        }
+        .month-marker {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+        .month-card {
+          padding: 16px 18px;
+        }
+        .benefit {
+          padding: 20px;
+        }
+        .closing {
+          padding: 56px 24px;
+        }
+        .compare-wrapper {
+          overflow-x: scroll;
+        }
+        table.compare {
+          min-width: 540px;
+        }
+        .addons-grid .addon-head {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <!-- ============= CAPA ============= -->
+      <div class="cover">
+        <div class="cover-top">
+          <div class="cover-brand">desafit.app</div>
+          <div class="cover-tag">
+            Proposta Comercial · <span data-emission-short>16 maio 2026</span>
+          </div>
+        </div>
+
+        <div class="cover-mockup">
+          <img
+            src="/desafit/mockup.png"
+            loading="eager"
+            decoding="async"
+            alt="Mockup do aplicativo desafit.app com a sua marca"
+          />
+          <div class="cover-mockup-caption">
+            Mockup ilustrativo · paleta e design definidos com você
+          </div>
+        </div>
+
+        <h1 class="cover-title">
+          Aplicativo próprio<br />
+          <strong>com a sua marca</strong><br />
+          para os seus alunos
+        </h1>
+        <div class="cover-subtitle">Proposta personalizada — construída para o seu programa</div>
+
+        <div class="cover-meta">
+          <div>
+            <strong>Data de emissão</strong>
+            <span data-emission-long>16 de maio de 2026</span><br />
+            Validade: 7 dias a partir da emissão
+          </div>
+          <div class="right">
+            <strong>Emitida por</strong>
+            Leandro Jose de Oliveira Neto<br />
+            Desenvolvimento de Software LTDA<br />
+            CNPJ 66.415.032/0001-66 · Americana, SP
+          </div>
+        </div>
+      </div>
+
+      <!-- ============= SOBRE ============= -->
+      <section class="section-light">
+        <div class="section-intro">
+          <div class="label">Sobre esta proposta</div>
+          <h2>Sua estrutura digital completa</h2>
+          <p class="lead">
+            A desafit.app é uma plataforma para profissionais de saúde, treinamento e bem-estar
+            criarem um aplicativo próprio com a sua marca para os seus alunos. Esta proposta
+            apresenta três opções de contratação — você escolhe entre só a estrutura de vendas, só o
+            aplicativo, ou o conjunto completo com vantagens exclusivas.
+          </p>
+        </div>
+
+        <div class="box-accent">
+          <h4>Já está incluído sem cobrança extra</h4>
+          <p style="font-size: 13.5px; margin-bottom: 0">
+            Hospedagem do aplicativo e site, hospedagem dos vídeos do programa, sistema de e-mail
+            profissional, backup diário, correções de problemas técnicos, novas funcionalidades
+            desenvolvidas continuamente e suporte direto comigo.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============= FLUXO ============= -->
+      <section class="section-cream">
+        <div class="section-intro">
+          <div class="label">O fluxo completo</div>
+          <h2>Como tudo se conecta</h2>
+          <p class="lead">
+            Quando você contrata o conjunto completo (Pacote C) e os adicionais, todas as etapas da
+            operação digital ficam cobertas — captação, conversão, entrega e retenção.
+          </p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-icon">01</div>
+            <div class="flow-title">Tráfego</div>
+            <div class="flow-desc">3 campanhas Meta Ads prontas. Você só ajusta orçamento.</div>
+            <div class="flow-tag">Adicional</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon">02</div>
+            <div class="flow-title">Captação</div>
+            <div class="flow-desc">Página com formulário, Pixel e Analytics configurados.</div>
+            <div class="flow-tag">Pacote A / C</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon">03</div>
+            <div class="flow-title">Vendas</div>
+            <div class="flow-desc">Página de venda e checkout integrado com Pix e cartão.</div>
+            <div class="flow-tag">Pacote A / C</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon">04</div>
+            <div class="flow-title">Entrega</div>
+            <div class="flow-desc">Aplicativo com sua marca, conteúdo, check-in, progresso.</div>
+            <div class="flow-tag">Pacote B / C</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon">05</div>
+            <div class="flow-title">Retenção</div>
+            <div class="flow-desc">Esteira contínua: aluno avança para o próximo programa.</div>
+            <div class="flow-tag">Adicional</div>
+          </div>
+        </div>
+
+        <p class="flow-note">
+          Cada peça funciona sozinha. O ganho real vem do conjunto — o aluno passa do anúncio à
+          conclusão sem você operar manualmente entre uma etapa e outra.
+        </p>
+      </section>
+
+      <!-- ============= PACOTES ============= -->
+      <section class="section-light">
+        <div class="section-intro">
+          <div class="label">Investimento · três opções</div>
+          <h2>Você escolhe por onde começar</h2>
+          <p class="lead">
+            Cada pacote entrega uma camada completa da operação. Você pode começar pelo que faz mais
+            sentido agora e expandir depois — ou pegar tudo de uma vez com a vantagem exclusiva do
+            Completo.
+          </p>
+        </div>
+
+        <!-- PACOTE A -->
+        <div class="pkg-block">
+          <div class="pkg-header">
+            <div>
+              <div class="pkg-tag">Pacote A</div>
+              <div class="pkg-name">Vendas e captação</div>
+              <p class="pkg-desc">
+                Toda a estrutura para captar leads, vender o programa e processar pagamentos. Para
+                quem ainda não precisa de aplicativo, mas precisa profissionalizar a aquisição.
+              </p>
+            </div>
+            <div class="pkg-price">
+              <div class="pkg-price-label">Investimento único</div>
+              <div class="pkg-price-val">R$ 1.500</div>
+              <div class="pkg-price-note">Entrega · 30 dias</div>
+            </div>
+          </div>
+
+          <div class="pkg-body">
+            <div>
+              <h4>Captação e vendas</h4>
+              <ul>
+                <li>Subdomínio seunome.desafit.app</li>
+                <li>Página de vendas do programa</li>
+                <li>Página de captação com formulário</li>
+                <li>Formulário de onboarding personalizado</li>
+                <li>Cálculo de TDEE, calorias e macros</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Pagamento e marketing</h4>
+              <ul>
+                <li>Checkout integrado (Pix + cartão)</li>
+                <li>Cupons de desconto configuráveis</li>
+                <li>Pixel Meta e Google Analytics</li>
+                <li>E-mail transacional com seu domínio</li>
+                <li>Painel de leads</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pkg-mensalidade">
+            <strong>Mensalidade:</strong> 30 dias sem cobrança após entrega. A partir do 31º dia, R$
+            100/mês via Pix recorrente.
+          </div>
+        </div>
+
+        <!-- PACOTE B -->
+        <div class="pkg-block">
+          <div class="pkg-header">
+            <div>
+              <div class="pkg-tag">Pacote B</div>
+              <div class="pkg-name">Aplicativo com a sua marca</div>
+              <p class="pkg-desc">
+                O aplicativo do aluno com a sua marca, conteúdo do programa, engajamento e retenção.
+                Para quem já vende e quer entregar com profissionalismo.
+              </p>
+            </div>
+            <div class="pkg-price">
+              <div class="pkg-price-label">Investimento único</div>
+              <div class="pkg-price-val">R$ 3.000</div>
+              <div class="pkg-price-note">Entrega · 60 dias</div>
+            </div>
+          </div>
+
+          <div class="pkg-body">
+            <div>
+              <h4>Aplicativo e conteúdo</h4>
+              <ul>
+                <li>Aplicativo com sua marca (Android e iPhone)</li>
+                <li>Subdomínio seunome.desafit.app</li>
+                <li>Estrutura do programa configurada conforme seu método</li>
+                <li>Player de vídeo com hospedagem inclusa</li>
+                <li>Biblioteca de 800+ exercícios</li>
+                <li>Sua biblioteca pessoal de vídeos</li>
+                <li>Materiais offline (PDFs salvos no app)</li>
+              </ul>
+              <h4 style="margin-top: 24px">Gestão e marca</h4>
+              <ul>
+                <li>Painel administrativo completo</li>
+                <li>Migração de alunos via planilha</li>
+                <li>Treinamento por videoconferência</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Experiência do aluno</h4>
+              <ul>
+                <li>Check-in diário</li>
+                <li>Galeria antes/depois</li>
+                <li>Histórico completo de progresso</li>
+                <li>Notificações push configuráveis</li>
+                <li>Lembretes de treino e refeição</li>
+                <li>Streak de dias consecutivos</li>
+                <li>Marcação de séries, repetições e cargas</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pkg-bonus">
+            <div class="pkg-bonus-label">Bônus inclusos</div>
+            <ul>
+              <li>Gamificação personalizada (entregue no mês 3)</li>
+              <li>
+                10 meses sem mensalidade — começa no 11º mês após a assinatura do contrato,
+                exatamente quando termina o parcelamento em 10×
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PACOTE C -->
+        <div class="pkg-block featured">
+          <div class="pkg-header">
+            <div>
+              <div class="pkg-tag">Pacote C · Recomendado</div>
+              <div class="pkg-name">Conjunto completo</div>
+              <p class="pkg-desc">
+                Toda a operação ponta a ponta — Pacote A + Pacote B — com desconto e bônus
+                exclusivos. A opção que entrega o fluxo inteiro: captação, venda, app, engajamento e
+                retenção.
+              </p>
+            </div>
+            <div class="pkg-price">
+              <div class="pkg-price-label">Economia de R$ 500</div>
+              <div class="pkg-price-val">R$ 4.000</div>
+              <div class="pkg-price-note">Entrega total · 90 dias</div>
+            </div>
+          </div>
+
+          <div class="pkg-body">
+            <div>
+              <h4>Tudo do Pacote A</h4>
+              <ul>
+                <li>Página de vendas</li>
+                <li>Página de captação</li>
+                <li>Formulário de onboarding</li>
+                <li>Cálculo nutricional</li>
+                <li>Checkout integrado</li>
+                <li>Cupons configuráveis</li>
+                <li>Pixel Meta e Analytics</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Tudo do Pacote B</h4>
+              <ul>
+                <li>Aplicativo Android e iPhone</li>
+                <li>Conteúdo do programa</li>
+                <li>Biblioteca de exercícios</li>
+                <li>Check-in e galeria</li>
+                <li>Notificações push</li>
+                <li>Painel administrativo</li>
+                <li>Migração e treinamento</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pkg-bonus">
+            <div class="pkg-bonus-label">Bônus exclusivos do Pacote C</div>
+            <ul>
+              <li>Gamificação personalizada (entregue no mês 3)</li>
+              <li>Chatbot nutricional com IA (entregue ~1 mês após o pacote)</li>
+              <li>
+                10 meses sem mensalidade — começa no 11º mês, alinhada com o fim do parcelamento
+              </li>
+              <li>Economia direta de R$ 500 sobre A + B contratados separadamente</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= FORMATOS DE PROGRAMA ============= -->
+      <section class="section-cream">
+        <div class="section-intro">
+          <div class="label">Formatos suportados</div>
+          <h2>Seu programa, do seu jeito</h2>
+          <p class="lead">
+            A plataforma é modular: combina componentes diferentes para suportar praticamente
+            qualquer formato de programa que você queira criar.
+          </p>
+        </div>
+
+        <div class="formats-grid">
+          <div class="format-block">
+            <div class="format-label">Duração</div>
+            <div class="format-items">
+              <span>7, 14, 21, 30 dias</span>
+              <span>60, 90 dias</span>
+              <span>3, 6, 12 meses</span>
+              <span>Contínuo (sem fim)</span>
+            </div>
+          </div>
+
+          <div class="format-block">
+            <div class="format-label">Modelo de turma</div>
+            <div class="format-items">
+              <span>Individual 1:1</span>
+              <span>Grupo fechado (cohort)</span>
+              <span>Híbrido (grupo + 1:1)</span>
+            </div>
+          </div>
+
+          <div class="format-block">
+            <div class="format-label">Modelo de venda</div>
+            <div class="format-items">
+              <span>Lançamento (janela fechada)</span>
+              <span>Perpétuo (sempre aberto)</span>
+              <span>Mensalidade recorrente</span>
+              <span>Programa gratuito (isca digital)</span>
+            </div>
+          </div>
+
+          <div class="format-block">
+            <div class="format-label">Modalidade</div>
+            <div class="format-items">
+              <span>100% online</span>
+              <span>Híbrido (online + presencial)</span>
+              <span>100% digital (sem encontros)</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 48px">Componentes do programa</h3>
+        <p>Cada dia do seu programa pode conter qualquer combinação destes componentes:</p>
+
+        <div class="components-grid">
+          <div class="component">
+            <div class="component-icon">▶</div>
+            <div class="component-title">Aula gravada</div>
+            <div class="component-desc">
+              Vídeo do treino, técnica ou explicação. Player com hospedagem inclusa.
+            </div>
+          </div>
+          <div class="component">
+            <div class="component-icon">⚡</div>
+            <div class="component-title">Treino estruturado</div>
+            <div class="component-desc">
+              Exercícios da biblioteca, séries, reps, carga e descanso configuráveis.
+            </div>
+          </div>
+          <div class="component">
+            <div class="component-icon">◉</div>
+            <div class="component-title">Live agendada</div>
+            <div class="component-desc">
+              Aviso e notificação push com link para Zoom, Meet, Instagram ou YouTube.
+            </div>
+          </div>
+          <div class="component">
+            <div class="component-icon">◐</div>
+            <div class="component-title">Call individual</div>
+            <div class="component-desc">Sessão 1:1 agendada com link para plataforma externa.</div>
+          </div>
+          <div class="component">
+            <div class="component-icon">▣</div>
+            <div class="component-title">Encontro presencial</div>
+            <div class="component-desc">
+              Data, local e capacidade configuráveis. Notificação automática para o aluno.
+            </div>
+          </div>
+          <div class="component">
+            <div class="component-icon">≡</div>
+            <div class="component-title">Material PDF</div>
+            <div class="component-desc">E-books, planilhas, guias. Acessíveis dentro do app.</div>
+          </div>
+          <div class="component">
+            <div class="component-icon">✓</div>
+            <div class="component-title">Tarefa / check-in</div>
+            <div class="component-desc">
+              Foto, resposta ou marcação manual. Você acompanha pelo painel.
+            </div>
+          </div>
+          <div class="component">
+            <div class="component-icon">✉</div>
+            <div class="component-title">Mensagem programada</div>
+            <div class="component-desc">
+              E-mail ou push enviado em dia específico ou marco do aluno.
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--ink-mute); margin-top: 24px; font-style: italic">
+          Lives e calls não acontecem dentro do aplicativo — o app envia o aviso e direciona para a
+          plataforma de sua escolha (Zoom, Meet, Instagram Live, YouTube, WhatsApp). Isso mantém a
+          operação enxuta e você usa o que já conhece.
+        </p>
+      </section>
+
+      <!-- ============= COMPARATIVO ============= -->
+      <section class="section-soft">
+        <div class="section-intro">
+          <div class="label">Comparativo dos pacotes</div>
+          <h2>Veja lado a lado o que cada um inclui</h2>
+          <p class="lead">
+            Você pode começar pelo pacote que faz mais sentido agora e expandir depois — a diferença
+            de valor entre os pacotes é mantida.
+          </p>
+        </div>
+
+        <div class="compare-wrapper">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Funcionalidade</th>
+                <th class="col-pkg">Pacote A<span class="price-mini">R$ 1.500</span></th>
+                <th class="col-pkg">Pacote B<span class="price-mini">R$ 3.000</span></th>
+                <th class="col-pkg featured">Pacote C<span class="price-mini">R$ 4.000</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-row">
+                <td colspan="4">Vendas e captação</td>
+              </tr>
+              <tr>
+                <td>Subdomínio seunome.desafit.app</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Página de vendas do programa</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Página de captação com formulário</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Formulário de onboarding personalizado</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Cálculo automático de TDEE, calorias e macros</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Checkout integrado (Pix + cartão)</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Cupons de desconto configuráveis</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Pixel Meta e Google Analytics</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Painel de leads</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+
+              <tr class="group-row">
+                <td colspan="4">Aplicativo e conteúdo</td>
+              </tr>
+              <tr>
+                <td>Aplicativo com sua marca (Android e iPhone)</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Estrutura do programa configurada</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Player de vídeo com hospedagem inclusa</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Biblioteca de 800+ exercícios</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Sua biblioteca pessoal de vídeos</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+
+              <tr class="group-row">
+                <td colspan="4">Experiência do aluno</td>
+              </tr>
+              <tr>
+                <td>Check-in diário</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Galeria antes/depois</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Histórico completo de progresso</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Notificações push configuráveis</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Streak de dias consecutivos</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Marcação de séries, repetições e cargas</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+
+              <tr class="group-row">
+                <td colspan="4">Gestão</td>
+              </tr>
+              <tr>
+                <td>Painel administrativo completo</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Migração de alunos via planilha</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>E-mail transacional com seu domínio</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+
+              <tr class="group-row">
+                <td colspan="4">Bônus exclusivos</td>
+              </tr>
+              <tr>
+                <td>Gamificação personalizada</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>Chatbot nutricional com IA</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+              <tr>
+                <td>10 meses sem mensalidade (alinhado com parcelamento)</td>
+                <td class="col-pkg empty">—</td>
+                <td class="col-pkg">✓</td>
+                <td class="col-pkg featured">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============= CRONOGRAMA ============= -->
+      <section class="section-cream">
+        <div class="section-intro">
+          <div class="label">Cronograma estimado</div>
+          <h2>Entregas por mês, com você usando desde o primeiro</h2>
+          <p class="lead">
+            O cronograma é estruturado para você começar a captar leads e gerar receita antes mesmo
+            do aplicativo ficar pronto. Cada mês entrega uma camada funcional completa.
+          </p>
+        </div>
+
+        <div class="timeline">
+          <div class="month">
+            <div class="month-marker">1</div>
+            <div class="month-card">
+              <div class="month-meta">Mês 1 · Pacotes A e C</div>
+              <div class="month-title">Identidade digital e captação no ar</div>
+              <div class="month-content">
+                <ul>
+                  <li>Domínio próprio configurado</li>
+                  <li>E-mails profissionais</li>
+                  <li>Página de vendas publicada</li>
+                  <li>Página de captação</li>
+                  <li>Confirmações automáticas</li>
+                  <li>Pixel Meta e Analytics</li>
+                  <li>Checkout integrado</li>
+                  <li>Cupons configuráveis</li>
+                </ul>
+              </div>
+              <div class="month-result">
+                Pacote A entregue · você já pode divulgar, receber inscrições e processar pagamentos
+              </div>
+            </div>
+          </div>
+
+          <div class="month">
+            <div class="month-marker">2</div>
+            <div class="month-card">
+              <div class="month-meta">Mês 2 · Pacotes B e C</div>
+              <div class="month-title">Painel administrativo e estrutura do programa</div>
+              <div class="month-content">
+                <ul>
+                  <li>Painel administrativo liberado</li>
+                  <li>Estrutura de dias configurável</li>
+                  <li>Ferramentas para montar treinos</li>
+                  <li>Upload de vídeos, fotos e PDFs</li>
+                  <li>Biblioteca de 800+ exercícios</li>
+                  <li>Formulário de onboarding</li>
+                  <li>Cálculo de TDEE e macros</li>
+                  <li>Migração inicial de alunos</li>
+                </ul>
+              </div>
+              <div class="month-result">
+                A estrutura está pronta — você começa a subir conteúdo e gravar vídeos
+              </div>
+            </div>
+          </div>
+
+          <div class="month">
+            <div class="month-marker">3</div>
+            <div class="month-card">
+              <div class="month-meta">Mês 3 · Pacotes B e C</div>
+              <div class="month-title">Aplicativo pronto para baixar</div>
+              <div class="month-content">
+                <ul>
+                  <li>Aplicativo instalável (Android e iPhone)</li>
+                  <li>Visual com sua marca em todas as telas</li>
+                  <li>Player de vídeo ativo</li>
+                  <li>Check-in diário e galeria antes/depois</li>
+                  <li>Notificações push configuradas</li>
+                  <li>Histórico de progresso</li>
+                  <li>Gamificação personalizada (bônus B/C)</li>
+                  <li>Treinamento e lançamento oficial</li>
+                </ul>
+              </div>
+              <div class="month-result">
+                Aplicativo na mão dos seus alunos · operação pronta para escalar
+              </div>
+            </div>
+          </div>
+
+          <div class="month bonus">
+            <div class="month-marker">4</div>
+            <div class="month-card">
+              <div class="month-meta">Após entrega · Bônus exclusivo Pacote C</div>
+              <div class="month-title">Chatbot nutricional com IA</div>
+              <div class="month-content">
+                <p style="font-size: 13.5px; margin: 0 0 16px 0">
+                  Diário alimentar dentro do app + chatbot com IA que conhece o perfil nutricional
+                  do aluno (meta calórica e macros).
+                  <strong
+                    >O aluno informa o que tem disponível para comer e o bot calcula as porções
+                    exatas</strong
+                  >
+                  para bater a meta da refeição — sem precisar cozinhar algo diferente do resto da
+                  família, sem ficar calculando macro, só pesar o que já vai comer. Dieta flexível
+                  de verdade.
+                </p>
+
+                <div class="chat-example">
+                  <div class="chat-msg user">
+                    <div class="chat-bubble">
+                      Hoje tem arroz, feijão e frango grelhado no almoço
+                    </div>
+                    <div class="chat-label">Aluno · 12:34</div>
+                  </div>
+                  <div class="chat-msg bot">
+                    <div class="chat-bubble">
+                      <div style="margin-bottom: 8px">
+                        Para bater a meta do almoço de hoje <strong>(790 kcal)</strong>:
+                      </div>
+                      <div
+                        style="
+                          font-family: 'Geist Mono', monospace;
+                          font-size: 12px;
+                          line-height: 1.8;
+                        "
+                      >
+                        150g de arroz cozido<br />
+                        100g de feijão cozido<br />
+                        150g de peito de frango grelhado
+                      </div>
+                      <div
+                        style="
+                          margin-top: 10px;
+                          padding-top: 8px;
+                          border-top: 1px solid rgba(255, 255, 255, 0.2);
+                          font-size: 12px;
+                        "
+                      >
+                        <strong>Total:</strong> 785 kcal · 56g proteína · 78g carboidrato · 7g
+                        gordura
+                      </div>
+                    </div>
+                    <div class="chat-label">Bot nutricional · 12:34</div>
+                  </div>
+                </div>
+              </div>
+              <div class="month-result">
+                Entregue aproximadamente 1 mês após a entrega final do pacote, sem custo adicional
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p
+          style="
+            margin-top: 32px;
+            font-size: 13px;
+            color: var(--ink-mute);
+            font-style: italic;
+            max-width: 640px;
+          "
+        >
+          Cronograma estimado. A entrega pode acontecer antes ou depois das datas previstas,
+          conforme imprevistos técnicos ou ajustes durante a construção. Você acompanha o progresso
+          semana a semana.
+        </p>
+      </section>
+
+      <!-- ============= PAGAMENTO ============= -->
+      <section class="section-light">
+        <div class="section-intro">
+          <div class="label">Condições comerciais</div>
+          <h2>Formas de pagamento</h2>
+          <p class="lead">
+            Pix com desconto, dividido em duas vezes, ou parcelado no cartão sem juros. Sem letras
+            miúdas, sem taxas escondidas.
+          </p>
+        </div>
+
+        <table class="payment">
+          <thead>
+            <tr>
+              <th>Pacote</th>
+              <th>Pix à vista (10% off)</th>
+              <th>2× no Pix</th>
+              <th>10× no cartão sem juros</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pacote A — Vendas e captação</td>
+              <td>R$ 1.350</td>
+              <td>2× R$ 750</td>
+              <td>10× R$ 150</td>
+            </tr>
+            <tr>
+              <td>Pacote B — Aplicativo</td>
+              <td>R$ 2.700</td>
+              <td>2× R$ 1.500</td>
+              <td>10× R$ 300</td>
+            </tr>
+            <tr class="featured-row">
+              <td>Pacote C — Conjunto completo</td>
+              <td>R$ 3.600</td>
+              <td>2× R$ 2.000</td>
+              <td>10× R$ 400</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top: 16px; font-size: 13px; color: var(--ink-mute)">
+          No "2× no Pix", o primeiro pagamento é na assinatura do contrato e o segundo na entrega
+          final. Adicionais somam ao pacote escolhido e podem ser parcelados nas mesmas condições.
+          Início dos trabalhos após confirmação do pagamento inicial.
+        </p>
+
+        <h3 style="margin-top: 40px">Mensalidade</h3>
+        <div class="mensalidade-grid">
+          <div class="mensalidade-box">
+            <h4>Pacote A</h4>
+            <div class="val">R$ 100/mês</div>
+            <div class="when">
+              A partir do 31º dia após a entrega · 30 dias de cortesia inclusos
+            </div>
+          </div>
+          <div class="mensalidade-box">
+            <h4>Pacotes B e C</h4>
+            <div class="val">R$ 200/mês</div>
+            <div class="when">
+              A partir do 11º mês após a assinatura do contrato · 10 meses de isenção alinhados com
+              o parcelamento em 10×
+            </div>
+          </div>
+        </div>
+
+        <h4 style="margin-top: 32px">O que está incluso na mensalidade</h4>
+        <ul style="columns: 2; column-gap: 32px">
+          <li>Hospedagem do aplicativo e site</li>
+          <li>Subdomínio seunome.desafit.app renovado anualmente</li>
+          <li>Hospedagem dos vídeos do programa</li>
+          <li>Sistema de e-mail profissional ativo</li>
+          <li>Backup diário dos seus dados</li>
+          <li>Correções de problemas técnicos</li>
+          <li>Novas funcionalidades desenvolvidas continuamente</li>
+          <li>Interações de IA do chatbot nutricional (Pacote C)</li>
+          <li>Suporte direto comigo</li>
+        </ul>
+
+        <p style="font-size: 13px; color: var(--ink-mute); margin-top: 16px; font-style: italic">
+          O chatbot com IA atende seus alunos 24h por dia. Foco principal é nutrição (calcular
+          porções para bater meta calórica), mas também conhece o programa e responde dúvidas
+          frequentes sobre execução, agenda e materiais — reduzindo o volume de mensagens que chegam
+          para você no WhatsApp.
+        </p>
+      </section>
+
+      <!-- ============= ADICIONAIS ============= -->
+      <section class="section-cream">
+        <div class="section-intro">
+          <div class="label">Serviços adicionais</div>
+          <h2>Opcionais para acelerar resultados</h2>
+          <p class="lead">
+            Itens cobrados separadamente. Podem ser contratados junto ao pacote ou em qualquer
+            momento futuro.
+          </p>
+        </div>
+
+        <div class="addons-grid">
+          <div class="addon">
+            <div class="addon-head">
+              <div class="addon-title">Programa adicional configurado</div>
+              <div class="addon-price">R$ 800</div>
+            </div>
+            <div class="addon-meta">Prazo extra · +10 dias</div>
+            <div class="addon-desc">
+              Configuração completa de um segundo programa dentro do mesmo aplicativo. Base para
+              construir esteira de produtos e aumentar receita por aluno.
+            </div>
+          </div>
+
+          <div class="addon">
+            <div class="addon-head">
+              <div class="addon-title">Setup de tráfego pago (Meta Ads)</div>
+              <div class="addon-price">R$ 1.200</div>
+            </div>
+            <div class="addon-meta">Prazo extra · +7 dias</div>
+            <div class="addon-desc">
+              Business Manager, Pixel e CAPI configurados, 3 campanhas iniciais prontas para o seu
+              programa, treinamento sobre como acompanhar e ajustar orçamento. Mínimo de R$ 6/dia
+              por campanha. Você ativa e desativa quando quiser, sem depender de agência ou gestor.
+            </div>
+          </div>
+
+          <div class="addon">
+            <div class="addon-head">
+              <div class="addon-title">Site institucional</div>
+              <div class="addon-price">R$ 500</div>
+            </div>
+            <div class="addon-meta">Prazo extra · +7 dias</div>
+            <div class="addon-desc">
+              Página institucional com sua história, áreas de atuação, depoimentos, antes e depois,
+              FAQ e contato. Apresentação profissional do seu trabalho fora do aplicativo.
+            </div>
+          </div>
+
+          <div class="addon">
+            <div class="addon-head">
+              <div class="addon-title">Página adicional customizada</div>
+              <div class="addon-price">R$ 300</div>
+            </div>
+            <div class="addon-meta">Prazo extra · +5 dias</div>
+            <div class="addon-desc">
+              Página extra fora do escopo padrão, adicionada ao site institucional.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= VANTAGENS ============= -->
+      <section class="section-light">
+        <div class="section-intro">
+          <div class="label">Vantagens reais</div>
+          <h2>Por que vale ter tudo isso</h2>
+          <p class="lead">
+            Você não está pagando por software. Está investindo em uma estrutura que reduz fricção,
+            aumenta retenção e cresce com você ao longo do tempo.
+          </p>
+        </div>
+
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit-icon">01</div>
+            <div class="benefit-title">Marca forte desde o primeiro toque</div>
+            <div class="benefit-desc">
+              Domínio próprio, e-mail com seu domínio, aplicativo com a sua identidade em todas as
+              telas. O aluno percebe o seu trabalho como uma marca consolidada — não como mais um
+              profissional no WhatsApp.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">02</div>
+            <div class="benefit-title">Retenção que acontece sozinha</div>
+            <div class="benefit-desc">
+              Notificações push, check-in diário, gamificação e histórico de progresso fazem o aluno
+              voltar todos os dias. Hábito é o que separa quem termina o programa de quem some no
+              dia 6.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">03</div>
+            <div class="benefit-title">Conteúdo que se paga várias vezes</div>
+            <div class="benefit-desc">
+              Os vídeos que você grava ficam na sua biblioteca pessoal. Pode reaproveitar em
+              qualquer programa futuro — sem regravar, sem perder qualidade, sem refazer trabalho.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">04</div>
+            <div class="benefit-title">Produto 100% digital, escala sem teto</div>
+            <div class="benefit-desc">
+              Se quiser, seu programa pode ser totalmente digital — sem lives, sem calls, sem
+              encontros. Só conteúdo gravado, check-in e progresso. Você vende para 10 ou para 1.000
+              alunos com o mesmo esforço operacional.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">05</div>
+            <div class="benefit-title">Isca digital para puxar lista</div>
+            <div class="benefit-desc">
+              Crie um programa gratuito curto (ex: 7 dias) como porta de entrada. Quem completa
+              entra na sua base qualificada e na esteira do próximo programa pago. Captação contínua
+              sem depender só de tráfego pago.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">06</div>
+            <div class="benefit-title">Esteira de programas no mesmo app</div>
+            <div class="benefit-desc">
+              Do gratuito de 7 dias para o pago de 21 dias, depois para o de 60, depois para o
+              anual. O aluno avança na sua esteira sem precisar baixar nada novo. Cada novo programa
+              multiplica o LTV do mesmo aluno.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">07</div>
+            <div class="benefit-title">Operação sem você no meio</div>
+            <div class="benefit-desc">
+              Aluno se inscreve, paga, recebe acesso. Cadastro automático, dados coletados pelo
+              formulário, cálculos nutricionais prontos. Você só atua onde realmente faz diferença.
+            </div>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">08</div>
+            <div class="benefit-title">Pronto para tráfego pago</div>
+            <div class="benefit-desc">
+              Pixel Meta e Google Analytics configurados desde o início. Quando você quiser
+              anunciar, a infraestrutura já está medindo conversão — sem retrabalho técnico.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= ESCOPO E DADOS ============= -->
+      <section class="section-soft">
+        <div class="section-intro">
+          <div class="label">Escopo</div>
+          <h2>O que está incluso, o que não está</h2>
+          <p class="lead">Para que a expectativa fique clara desde o início.</p>
+        </div>
+
+        <div class="two-col">
+          <div class="col">
+            <h4>Está incluso</h4>
+            <ul class="check-list">
+              <li>Hospedagem do aplicativo e do site</li>
+              <li>Subdomínio seunome.desafit.app configurado</li>
+              <li>Hospedagem dos vídeos do programa</li>
+              <li>Sistema de e-mail profissional ativo</li>
+              <li>Backup diário dos seus dados</li>
+              <li>Correções de problemas técnicos</li>
+              <li>Novas funcionalidades contínuas</li>
+              <li>Suporte direto comigo</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>Não está incluso</h4>
+            <ul class="x-list">
+              <li>Criação do método ou conteúdo do programa</li>
+              <li>
+                Criação de identidade visual do zero (logo, paleta) — trabalhamos a partir do que
+                você já tem
+              </li>
+              <li>Produção de conteúdo (gravação de vídeos, sessão de fotos)</li>
+              <li>Gestão mensal de tráfego pago — o setup inicial é adicional separado</li>
+              <li>
+                Transmissão ao vivo dentro do aplicativo (o app pode notificar e direcionar para
+                Instagram, YouTube ou Zoom)
+              </li>
+              <li>
+                Compra e renovação anual de domínio próprio externo (se preferir um domínio fora do
+                desafit.app, configuramos o DNS mas a compra fica por sua conta)
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="box-accent" style="margin-top: 40px">
+          <h4>Seu trabalho é seu</h4>
+          <p style="margin-bottom: 12px; font-size: 14px">
+            Construímos a infraestrutura.
+            <strong>Você constrói a marca, o método e a relação com cada aluno.</strong> O método,
+            conteúdo, programa e dados que você cria
+            <strong>não são compartilhados com nenhum outro profissional</strong> da plataforma — o
+            seu método é seu, ponto.
+          </p>
+          <ul class="check-list" style="margin-bottom: 0">
+            <li>
+              Seus alunos, leads, vídeos, materiais e conteúdo são exportáveis a qualquer momento
+            </li>
+            <li>Conformidade total com a LGPD</li>
+            <li>Backup automático diário</li>
+          </ul>
+        </div>
+
+        <h3 style="margin-top: 40px">Materiais necessários no início</h3>
+        <p>
+          Para começarmos a construção, precisamos receber em até 5 dias úteis após a assinatura:
+        </p>
+        <div class="materials-grid">
+          <ul>
+            <li>Logo em alta resolução (vetorial preferencialmente)</li>
+            <li>Paleta de cores e referências visuais</li>
+            <li>Textos: bio, descrição do programa, depoimentos</li>
+          </ul>
+          <ul>
+            <li>Conteúdo do programa: vídeos, PDFs, materiais</li>
+            <li>Lista de alunos existentes em planilha (se houver)</li>
+            <li>Gateway de pagamento à sua escolha (Pacotes A e C)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============= PALETAS ============= -->
+      <section class="section-cream">
+        <div class="section-intro">
+          <div class="label">Identidade visual</div>
+          <h2>Veja algumas opções de paletas para combinar com sua marca</h2>
+          <p class="lead">
+            Se você ainda não tem uma paleta definida, exploramos juntos as opções abaixo. Cada uma
+            já vem calibrada para os dois modos (claro e escuro) e foi testada nos componentes reais
+            do aplicativo — botões, cards, badges, gráficos. Você escolhe a base; eu aplico em todo
+            o app, página de vendas e e-mails.
+          </p>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin: 24px 0 32px;
+          "
+        >
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.58 0.18 275), oklch(0.52 0.2 275));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Indigo
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.62 0.16 145), oklch(0.55 0.18 145));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Verde
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.68 0.18 60), oklch(0.6 0.2 50));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Amber
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.62 0.22 25), oklch(0.55 0.24 25));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Coral
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.6 0.16 220), oklch(0.5 0.18 220));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Azure
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.6 0.2 330), oklch(0.52 0.22 330));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Magenta
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.62 0.14 180), oklch(0.55 0.16 180));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Teal
+          </div>
+          <div
+            style="
+              aspect-ratio: 1.2/1;
+              border-radius: 10px;
+              background: linear-gradient(135deg, oklch(0.45 0.04 270), oklch(0.32 0.05 270));
+              display: flex;
+              align-items: flex-end;
+              padding: 10px 12px;
+              color: white;
+              font-family: 'Geist Mono', monospace;
+              font-size: 10px;
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            "
+          >
+            Slate
+          </div>
+        </div>
+
+        <a
+          href="/paletas"
+          target="_blank"
+          rel="noopener"
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(217, 83, 30, 0.25);
+            transition:
+              transform 0.15s ease,
+              box-shadow 0.15s ease;
+          "
+          onmouseover="
+            this.style.transform = 'translateY(-1px)'
+            this.style.boxShadow = '0 8px 22px rgba(217,83,30,0.35)'
+          "
+          onmouseout="
+            this.style.transform = ''
+            this.style.boxShadow = '0 4px 14px rgba(217,83,30,0.25)'
+          "
+        >
+          Explorar as paletas no app
+          <span aria-hidden="true" style="font-family: 'Geist Mono', monospace; font-size: 16px"
+            >→</span
+          >
+        </a>
+
+        <p
+          style="
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--ink-mute);
+            font-style: italic;
+            max-width: 640px;
+          "
+        >
+          Abrimos a página /paletas em outra aba. Cada paleta tem demo completa: dashboard, cards,
+          gráficos, badges, formulários — você vê exatamente como vai ficar no seu app antes de
+          decidir.
+        </p>
+      </section>
+
+      <!-- ============= FAQ ============= -->
+      <section class="section-light">
+        <div class="section-intro">
+          <div class="label">Perguntas frequentes</div>
+          <h2>Dúvidas comuns</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-num">01</div>
+            <div>
+              <div class="faq-q">Quem hospeda meus vídeos?</div>
+              <div class="faq-a">
+                Nós. A hospedagem segura de vídeo está inclusa no pacote — você não precisa pagar
+                Vimeo Pro ou similar à parte. Os vídeos são protegidos contra cópia.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">02</div>
+            <div>
+              <div class="faq-q">Qual será o meu domínio?</div>
+              <div class="faq-a">
+                Por padrão, um subdomínio próprio dentro do desafit.app (seunome.desafit.app),
+                incluído sem custo extra. Se preferir um domínio próprio externo (seudomínio.com.br,
+                por exemplo), configuramos o DNS — a compra e renovação anual ficam por conta do
+                profissional.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">03</div>
+            <div>
+              <div class="faq-q">Posso transmitir lives dentro do aplicativo?</div>
+              <div class="faq-a">
+                Não no escopo desta proposta. Lives continuam acontecendo nas plataformas que você
+                já usa (Instagram, YouTube, Zoom). O aplicativo pode notificar o aluno antes da live
+                e direcioná-lo para o link correto.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">04</div>
+            <div>
+              <div class="faq-q">Como funcionam os pagamentos dos alunos?</div>
+              <div class="faq-a">
+                No Pacote A ou C, o aluno paga direto no site via checkout integrado (Pix + cartão)
+                e ganha acesso automático. Os valores vão direto para a sua conta — não
+                intermediamos pagamentos. Suportamos Asaas, Pagar.me, Mercado Pago, Stripe Brasil e
+                outros gateways com API REST.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">05</div>
+            <div>
+              <div class="faq-q">E se eu quiser uma funcionalidade que ainda não existe?</div>
+              <div class="faq-a">
+                Funcionalidades úteis para a maior parte dos clientes são desenvolvidas e
+                disponibilizadas para todos sem custo adicional. Serviços com custo por uso (IA, SMS
+                em volume, integrações específicas) são cobrados à parte. Funcionalidades só para
+                você são orçadas como projeto separado.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">06</div>
+            <div>
+              <div class="faq-q">Posso ter mais de um programa no aplicativo?</div>
+              <div class="faq-a">
+                Sim, com o adicional "Programa adicional configurado". Os pacotes B e C incluem 1
+                programa configurado.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">07</div>
+            <div>
+              <div class="faq-q">Quando começa a cobrar a mensalidade?</div>
+              <div class="faq-a">
+                No Pacote A, 30 dias após a entrega — R$ 100/mês via Pix recorrente. Nos Pacotes B e
+                C, apenas no 11º mês contado da assinatura do contrato — R$ 200/mês via Pix
+                recorrente. A isenção de 10 meses foi pensada para coincidir com o término do
+                parcelamento em 10×, evitando que você pague mensalidade e parcela ao mesmo tempo.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">08</div>
+            <div>
+              <div class="faq-q">O que acontece se a entrega atrasar?</div>
+              <div class="faq-a">
+                O cronograma é estimado — a entrega pode acontecer antes ou depois das datas
+                previstas, conforme imprevistos técnicos ou ajustes durante a construção. Você
+                acompanha o progresso semana a semana e mantemos comunicação aberta.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-num">09</div>
+            <div>
+              <div class="faq-q">Posso começar com um pacote e migrar depois?</div>
+              <div class="faq-a">
+                Sim. Você pode começar pelo A ou B e adicionar o que faltar quando fizer sentido. A
+                diferença de valor entre os pacotes é mantida.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= FECHAMENTO ============= -->
+      <div class="closing">
+        <div class="label" style="margin-bottom: 16px">Vamos conversar?</div>
+        <h2>Pronto para construir o seu aplicativo?</h2>
+        <p>
+          Esta proposta tem validade de 7 dias a partir da data de emissão. Para confirmar ou tirar
+          qualquer dúvida, entre em contato diretamente.
+        </p>
+
+        <a
+          href="https://wa.me/5519996511995?text=Ol%C3%A1!%20Vim%20pela%20proposta%20comercial%20do%20desafit.app%20e%20quero%20conversar."
+          target="_blank"
+          rel="noopener noreferrer"
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #25d366;
+            color: #ffffff;
+            padding: 18px 36px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            margin: 32px 0 8px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.32);
+            transition:
+              transform 0.15s ease,
+              box-shadow 0.15s ease;
+          "
+          onmouseover="
+            this.style.transform = 'translateY(-1px)'
+            this.style.boxShadow = '0 10px 26px rgba(37,211,102,0.4)'
+          "
+          onmouseout="
+            this.style.transform = ''
+            this.style.boxShadow = '0 6px 20px rgba(37,211,102,0.32)'
+          "
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            style="flex-shrink: 0"
+          >
+            <path
+              d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"
+            />
+          </svg>
+          Conversar no WhatsApp · (19) 99651-1995
+        </a>
+
+        <div class="closing-card">
+          <strong>Leandro Jose de Oliveira Neto</strong>
+          <div class="closing-meta">
+            Desenvolvimento de Software LTDA<br />
+            CNPJ 66.415.032/0001-66<br />
+            Americana, SP
+          </div>
+          <div class="closing-brand">DESAFIT.APP</div>
+        </div>
+
+        <div class="closing-conf">Esta proposta é confidencial</div>
+      </div>
+    </div>
+
+    <script>
+      ;(function () {
+        var now = new Date()
+        var months = [
+          'janeiro',
+          'fevereiro',
+          'março',
+          'abril',
+          'maio',
+          'junho',
+          'julho',
+          'agosto',
+          'setembro',
+          'outubro',
+          'novembro',
+          'dezembro',
+        ]
+        var d = now.getDate()
+        var m = months[now.getMonth()]
+        var y = now.getFullYear()
+        var longStr = d + ' de ' + m + ' de ' + y
+        var shortStr = d + ' ' + m + ' ' + y
+        document.querySelectorAll('[data-emission-long]').forEach(function (el) {
+          el.textContent = longStr
+        })
+        document.querySelectorAll('[data-emission-short]').forEach(function (el) {
+          el.textContent = shortStr
+        })
+      })()
+    </script>
+  </body>
+</html>

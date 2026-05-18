@@ -43,27 +43,28 @@ Sub-pasta nunca importa irmã horizontal exceto via tag explícita
 
 `sheriff.config.ts`:
 
-| Pasta | Tags |
-|---|---|
-| `app/(*)` | `type:feature`, `scope:web` |
-| `app/(*)/(*)` | `type:feature`, `scope:web` |
-| `components/ui` | `type:shared` |
-| `components/(*)` | `type:feature`, `scope:web` |
-| `lib/contracts` | `type:shared` |
-| `lib/contracts/(*)` | `type:shared` |
-| `lib/domain` | `type:shared` |
-| `lib/data` | `type:data`, `side:server` |
-| `lib/data/(*)` | `type:data`, `side:server` |
-| `lib/supabase` | `type:data`, `side:server` |
-| `lib/api` | `type:shared`, `side:server` |
-| `lib/design` | `type:shared` |
-| `lib/hooks` | `type:shared` |
-| `lib/auth` | `type:shared` |
-| `lib/email` | `type:shared`, `side:server` |
-| `lib/i18n` | `type:shared` |
-| `lib/utils` | `type:shared` |
+| Pasta               | Tags                         |
+| ------------------- | ---------------------------- |
+| `app/(*)`           | `type:feature`, `scope:web`  |
+| `app/(*)/(*)`       | `type:feature`, `scope:web`  |
+| `components/ui`     | `type:shared`                |
+| `components/(*)`    | `type:feature`, `scope:web`  |
+| `lib/contracts`     | `type:shared`                |
+| `lib/contracts/(*)` | `type:shared`                |
+| `lib/domain`        | `type:shared`                |
+| `lib/data`          | `type:data`, `side:server`   |
+| `lib/data/(*)`      | `type:data`, `side:server`   |
+| `lib/supabase`      | `type:data`, `side:server`   |
+| `lib/api`           | `type:shared`, `side:server` |
+| `lib/design`        | `type:shared`                |
+| `lib/hooks`         | `type:shared`                |
+| `lib/auth`          | `type:shared`                |
+| `lib/email`         | `type:shared`, `side:server` |
+| `lib/i18n`          | `type:shared`                |
+| `lib/utils`         | `type:shared`                |
 
 `depRules`:
+
 - `type:feature` → `[type:feature, type:shared, type:data]`
 - `type:data` → `[type:shared]`
 - `type:shared` → `[type:shared]`
@@ -103,9 +104,9 @@ fica sem efeito mas componente pode ser bundled errado.
 
 ESLint `no-restricted-imports`:
 
-| Pattern | Mensagem |
-|---|---|
-| `@supabase/supabase-js` direto | `Use lib/supabase/{client,server}. NEVER createClient() directly.` |
+| Pattern                          | Mensagem                                                              |
+| -------------------------------- | --------------------------------------------------------------------- |
+| `@supabase/supabase-js` direto   | `Use lib/supabase/{client,server}. NEVER createClient() directly.`    |
 | `@/lib/supabase/admin` em client | `Admin client only in supabase/functions/** and supabase/migrations.` |
 
 `lib/supabase/index.ts` re-exporta **somente** `client` + `server`. **Admin nunca é exportado daqui** — quem precisa importa via path absoluto `@/lib/supabase/admin` e essa pasta tem allowlist hardcoded (Edge Functions + jobs admin).
@@ -118,13 +119,13 @@ Detalhes: master plan §16.17b · pesquisa 04 §8.3.
 
 `no-restricted-imports` paths + patterns:
 
-| Banido | Substituto |
-|---|---|
-| `framer-motion` | `motion` / `motion/react` (Motion 12) |
-| `**/legacy/**` | Não existe no greenfield |
-| `@supabase/supabase-js` direto | Wrapper em `lib/supabase/{client,server}` |
-| `@/lib/supabase/admin` em client | Server-only (Edge Functions + migrations) |
-| `@supabase/auth-helpers-nextjs` | `@supabase/ssr` (deprecado) |
+| Banido                                         | Substituto                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------- |
+| `framer-motion`                                | `motion` / `motion/react` (Motion 12)                                           |
+| `**/legacy/**`                                 | Não existe no greenfield                                                        |
+| `@supabase/supabase-js` direto                 | Wrapper em `lib/supabase/{client,server}`                                       |
+| `@/lib/supabase/admin` em client               | Server-only (Edge Functions + migrations)                                       |
+| `@supabase/auth-helpers-nextjs`                | `@supabase/ssr` (deprecado)                                                     |
 | `lucide-react` namespace (`import * as Icons`) | Named imports (`import { Dumbbell } from 'lucide-react'`) — preserva tree-shake |
 
 Detalhes: master plan §2.3 · pesquisa 04 §2.2.
@@ -144,6 +145,7 @@ falham em tree-shake através de re-exports profundos, especialmente quando
 módulos intermediários tocam globals (pesquisa 10 §B antipattern #5).
 
 Importar cada coisa direto do caminho dela:
+
 - `import { Button } from '@/components/ui/button'`
 - `import { Dumbbell } from 'lucide-react'`
 - `import { motion } from 'motion/react'`
@@ -176,6 +178,7 @@ Detalhes: pesquisa 08 §A7 (ClientMotion wrapper) · master plan §10.
 - Importa de `lib/contracts/`, `lib/domain/`, `lib/design/` — nunca de `lib/data/`
 
 Hooks essenciais dia 1:
+
 - `use-responsive` (matchMedia mobile/desktop)
 - `use-server-action` (wrap `useTransition` + Result handling)
 - `use-debounce`
@@ -220,6 +223,7 @@ Hooks essenciais dia 1:
 - **NUNCA chama Supabase direto em `page.tsx`** — usa `lib/data/`
 
 Route groups (sem entrar em URL):
+
 - `(auth)` — login/signup/forgot-password/reset/verify-email
 - `(setup)` — setup pós-signup (fase 2 SaaS público)
 - `(shell)` — painel profissional
@@ -249,29 +253,32 @@ Detalhes: pesquisa 04 §2.3 · master plan §1.6.
 
 ## 13. Anti-patterns proibidos
 
-| Anti-pattern | Detecção |
-|---|---|
-| `lib/data/foo.ts` import de `app/...` | Sheriff `type:data` não pode importar `type:feature` |
-| `lib/data/foo.ts` import de `components/...` | Idem |
-| Component `'use client'` import de `lib/email/...` (Resend server) | Sheriff `side:server` não importável de noTag |
-| Component import direto de `lib/supabase/admin` | `no-restricted-imports` + `server-only` quebra build |
-| Barrel `lib/icons.ts` re-exportando Lucide | Sheriff `enableBarrelLess` |
-| Componente `'use client'` em arquivo `*.action.ts` | `no-restricted-syntax` override em glob `_actions/**` |
-| `useState` em Server Component | TS reclama (hook fora de Client Component) |
-| Server Action sem retorno tipado `Result<T, AppError>` | `explicit-function-return-type` em glob `_actions/**` |
-| Circular dependency cross-module | dependency-cruiser CI |
+| Anti-pattern                                                       | Detecção                                              |
+| ------------------------------------------------------------------ | ----------------------------------------------------- |
+| `lib/data/foo.ts` import de `app/...`                              | Sheriff `type:data` não pode importar `type:feature`  |
+| `lib/data/foo.ts` import de `components/...`                       | Idem                                                  |
+| Component `'use client'` import de `lib/email/...` (Resend server) | Sheriff `side:server` não importável de noTag         |
+| Component import direto de `lib/supabase/admin`                    | `no-restricted-imports` + `server-only` quebra build  |
+| Barrel `lib/icons.ts` re-exportando Lucide                         | Sheriff `enableBarrelLess`                            |
+| Componente `'use client'` em arquivo `*.action.ts`                 | `no-restricted-syntax` override em glob `_actions/**` |
+| `useState` em Server Component                                     | TS reclama (hook fora de Client Component)            |
+| Server Action sem retorno tipado `Result<T, AppError>`             | `explicit-function-return-type` em glob `_actions/**` |
+| Circular dependency cross-module                                   | dependency-cruiser CI                                 |
 
 ---
 
 ## 14. Hooks Claude Code complementares (defesa dia 0)
 
 `.claude/hooks/block-disables.sh` (PreToolUse Edit|Write|MultiEdit):
+
 - Bloqueia `eslint-disable`, `@ts-ignore`, `@ts-nocheck` em arquivos editados (deny + reason)
 
 `.claude/hooks/format-on-write.sh` (PostToolUse):
+
 - Roda Prettier + ESLint --fix no arquivo escrito
 
 `.claude/hooks/vocab-reminder.sh` (UserPromptSubmit):
+
 - Injeta `additionalContext` com vocabulário banido + canônico
 
 Detalhes: pesquisa 04 §1.6 · master plan §27.3.
@@ -290,6 +297,6 @@ Detalhes: pesquisa 04 §1.6 · master plan §27.3.
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — Sheriff tags + 'use client' guard + admin guard + barrel ban | Leandro |
+| Data       | Mudança                                                                       | Aprovador |
+| ---------- | ----------------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — Sheriff tags + 'use client' guard + admin guard + barrel ban | Leandro   |

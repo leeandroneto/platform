@@ -1,0 +1,63 @@
+# Changelog
+
+Todas as mudanças notáveis do projeto `platform` (multi-brand white-label SaaS).
+Formato: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versionamento: [SemVer](https://semver.org/spec/v2.0.0.html).
+
+Categorias: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
+Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing (não por commit).
+
+---
+
+## [Unreleased]
+
+### Added
+
+- Bootstrap completo do greenfield `platform` — Next.js 16, React 19, Tailwind v4, Supabase `@supabase/ssr` 0.10, Motion 12 (ADR-0008, ADR-0014)
+- 29 ADRs Michael Nygard (ADR-0017) cobrindo decisões fundacionais — schema sizing, multi-brand, multi-domain, template→instance, RLS performance
+- 18 blueprints técnicos em `docs/blueprint/` cobrindo arquitetura, stack, design system, data model, AI prompts, PWA, packages A/B/C, roadmap, lint, docs lifecycle
+- 24 regras ESLint custom — token bypass, vocab banido, brand hardcode, i18n hardcoded, boundaries domain→data→hooks→UI via Sheriff (ADR-0012)
+- Migration `0001_initial` — 25 tabelas `platform.*` + 12 `public.*` + RLS 5 categorias + 8 functions + triggers handle_new_user + custom_access_token_hook
+- Seed dia 0 — 13 paletas OKLCH oficiais + 7 fontes + 3 shape presets + 5 push templates + 4 email templates + brand `desafit`
+- Migration `0002_table_grants` — GRANTs Supabase-canonical (anon read, authenticated CRUD)
+- Migration `0003_security_hardening` — pg_trgm em extensions schema + REVOKE RPC exposure de 7 trigger-only functions
+- Migration `0004_restore_rls_helper_grants` — restaurado GRANT EXECUTE em `current_tenant_id()` e `current_user_role()` (necessário pra RLS USING clauses)
+- 5 storage buckets — avatars, programs-covers, components-media, tenant-logos, brand-assets
+- Scripts auto-update docs — `pnpm adr:index` + `pnpm docs:validate` + `pnpm docs:status`
+- ADR-0031 — 7 lint overrides intencionais por path (`components/ui/**`, `scripts/**`, etc) documentando escopo onde regras globais não fazem sentido
+- ADR-0032 — escopo do validator APCA de paletas; primary é bg de action (não fg de texto), validamos cenários reais (body+nonText)
+- Rota `/portal` (`app/(client)/portal/`) — área do cliente final EN puro, multi-vertical compatible (substitui `/aluno/*` rewrite, que era fitness-only)
+- Blueprint 05 §3 ganhou tabela "Design tokens — uso" com onde-usar/não-usar de cada token
+
+### Changed
+
+- Schema rename `desafit.*` → `core.*` → `platform.*` (ADR-0021 superseded by ADR-0025) — multi-marca real, não 1 marca por schema
+- Pools de customização movidos de hardcoded para banco (ADR-0028) — admin adiciona paleta/fonte sem deploy
+- Template→Instance pattern unificado (ADR-0029) — pages, programs, forms E paletas via mesmo padrão `source_template_id` + `created_by_tenant_id`
+- `scripts/validate-palettes.ts` — testa 2 cenários reais (body text + non-text delimiter) em vez de `APCA(primary, surface-1)` que era inútil (ADR-0032)
+- `proxy.ts` — requer host header (responde 400 se ausente); removido fallback hardcoded `'desafit.app'` (regra naming.md — brand sempre via env/route)
+- `lib/env.ts:NEXT_PUBLIC_DEFAULT_BRAND_HOST` — agora `min(1)` sem default; env obrigatória no boot
+
+### Removed
+
+- `platform.tenant_branding` tabela — branding inline em `platform.tenants` (ADR-0028)
+- `platform.tenants.custom_primary_oklch` coluna — substituído por clone pattern via `platform.palettes.source_palette_id` (ADR-0029)
+- `platform.brands.primary_color_oklch` coluna — sempre via `default_palette_id` FK (ADR-0028)
+- Rewrite `/aluno/:path* → /client/:path*` em `vercel.ts` — `aluno` é fitness-only; rota EN `/portal` cobre todas verticais
+- Fallback hardcoded `'desafit.app'` em `proxy.ts`, `app/layout.tsx`, `lib/env.ts` — brand resolution puramente via host + DB lookup
+
+### Security
+
+- RLS habilitada em 100% das tabelas tenant-scoped com policies separadas por operação (SELECT/INSERT/UPDATE/DELETE)
+- `(SELECT fn())` wrap em todas as policies — initPlan caching (benchmark Supabase docs: 94-99% improvement)
+- `current_tenant_id()` declarada `STABLE` para garantir caching do planner Postgres
+- `handle_new_user` trigger com `SECURITY DEFINER SET search_path = ''` — mitigação CVE-2018-1058
+- REVOKE EXECUTE de hook functions de roles públicas (anon, authenticated, public)
+
+---
+
+## Como adicionar entrada
+
+1. Antes de PR mergeable, adicione bullet em `[Unreleased]` na categoria certa
+2. Cite ADR-NNNN ou blueprint que motivou a mudança
+3. Foque em "o que muda pro usuário/dev externo", não diff técnico
+4. Em release: mover bullets de `[Unreleased]` pra nova versão `[X.Y.Z] - YYYY-MM-DD`, bump SemVer

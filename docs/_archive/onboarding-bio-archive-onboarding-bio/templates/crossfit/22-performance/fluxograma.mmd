@@ -1,0 +1,31 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · competitive_phase}
+    Q1 -->|box_competitor| BranchBox[🟢 Branch: Box Local]
+    Q1 -->|regional_competitor| BranchRegional[🟡 Branch: Regional]
+    Q1 -->|quarterfinals_plus| BranchElite[🔵 Branch: Elite]
+    BranchBox --> Q2
+    BranchRegional --> Q2
+    BranchElite --> Q2
+    Q2[Q2 · main_bottleneck] --> Q3[Q3 · gymnastics_level]
+    Q3 --> Q4[Q4 · strength_level]
+    Q4 --> Q5[Q5 · training_structure]
+    Q5 --> Q6{Q6 · health_conditions}
+    Q6 -->|none| PN
+    Q6 -->|cardiac / rhabdo| Safety[🚨 safetyReduced]
+    Q6 -->|shoulder / knee_back| PN
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchMid fill:#fff8e1,stroke:#f9a825
+    classDef branchHigh fill:#e3f2fd,stroke:#1565c0
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchBox branch
+    class BranchRegional branchMid
+    class BranchElite branchHigh
+    class Basics,PN,Goal,Contact universal

@@ -16,14 +16,17 @@ Sequência: Bootstrap repo (M0) → Funil comercial (M1) → Outreach via funil 
 ## Consequences
 
 **Positivo:**
+
 - Cold outreach com link de demo real converte muito melhor
 - Evita "vendedor sem produto" (vergonhoso pro fundador, queima warm network)
 - Funil mesmo é entregável vendável (Pacote A)
 
 **Negativo:**
+
 - ~4-6 semanas sem validação real de mercado
 - Mitigação: 1 ligação/semana com prospect mesmo sem demo (pesquisa 07 §7)
 
 **Neutro:**
+
 - Sprint plan `12-sprint-plan.md` Sprint 3-4 = M1 funil
 - M2 só começa com M1 fechado (1 venda real ≥ R$ 1.500)

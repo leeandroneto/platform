@@ -1,0 +1,1947 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  data-palette="lime"
+  data-typography="modern"
+  data-shape="rounded"
+  data-density="cozy"
+  data-surface="public"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Diagnóstico · Carlos Mendes · onboarding.bio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============================================================
+     Design tokens — espelho do @theme da onboarding.bio
+     dark-first, palette lime
+     ============================================================ */
+      :root {
+        /* warm gray neutrals (hue 80) */
+        --ob-gray-50: oklch(98% 0.005 80);
+        --ob-gray-100: oklch(95% 0.005 80);
+        --ob-gray-200: oklch(88% 0.006 80);
+        --ob-gray-300: oklch(78% 0.007 80);
+        --ob-gray-400: oklch(63% 0.008 80);
+        --ob-gray-500: oklch(50% 0.008 80);
+        --ob-gray-600: oklch(40% 0.008 80);
+        --ob-gray-700: oklch(30% 0.008 80);
+        --ob-gray-800: oklch(22% 0.008 80);
+        --ob-gray-850: oklch(17% 0.008 80);
+        --ob-gray-900: oklch(13% 0.007 80);
+        --ob-gray-950: oklch(9% 0.006 80);
+
+        /* lime palette (default) */
+        --ob-accent-dark: oklch(86% 0.2 122); /* #c6ff6c */
+        --ob-accent-light: oklch(72% 0.22 130); /* #6fbf00 */
+
+        /* dark theme bindings */
+        --color-background: var(--ob-gray-950);
+        --color-foreground: var(--ob-gray-100);
+        --color-muted: var(--ob-gray-850);
+        --color-muted-foreground: var(--ob-gray-400);
+        --color-card: var(--ob-gray-900);
+        --color-card-foreground: var(--ob-gray-100);
+        --color-border: oklch(22% 0.008 80 / 0.7);
+        --color-border-strong: oklch(28% 0.008 80);
+        --color-input: var(--ob-gray-850);
+        --color-primary: var(--ob-accent-dark);
+        --color-primary-foreground: var(--ob-gray-950);
+        --color-accent: var(--ob-accent-dark);
+        --color-accent-muted: oklch(86% 0.2 122 / 0.12);
+
+        /* priority colors */
+        --color-priority-1: oklch(67% 0.2 36); /* laranja-vermelho mais vivo no dark */
+        --color-priority-1-bg: oklch(67% 0.2 36 / 0.1);
+        --color-priority-2: oklch(72% 0.16 75); /* âmbar */
+        --color-priority-2-bg: oklch(72% 0.16 75 / 0.1);
+        --color-priority-3: oklch(70% 0.16 163); /* verde */
+        --color-priority-3-bg: oklch(70% 0.16 163 / 0.1);
+
+        /* score colors */
+        --color-score-high: oklch(70% 0.16 163);
+        --color-score-mid: oklch(72% 0.16 75);
+        --color-score-low: oklch(67% 0.2 36);
+        --color-score-danger: oklch(60% 0.22 25);
+        --color-score-info: oklch(70% 0.13 220);
+
+        /* shape (rounded) */
+        --shape-card: 14px;
+        --shape-button: 10px;
+        --shape-input: 10px;
+        --shape-badge: 4px;
+        --shape-pill: 999px;
+
+        /* typography scale */
+        --text-display: 48px;
+        --text-h1: 28px;
+        --text-h2: 20px;
+        --text-h3: 16px;
+        --text-body-large: 16px;
+        --text-body: 14px;
+        --text-body-small: 13px;
+        --text-label: 11px;
+        --text-micro: 10px;
+        --text-mono: 14px;
+
+        /* fonts */
+        --font-sans: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+        --font-mono: 'Geist Mono', 'SF Mono', Menlo, monospace;
+        --font-display: 'Geist', 'Barlow', Impact, sans-serif;
+
+        /* spacing for density=cozy */
+        --space-section: 48px;
+        --space-card: 20px;
+        --space-block: 16px;
+        --container-padding: 20px;
+        --container-max: 720px;
+      }
+
+      @media (min-width: 768px) {
+        :root {
+          --space-section: 72px;
+          --container-padding: 32px;
+        }
+      }
+
+      /* ============================================================
+     Reset & base
+     ============================================================ */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        line-height: 1.55;
+        color: var(--color-foreground);
+        background: var(--color-background);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-feature-settings: 'cv11', 'ss01';
+      }
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        background: none;
+        color: inherit;
+      }
+      ul {
+        list-style: none;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .tabular {
+        font-variant-numeric: tabular-nums;
+      }
+      .mono {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.005em;
+      }
+
+      /* ============================================================
+     Tipografia (espelho dos componentes <Heading>, <Text>, <Eyebrow>)
+     ============================================================ */
+      .h-display {
+        font-family: var(--font-display);
+        font-size: var(--text-display);
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+      .h-1 {
+        font-size: var(--text-h1);
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+      }
+      .h-2 {
+        font-size: var(--text-h2);
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      .h-3 {
+        font-size: var(--text-h3);
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      .t-body-large {
+        font-size: var(--text-body-large);
+        line-height: 1.55;
+      }
+      .t-body {
+        font-size: var(--text-body);
+        line-height: 1.55;
+      }
+      .t-body-small {
+        font-size: var(--text-body-small);
+        line-height: 1.5;
+        letter-spacing: 0.005em;
+      }
+      .t-label {
+        font-size: var(--text-label);
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: 0.04em;
+      }
+      .t-micro {
+        font-size: var(--text-micro);
+        line-height: 1.2;
+      }
+      .t-muted {
+        color: var(--color-muted-foreground);
+      }
+
+      .eyebrow {
+        font-size: var(--text-label);
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+      }
+      .eyebrow-accent {
+        color: var(--color-accent);
+      }
+      .eyebrow-mono {
+        font-family: var(--font-mono);
+        letter-spacing: 0.04em;
+      }
+
+      /* ============================================================
+     Layout
+     ============================================================ */
+      .page {
+        min-height: 100dvh;
+        padding: 0 var(--container-padding) calc(env(safe-area-inset-bottom, 0) + 96px);
+        max-width: var(--container-max);
+        margin: 0 auto;
+      }
+      .section {
+        margin-top: var(--space-section);
+      }
+      .section:first-of-type {
+        margin-top: 0;
+      }
+      .section-header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 24px;
+      }
+      .section-header .eyebrow {
+        color: var(--color-accent);
+      }
+
+      /* ============================================================
+     Cards
+     ============================================================ */
+      .card {
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--shape-card);
+        padding: var(--space-card);
+      }
+      .card-tight {
+        padding: 16px;
+      }
+      .card-flush {
+        padding: 0;
+        overflow: hidden;
+      }
+      .card-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      /* ============================================================
+     Topbar
+     ============================================================ */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px var(--container-padding);
+        background: oklch(9% 0.006 80 / 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+        margin: 0 calc(var(--container-padding) * -1) 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: var(--color-accent);
+        display: grid;
+        place-items: center;
+        color: var(--color-primary-foreground);
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .brand-name {
+        color: var(--color-foreground);
+      }
+      .brand-name-light {
+        color: var(--color-muted-foreground);
+      }
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--shape-button);
+        display: grid;
+        place-items: center;
+        color: var(--color-muted-foreground);
+        transition:
+          background 120ms ease,
+          color 120ms ease;
+      }
+      .icon-btn:hover {
+        background: var(--color-muted);
+        color: var(--color-foreground);
+      }
+
+      /* ============================================================
+     Hero (cabeçalho do relatório)
+     ============================================================ */
+      .hero {
+        padding: 32px 0 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .hero-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .hero-name {
+        font-family: var(--font-display);
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: var(--color-foreground);
+      }
+      .hero-name em {
+        color: var(--color-accent);
+        font-style: normal;
+      }
+      @media (min-width: 768px) {
+        .hero-name {
+          font-size: 56px;
+        }
+      }
+      .hero-context {
+        color: var(--color-muted-foreground);
+        font-size: 15px;
+        line-height: 1.5;
+        max-width: 560px;
+      }
+      .hero-emotional {
+        margin-top: 8px;
+        padding: 16px 18px;
+        background: var(--color-accent-muted);
+        border-left: 2px solid var(--color-accent);
+        border-radius: 0 10px 10px 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--color-foreground);
+      }
+
+      /* ============================================================
+     Pill / chip / badge
+     ============================================================ */
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: var(--shape-pill);
+        background: var(--color-muted);
+        font-size: var(--text-label);
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+      }
+      .pill-accent {
+        background: var(--color-accent-muted);
+        color: var(--color-accent);
+      }
+      .pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.85;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 8px;
+        border-radius: var(--shape-badge);
+        font-size: var(--text-label);
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .badge-success {
+        background: oklch(70% 0.16 163 / 0.14);
+        color: oklch(82% 0.16 163);
+      }
+      .badge-warning {
+        background: oklch(72% 0.16 75 / 0.14);
+        color: oklch(82% 0.16 75);
+      }
+      .badge-danger {
+        background: oklch(67% 0.2 36 / 0.16);
+        color: oklch(78% 0.18 36);
+      }
+      .badge-info {
+        background: oklch(70% 0.13 220 / 0.16);
+        color: oklch(82% 0.13 220);
+      }
+      .badge-neutral {
+        background: var(--color-muted);
+        color: var(--color-muted-foreground);
+      }
+
+      /* ============================================================
+     Stats grid (indicadores financeiros)
+     ============================================================ */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      @media (min-width: 768px) {
+        .stats-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+        }
+      }
+      .stat {
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--shape-card);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-height: 110px;
+      }
+      .stat-label {
+        font-size: var(--text-label);
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+      }
+      .stat-value {
+        font-family: var(--font-mono);
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--color-foreground);
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-context {
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--color-muted-foreground);
+      }
+      .stat-trend {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+      }
+      .stat-trend-up {
+        color: oklch(78% 0.16 163);
+      }
+      .stat-trend-down {
+        color: oklch(78% 0.18 36);
+      }
+      .stat-accent .stat-value {
+        color: var(--color-accent);
+      }
+      .stat-danger .stat-value {
+        color: oklch(78% 0.18 36);
+      }
+
+      /* ============================================================
+     SWOT vertical (mobile-first)
+     ============================================================ */
+      .swot-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      @media (min-width: 768px) {
+        .swot-stack {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 14px;
+        }
+      }
+      .swot-group {
+        border: 1px solid var(--color-border);
+        border-radius: var(--shape-card);
+        background: var(--color-card);
+        overflow: hidden;
+      }
+      .swot-group-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--color-border);
+        background: oklch(15% 0.008 80);
+      }
+      .swot-group-header .swot-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .swot-forcas .swot-icon {
+        background: oklch(70% 0.16 163 / 0.16);
+        color: oklch(80% 0.16 163);
+      }
+      .swot-fraquezas .swot-icon {
+        background: oklch(67% 0.2 36 / 0.16);
+        color: oklch(80% 0.18 36);
+      }
+      .swot-oportunidades .swot-icon {
+        background: oklch(70% 0.13 220 / 0.18);
+        color: oklch(82% 0.13 220);
+      }
+      .swot-ameacas .swot-icon {
+        background: oklch(72% 0.16 75 / 0.16);
+        color: oklch(82% 0.16 75);
+      }
+
+      .swot-group-title {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .swot-group-count {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--color-muted-foreground);
+        letter-spacing: 0.04em;
+      }
+      .swot-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .swot-item {
+        padding: 14px 16px;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        gap: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .swot-item:first-child {
+        border-top: 0;
+      }
+      .swot-item-num {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--color-muted);
+        color: var(--color-muted-foreground);
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: var(--font-mono);
+        margin-top: 2px;
+      }
+
+      /* ============================================================
+     Persona
+     ============================================================ */
+      .persona {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .persona-top {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .persona-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, oklch(86% 0.2 122 / 0.25), oklch(70% 0.16 163 / 0.25));
+        color: var(--color-accent);
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        font-size: 16px;
+        flex-shrink: 0;
+        border: 1px solid var(--color-border-strong);
+      }
+      .persona-id .persona-name {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+      .persona-id .persona-meta {
+        font-size: 13px;
+        color: var(--color-muted-foreground);
+        margin-top: 2px;
+      }
+      .persona-narrative {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--color-foreground);
+      }
+      .persona-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .persona-tag {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: var(--shape-pill);
+        background: var(--color-muted);
+        color: var(--color-foreground);
+        border: 1px solid var(--color-border);
+      }
+
+      /* ============================================================
+     Pricing (3 cards empilhados)
+     ============================================================ */
+      .pricing-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      @media (min-width: 768px) {
+        .pricing-stack {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+        }
+      }
+      .price-card {
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--shape-card);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        position: relative;
+      }
+      @media (min-width: 768px) {
+        .price-card {
+          flex-direction: column;
+          align-items: stretch;
+          text-align: center;
+          padding: 20px;
+          gap: 8px;
+          min-height: 130px;
+        }
+      }
+      .price-card-tier {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+      }
+      .price-card-value {
+        font-family: var(--font-mono);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-foreground);
+        font-variant-numeric: tabular-nums;
+      }
+      .price-card.is-current {
+        border-color: var(--color-accent);
+        background: var(--color-accent-muted);
+      }
+      .price-card.is-current .price-card-value {
+        color: var(--color-accent);
+      }
+      .price-card-flag {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        background: var(--color-accent);
+        color: var(--color-primary-foreground);
+        font-size: 10px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 0 var(--shape-card) 0 6px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .pricing-recommendation {
+        margin-top: 14px;
+        padding: 14px 16px;
+        background: var(--color-muted);
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--color-foreground);
+      }
+      .pricing-recommendation strong {
+        color: var(--color-accent);
+        font-weight: 600;
+      }
+
+      /* ============================================================
+     Break-even gauge
+     ============================================================ */
+      .be-card {
+        padding: 20px;
+      }
+      .be-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .be-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .be-stat-label {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+      }
+      .be-stat-value {
+        font-family: var(--font-mono);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--color-foreground);
+      }
+      .be-stat-value.is-success {
+        color: oklch(80% 0.16 163);
+      }
+      .be-stat-value.is-danger {
+        color: oklch(80% 0.18 36);
+      }
+
+      .be-bar-wrap {
+        position: relative;
+        padding: 14px 0 6px;
+      }
+      .be-bar-track {
+        height: 10px;
+        background: var(--color-muted);
+        border-radius: 999px;
+        position: relative;
+        overflow: hidden;
+      }
+      .be-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, oklch(70% 0.16 163), var(--color-accent));
+        border-radius: 999px;
+      }
+      .be-bar-marker {
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        width: 2px;
+        background: var(--color-foreground);
+        opacity: 0.7;
+      }
+      .be-bar-marker::after {
+        content: attr(data-label);
+        position: absolute;
+        top: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--color-muted-foreground);
+        white-space: nowrap;
+        letter-spacing: 0.04em;
+      }
+      .be-legend {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--color-muted-foreground);
+        margin-top: 14px;
+      }
+      .be-legend strong {
+        color: var(--color-foreground);
+        font-family: var(--font-mono);
+        font-weight: 500;
+      }
+
+      .be-interpretation {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: oklch(70% 0.16 163 / 0.08);
+        border-left: 2px solid oklch(70% 0.16 163);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      /* ============================================================
+     Diferenciais
+     ============================================================ */
+      .diff-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .diff-card {
+        padding: 16px 18px;
+      }
+      .diff-card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .diff-card-header svg {
+        color: var(--color-accent);
+      }
+      .diff-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .diff-item {
+        display: flex;
+        gap: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .diff-item::before {
+        content: '';
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--color-accent);
+        margin-top: 8px;
+        flex-shrink: 0;
+      }
+      .diff-gap {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: oklch(67% 0.2 36 / 0.08);
+        border-left: 2px solid oklch(67% 0.2 36);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .diff-gap-label {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: oklch(78% 0.18 36);
+        margin-bottom: 4px;
+        display: block;
+      }
+
+      /* ============================================================
+     Top 3 ações — a peça mais importante
+     ============================================================ */
+      .actions-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .action-card {
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--shape-card);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 3px;
+      }
+      .action-1::before {
+        background: var(--color-priority-1);
+      }
+      .action-2::before {
+        background: var(--color-priority-2);
+      }
+      .action-3::before {
+        background: var(--color-priority-3);
+      }
+
+      .action-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .action-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .action-1 .action-num {
+        background: var(--color-priority-1-bg);
+        color: var(--color-priority-1);
+      }
+      .action-2 .action-num {
+        background: var(--color-priority-2-bg);
+        color: var(--color-priority-2);
+      }
+      .action-3 .action-num {
+        background: var(--color-priority-3-bg);
+        color: var(--color-priority-3);
+      }
+      .action-priority-label {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .action-1 .action-priority-label {
+        color: var(--color-priority-1);
+      }
+      .action-2 .action-priority-label {
+        color: var(--color-priority-2);
+      }
+      .action-3 .action-priority-label {
+        color: var(--color-priority-3);
+      }
+
+      .action-title {
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 8px;
+        color: var(--color-foreground);
+      }
+      .action-diagnostic {
+        font-size: 13px;
+        color: var(--color-muted-foreground);
+        margin-bottom: 14px;
+        line-height: 1.55;
+      }
+      .action-block-label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-muted-foreground);
+        margin-bottom: 4px;
+      }
+      .action-do {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--color-foreground);
+        margin-bottom: 14px;
+      }
+      .action-impact {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: var(--color-muted);
+        border-radius: 8px;
+        font-size: 12px;
+        color: var(--color-foreground);
+      }
+      .action-impact svg {
+        color: var(--color-accent);
+        flex-shrink: 0;
+      }
+      .action-impact strong {
+        font-weight: 600;
+        color: var(--color-foreground);
+      }
+
+      /* ============================================================
+     Closing CTA
+     ============================================================ */
+      .closing {
+        margin-top: var(--space-section);
+        padding: 28px 22px 24px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, oklch(13% 0.007 80), oklch(11% 0.007 80));
+        border: 1px solid var(--color-border-strong);
+        position: relative;
+        overflow: hidden;
+      }
+      .closing::before {
+        content: '';
+        position: absolute;
+        top: -120px;
+        right: -120px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, oklch(86% 0.2 122 / 0.18), transparent 70%);
+        pointer-events: none;
+      }
+      .closing-eyebrow {
+        color: var(--color-accent);
+      }
+      .closing-title {
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        margin: 8px 0 12px;
+        max-width: 480px;
+      }
+      @media (min-width: 768px) {
+        .closing-title {
+          font-size: 32px;
+        }
+      }
+      .closing-body {
+        font-size: 14px;
+        color: var(--color-muted-foreground);
+        line-height: 1.55;
+        margin-bottom: 20px;
+        max-width: 520px;
+      }
+      .closing-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 22px;
+        border-radius: var(--shape-button);
+        background: var(--color-accent);
+        color: var(--color-primary-foreground);
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: -0.005em;
+        transition:
+          transform 120ms ease,
+          filter 120ms ease;
+        position: relative;
+        z-index: 1;
+      }
+      .closing-cta:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+
+      /* ============================================================
+     Footer
+     ============================================================ */
+      .foot {
+        margin-top: 40px;
+        padding: 24px 0 8px;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--color-muted-foreground);
+        letter-spacing: 0.02em;
+      }
+      .foot-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .foot-meta span::after {
+        content: '·';
+        margin-left: 8px;
+        opacity: 0.5;
+      }
+      .foot-meta span:last-child::after {
+        display: none;
+      }
+
+      /* ============================================================
+     Sticky CTA mobile (aparece após 40% scroll — comportamento
+     atual do StickyReportCta.tsx)
+     ============================================================ */
+      .sticky-cta {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: calc(env(safe-area-inset-bottom, 0) + 16px);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px 12px 18px;
+        background: var(--color-card);
+        border: 1px solid var(--color-border-strong);
+        border-radius: 14px;
+        box-shadow:
+          0 12px 36px -12px oklch(0% 0 0 / 0.6),
+          0 0 0 1px oklch(86% 0.2 122 / 0.15);
+        transform: translateY(calc(100% + 32px));
+        opacity: 0;
+        transition:
+          transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity 280ms ease;
+      }
+      .sticky-cta.is-visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .sticky-cta-text {
+        font-size: 13px;
+        line-height: 1.3;
+      }
+      .sticky-cta-text strong {
+        display: block;
+        font-weight: 600;
+        color: var(--color-foreground);
+      }
+      .sticky-cta-text span {
+        color: var(--color-muted-foreground);
+        font-size: 11px;
+      }
+      .sticky-cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 14px;
+        background: var(--color-accent);
+        color: var(--color-primary-foreground);
+        border-radius: var(--shape-button);
+        font-weight: 600;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      @media (min-width: 768px) {
+        .sticky-cta {
+          display: none;
+        }
+      }
+
+      /* ============================================================
+     Animation (respeita prefers-reduced-motion)
+     ============================================================ */
+      .reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 500ms ease,
+          transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .sticky-cta {
+          transition: none;
+        }
+        * {
+          animation: none !important;
+        }
+      }
+
+      /* ============================================================
+     Acessibilidade
+     ============================================================ */
+      :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================
+     TOPBAR
+     ============================================================ -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">o</span>
+        <span
+          ><span class="brand-name">onboarding</span
+          ><span class="brand-name-light">.bio</span></span
+        >
+      </div>
+      <nav class="topbar-actions" aria-label="Ações do relatório">
+        <button class="icon-btn" aria-label="Compartilhar via WhatsApp">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+            />
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Baixar PDF">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+        </button>
+      </nav>
+    </header>
+
+    <main class="page" id="report" data-tom="salvacao">
+      <!-- ============================================================
+       HERO · cabeçalho personalizado
+       ============================================================ -->
+      <section class="hero reveal">
+        <div class="hero-meta">
+          <span class="pill pill-accent"
+            ><span class="pill-dot"></span>Diagnóstico personalizado</span
+          >
+          <span class="pill"><span>Maio 2026</span></span>
+        </div>
+        <h1 class="hero-name">Carlos, aqui está seu<br />diagnóstico de <em>negócio</em>.</h1>
+        <p class="hero-context">
+          Personal de <strong>musculação</strong> em <strong>Americana&nbsp;·&nbsp;SP</strong>, há
+          <strong>4&nbsp;anos</strong> como autônomo. 18 alunos ativos, ticket médio de
+          R$&nbsp;400/mês.
+        </p>
+        <div class="hero-emotional">
+          <strong>Você opera com margem saudável (61%)</strong>, mas tem 3 frentes abertas que estão
+          custando alunos e travando seu próximo R$&nbsp;3.000 de receita mensal.
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 1 · Indicadores financeiros (2x2 mobile, 4 cols desktop)
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">01 · Como está hoje</span>
+          <h2 class="h-1">Seus números</h2>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat stat-accent">
+            <span class="stat-label">Receita mensal</span>
+            <span class="stat-value">R$ 7.200</span>
+            <span class="stat-context">18 alunos × R$ 400</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Margem líquida</span>
+            <span class="stat-value">61%</span>
+            <span class="stat-context">R$ 4.400 sobram após custos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Custos fixos</span>
+            <span class="stat-value">R$ 2.800</span>
+            <span class="stat-context">Aluguel, deslocamento, MEI</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Distância da meta</span>
+            <span class="stat-value">72%</span>
+            <span class="stat-context">Meta de R$ 10.000/mês</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 2 · SWOT (vertical em mobile, 2x2 em desktop)
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">02 · Análise estratégica</span>
+          <h2 class="h-1">O que joga a favor — e o que pode te travar</h2>
+        </header>
+
+        <div class="swot-stack">
+          <div class="swot-group swot-forcas">
+            <div class="swot-group-header">
+              <span class="swot-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </span>
+              <h3 class="swot-group-title">Forças</h3>
+              <span class="swot-group-count">3 itens</span>
+            </div>
+            <ul class="swot-list">
+              <li class="swot-item">
+                <span class="swot-item-num">1</span
+                ><span
+                  ><strong>Captação por indicação consistente.</strong> 70% dos seus alunos vêm de
+                  indicação de outros alunos — sinal forte de satisfação real.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">2</span
+                ><span
+                  ><strong>Especialização clara em emagrecimento feminino.</strong> Nicho com
+                  demanda em alta e ticket acima da média do personal genérico.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">3</span
+                ><span
+                  ><strong>Retenção acima do benchmark.</strong> Permanência média de 8 meses contra
+                  6–14 meses típicos da modalidade.</span
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="swot-group swot-fraquezas">
+            <div class="swot-group-header">
+              <span class="swot-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                  />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </span>
+              <h3 class="swot-group-title">Fraquezas</h3>
+              <span class="swot-group-count">3 itens</span>
+            </div>
+            <ul class="swot-list">
+              <li class="swot-item">
+                <span class="swot-item-num">1</span
+                ><span
+                  ><strong>Sem vitrine própria.</strong> Você depende do Linktree e do DM do
+                  Instagram — todo lead passa por um funil que você não controla.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">2</span
+                ><span
+                  ><strong>Cobrança 100% manual via Pix.</strong> Com 18 alunos, são 18
+                  lembretes/mês. Inadimplência cresce e seu tempo escapa.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">3</span
+                ><span
+                  ><strong>Dados espalhados em WhatsApp, planilha e cabeça.</strong> Quando um aluno
+                  some, você não tem histórico claro pra agir.</span
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="swot-group swot-oportunidades">
+            <div class="swot-group-header">
+              <span class="swot-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+              </span>
+              <h3 class="swot-group-title">Oportunidades</h3>
+              <span class="swot-group-count">3 itens</span>
+            </div>
+            <ul class="swot-list">
+              <li class="swot-item">
+                <span class="swot-item-num">1</span
+                ><span
+                  ><strong>Público 50+ em forte expansão.</strong> "Fitness for Older Adults" é a 2ª
+                  maior tendência ACSM 2026, com baixa concorrência qualificada na sua região.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">2</span
+                ><span
+                  ><strong>Híbrido presencial + online com tracking via wearable.</strong> 54% dos
+                  alunos preferem esse modelo — você atende mais sem novo deslocamento.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">3</span
+                ><span
+                  ><strong>Nicho de gestante/pós-parto.</strong> Ticket premium, churn baixíssimo,
+                  baixa oferta qualificada no interior paulista.</span
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="swot-group swot-ameacas">
+            <div class="swot-group-header">
+              <span class="swot-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9" />
+                  <polyline points="13 11 9 17 15 17 11 23" />
+                </svg>
+              </span>
+              <h3 class="swot-group-title">Ameaças</h3>
+              <span class="swot-group-count">3 itens</span>
+            </div>
+            <ul class="swot-list">
+              <li class="swot-item">
+                <span class="swot-item-num">1</span
+                ><span
+                  ><strong>Academias low-cost (Smart Fit, Bluefit).</strong> Comprimem a percepção
+                  de valor do "personal de bairro" — quem hesita acaba migrando pra mensalidade
+                  barata + personal interno.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">2</span
+                ><span
+                  ><strong>Apps de IA com planilha automática.</strong> Atacam o personal genérico
+                  online por R$ 30–80/mês. Sua diferenciação precisa ser clara.</span
+                >
+              </li>
+              <li class="swot-item">
+                <span class="swot-item-num">3</span
+                ><span
+                  ><strong>Sazonalidade dezembro–janeiro.</strong> Alunos viajam, cancelam
+                  temporário e parte não volta — sem ação ativa, churn vira estrutural.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 3 · Persona do aluno ideal
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">03 · Quem deveria estar treinando com você</span>
+          <h2 class="h-1">Seu aluno ideal</h2>
+        </header>
+
+        <div class="card persona">
+          <div class="persona-top">
+            <div class="persona-avatar">AM</div>
+            <div class="persona-id">
+              <div class="persona-name">Ana Maria</div>
+              <div class="persona-meta">36–42 anos · Analista sênior · Americana, SP</div>
+            </div>
+          </div>
+          <p class="persona-narrative">
+            Mãe de 2 filhos, rotina apertada, quer perder 8–12 kg e voltar a ter disposição. Já
+            tentou academia sozinha e desistiu duas vezes. Valoriza atenção próxima e progresso
+            visível. Chega por indicação de uma colega de trabalho que treina com você há 6 meses.
+          </p>
+          <div class="persona-tags">
+            <span class="persona-tag">Emagrecimento</span>
+            <span class="persona-tag">Saúde + estética</span>
+            <span class="persona-tag">Indicação ativa</span>
+            <span class="persona-tag">Renda B</span>
+            <span class="persona-tag">Ticket R$ 400–600</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 4 · Análise de precificação
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">04 · Precificação</span>
+          <h2 class="h-1">Onde você está no mercado</h2>
+        </header>
+
+        <div class="pricing-stack">
+          <div class="price-card">
+            <span class="price-card-tier">Básico</span>
+            <span class="price-card-value">R$ 320–560</span>
+          </div>
+          <div class="price-card is-current">
+            <span class="price-card-flag">Você cobra</span>
+            <span class="price-card-tier">Básico</span>
+            <span class="price-card-value">R$ 400</span>
+          </div>
+          <div class="price-card">
+            <span class="price-card-tier">Médio</span>
+            <span class="price-card-value">R$ 560–960</span>
+          </div>
+          <div class="price-card">
+            <span class="price-card-tier">Premium</span>
+            <span class="price-card-value">R$ 960–2.000</span>
+          </div>
+        </div>
+
+        <div class="pricing-recommendation">
+          Com 4 anos de atuação, retenção acima da média e nicho específico, você tem espaço pra
+          subir pra <strong>faixa média (R$ 560–960)</strong> sem perder volume. O caminho é
+          estruturar uma vitrine clara com depoimentos e antes/depois — assim o ticket sobe sem
+          virar negociação.
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 5 · Break-even
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">05 · Ponto de equilíbrio</span>
+          <h2 class="h-1">Quantos alunos pra dormir tranquilo</h2>
+        </header>
+
+        <div class="card be-card">
+          <div class="be-row">
+            <div class="be-stat">
+              <span class="be-stat-label">Alunos atuais</span>
+              <span class="be-stat-value is-success">18</span>
+            </div>
+            <div class="be-stat" style="text-align: right">
+              <span class="be-stat-label">Mínimo pra cobrir custos</span>
+              <span class="be-stat-value">7</span>
+            </div>
+          </div>
+
+          <div class="be-bar-wrap">
+            <div class="be-bar-track">
+              <div class="be-bar-fill" style="width: 75%"></div>
+            </div>
+            <div class="be-bar-marker" style="left: 28%" data-label="Break-even"></div>
+          </div>
+
+          <div class="be-legend">
+            <span>0 alunos</span>
+            <span><strong>+11 de margem</strong> · 257% acima do mínimo</span>
+            <span>24 alunos (meta)</span>
+          </div>
+
+          <div class="be-interpretation">
+            Você está numa zona confortável. Mesmo perdendo 5 alunos hoje, ainda fecha o mês no
+            positivo. Isso significa <strong>liberdade pra subir o ticket</strong> sem medo — você
+            não está dependente de volume.
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 6 · Concorrência e diferenciais
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow">06 · Posicionamento</span>
+          <h2 class="h-1">O que te diferencia</h2>
+        </header>
+
+        <div class="diff-grid">
+          <div class="card diff-card">
+            <div class="diff-card-header">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                />
+              </svg>
+              <h3 class="h-3">Seus diferenciais</h3>
+            </div>
+            <div class="diff-list">
+              <div class="diff-item">
+                Especialização real em emagrecimento feminino — não é "atende todo mundo".
+              </div>
+              <div class="diff-item">
+                Atendimento próximo e disponibilidade no WhatsApp — base do boca-a-boca.
+              </div>
+              <div class="diff-item">4 anos de histórico com retenção média de 8 meses.</div>
+              <div class="diff-item">
+                Modelo híbrido (academia parceira + domicílio) raro na sua região.
+              </div>
+            </div>
+          </div>
+
+          <div class="card diff-card">
+            <div class="diff-card-header">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                />
+              </svg>
+              <h3 class="h-3">A concorrência local</h3>
+            </div>
+            <div class="diff-list">
+              <div class="diff-item">Personals em academia (R$ 80–120/h, sem identidade).</div>
+              <div class="diff-item">
+                Smart Fit + personal interno (R$ 250–350/mês, alta rotatividade).
+              </div>
+              <div class="diff-item">Coaches online genéricos (R$ 150–300/mês, sem follow-up).</div>
+            </div>
+            <div class="diff-gap">
+              <span class="diff-gap-label">Lacuna competitiva</span>
+              Nenhum competidor da sua faixa em Americana tem vitrine digital própria com
+              depoimentos e antes/depois organizados.
+              <strong>Esse é o seu atalho pra subir o ticket.</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       SEÇÃO 7 · TOP 3 AÇÕES — A peça que vende
+       ============================================================ -->
+      <section class="section reveal">
+        <header class="section-header">
+          <span class="eyebrow eyebrow-accent">07 · O que fazer agora</span>
+          <h2 class="h-1">Suas 3 prioridades</h2>
+          <p class="t-body t-muted" style="margin-top: 4px">
+            Em ordem de impacto financeiro. Comece de cima.
+          </p>
+        </header>
+
+        <div class="actions-stack">
+          <article class="action-card action-1">
+            <div class="action-head">
+              <span class="action-num">1</span>
+              <span class="action-priority-label">Urgente · maior alavanca</span>
+            </div>
+            <h3 class="action-title">
+              Construir uma vitrine própria com depoimentos e antes/depois
+            </h3>
+            <p class="action-diagnostic">
+              Você capta 70% por indicação, mas perde leads no Linktree porque não tem prova social
+              organizada. Quem chega indireto (Instagram, busca) não converte.
+            </p>
+            <div class="action-block-label">O que fazer</div>
+            <p class="action-do">
+              Coletar 5 depoimentos esta semana (vídeo curto de 20s no WhatsApp) e organizar com 5
+              antes/depois reais em uma página única. Substituir o Linktree por essa página.
+            </p>
+            <div class="action-impact">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+              <span
+                ><strong>Impacto esperado:</strong> conversão de lead frio sobe 2–3x e cria base
+                para subir o ticket pra R$ 560–700.</span
+              >
+            </div>
+          </article>
+
+          <article class="action-card action-2">
+            <div class="action-head">
+              <span class="action-num">2</span>
+              <span class="action-priority-label">Importante · libera tempo</span>
+            </div>
+            <h3 class="action-title">Migrar a cobrança manual pra recorrência automática</h3>
+            <p class="action-diagnostic">
+              Com 18 alunos, são 18 cobranças manuais/mês. Você gasta 3–4h só nisso e a
+              inadimplência cresce conforme a base aumenta.
+            </p>
+            <div class="action-block-label">O que fazer</div>
+            <p class="action-do">
+              Configurar Pix recorrente automático para todos os alunos novos a partir do próximo
+              mês. Migrar os atuais aos poucos. Centralizar histórico financeiro num único lugar.
+            </p>
+            <div class="action-impact">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span
+                ><strong>Impacto esperado:</strong> 12–16h liberadas/mês e queda de 5–10% na
+                inadimplência.</span
+              >
+            </div>
+          </article>
+
+          <article class="action-card action-3">
+            <div class="action-head">
+              <span class="action-num">3</span>
+              <span class="action-priority-label">Crescimento · próximo nível</span>
+            </div>
+            <h3 class="action-title">Estruturar um programa de 12 semanas como produto fechado</h3>
+            <p class="action-diagnostic">
+              Você tem retenção alta e nicho claro, mas vende "mensalidade aberta" — o que dá margem
+              ao aluno pra parar a qualquer hora.
+            </p>
+            <div class="action-block-label">O que fazer</div>
+            <p class="action-do">
+              Empacotar um programa de 12 semanas com nome, promessa e antes/depois esperados.
+              Vender como produto único (R$ 1.500–1.800), não como mensalidade. Permite cobrar mais
+              e reduz churn estrutural.
+            </p>
+            <div class="action-impact">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              <span
+                ><strong>Impacto esperado:</strong> ticket médio sobe 30–50% e permanência sai de 8
+                para 12+ meses.</span
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============================================================
+       CLOSING · CTA pro produto
+       ============================================================ -->
+      <section class="closing reveal">
+        <span class="eyebrow closing-eyebrow">O atalho</span>
+        <h2 class="closing-title">
+          Suas 3 prioridades exigem ferramentas separadas hoje. Existe um caminho mais simples.
+        </h2>
+        <p class="closing-body">
+          Site profissional com depoimentos, cobrança recorrente automática, gestão centralizada de
+          alunos e programas estruturados — tudo dentro de <strong>onboarding.bio/seu-nome</strong>,
+          por R$ 27/mês como fundador.
+        </p>
+        <a href="#" class="closing-cta">
+          Conhecer onboarding.bio
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </section>
+
+      <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+      <footer class="foot">
+        <div class="foot-meta">
+          <span>Diagnóstico gerado em 06 de maio de 2026</span>
+          <span>Análise por IA + benchmarks do mercado fitness BR</span>
+          <span>onboarding.bio</span>
+        </div>
+        <div class="foot-meta">
+          <span>Confidencial · uso exclusivo de Carlos Mendes</span>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ============================================================
+     STICKY CTA mobile (aparece após 40% scroll)
+     ============================================================ -->
+    <aside class="sticky-cta" id="stickyCta" aria-hidden="true">
+      <div class="sticky-cta-text">
+        <strong>Resolva as 3 prioridades em um só lugar</strong>
+        <span>R$ 27/mês · vagas de fundador</span>
+      </div>
+      <a href="#" class="sticky-cta-button">
+        Ver
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </a>
+    </aside>
+
+    <script>
+      // Reveal on scroll
+      const reveals = document.querySelectorAll('.reveal')
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible')
+              io.unobserve(e.target)
+            }
+          })
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      )
+      reveals.forEach((el) => io.observe(el))
+
+      // Sticky CTA — aparece após 40% scroll
+      const stickyCta = document.getElementById('stickyCta')
+      const onScroll = () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight
+        const p = window.scrollY / h
+        stickyCta.classList.toggle('is-visible', p > 0.4 && p < 0.96)
+        stickyCta.setAttribute(
+          'aria-hidden',
+          stickyCta.classList.contains('is-visible') ? 'false' : 'true',
+        )
+      }
+      window.addEventListener('scroll', onScroll, { passive: true })
+      onScroll()
+    </script>
+  </body>
+</html>

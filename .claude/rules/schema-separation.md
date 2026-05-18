@@ -2,18 +2,18 @@
 name: Schemas separados public/platform/onboarding
 description: platform = multi-marca multi-vertical (era core — ADR-0025). onboarding = legado pausado (NÃO usar).
 paths:
-  - "lib/data/**/*.ts"
-  - "supabase/**/*.sql"
-  - "supabase/functions/**/*.ts"
+  - 'lib/data/**/*.ts'
+  - 'supabase/**/*.sql'
+  - 'supabase/functions/**/*.ts'
 ---
 
 ## 3 schemas no Postgres
 
-| Schema | Conteúdo | Status |
-|---|---|---|
-| `public.*` | auth, system, knowledge bases compartilhadas | ativo |
-| `platform.*` | produto principal multi-marca multi-vertical | ativo (dia 1) |
-| `onboarding.*` | legado pausado | **NÃO usar neste greenfield** |
+| Schema         | Conteúdo                                     | Status                        |
+| -------------- | -------------------------------------------- | ----------------------------- |
+| `public.*`     | auth, system, knowledge bases compartilhadas | ativo                         |
+| `platform.*`   | produto principal multi-marca multi-vertical | ativo (dia 1)                 |
+| `onboarding.*` | legado pausado                               | **NÃO usar neste greenfield** |
 
 ## Como acessar em data layer
 
@@ -47,6 +47,7 @@ const { data } = await client.schema('onboarding').from('intakes').select('*')
 ## Multi-marca / multi-vertical
 
 Schema `platform.*` é polimórfico (D-G28):
+
 - `platform.tenants.vertical` indica `fitness` / `nutrition` / `yoga` / `english` / etc
 - `platform.components.kind` enum + `payload jsonb` por vertical
 - JSONB internal keys SEMPRE em EN (`reflection`, `pillars`, `next_step`)

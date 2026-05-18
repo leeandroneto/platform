@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 10
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      # ─── Cheap audits first (fail-fast) ───────────────────────────────────
+      - name: TypeScript typecheck
+        run: pnpm typecheck
+
+      - name: Vocab audit (grep)
+        run: pnpm vocab:audit
+
+      - name: i18n audit (grep)
+        run: pnpm i18n:audit
+
+      - name: Token audit (grep)
+        run: pnpm token:audit
+
+      - name: eslint-disable allowlist
+        run: pnpm audit:disables
+
+      - name: Docs consistency (ADRs, supersedes, blueprint refs)
+        run: pnpm docs:validate
+
+      - name: ESLint
+        run: pnpm lint --max-warnings 0 --no-inline-config
+
+      - name: Knip (dead code)
+        run: pnpm knip
+
+      # ─── Tests ─────────────────────────────────────────────────────────────
+      - name: Vitest
+        run: pnpm test
+
+      # ─── APCA palette validation ──────────────────────────────────────────
+      - name: Validate palettes APCA
+        run: pnpm validate:palettes
+
+      # ─── Build + size budgets ──────────────────────────────────────────────
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_BRAND_NAME: desafit
+          NEXT_PUBLIC_BRAND_DOMAIN: desafit.app
+          NEXT_PUBLIC_APP_URL: https://desafit.app
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder
+
+      - name: Size budgets
+        run: pnpm size
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: ci
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
+        with: { version: 10 }
+      - uses: actions/setup-node@v5
+        with: { node-version: '24', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e

@@ -1,1 +1,131 @@
-@AGENTS.md
+# Claude — contexto do projeto
+
+> Carregado no início de toda sessão. **Mantenha curto e atualizado.**
+> Última atualização: 2026-05-17
+
+---
+
+## Projeto
+
+SaaS B2B white-label PWA **multi-marca multi-vertical**. Profissionais de
+diferentes verticais (fitness, yoga, idiomas) criam, vendem e operam
+programas e desafios online com suporte de IA.
+
+**Arquitetura:** 1 código + 1 deploy + N marcas filhas via hostname
+(ADR-0024). Brand resolvida em runtime via `platform.brands` lookup,
+não env. Adicionar marca filha = INSERT + DNS, zero refactor.
+
+**Marca filha dia 1:** `desafit.app` (fitness).
+**Marcas planejadas:** `yoga.app`, `ingles.app`.
+**Marca pai (holding):** identidade comercial só (footer, legal); zero tech (ADR-0022).
+
+Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
+
+---
+
+## Onde fica cada coisa
+
+| Info                            | Arquivo canônico                  |
+| ------------------------------- | --------------------------------- |
+| Regras code carregadas por path | `.claude/rules/*.md`              |
+| Constituição imutável           | `docs/blueprint/00-PROJETO.md`    |
+| Decisões fechadas (ADRs)        | `docs/adr/NNNN-*.md`              |
+| Blueprints técnicos             | `docs/blueprint/NN-*.md`          |
+| Histórico arquivado             | `docs/_archive/` (referência JIT) |
+
+Conflito entre docs: ADR > Blueprint > Master Plan (arquivado) > Memória.
+
+---
+
+## Stack travado (não bumpar major sem ADR)
+
+Next 16 (App Router, Turbopack, `proxy.ts`) · React 19 · Tailwind v4
+(`@theme` OKLCH) · shadcn new-york dark-first · Motion 12 (`motion/react`,
+NUNCA `framer-motion`) · Supabase `@supabase/ssr` 0.10 · Zod 4 + RHF 7 ·
+next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Ladle.
+
+---
+
+## Schemas separados (regra crítica)
+
+- `public.*` — compartilhado (auth, system)
+- `platform.*` — multi-marca multi-vertical (produto principal — ADR-0025)
+- `onboarding.*` — legado pausado (NÃO usado neste greenfield)
+
+Em data layer: `client.schema('platform').from('programs')`. `public` é default.
+Detalhes: `.claude/rules/schema-separation.md`.
+
+---
+
+## Multi-marca via hostname (ADR-0024)
+
+NUNCA hardcoded `desafit`/`yoga.app`/`ingles.app` no código. Brand vem do hostname:
+
+```ts
+// proxy.ts (Next 16)
+import { getBrandByHost } from '@/lib/brand/getBrandByHost'
+const brand = await getBrandByHost(req.headers.get('host'))
+// brand: { id, name, host, primary_color_oklch, logo_url, default_vertical }
+```
+
+Em componentes RSC:
+
+```tsx
+import { useBrand } from '@/lib/brand/BrandProvider'
+const brand = useBrand()
+return <h1>{brand.name}</h1>
+```
+
+Verticalização via `platform.tenants.vertical` + `component.kind` polimórfico
+
+- JSONB internal keys. Mesmo schema serve todas marcas filhas.
+
+---
+
+## Camadas (resumo)
+
+`lib/contracts/` SSOT Zod + Result + AppError · `lib/domain/` lógica pura ·
+`lib/data/` IO Supabase, lança erro · `lib/hooks/` estado React ·
+`lib/services/` **vazio por design** · `supabase/functions/` Deno ·
+`app/<route>/actions.ts` `{ok,data}|{ok,error}` · `app/`+`components/` UI
+(RSC default).
+
+Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
+
+---
+
+## Regras críticas (toda sessão)
+
+- **JWT claims:** RLS usa `auth.jwt() ->> 'tenant_id'` (nunca recriar helper)
+- **Migrations:** via `mcp__supabase__apply_migration`. Nunca .sql manual
+- **Erros:** `lib/data/` e `lib/domain/` lançam · server actions retornam `{ok}`
+- **Env:** `import { env } from '@/lib/env'` (exceto `NEXT_PUBLIC_*` em client)
+- **Componentes:** <300 linhas, RSC default, nunca `createClient()` direto
+- **Nomenclatura:** DB+code+folders EN; URL+UI PT-BR via `t()` next-intl
+- **Brand:** SEMPRE via `useBrand()` / hostname lookup. NUNCA hardcoded
+- **Vocab banido:** ver `.claude/rules/naming.md` antes de qualquer code
+
+---
+
+## Test e build
+
+```bash
+pnpm typecheck                            # 0 erros
+pnpm vocab:audit && pnpm i18n:audit && pnpm token:audit
+pnpm lint --max-warnings 0                # 0/0
+pnpm test                                 # vitest 100%
+pnpm build                                # verde
+pnpm size                                 # budgets verdes
+```
+
+Antes de PR: rodar os 6 acima.
+
+---
+
+## Abstrações disponíveis (use antes de criar)
+
+`useServerAction(action)` · `CopyButton`/`useCopy` · `ok()`/`fail()` ·
+`renderEmail(el)` · `useBrand()` · `getBrandByHost()`. Lista completa:
+`.claude/rules/abstractions.md`.
+
+Criar abstração nova: 3+ usos + ADR (pesquisa 04).

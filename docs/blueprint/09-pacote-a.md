@@ -8,13 +8,13 @@
 
 ## 1. Investimento e cobrança
 
-| Item | Valor |
-|---|---|
-| Setup (entrada) | **R$ 1.500** |
-| Mensalidade plataforma | **R$ 100/mês** |
-| Início mensalidade | **31º dia após entrega** (30 dias de cortesia) |
-| Prazo de entrega | **30 dias** (máximo) |
-| Pagamento setup | Pix à vista (10% off → R$ 1.350) · 2× Pix (R$ 750 cada — assinatura + entrega) · 10× cartão sem juros (R$ 150) |
+| Item                   | Valor                                                                                                          |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Setup (entrada)        | **R$ 1.500**                                                                                                   |
+| Mensalidade plataforma | **R$ 100/mês**                                                                                                 |
+| Início mensalidade     | **31º dia após entrega** (30 dias de cortesia)                                                                 |
+| Prazo de entrega       | **30 dias** (máximo)                                                                                           |
+| Pagamento setup        | Pix à vista (10% off → R$ 1.350) · 2× Pix (R$ 750 cada — assinatura + entrega) · 10× cartão sem juros (R$ 150) |
 
 **Cobrança plataforma → prof:** EFI Bank (Pix Automático + cartão). Mensalidade entra em loop recorrente após `current_date + 30d` da entrega.
 
@@ -26,9 +26,10 @@ Referências: `00-PROJETO.md §3` · proposta_desafit.html · master plan §0.5.
 
 ## 2. Promessa (proposta — verbatim)
 
-> *"Toda a estrutura para captar leads, vender o programa e processar pagamentos. Para quem ainda não precisa de aplicativo, mas precisa profissionalizar a aquisição."*
+> _"Toda a estrutura para captar leads, vender o programa e processar pagamentos. Para quem ainda não precisa de aplicativo, mas precisa profissionalizar a aquisição."_
 
 **Inclui (proposta):**
+
 - Subdomínio `seunome.desafit.app`
 - Página de vendas do programa
 - Página de captação com formulário
@@ -41,6 +42,7 @@ Referências: `00-PROJETO.md §3` · proposta_desafit.html · master plan §0.5.
 - Painel de leads
 
 **NÃO inclui:**
+
 - PWA branded do aluno (Pacote B/C)
 - Programa estruturado entregue (Pacote B/C)
 - Aluno cadastrado dentro da plataforma (Pacote B/C)
@@ -77,7 +79,7 @@ Padrão: pesquisa 02 §3.4 (vibe coding pipeline UX) + blueprint/08-pwa-offline.
 
 - Schema `platform.pages` com `draft_blocks` + `published_blocks jsonb`
 - Renderer SSR de blocos (11 tipos base — pesquisa 02 §4.4)
-- **Tier 1 editor dia 1** (D-G69 — _CONFLITOS #11): form-based em vaul bottom sheet (sem drag-drop)
+- **Tier 1 editor dia 1** (D-G69 — \_CONFLITOS #11): form-based em vaul bottom sheet (sem drag-drop)
 - Tier 2 drag-drop entra no Pacote B
 - White-label runtime via CSS via API route (D-G59 — blueprint/05-design-system.md §4)
 - 13 paletas OKLCH oficiais (D-G76) — prof escolhe 1 no setup
@@ -155,13 +157,13 @@ Prof escolhe e configura próprio gateway no painel. Plataforma **NÃO intermedi
 
 Ordem de implementação (master plan §24.3):
 
-| Ordem | Gateway | Moeda | Quando |
-|---|---|---|---|
-| 1 | **Asaas** | BRL | Dia 1 (link externo, API simples, doc PT-BR, Pix R$0,49) |
-| 2 | **Stripe** | USD/EUR/GBP/CAD/AUD | **Dia 1 também** (D-G33) — prof brasileiro vendendo no exterior |
-| 3 | Pagar.me | BRL | Quando 1º tenant pedir |
-| 4 | Mercado Pago | BRL | Quando 1º tenant pedir |
-| 5 | Stripe BR (BRL via Stripe) | BRL | Quando demanda aparecer |
+| Ordem | Gateway                    | Moeda               | Quando                                                          |
+| ----- | -------------------------- | ------------------- | --------------------------------------------------------------- |
+| 1     | **Asaas**                  | BRL                 | Dia 1 (link externo, API simples, doc PT-BR, Pix R$0,49)        |
+| 2     | **Stripe**                 | USD/EUR/GBP/CAD/AUD | **Dia 1 também** (D-G33) — prof brasileiro vendendo no exterior |
+| 3     | Pagar.me                   | BRL                 | Quando 1º tenant pedir                                          |
+| 4     | Mercado Pago               | BRL                 | Quando 1º tenant pedir                                          |
+| 5     | Stripe BR (BRL via Stripe) | BRL                 | Quando demanda aparecer                                         |
 
 Tenant cola credenciais em `/dashboard/settings/payment` (encrypted em `platform.payment_methods.gateway_config jsonb` via pgcrypto).
 
@@ -182,24 +184,28 @@ Detalhes: master plan §24.3 + pesquisa 01 §2.1.
 ## 7. Roadmap interno de entrega (30 dias)
 
 **Semana 1 (dias 1-7):**
+
 - Materiais recebidos do prof (logo, cor primária, bio, conteúdo programa)
 - Tenant criado em `/admin/tenants/new` (vertical, slug, default_currency, default_locale)
 - Branding configurado (`deriveTokens(primary)` gera 21 tokens)
 - Subdomínio `<slug>.desafit.app` ativo
 
 **Semana 2 (dias 8-14):**
+
 - Landing institucional publicada (fundador monta JSON via admin OU tier 1 editor)
 - Página de vendas do programa publicada
 - Pixel + GA4 configurados
 - Resend domain verified
 
 **Semana 3 (dias 15-21):**
+
 - Form de captação configurado (campos por modalidade)
 - Edge Function `generate-assessment` testada com perfil real
 - CTA WhatsApp com mensagem template
 - Email templates customizados com domínio do prof
 
 **Semana 4 (dias 22-30):**
+
 - Checkout integrado com gateway escolhido
 - Cupons configurados (se prof tem campanha)
 - Dashboard de leads ativo (CRUD via admin)
@@ -215,10 +221,12 @@ Detalhes: master plan §24.3 + pesquisa 01 §2.1.
 Schema dia 0 cobre 100% da promessa do Pacote A. Toda feature é **entregue automatizada** sempre que possível.
 
 **Manual aceito pro 1º cliente** (cronograma apertar):
+
 - Editor visual de páginas (`pages.draft_blocks`) — fundador monta JSON; tier 1 editor entra sprint imediato pós-1º cliente
 - Configuração tema (palette + tokens) — fundador faz via admin; UI self-service em sprint pós-1º
 
 **Não pode adiar (entra junto com 1º cliente):**
+
 - Form captação (`capture_forms` CRUD admin)
 - Edge Function `generate-assessment`
 - Checkout link externo (Asaas/Stripe)
@@ -231,12 +239,12 @@ Memória: `project_desafit_principio_39_revisto.md`.
 
 ## 9. Métricas TTFV (PostHog)
 
-| Métrica | Definição | Target |
-|---|---|---|
-| **Tempo até 1ª venda paga** | `prof.created_at → 1º payment.status = 'paid'` | P50 < 45 dias (Pacote A puro) |
-| **Setup-to-active rate** | % de tenants Pacote A com lead chegando em 14 dias da entrega | ≥ 70% |
-| **Lead → conversão WhatsApp** | % de assessments com CTA WhatsApp clicado | ≥ 30% |
-| **Lead → fechamento venda** | % de leads que viram `payment.status = 'paid'` | ≥ 5% (baseline cold) |
+| Métrica                       | Definição                                                     | Target                        |
+| ----------------------------- | ------------------------------------------------------------- | ----------------------------- |
+| **Tempo até 1ª venda paga**   | `prof.created_at → 1º payment.status = 'paid'`                | P50 < 45 dias (Pacote A puro) |
+| **Setup-to-active rate**      | % de tenants Pacote A com lead chegando em 14 dias da entrega | ≥ 70%                         |
+| **Lead → conversão WhatsApp** | % de assessments com CTA WhatsApp clicado                     | ≥ 30%                         |
+| **Lead → fechamento venda**   | % de leads que viram `payment.status = 'paid'`                | ≥ 5% (baseline cold)          |
 
 Eventos canônicos: `professional_signed_up`, `program_published`, `lead_captured`, `assessment_generated`, `whatsapp_handoff_clicked`, `purchase`.
 
@@ -269,6 +277,6 @@ Detalhes: blueprint/05-design-system.md §14 (sheet decision tree) + pesquisa 15
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — Pacote A R$1.500 + R$100/mês, 30d entrega, 9 componentes técnicos, gateway externo | Leandro |
+| Data       | Mudança                                                                                             | Aprovador |
+| ---------- | --------------------------------------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — Pacote A R$1.500 + R$100/mês, 30d entrega, 9 componentes técnicos, gateway externo | Leandro   |

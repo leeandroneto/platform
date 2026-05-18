@@ -20,15 +20,18 @@ Numeração sequencial 4 dígitos (`0001`, `0002`, …, `9999`) — nunca reuse 
 ## Consequences
 
 **Positivo:**
+
 - Decisão superseded sem perder histórico
 - Git blame trivial (1 commit por ADR)
 - Claude Code lê 1 ADR sem carregar 107 não-relacionadas
 - Padrão indústria consolidado (Spotify, Microsoft, AWS Builders' Library)
 
 **Negativo:**
+
 - Mais arquivos no repo (23 ADRs dia 0)
 - Mitigação: índice auto-gerado + grep ágil
 
 **Neutro:**
+
 - Template completo em `14-docs-lifecycle.md §3`
 - Mudança vs `_CONFLITOS.md` monolítico: ADRs imutáveis após `accepted` (este doc original vira referência arquivada)

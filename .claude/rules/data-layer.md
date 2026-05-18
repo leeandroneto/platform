@@ -2,7 +2,7 @@
 name: Data layer rules
 description: function(client, ...args), lança erro, sem React
 paths:
-  - "lib/data/**/*.ts"
+  - 'lib/data/**/*.ts'
 ---
 
 ## Regras Data layer
@@ -10,10 +10,7 @@ paths:
 ### Assinatura canônica
 
 ```ts
-export async function fnName(
-  client: SupabaseClient,
-  ...args: TArgs
-): Promise<TResult>
+export async function fnName(client: SupabaseClient, ...args: TArgs): Promise<TResult>
 ```
 
 - Primeiro argumento SEMPRE é `client` (injetado pelo caller)

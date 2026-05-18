@@ -1,0 +1,2135 @@
+<h2 class="sr-only">
+  Protótipo do painel onboarding.bio com troca de estilo, cor, tipografia, shape e densidade,
+  mostrado em desktop e mobile, com dashboard ao vivo e fluxo de criação de desafio.
+</h2>
+
+<style>
+  .ob-root {
+    font-family: var(--ob-font, system-ui, sans-serif);
+  }
+  .ob-frame-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 1rem 0;
+  }
+  .ob-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 12px;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .ob-toolbar-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-right: 4px;
+  }
+  .ob-tab {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 0.5px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+  }
+  .ob-tab.active {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-tertiary);
+    font-weight: 500;
+  }
+  .ob-device-frame {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .ob-screen {
+    background: var(--ob-bg, #fff);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border-tertiary);
+    transition: background 200ms;
+  }
+  .ob-screen.desktop {
+    width: 100%;
+    min-height: 540px;
+  }
+  .ob-screen.mobile {
+    width: 320px;
+    min-height: 600px;
+    margin: 0 auto;
+    border-radius: 28px;
+    padding: 6px;
+    background: #111;
+  }
+  .ob-screen.mobile .ob-screen-inner {
+    background: var(--ob-bg, #fff);
+    border-radius: 22px;
+    overflow: hidden;
+  }
+
+  /* App tokens controlled by JS via inline style */
+  .app {
+    color: var(--ob-fg, #111);
+    background: var(--ob-bg, #fff);
+  }
+  .app * {
+    box-sizing: border-box;
+  }
+
+  /* Surfaces */
+  .surface-1 {
+    background: var(--ob-surface-1, #fafaf7);
+  }
+  .surface-2 {
+    background: var(--ob-surface-2, #fff);
+    border: 0.5px solid var(--ob-border, rgba(0, 0, 0, 0.08));
+  }
+  .text-muted {
+    color: var(--ob-fg-muted, #6b6a64);
+  }
+  .divider {
+    height: 0.5px;
+    background: var(--ob-border, rgba(0, 0, 0, 0.08));
+    width: 100%;
+  }
+
+  /* Density */
+  .d-tight {
+    --pad-y: 8px;
+    --pad-x: 12px;
+    --row-y: 10px;
+    --gap: 8px;
+  }
+  .d-cozy {
+    --pad-y: 12px;
+    --pad-x: 16px;
+    --row-y: 14px;
+    --gap: 12px;
+  }
+  .d-roomy {
+    --pad-y: 16px;
+    --pad-x: 20px;
+    --row-y: 18px;
+    --gap: 16px;
+  }
+
+  /* Shape */
+  .s-sharp {
+    --r-sm: 2px;
+    --r-md: 4px;
+    --r-lg: 6px;
+  }
+  .s-rounded {
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+  }
+  .s-soft {
+    --r-sm: 12px;
+    --r-md: 16px;
+    --r-lg: 22px;
+  }
+
+  .btn {
+    font: inherit;
+    border: 0.5px solid var(--ob-border, rgba(0, 0, 0, 0.08));
+    padding: var(--pad-y) var(--pad-x);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    background: var(--ob-surface-2, #fff);
+    color: var(--ob-fg, #111);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1;
+    transition:
+      background 120ms,
+      transform 80ms;
+  }
+  .btn:hover {
+    background: var(--ob-surface-1, #f5f5f0);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn-primary {
+    background: var(--ob-brand, #d85a30);
+    color: var(--ob-brand-fg, #fff);
+    border-color: transparent;
+    font-weight: 500;
+  }
+  .btn-primary:hover {
+    background: var(--ob-brand-hover, #b94a26);
+  }
+  .btn-ghost {
+    border-color: transparent;
+    background: transparent;
+  }
+  .btn-ghost:hover {
+    background: var(--ob-surface-1, #f5f5f0);
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--ob-danger, #b91c1c);
+    border-color: var(--ob-border, rgba(0, 0, 0, 0.08));
+  }
+  .btn-icon {
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .pill-success {
+    background: rgba(29, 158, 117, 0.12);
+    color: #0f6e56;
+  }
+  .pill-warn {
+    background: rgba(239, 159, 39, 0.16);
+    color: #854f0b;
+  }
+  .pill-info {
+    background: rgba(55, 138, 221, 0.14);
+    color: #185fa5;
+  }
+
+  .card {
+    background: var(--ob-surface-2, #fff);
+    border: 0.5px solid var(--ob-border, rgba(0, 0, 0, 0.08));
+    border-radius: var(--r-lg);
+    padding: var(--pad-y) var(--pad-x);
+  }
+  .metric-card {
+    background: var(--ob-surface-1, #f5f5f0);
+    border-radius: var(--r-md);
+    padding: var(--pad-y) var(--pad-x);
+  }
+  .metric-label {
+    font-size: 12px;
+    color: var(--ob-fg-muted);
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .metric-value {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+    font-feature-settings: 'tnum';
+    line-height: 1.1;
+  }
+  .metric-delta {
+    font-size: 11px;
+    margin: 4px 0 0;
+  }
+  .metric-delta.up {
+    color: #0f6e56;
+  }
+  .metric-delta.down {
+    color: #b91c1c;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--ob-surface-1);
+    border-right: 0.5px solid var(--ob-border);
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-logo {
+    font-weight: 500;
+    font-size: 14px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sidebar-logo .logo-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--r-sm);
+    background: var(--ob-brand);
+  }
+  .sidebar-section {
+    font-size: 11px;
+    color: var(--ob-fg-muted);
+    padding: 12px 10px 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .nav-item {
+    padding: 7px 10px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    color: var(--ob-fg-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-item:hover {
+    background: var(--ob-surface-2);
+    color: var(--ob-fg);
+  }
+  .nav-item.active {
+    background: var(--ob-surface-2);
+    color: var(--ob-fg);
+    font-weight: 500;
+  }
+  .nav-item.active .nav-icon {
+    color: var(--ob-brand);
+  }
+  .nav-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  /* Top bar */
+  .topbar {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.5px solid var(--ob-border);
+  }
+  .crumbs {
+    font-size: 13px;
+    color: var(--ob-fg-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .crumbs .sep {
+    opacity: 0.5;
+  }
+  .crumbs .here {
+    color: var(--ob-fg);
+    font-weight: 500;
+  }
+
+  /* Headings */
+  .h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .h3 {
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* Mobile chrome */
+  .m-topbar {
+    padding: 14px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .m-title {
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .m-tabbar {
+    position: sticky;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 0.5px solid var(--ob-border);
+    background: var(--ob-surface-2);
+    padding: 8px 4px 14px;
+  }
+  .m-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--ob-fg-muted);
+    cursor: pointer;
+    padding: 4px;
+  }
+  .m-tab.active {
+    color: var(--ob-brand);
+  }
+  .m-tab svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Alunos table */
+  .row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: var(--row-y) var(--pad-x);
+    border-bottom: 0.5px solid var(--ob-border);
+    font-size: 13px;
+  }
+  .row:last-child {
+    border-bottom: 0;
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ob-surface-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ob-fg-muted);
+  }
+
+  /* Theme picker */
+  .style-tile {
+    padding: 10px;
+    border-radius: var(--r-md);
+    border: 0.5px solid var(--ob-border);
+    cursor: pointer;
+    text-align: left;
+    background: var(--ob-surface-2);
+    transition: border-color 120ms;
+  }
+  .style-tile:hover {
+    border-color: var(--ob-fg-muted);
+  }
+  .style-tile.active {
+    border: 1.5px solid var(--ob-brand);
+    padding: 9px;
+  }
+  .style-tile-strip {
+    display: flex;
+    gap: 4px;
+    height: 22px;
+    margin-bottom: 8px;
+  }
+  .style-tile-strip > div {
+    flex: 1;
+    border-radius: 3px;
+  }
+  .style-tile-name {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .style-tile-desc {
+    font-size: 11px;
+    color: var(--ob-fg-muted);
+    margin: 2px 0 0;
+  }
+
+  .swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: transform 120ms;
+    position: relative;
+  }
+  .swatch:hover {
+    transform: scale(1.08);
+  }
+  .swatch.active {
+    border-color: var(--ob-fg);
+    box-shadow: inset 0 0 0 2px var(--ob-bg);
+  }
+
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--r-sm);
+    background: var(--ob-surface-1);
+    border: 0.5px solid var(--ob-border);
+  }
+  .seg button {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: calc(var(--r-sm) - 2px);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: var(--ob-fg-muted);
+  }
+  .seg button.active {
+    background: var(--ob-surface-2);
+    color: var(--ob-fg);
+    font-weight: 500;
+    box-shadow: 0 0 0 0.5px var(--ob-border);
+  }
+
+  .field-label {
+    font-size: 11px;
+    color: var(--ob-fg-muted);
+    margin-bottom: 6px;
+    display: block;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* APCA contrast indicator */
+  .contrast-bar {
+    height: 4px;
+    background: var(--ob-surface-1);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .contrast-fill {
+    height: 100%;
+    background: #1d9e75;
+    transition: width 200ms;
+  }
+
+  /* Bottom sheet (mobile) */
+  .sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: flex-end;
+    z-index: 5;
+    border-radius: 22px;
+    overflow: hidden;
+  }
+  .sheet-backdrop.open {
+    display: flex;
+  }
+  .sheet {
+    background: var(--ob-surface-2);
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    padding: 8px 16px 20px;
+    max-height: 88%;
+    overflow: auto;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--ob-fg-muted);
+    opacity: 0.3;
+    border-radius: 999px;
+    margin: 6px auto 14px;
+  }
+
+  /* Side sheet (desktop) */
+  .side-sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.18);
+    display: none;
+    justify-content: flex-end;
+    z-index: 5;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .side-sheet-backdrop.open {
+    display: flex;
+  }
+  .side-sheet {
+    width: 460px;
+    background: var(--ob-surface-2);
+    height: 100%;
+    padding: 18px 22px;
+    overflow: auto;
+    border-left: 0.5px solid var(--ob-border);
+  }
+
+  .ob-positioned {
+    position: relative;
+  }
+
+  /* Sparkline bars */
+  .spark {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 38px;
+    margin-top: 8px;
+  }
+  .spark > div {
+    flex: 1;
+    background: var(--ob-brand);
+    opacity: 0.85;
+    border-radius: 2px 2px 0 0;
+  }
+  .spark > div.muted {
+    background: var(--ob-fg-muted);
+    opacity: 0.25;
+  }
+
+  /* Inputs */
+  .input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: var(--r-sm);
+    border: 0.5px solid var(--ob-border);
+    background: var(--ob-surface-2);
+    color: var(--ob-fg);
+    font-family: inherit;
+  }
+  .input:focus {
+    outline: 2px solid var(--ob-brand);
+    outline-offset: -1px;
+    border-color: transparent;
+  }
+
+  /* Status dot */
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.ok {
+    background: #1d9e75;
+  }
+  .dot.warn {
+    background: #ef9f27;
+  }
+  .dot.bad {
+    background: #e24b4a;
+  }
+
+  /* Wizard step indicator (desktop dialog) */
+  .step-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .step-dot {
+    width: 18px;
+    height: 3px;
+    background: var(--ob-border);
+    border-radius: 999px;
+  }
+  .step-dot.active {
+    background: var(--ob-brand);
+  }
+  .step-dot.done {
+    background: var(--ob-fg-muted);
+    opacity: 0.4;
+  }
+
+  /* Mobile preview helper */
+  .legend {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding: 0 4px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap, 12px);
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap, 12px);
+  }
+  @media (max-width: 720px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<div class="ob-root ob-frame-wrap">
+  <!-- Top toolbar (controls) -->
+  <div class="ob-toolbar">
+    <span class="ob-toolbar-label">Visualizar:</span>
+    <div class="seg" role="tablist" aria-label="Dispositivo">
+      <button class="active" id="dev-desktop" type="button">Desktop</button>
+      <button id="dev-mobile" type="button">Mobile</button>
+    </div>
+
+    <span class="ob-toolbar-label" style="margin-left: 12px">Tela:</span>
+    <div class="seg">
+      <button class="active" id="screen-settings" type="button">Aparência</button>
+      <button id="screen-dashboard" type="button">Dashboard</button>
+      <button id="screen-create" type="button">Criar desafio</button>
+    </div>
+
+    <span class="ob-toolbar-label" style="margin-left: 12px">Modo:</span>
+    <div class="seg">
+      <button class="active" id="mode-light" type="button">Claro</button>
+      <button id="mode-dark" type="button">Escuro</button>
+    </div>
+  </div>
+
+  <p class="legend" id="screen-legend">
+    Ajuste estilo, cor, tipografia, shape e densidade no painel da esquerda — todo o app reage ao
+    vivo.
+  </p>
+
+  <!-- The device frame holds desktop or mobile preview -->
+  <div class="ob-device-frame">
+    <div id="screen" class="ob-screen desktop ob-positioned">
+      <!-- content rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+  ;(function () {
+    // ---------- State ----------
+    var state = {
+      device: 'desktop', // desktop | mobile
+      screen: 'settings', // settings | dashboard | create
+      mode: 'light', // light | dark
+      styleKey: 'energia',
+      color: '#d85a30', // brand color
+      typo: 'inter', // inter | dm-sans | source-serif | space-grotesk
+      shape: 'rounded', // sharp | rounded | soft
+      density: 'cozy', // tight | cozy | roomy
+      sheetOpen: false,
+      sideSheetOpen: false,
+      wizardStep: 1,
+    }
+
+    // ---------- Style packs (curated) ----------
+    var styles = {
+      energia: {
+        name: 'Energia',
+        desc: 'Intenso, geométrico, foto full-bleed',
+        color: '#d85a30',
+        typo: 'space-grotesk',
+        shape: 'sharp',
+        density: 'tight',
+        strip: ['#d85a30', '#f0997b', '#fff', '#111'],
+      },
+      clinico: {
+        name: 'Clínico',
+        desc: 'Calmo, confiável, médico',
+        color: '#185fa5',
+        typo: 'inter',
+        shape: 'rounded',
+        density: 'cozy',
+        strip: ['#185fa5', '#85b7eb', '#fff', '#0c447c'],
+      },
+      raiz: {
+        name: 'Raiz',
+        desc: 'Orgânico, terroso, humano',
+        color: '#639922',
+        typo: 'dm-sans',
+        shape: 'soft',
+        density: 'cozy',
+        strip: ['#639922', '#c0dd97', '#f7f3ea', '#3b6d11'],
+      },
+      revista: {
+        name: 'Revista',
+        desc: 'Editorial, sereno, foto protagonista',
+        color: '#26215c',
+        typo: 'source-serif',
+        shape: 'sharp',
+        density: 'roomy',
+        strip: ['#26215c', '#7f77dd', '#f8f6f1', '#111'],
+      },
+      noturno: {
+        name: 'Noturno',
+        desc: 'Sofisticado, escuro nativo',
+        color: '#7f77dd',
+        typo: 'inter',
+        shape: 'rounded',
+        density: 'cozy',
+        strip: ['#1a1a22', '#7f77dd', '#2c2c33', '#fff'],
+      },
+      impacto: {
+        name: 'Impacto',
+        desc: 'Esportivo, alto contraste',
+        color: '#a32d2d',
+        typo: 'space-grotesk',
+        shape: 'sharp',
+        density: 'tight',
+        strip: ['#a32d2d', '#111', '#fff', '#e24b4a'],
+      },
+    }
+
+    // ---------- Color presets (curated) ----------
+    var colors = [
+      '#d85a30',
+      '#185fa5',
+      '#0f6e56',
+      '#639922',
+      '#a32d2d',
+      '#7f77dd',
+      '#854f0b',
+      '#26215c',
+      '#111111',
+    ]
+
+    // ---------- Typography pairs ----------
+    var fonts = {
+      inter: {
+        stack: 'Inter, ui-sans-serif, system-ui, sans-serif',
+        label: 'Inter',
+        mood: 'Neutra moderna',
+      },
+      'dm-sans': {
+        stack: '"DM Sans", ui-sans-serif, sans-serif',
+        label: 'DM Sans',
+        mood: 'Humanista amigável',
+      },
+      'space-grotesk': {
+        stack: '"Space Grotesk", ui-sans-serif, sans-serif',
+        label: 'Space Grotesk',
+        mood: 'Geométrica esportiva',
+      },
+      'source-serif': {
+        stack: '"Source Serif Pro", Georgia, serif',
+        label: 'Source Serif',
+        mood: 'Editorial',
+      },
+    }
+
+    // ---------- Helpers ----------
+    function hexToRgb(hex) {
+      var h = hex.replace('#', '')
+      if (h.length === 3)
+        h = h
+          .split('')
+          .map(function (c) {
+            return c + c
+          })
+          .join('')
+      var n = parseInt(h, 16)
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+    }
+    function relLuminance(rgb) {
+      var a = rgb.map(function (v) {
+        v = v / 255
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+      })
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2]
+    }
+    function pickFg(bg) {
+      var L = relLuminance(hexToRgb(bg))
+      return L > 0.5 ? '#111' : '#fff'
+    }
+    function contrastRatio(bg, fg) {
+      var L1 = relLuminance(hexToRgb(bg))
+      var L2 = relLuminance(hexToRgb(fg))
+      var hi = Math.max(L1, L2),
+        lo = Math.min(L1, L2)
+      return Math.round(((hi + 0.05) / (lo + 0.05)) * 10) / 10
+    }
+    function darken(hex, amt) {
+      var rgb = hexToRgb(hex).map(function (v) {
+        return Math.max(0, Math.round(v * (1 - amt)))
+      })
+      return (
+        '#' +
+        rgb
+          .map(function (v) {
+            return v.toString(16).padStart(2, '0')
+          })
+          .join('')
+      )
+    }
+
+    // ---------- Apply tokens to screen ----------
+    function applyTokens() {
+      var screen = document.getElementById('screen')
+      if (!screen) return
+      var bg, surface1, surface2, fg, fgMuted, border
+      if (state.mode === 'dark') {
+        bg = '#0e0e10'
+        surface1 = '#1a1a1d'
+        surface2 = '#222226'
+        fg = '#f0eee8'
+        fgMuted = '#9e9c95'
+        border = 'rgba(255,255,255,0.08)'
+      } else {
+        bg = '#ffffff'
+        surface1 = '#f7f5ef'
+        surface2 = '#ffffff'
+        fg = '#171615'
+        fgMuted = '#6b6a64'
+        border = 'rgba(0,0,0,0.09)'
+        if (state.styleKey === 'revista') {
+          bg = '#faf8f3'
+          surface1 = '#f3efe6'
+        }
+        if (state.styleKey === 'raiz') {
+          bg = '#fbf7ef'
+          surface1 = '#f0ebde'
+        }
+      }
+      var brandFg = pickFg(state.color)
+      var brandHover = darken(state.color, 0.12)
+
+      screen.style.setProperty('--ob-bg', bg)
+      screen.style.setProperty('--ob-surface-1', surface1)
+      screen.style.setProperty('--ob-surface-2', surface2)
+      screen.style.setProperty('--ob-fg', fg)
+      screen.style.setProperty('--ob-fg-muted', fgMuted)
+      screen.style.setProperty('--ob-border', border)
+      screen.style.setProperty('--ob-brand', state.color)
+      screen.style.setProperty('--ob-brand-fg', brandFg)
+      screen.style.setProperty('--ob-brand-hover', brandHover)
+      screen.style.setProperty('--ob-danger', '#b91c1c')
+      screen.style.setProperty('--ob-font', fonts[state.typo].stack)
+    }
+
+    // ---------- Renderers ----------
+    function renderSettingsDesktop() {
+      var ratio = contrastRatio(state.color, '#ffffff')
+      var apca = Math.min(100, Math.round((ratio / 7) * 100))
+      return (
+        '\
+      <div style="display: grid; grid-template-columns: 200px 1fr; min-height: 540px;">\
+        <aside class="sidebar">\
+          <div class="sidebar-logo"><span class="logo-dot"></span> onboarding.bio</div>\
+          <div class="nav-item">' +
+        navIcon('home') +
+        ' Início</div>\
+          <div class="nav-item">' +
+        navIcon('users') +
+        ' Alunos</div>\
+          <div class="nav-item">' +
+        navIcon('flag') +
+        ' Desafios</div>\
+          <div class="nav-item">' +
+        navIcon('chart') +
+        ' Relatórios</div>\
+          <div class="sidebar-section">Configurações</div>\
+          <div class="nav-item">' +
+        navIcon('user') +
+        ' Perfil</div>\
+          <div class="nav-item active">' +
+        navIcon('palette') +
+        ' Aparência</div>\
+          <div class="nav-item">' +
+        navIcon('plug') +
+        ' Integrações</div>\
+          <div class="nav-item">' +
+        navIcon('shield') +
+        ' Privacidade</div>\
+        </aside>\
+        <main>\
+          <div class="topbar">\
+            <div class="crumbs">Configurações <span class="sep">›</span> <span class="here">Aparência</span></div>\
+            <div style="display:flex; gap:8px;">\
+              <button class="btn btn-ghost">Descartar</button>\
+              <button class="btn btn-primary">Salvar alterações</button>\
+            </div>\
+          </div>\
+          <div style="padding: 22px 28px; display: grid; grid-template-columns: 1fr 320px; gap: 22px;">\
+            <div style="display:flex; flex-direction:column; gap:18px;">\
+              <div>\
+                <h1 class="h1">Aparência</h1>\
+                <p class="text-muted" style="margin: 6px 0 0; font-size: 13px;">Define como suas páginas públicas aparecem para seus alunos. O painel interno fica neutro.</p>\
+              </div>\
+\
+              <div class="card">\
+                <h2 class="h2">Estilo</h2>\
+                <p class="text-muted" style="margin: 4px 0 14px; font-size: 12px;">Cada estilo é um pacote completo. Você ainda pode ajustar a cor abaixo.</p>\
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">' +
+        Object.keys(styles)
+          .map(function (k) {
+            var s = styles[k]
+            var active = state.styleKey === k ? ' active' : ''
+            return (
+              '<button data-style="' +
+              k +
+              '" class="style-tile' +
+              active +
+              '" type="button">\
+                      <div class="style-tile-strip">' +
+              s.strip
+                .map(function (c) {
+                  return '<div style="background:' + c + '"></div>'
+                })
+                .join('') +
+              '</div>\
+                      <p class="style-tile-name">' +
+              s.name +
+              '</p>\
+                      <p class="style-tile-desc">' +
+              s.desc +
+              '</p>\
+                    </button>'
+            )
+          })
+          .join('') +
+        '</div>\
+              </div>\
+\
+              <div class="card">\
+                <h2 class="h2">Cor de marca</h2>\
+                <p class="text-muted" style="margin: 4px 0 14px; font-size: 12px;">A cor é validada antes de salvar para garantir que textos fiquem legíveis.</p>\
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 14px;">' +
+        colors
+          .map(function (c) {
+            var active = state.color.toLowerCase() === c.toLowerCase() ? ' active' : ''
+            return (
+              '<button class="swatch' +
+              active +
+              '" data-color="' +
+              c +
+              '" style="background:' +
+              c +
+              '" type="button" aria-label="Cor ' +
+              c +
+              '"></button>'
+            )
+          })
+          .join('') +
+        '<label class="swatch" style="background: linear-gradient(45deg,#f00,#0f0,#00f); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Cor personalizada">\
+                    <input type="color" id="custom-color" value="' +
+        state.color +
+        '" style="opacity:0; width:100%; height:100%; cursor:pointer;">\
+                  </label>\
+                </div>\
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12px;">\
+                  <span class="text-muted">Contraste sobre branco: <strong style="color: var(--ob-fg);">' +
+        ratio +
+        ':1</strong></span>\
+                  <span class="pill ' +
+        (ratio >= 4.5 ? 'pill-success' : ratio >= 3 ? 'pill-warn' : 'pill-info') +
+        '">' +
+        (ratio >= 4.5
+          ? 'AA aprovado'
+          : ratio >= 3
+            ? 'Apenas em texto grande'
+            : 'Reprovado para texto') +
+        '</span>\
+                </div>\
+                <div class="contrast-bar"><div class="contrast-fill" style="width:' +
+        apca +
+        '%; background:' +
+        (ratio >= 4.5 ? '#1d9e75' : ratio >= 3 ? '#ef9f27' : '#e24b4a') +
+        '"></div></div>\
+              </div>\
+\
+              <div class="card">\
+                <h2 class="h2">Tipografia</h2>\
+                <p class="text-muted" style="margin: 4px 0 14px; font-size: 12px;">Escolha entre famílias curadas. Não permitimos fontes soltas para manter coerência.</p>\
+                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">' +
+        Object.keys(fonts)
+          .map(function (k) {
+            var f = fonts[k]
+            var active = state.typo === k ? ' active' : ''
+            return (
+              '<button data-typo="' +
+              k +
+              '" class="style-tile' +
+              active +
+              '" type="button">\
+                      <p style="font-family:' +
+              f.stack +
+              '; font-size: 18px; margin:0; font-weight: 500;">Aa Bb Cc</p>\
+                      <p class="style-tile-name" style="margin-top:6px;">' +
+              f.label +
+              '</p>\
+                      <p class="style-tile-desc">' +
+              f.mood +
+              '</p>\
+                    </button>'
+            )
+          })
+          .join('') +
+        '</div>\
+              </div>\
+\
+              <div class="grid-2">\
+                <div class="card">\
+                  <h2 class="h2">Shape</h2>\
+                  <p class="text-muted" style="margin: 4px 0 12px; font-size: 12px;">Quão arredondados ficam botões, cards e campos.</p>\
+                  <div class="seg" style="width:100%;">\
+                    <button data-shape="sharp" class="' +
+        (state.shape === 'sharp' ? 'active' : '') +
+        '" type="button" style="flex:1;">Sharp</button>\
+                    <button data-shape="rounded" class="' +
+        (state.shape === 'rounded' ? 'active' : '') +
+        '" type="button" style="flex:1;">Rounded</button>\
+                    <button data-shape="soft" class="' +
+        (state.shape === 'soft' ? 'active' : '') +
+        '" type="button" style="flex:1;">Soft</button>\
+                  </div>\
+                </div>\
+                <div class="card">\
+                  <h2 class="h2">Densidade</h2>\
+                  <p class="text-muted" style="margin: 4px 0 12px; font-size: 12px;">Quanto ar respira entre os elementos.</p>\
+                  <div class="seg" style="width:100%;">\
+                    <button data-density="tight" class="' +
+        (state.density === 'tight' ? 'active' : '') +
+        '" type="button" style="flex:1;">Compacto</button>\
+                    <button data-density="cozy" class="' +
+        (state.density === 'cozy' ? 'active' : '') +
+        '" type="button" style="flex:1;">Confortável</button>\
+                    <button data-density="roomy" class="' +
+        (state.density === 'roomy' ? 'active' : '') +
+        '" type="button" style="flex:1;">Espaçoso</button>\
+                  </div>\
+                </div>\
+              </div>\
+            </div>\
+\
+            <aside style="position: sticky; top: 16px; align-self:flex-start;">\
+              <div class="card">\
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">\
+                  <h2 class="h2">Pré-visualização</h2>\
+                  <span class="pill pill-info">site público</span>\
+                </div>\
+                ' +
+        previewBlock() +
+        '\
+              </div>\
+            </aside>\
+          </div>\
+        </main>\
+      </div>'
+      )
+    }
+
+    function previewBlock() {
+      return (
+        '\
+      <div style="border-radius: var(--r-md); overflow:hidden; border: 0.5px solid var(--ob-border);">\
+        <div style="height: 86px; background: ' +
+        state.color +
+        '; padding: 14px; color:' +
+        pickFg(state.color) +
+        '; display:flex; align-items:flex-end;">\
+          <div>\
+            <p style="margin:0; font-size: 11px; opacity:0.9; letter-spacing:0.04em; text-transform: uppercase;">Personal trainer</p>\
+            <p style="margin:2px 0 0; font-weight: 500; font-size: 16px;">Pri Ortiz</p>\
+          </div>\
+        </div>\
+        <div style="padding: 14px;">\
+          <p style="margin:0 0 4px; font-size: 13px; font-weight:500;">21 dias mais leve</p>\
+          <p class="text-muted" style="margin:0 0 12px; font-size: 12px; line-height:1.5;">Programa guiado de 21 dias com check-in diário e acompanhamento por WhatsApp.</p>\
+          <button class="btn btn-primary" style="width:100%; justify-content:center;">Quero começar</button>\
+          <div style="display:flex; gap:6px; margin-top:10px;">\
+            <span class="pill pill-info">Vagas limitadas</span>\
+            <span class="pill pill-success">7 dias de garantia</span>\
+          </div>\
+        </div>\
+      </div>'
+      )
+    }
+
+    function renderDashboardDesktop() {
+      return (
+        '\
+      <div style="display: grid; grid-template-columns: 200px 1fr; min-height: 540px;">\
+        <aside class="sidebar">\
+          <div class="sidebar-logo"><span class="logo-dot"></span> onboarding.bio</div>\
+          <div class="nav-item active">' +
+        navIcon('home') +
+        ' Início</div>\
+          <div class="nav-item">' +
+        navIcon('users') +
+        ' Alunos <span class="pill pill-warn" style="margin-left:auto;">3</span></div>\
+          <div class="nav-item">' +
+        navIcon('flag') +
+        ' Desafios</div>\
+          <div class="nav-item">' +
+        navIcon('chart') +
+        ' Relatórios</div>\
+          <div class="sidebar-section">Configurações</div>\
+          <div class="nav-item">' +
+        navIcon('user') +
+        ' Perfil</div>\
+          <div class="nav-item">' +
+        navIcon('palette') +
+        ' Aparência</div>\
+        </aside>\
+        <main>\
+          <div class="topbar">\
+            <div class="crumbs"><span class="here">Início</span></div>\
+            <div style="display:flex; gap:8px;">\
+              <button class="btn btn-ghost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Buscar <kbd style="font-size:10px; padding: 1px 4px; border:0.5px solid var(--ob-border); border-radius:3px; margin-left:4px;">⌘K</kbd></button>\
+              <button class="btn btn-primary">+ Novo desafio</button>\
+            </div>\
+          </div>\
+          <div style="padding: 22px 28px; display:flex; flex-direction:column; gap: 22px;">\
+            <div>\
+              <h1 class="h1">Boa tarde, Pri</h1>\
+              <p class="text-muted" style="margin: 6px 0 0; font-size: 13px;">Você tem 3 alunos que precisam de atenção hoje.</p>\
+            </div>\
+\
+            <div class="grid-4">\
+              ' +
+        metricCard('Alunos ativos', '47', '+4 esta semana', 'up') +
+        '\
+              ' +
+        metricCard('Adesão média', '82%', '+3pp vs. semana anterior', 'up') +
+        '\
+              ' +
+        metricCard('Receita do mês', 'R$ 6.480', '+R$ 940 vs. abril', 'up') +
+        '\
+              ' +
+        metricCard('Cases prontos', '3', 'aguardando aprovação', '') +
+        '\
+            </div>\
+\
+            <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap: 16px;">\
+              <div class="card">\
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">\
+                  <div>\
+                    <h2 class="h2">21 dias mais leve · Turma 03</h2>\
+                    <p class="text-muted" style="margin:2px 0 0; font-size:12px;">Dia 14 de 21 · 18 alunos</p>\
+                  </div>\
+                  <div class="seg">\
+                    <button class="active" type="button">Adesão</button>\
+                    <button type="button">Cases</button>\
+                    <button type="button">Receita</button>\
+                  </div>\
+                </div>\
+                <div class="spark">' +
+        [80, 72, 85, 90, 68, 55, 60, 78, 82, 88, 76, 84, 90, 72]
+          .map(function (v, i) {
+            return '<div style="height:' + v + '%"></div>'
+          })
+          .join('') +
+        '</div>\
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size: 11px; color: var(--ob-fg-muted);">\
+                  <span>Dia 1</span><span>Dia 7</span><span>Dia 14</span>\
+                </div>\
+              </div>\
+\
+              <div class="card" style="padding: 0;">\
+                <div style="padding: var(--pad-y) var(--pad-x); display:flex; justify-content:space-between; align-items:center;">\
+                  <h2 class="h2">Alunos em risco</h2>\
+                  <button class="btn btn-ghost" style="font-size:12px; padding: 4px 8px;">Ver todos</button>\
+                </div>\
+                <div class="divider"></div>\
+                ' +
+        riskRow('Mariana S.', 'sem check-in há 3 dias', 'bad') +
+        '\
+                ' +
+        riskRow('Carlos P.', 'sentimento negativo no check-in', 'warn') +
+        '\
+                ' +
+        riskRow('Beatriz R.', 'reportou dor no joelho', 'warn') +
+        '\
+              </div>\
+            </div>\
+\
+            <div class="card" style="padding:0;">\
+              <div style="padding: var(--pad-y) var(--pad-x); display:flex; justify-content:space-between; align-items:center;">\
+                <h2 class="h2">Mensagem de hoje · Dia 14 (aha moment)</h2>\
+                <button class="btn btn-primary" id="open-side-sheet">Revisar e enviar</button>\
+              </div>\
+              <div class="divider"></div>\
+              <div style="padding: var(--pad-y) var(--pad-x); display:flex; gap:12px; align-items:flex-start;">\
+                <div class="avatar" style="background: ' +
+        state.color +
+        '; color: ' +
+        pickFg(state.color) +
+        ';">IA</div>\
+                <div style="flex:1; font-size: 13px; line-height: 1.6;">"Hoje é o dia 14. Tira um minuto, abre suas fotos do dia 1 e do dia de hoje. Olha os números: peso, cintura, energia. Você não percebeu, mas seu corpo já mudou. E o melhor: faltam 7 dias. Vamos juntos." <span class="pill pill-info" style="margin-left:6px;">gerado por IA</span></div>\
+              </div>\
+            </div>\
+          </div>\
+        </main>\
+\
+        <div class="side-sheet-backdrop ' +
+        (state.sideSheetOpen ? 'open' : '') +
+        '" id="side-backdrop">\
+          <aside class="side-sheet">\
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">\
+              <h2 class="h2">Mensagem do dia 14</h2>\
+              <button class="btn btn-icon btn-ghost" id="close-side">✕</button>\
+            </div>\
+            <p class="text-muted" style="font-size:12px; margin: 0 0 8px;">Edite antes de enviar para o grupo. Seus alunos verão como mensagem sua.</p>\
+            <textarea class="input" rows="6" style="font-family: inherit;">Hoje é o dia 14. Tira um minuto, abre suas fotos do dia 1 e do dia de hoje. Olha os números: peso, cintura, energia. Você não percebeu, mas seu corpo já mudou. E o melhor: faltam 7 dias. Vamos juntos.</textarea>\
+            <div style="margin-top: 12px;">\
+              <span class="field-label">Destino</span>\
+              <div class="seg" style="width:100%;">\
+                <button class="active" type="button" style="flex:1;">Grupo WhatsApp</button>\
+                <button type="button" style="flex:1;">Individual</button>\
+              </div>\
+            </div>\
+            <div style="margin-top: 12px;">\
+              <span class="field-label">Quando enviar</span>\
+              <div class="seg" style="width:100%;">\
+                <button class="active" type="button" style="flex:1;">Agora</button>\
+                <button type="button" style="flex:1;">Hoje 19h</button>\
+                <button type="button" style="flex:1;">Personalizado</button>\
+              </div>\
+            </div>\
+            <div style="display:flex; gap:8px; margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--ob-border);">\
+              <button class="btn btn-ghost" id="close-side-cancel" style="flex:1;">Cancelar</button>\
+              <button class="btn btn-primary" style="flex:2;">Enviar para 18 alunos</button>\
+            </div>\
+          </aside>\
+        </div>\
+      </div>'
+      )
+    }
+
+    function metricCard(label, value, delta, dir) {
+      return (
+        '<div class="metric-card">\
+      <p class="metric-label">' +
+        label +
+        '</p>\
+      <p class="metric-value">' +
+        value +
+        '</p>\
+      ' +
+        (delta
+          ? '<p class="metric-delta ' +
+            (dir || '') +
+            '">' +
+            (dir === 'up' ? '▲' : dir === 'down' ? '▼' : '') +
+            ' ' +
+            delta +
+            '</p>'
+          : '') +
+        '\
+    </div>'
+      )
+    }
+
+    function riskRow(name, reason, sev) {
+      var initials = name
+        .split(' ')
+        .map(function (s) {
+          return s[0]
+        })
+        .join('')
+      return (
+        '<div class="row" style="border-bottom: 0.5px solid var(--ob-border);">\
+      <div class="avatar">' +
+        initials +
+        '</div>\
+      <div>\
+        <p style="margin:0; font-weight:500; font-size: 13px;">' +
+        name +
+        '</p>\
+        <p class="text-muted" style="margin:2px 0 0; font-size: 11px;"><span class="dot ' +
+        sev +
+        '"></span> ' +
+        reason +
+        '</p>\
+      </div>\
+      <button class="btn btn-ghost" style="font-size:12px; padding: 4px 8px;">Mensagem</button>\
+    </div>'
+      )
+    }
+
+    function renderCreateDesktop() {
+      var step = state.wizardStep
+      return (
+        '\
+      <div style="display: grid; grid-template-columns: 200px 1fr; min-height: 540px;">\
+        <aside class="sidebar">\
+          <div class="sidebar-logo"><span class="logo-dot"></span> onboarding.bio</div>\
+          <div class="nav-item">' +
+        navIcon('home') +
+        ' Início</div>\
+          <div class="nav-item">' +
+        navIcon('users') +
+        ' Alunos</div>\
+          <div class="nav-item active">' +
+        navIcon('flag') +
+        ' Desafios</div>\
+          <div class="nav-item">' +
+        navIcon('chart') +
+        ' Relatórios</div>\
+        </aside>\
+        <main>\
+          <div class="topbar">\
+            <div class="crumbs">Desafios <span class="sep">›</span> <span class="here">Novo desafio</span></div>\
+            <div class="step-dots">\
+              <span class="step-dot ' +
+        (step >= 1 ? (step === 1 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 2 ? (step === 2 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 3 ? (step === 3 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 4 ? (step === 4 ? 'active' : 'done') : '') +
+        '"></span>\
+            </div>\
+          </div>\
+          <div style="padding: 22px 28px; display: grid; grid-template-columns: 1fr 320px; gap: 22px;">\
+            <div>\
+              <p class="text-muted" style="margin:0 0 4px; font-size:12px; letter-spacing:0.04em; text-transform:uppercase;">Etapa ' +
+        step +
+        ' de 4</p>\
+              ' +
+        (step === 1
+          ? wizardStep1()
+          : step === 2
+            ? wizardStep2()
+            : step === 3
+              ? wizardStep3()
+              : wizardStep4()) +
+        '\
+              <div style="display:flex; justify-content:space-between; margin-top:22px; padding-top:16px; border-top: 0.5px solid var(--ob-border);">\
+                <button class="btn btn-ghost" id="wizard-back" ' +
+        (step === 1 ? 'disabled style="opacity:0.4"' : '') +
+        '>← Voltar</button>\
+                <div style="display:flex; gap:8px;">\
+                  <button class="btn btn-ghost">Salvar rascunho</button>\
+                  <button class="btn btn-primary" id="wizard-next">' +
+        (step === 4 ? 'Publicar desafio' : 'Continuar →') +
+        '</button>\
+                </div>\
+              </div>\
+            </div>\
+            <aside>\
+              <div class="card">\
+                <h2 class="h2">Resumo</h2>\
+                <div style="margin-top:10px; font-size:12px; line-height:1.7;">\
+                  <div style="display:flex; justify-content:space-between;"><span class="text-muted">Template</span><span>21 dias mais leve</span></div>\
+                  <div style="display:flex; justify-content:space-between;"><span class="text-muted">Vagas</span><span>20</span></div>\
+                  <div style="display:flex; justify-content:space-between;"><span class="text-muted">Preço</span><span>R$ 297</span></div>\
+                  <div style="display:flex; justify-content:space-between;"><span class="text-muted">Início</span><span>03/jun</span></div>\
+                </div>\
+              </div>\
+            </aside>\
+          </div>\
+        </main>\
+      </div>'
+      )
+    }
+
+    function wizardStep1() {
+      return (
+        '\
+      <h1 class="h1">Escolha um template</h1>\
+      <p class="text-muted" style="margin: 6px 0 18px; font-size:13px;">Templates oficiais foram validados clinicamente. Você pode customizar tudo depois.</p>\
+      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">\
+        ' +
+        templateCard('21 dias mais leve', 'Emagrecimento sustentável · iniciantes', true) +
+        '\
+        ' +
+        templateCard('Reset metabólico', 'Reeducação alimentar · 30 dias', false) +
+        '\
+        ' +
+        templateCard('Força em casa', 'Treino sem equipamento · 28 dias', false) +
+        '\
+        ' +
+        templateCard('Pré-praia', 'Ciclo intenso · 21 dias', false) +
+        '\
+      </div>'
+      )
+    }
+    function wizardStep2() {
+      return '\
+      <h1 class="h1">Datas e vagas</h1>\
+      <p class="text-muted" style="margin: 6px 0 18px; font-size:13px;">Você pode editar tudo isso depois enquanto não publicar.</p>\
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">\
+        <div><span class="field-label">Início</span><input class="input" type="text" value="03 de junho de 2026"></div>\
+        <div><span class="field-label">Duração</span><input class="input" type="text" value="21 dias"></div>\
+        <div><span class="field-label">Vagas</span><input class="input" type="text" value="20"></div>\
+        <div><span class="field-label">Inscrições até</span><input class="input" type="text" value="01 de junho"></div>\
+      </div>\
+      <div style="margin-top:18px;"><span class="field-label">Grupo WhatsApp</span><input class="input" type="text" placeholder="Cole o link de convite" value="https://chat.whatsapp.com/..."></div>'
+    }
+    function wizardStep3() {
+      return '\
+      <h1 class="h1">Preço e pagamento</h1>\
+      <p class="text-muted" style="margin: 6px 0 18px; font-size:13px;">Você recebe 70%. A onboarding.bio fica com 30% de comissão pelo split nativo.</p>\
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">\
+        <div><span class="field-label">Preço cheio</span><input class="input" type="text" value="R$ 297"></div>\
+        <div><span class="field-label">Lote promocional</span><input class="input" type="text" value="R$ 197 · 5 vagas"></div>\
+      </div>\
+      <div class="card" style="margin-top: 16px; background: var(--ob-surface-1);">\
+        <div style="display:flex; justify-content:space-between; font-size:13px;">\
+          <span>Você recebe por venda</span>\
+          <strong>R$ 207,90</strong>\
+        </div>\
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:6px;">\
+          <span class="text-muted">Comissão da plataforma (30%)</span>\
+          <span class="text-muted">R$ 89,10</span>\
+        </div>\
+      </div>'
+    }
+    function wizardStep4() {
+      return (
+        '\
+      <h1 class="h1">Página pública</h1>\
+      <p class="text-muted" style="margin: 6px 0 18px; font-size:13px;">É isso que seus alunos vão ver. Use seu estilo "' +
+        styles[state.styleKey].name +
+        '".</p>\
+      ' +
+        previewBlock()
+      )
+    }
+
+    function templateCard(name, desc, active) {
+      return (
+        '<button class="style-tile' +
+        (active ? ' active' : '') +
+        '" type="button">\
+      <div class="style-tile-strip"><div style="background:' +
+        state.color +
+        '"></div><div style="background:var(--ob-surface-1)"></div></div>\
+      <p class="style-tile-name">' +
+        name +
+        '</p>\
+      <p class="style-tile-desc">' +
+        desc +
+        '</p>\
+    </button>'
+      )
+    }
+
+    // ---------- MOBILE ----------
+    function renderSettingsMobile() {
+      return (
+        '\
+      <div class="ob-screen-inner">\
+        <div class="m-topbar">\
+          <button class="btn btn-icon btn-ghost" aria-label="Voltar">←</button>\
+          <p class="m-title">Aparência</p>\
+          <button class="btn btn-ghost" style="font-size:13px;">Salvar</button>\
+        </div>\
+        <div style="padding: 8px 14px 80px;">\
+\
+          <div style="margin-bottom:18px;">\
+            <span class="field-label">Estilo</span>\
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">' +
+        Object.keys(styles)
+          .map(function (k) {
+            var s = styles[k]
+            var active = state.styleKey === k ? ' active' : ''
+            return (
+              '<button data-style="' +
+              k +
+              '" class="style-tile' +
+              active +
+              '" type="button">\
+                  <div class="style-tile-strip">' +
+              s.strip
+                .map(function (c) {
+                  return '<div style="background:' + c + '"></div>'
+                })
+                .join('') +
+              '</div>\
+                  <p class="style-tile-name">' +
+              s.name +
+              '</p>\
+                  <p class="style-tile-desc">' +
+              s.desc +
+              '</p>\
+                </button>'
+            )
+          })
+          .join('') +
+        '</div>\
+          </div>\
+\
+          <div style="margin-bottom:18px;">\
+            <span class="field-label">Cor de marca</span>\
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">' +
+        colors
+          .map(function (c) {
+            var active = state.color.toLowerCase() === c.toLowerCase() ? ' active' : ''
+            return (
+              '<button class="swatch' +
+              active +
+              '" data-color="' +
+              c +
+              '" style="background:' +
+              c +
+              '" type="button" aria-label="Cor ' +
+              c +
+              '"></button>'
+            )
+          })
+          .join('') +
+        '</div>\
+            <p class="text-muted" style="font-size:11px; margin:8px 0 0;">Contraste sobre branco: ' +
+        contrastRatio(state.color, '#ffffff') +
+        ':1</p>\
+          </div>\
+\
+          <div style="margin-bottom:18px;">\
+            <span class="field-label">Tipografia</span>\
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">' +
+        Object.keys(fonts)
+          .map(function (k) {
+            var f = fonts[k]
+            var active = state.typo === k ? ' active' : ''
+            return (
+              '<button data-typo="' +
+              k +
+              '" class="style-tile' +
+              active +
+              '" type="button">\
+                  <p style="font-family:' +
+              f.stack +
+              '; font-size: 16px; margin:0; font-weight:500;">Aa</p>\
+                  <p class="style-tile-name" style="margin-top:4px;">' +
+              f.label +
+              '</p>\
+                </button>'
+            )
+          })
+          .join('') +
+        '</div>\
+          </div>\
+\
+          <div style="margin-bottom:18px;">\
+            <span class="field-label">Shape</span>\
+            <div class="seg" style="width:100%;">\
+              <button data-shape="sharp" class="' +
+        (state.shape === 'sharp' ? 'active' : '') +
+        '" type="button" style="flex:1;">Sharp</button>\
+              <button data-shape="rounded" class="' +
+        (state.shape === 'rounded' ? 'active' : '') +
+        '" type="button" style="flex:1;">Rounded</button>\
+              <button data-shape="soft" class="' +
+        (state.shape === 'soft' ? 'active' : '') +
+        '" type="button" style="flex:1;">Soft</button>\
+            </div>\
+          </div>\
+\
+          <div style="margin-bottom:18px;">\
+            <span class="field-label">Densidade</span>\
+            <div class="seg" style="width:100%;">\
+              <button data-density="tight" class="' +
+        (state.density === 'tight' ? 'active' : '') +
+        '" type="button" style="flex:1;">Compacto</button>\
+              <button data-density="cozy" class="' +
+        (state.density === 'cozy' ? 'active' : '') +
+        '" type="button" style="flex:1;">Conforto</button>\
+              <button data-density="roomy" class="' +
+        (state.density === 'roomy' ? 'active' : '') +
+        '" type="button" style="flex:1;">Espaçoso</button>\
+            </div>\
+          </div>\
+\
+          <div class="card">\
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">\
+              <h2 class="h2">Pré-visualização</h2>\
+              <span class="pill pill-info">site público</span>\
+            </div>\
+            ' +
+        previewBlock() +
+        '\
+          </div>\
+        </div>\
+      </div>'
+      )
+    }
+
+    function renderDashboardMobile() {
+      return (
+        '\
+      <div class="ob-screen-inner" style="display:flex; flex-direction:column; min-height: 600px;">\
+        <div class="m-topbar">\
+          <div style="display:flex; align-items:center; gap: 8px;">\
+            <div style="width:24px; height:24px; border-radius: var(--r-sm); background:' +
+        state.color +
+        ';"></div>\
+            <p class="m-title" style="font-size: 15px;">Olá, Pri</p>\
+          </div>\
+          <button class="btn btn-icon btn-ghost" aria-label="Notificações">\
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>\
+          </button>\
+        </div>\
+        <div style="padding: 8px 14px 14px; flex: 1;">\
+          <p class="text-muted" style="margin: 0 0 14px; font-size:12px;">3 alunos precisam de atenção hoje.</p>\
+\
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom: 14px;">\
+            ' +
+        metricCard('Ativos', '47', '+4 esta semana', 'up') +
+        '\
+            ' +
+        metricCard('Adesão', '82%', '+3pp', 'up') +
+        '\
+          </div>\
+\
+          <div class="card" style="padding: 0; margin-bottom: 14px;">\
+            <div style="padding: var(--pad-y) var(--pad-x);">\
+              <p style="margin:0; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ob-fg-muted);">21 dias mais leve · turma 03</p>\
+              <p class="h2" style="margin:4px 0 0;">Dia 14 de 21</p>\
+            </div>\
+            <div style="padding: 0 var(--pad-x) var(--pad-y);">\
+              <div class="spark">' +
+        [80, 72, 85, 90, 68, 55, 60, 78, 82, 88, 76, 84, 90, 72]
+          .map(function (v) {
+            return '<div style="height:' + v + '%"></div>'
+          })
+          .join('') +
+        '</div>\
+            </div>\
+          </div>\
+\
+          <h2 class="h2" style="margin: 6px 0 8px;">Em risco</h2>\
+          <div class="card" style="padding:0;">\
+            ' +
+        riskRow('Mariana S.', 'sem check-in há 3 dias', 'bad') +
+        '\
+            ' +
+        riskRow('Carlos P.', 'sentimento negativo', 'warn') +
+        '\
+            ' +
+        riskRow('Beatriz R.', 'reportou dor no joelho', 'warn') +
+        '\
+          </div>\
+\
+          <button class="btn btn-primary" id="open-sheet" style="width:100%; justify-content:center; margin-top:14px;">+ Novo desafio</button>\
+        </div>\
+\
+        <div class="m-tabbar">\
+          <div class="m-tab active">' +
+        tabIcon('home') +
+        '<span>Início</span></div>\
+          <div class="m-tab">' +
+        tabIcon('users') +
+        '<span>Alunos</span></div>\
+          <div class="m-tab">' +
+        tabIcon('plus') +
+        '<span>Novo</span></div>\
+          <div class="m-tab">' +
+        tabIcon('flag') +
+        '<span>Desafios</span></div>\
+          <div class="m-tab">' +
+        tabIcon('user') +
+        '<span>Perfil</span></div>\
+        </div>\
+\
+        <div class="sheet-backdrop ' +
+        (state.sheetOpen ? 'open' : '') +
+        '" id="sheet-backdrop">\
+          <div class="sheet">\
+            <div class="sheet-handle"></div>\
+            <h2 class="h2" style="margin: 0 0 4px;">Criar desafio</h2>\
+            <p class="text-muted" style="font-size:12px; margin:0 0 14px;">Vamos por etapas — você pode salvar e voltar quando quiser.</p>\
+            <button class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:8px;" id="sheet-go">Começar do zero</button>\
+            <button class="btn" style="width:100%; justify-content:center;">Usar template oficial</button>\
+            <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:6px;" id="close-sheet">Cancelar</button>\
+          </div>\
+        </div>\
+      </div>'
+      )
+    }
+
+    function renderCreateMobile() {
+      var step = state.wizardStep
+      var content =
+        step === 1
+          ? wizardStep1Mobile()
+          : step === 2
+            ? wizardStep2Mobile()
+            : step === 3
+              ? wizardStep3Mobile()
+              : wizardStep4Mobile()
+      return (
+        '\
+      <div class="ob-screen-inner" style="display:flex; flex-direction:column; min-height:600px;">\
+        <div class="m-topbar" style="border-bottom: 0.5px solid var(--ob-border);">\
+          <button class="btn btn-icon btn-ghost" id="wizard-back-m" aria-label="Voltar">' +
+        (step === 1 ? '✕' : '←') +
+        '</button>\
+          <div style="display:flex; flex-direction: column; align-items:center;">\
+            <p style="margin:0; font-size:11px; color: var(--ob-fg-muted); letter-spacing:0.04em; text-transform:uppercase;">Etapa ' +
+        step +
+        ' de 4</p>\
+            <div class="step-dots" style="margin-top: 4px;">\
+              <span class="step-dot ' +
+        (step >= 1 ? (step === 1 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 2 ? (step === 2 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 3 ? (step === 3 ? 'active' : 'done') : '') +
+        '"></span>\
+              <span class="step-dot ' +
+        (step >= 4 ? (step === 4 ? 'active' : 'done') : '') +
+        '"></span>\
+            </div>\
+          </div>\
+          <button class="btn btn-ghost" style="font-size:12px;">Salvar</button>\
+        </div>\
+        <div style="padding: 16px 14px 90px; flex: 1; overflow:auto;">\
+          ' +
+        content +
+        '\
+        </div>\
+        <div style="position: sticky; bottom: 0; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: var(--ob-surface-2); border-top: 0.5px solid var(--ob-border);">\
+          <button class="btn btn-primary" id="wizard-next-m" style="width:100%; justify-content:center;">' +
+        (step === 4 ? 'Publicar desafio' : 'Continuar') +
+        '</button>\
+        </div>\
+      </div>'
+      )
+    }
+
+    function wizardStep1Mobile() {
+      return (
+        '\
+      <h1 class="h1" style="font-size: 19px;">Escolha um template</h1>\
+      <p class="text-muted" style="margin: 6px 0 14px; font-size:13px;">Validados clinicamente. Você customiza depois.</p>\
+      <div style="display:flex; flex-direction:column; gap: 8px;">\
+        ' +
+        templateCardM('21 dias mais leve', 'Emagrecimento · iniciantes', true) +
+        '\
+        ' +
+        templateCardM('Reset metabólico', 'Reeducação alimentar · 30 dias', false) +
+        '\
+        ' +
+        templateCardM('Força em casa', 'Sem equipamento · 28 dias', false) +
+        '\
+      </div>'
+      )
+    }
+    function templateCardM(name, desc, active) {
+      return (
+        '<button class="style-tile' +
+        (active ? ' active' : '') +
+        '" type="button" style="display:flex; gap:12px; align-items:center;">\
+      <div style="width:40px; height:40px; border-radius: var(--r-md); background: ' +
+        state.color +
+        '; flex-shrink:0;"></div>\
+      <div style="text-align:left;">\
+        <p class="style-tile-name">' +
+        name +
+        '</p>\
+        <p class="style-tile-desc">' +
+        desc +
+        '</p>\
+      </div>\
+    </button>'
+      )
+    }
+    function wizardStep2Mobile() {
+      return '\
+      <h1 class="h1" style="font-size: 19px;">Datas e vagas</h1>\
+      <p class="text-muted" style="margin: 6px 0 14px; font-size:13px;">Pode editar até publicar.</p>\
+      <div style="display:flex; flex-direction:column; gap: 14px;">\
+        <div><span class="field-label">Início</span><input class="input" inputmode="numeric" type="text" value="03/06/2026"></div>\
+        <div><span class="field-label">Duração</span>\
+          <div class="seg" style="width:100%;">\
+            <button class="active" type="button" style="flex:1;">21 dias</button>\
+            <button type="button" style="flex:1;">28 dias</button>\
+            <button type="button" style="flex:1;">30 dias</button>\
+          </div>\
+        </div>\
+        <div><span class="field-label">Vagas</span><input class="input" inputmode="numeric" type="text" value="20"></div>\
+        <div><span class="field-label">Grupo WhatsApp</span><input class="input" type="url" inputmode="url" placeholder="https://chat.whatsapp.com/..."></div>\
+      </div>'
+    }
+    function wizardStep3Mobile() {
+      return '\
+      <h1 class="h1" style="font-size: 19px;">Preço</h1>\
+      <p class="text-muted" style="margin: 6px 0 14px; font-size:13px;">Você recebe 70% via split nativo.</p>\
+      <div style="display:flex; flex-direction:column; gap: 14px;">\
+        <div><span class="field-label">Preço cheio</span><input class="input" inputmode="decimal" type="text" value="R$ 297"></div>\
+        <div><span class="field-label">Lote promocional</span><input class="input" inputmode="decimal" type="text" value="R$ 197"></div>\
+        <div class="card" style="background: var(--ob-surface-1);">\
+          <div style="display:flex; justify-content:space-between; font-size:13px;">\
+            <span>Você recebe</span><strong>R$ 207,90</strong>\
+          </div>\
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">\
+            <span class="text-muted">Comissão (30%)</span><span class="text-muted">R$ 89,10</span>\
+          </div>\
+        </div>\
+      </div>'
+    }
+    function wizardStep4Mobile() {
+      return (
+        '\
+      <h1 class="h1" style="font-size: 19px;">Página pública</h1>\
+      <p class="text-muted" style="margin: 6px 0 14px; font-size:13px;">Estilo "' +
+        styles[state.styleKey].name +
+        '".</p>\
+      ' +
+        previewBlock()
+      )
+    }
+
+    // ---------- Icons ----------
+    function navIcon(name) {
+      var i = {
+        home: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>',
+        users:
+          '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2"/><path d="M16 14c2 0 5 1 5 4"/></svg>',
+        flag: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
+        chart:
+          '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V8"/><path d="M10 20v-7"/><path d="M16 20V4"/></svg>',
+        user: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>',
+        palette:
+          '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1"/><circle cx="15" cy="8" r="1"/><circle cx="17" cy="13" r="1"/><path d="M12 21a3 3 0 0 1 0-6 3 3 0 0 0 0-6"/></svg>',
+        plug: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6V3M15 6V3M9 18v3M15 18v3"/><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
+        shield:
+          '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 5 4 8 8 9 4-1 8-4 8-9V6z"/></svg>',
+      }
+      return i[name] || ''
+    }
+    function tabIcon(name) {
+      var i = {
+        home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>',
+        users:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/></svg>',
+        plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+        flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
+        user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>',
+      }
+      return i[name] || ''
+    }
+
+    // ---------- Render dispatcher ----------
+    function render() {
+      var screen = document.getElementById('screen')
+      if (!screen) return
+      screen.className =
+        'ob-screen ' + state.device + ' ob-positioned app d-' + state.density + ' s-' + state.shape
+      applyTokens()
+
+      var html = ''
+      if (state.device === 'desktop') {
+        if (state.screen === 'settings') html = renderSettingsDesktop()
+        if (state.screen === 'dashboard') html = renderDashboardDesktop()
+        if (state.screen === 'create') html = renderCreateDesktop()
+      } else {
+        if (state.screen === 'settings') html = renderSettingsMobile()
+        if (state.screen === 'dashboard') html = renderDashboardMobile()
+        if (state.screen === 'create') html = renderCreateMobile()
+      }
+      screen.innerHTML = html
+
+      // Update legend
+      var legend = document.getElementById('screen-legend')
+      if (legend) {
+        var msg = {
+          settings: 'Ajuste estilo, cor, tipografia, shape e densidade — todo o app reage ao vivo.',
+          dashboard:
+            'Dashboard adaptado ao estilo escolhido. No desktop, a edição abre em side sheet à direita; no mobile, em bottom sheet.',
+          create:
+            'Caso difícil em mobile: criação de desafio. Desktop usa wizard em página dedicada com resumo lateral; mobile vira full-screen com sticky CTA, step indicator no topo e teclado correto por campo.',
+        }[state.screen]
+        legend.textContent = msg
+      }
+
+      bindScreenEvents()
+    }
+
+    function bindScreenEvents() {
+      // Style tiles
+      document.querySelectorAll('[data-style]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var key = el.getAttribute('data-style')
+          var s = styles[key]
+          state.styleKey = key
+          state.color = s.color
+          state.typo = s.typo
+          state.shape = s.shape
+          state.density = s.density
+          if (key === 'noturno') state.mode = 'dark'
+          else if (state.mode === 'dark' && key !== 'noturno') {
+            /* keep user choice */
+          }
+          document.getElementById('mode-light').classList.toggle('active', state.mode === 'light')
+          document.getElementById('mode-dark').classList.toggle('active', state.mode === 'dark')
+          render()
+        })
+      })
+      document.querySelectorAll('[data-color]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          state.color = el.getAttribute('data-color')
+          render()
+        })
+      })
+      var custom = document.getElementById('custom-color')
+      if (custom) {
+        custom.addEventListener('input', function (e) {
+          state.color = e.target.value
+          render()
+        })
+      }
+      document.querySelectorAll('[data-typo]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          state.typo = el.getAttribute('data-typo')
+          render()
+        })
+      })
+      document.querySelectorAll('[data-shape]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          state.shape = el.getAttribute('data-shape')
+          render()
+        })
+      })
+      document.querySelectorAll('[data-density]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          state.density = el.getAttribute('data-density')
+          render()
+        })
+      })
+      // Side sheet
+      var sideOpen = document.getElementById('open-side-sheet')
+      if (sideOpen)
+        sideOpen.addEventListener('click', function () {
+          state.sideSheetOpen = true
+          render()
+        })
+      var sideClose = document.getElementById('close-side')
+      if (sideClose)
+        sideClose.addEventListener('click', function () {
+          state.sideSheetOpen = false
+          render()
+        })
+      var sideCancel = document.getElementById('close-side-cancel')
+      if (sideCancel)
+        sideCancel.addEventListener('click', function () {
+          state.sideSheetOpen = false
+          render()
+        })
+      var sideBack = document.getElementById('side-backdrop')
+      if (sideBack)
+        sideBack.addEventListener('click', function (e) {
+          if (e.target.id === 'side-backdrop') {
+            state.sideSheetOpen = false
+            render()
+          }
+        })
+      // Bottom sheet
+      var openSheet = document.getElementById('open-sheet')
+      if (openSheet)
+        openSheet.addEventListener('click', function () {
+          state.sheetOpen = true
+          render()
+        })
+      var closeSheet = document.getElementById('close-sheet')
+      if (closeSheet)
+        closeSheet.addEventListener('click', function () {
+          state.sheetOpen = false
+          render()
+        })
+      var sheetBack = document.getElementById('sheet-backdrop')
+      if (sheetBack)
+        sheetBack.addEventListener('click', function (e) {
+          if (e.target.id === 'sheet-backdrop') {
+            state.sheetOpen = false
+            render()
+          }
+        })
+      var sheetGo = document.getElementById('sheet-go')
+      if (sheetGo)
+        sheetGo.addEventListener('click', function () {
+          state.sheetOpen = false
+          state.screen = 'create'
+          state.wizardStep = 1
+          document.getElementById('screen-settings').classList.remove('active')
+          document.getElementById('screen-dashboard').classList.remove('active')
+          document.getElementById('screen-create').classList.add('active')
+          render()
+        })
+      // Wizard
+      var wn = document.getElementById('wizard-next')
+      if (wn)
+        wn.addEventListener('click', function () {
+          if (state.wizardStep < 4) state.wizardStep++
+          render()
+        })
+      var wb = document.getElementById('wizard-back')
+      if (wb)
+        wb.addEventListener('click', function () {
+          if (state.wizardStep > 1) state.wizardStep--
+          render()
+        })
+      var wnm = document.getElementById('wizard-next-m')
+      if (wnm)
+        wnm.addEventListener('click', function () {
+          if (state.wizardStep < 4) state.wizardStep++
+          render()
+        })
+      var wbm = document.getElementById('wizard-back-m')
+      if (wbm)
+        wbm.addEventListener('click', function () {
+          if (state.wizardStep > 1) state.wizardStep--
+          else {
+            state.screen = 'dashboard'
+            document.getElementById('screen-dashboard').classList.add('active')
+            document.getElementById('screen-create').classList.remove('active')
+            document.getElementById('screen-settings').classList.remove('active')
+          }
+          render()
+        })
+    }
+
+    // ---------- Toolbar wiring ----------
+    function setSeg(activeId, others) {
+      document.getElementById(activeId).classList.add('active')
+      others.forEach(function (id) {
+        document.getElementById(id).classList.remove('active')
+      })
+    }
+    document.getElementById('dev-desktop').addEventListener('click', function () {
+      state.device = 'desktop'
+      setSeg('dev-desktop', ['dev-mobile'])
+      render()
+    })
+    document.getElementById('dev-mobile').addEventListener('click', function () {
+      state.device = 'mobile'
+      setSeg('dev-mobile', ['dev-desktop'])
+      render()
+    })
+    document.getElementById('screen-settings').addEventListener('click', function () {
+      state.screen = 'settings'
+      setSeg('screen-settings', ['screen-dashboard', 'screen-create'])
+      render()
+    })
+    document.getElementById('screen-dashboard').addEventListener('click', function () {
+      state.screen = 'dashboard'
+      setSeg('screen-dashboard', ['screen-settings', 'screen-create'])
+      render()
+    })
+    document.getElementById('screen-create').addEventListener('click', function () {
+      state.screen = 'create'
+      state.wizardStep = 1
+      setSeg('screen-create', ['screen-settings', 'screen-dashboard'])
+      render()
+    })
+    document.getElementById('mode-light').addEventListener('click', function () {
+      state.mode = 'light'
+      setSeg('mode-light', ['mode-dark'])
+      render()
+    })
+    document.getElementById('mode-dark').addEventListener('click', function () {
+      state.mode = 'dark'
+      setSeg('mode-dark', ['mode-light'])
+      render()
+    })
+
+    render()
+  })()
+</script>

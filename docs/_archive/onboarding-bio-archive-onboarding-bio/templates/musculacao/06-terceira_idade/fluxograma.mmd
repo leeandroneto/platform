@@ -1,0 +1,28 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · fase_ativa}
+    Q1 -->|ativo_regular| BranchA[🟢 Branch: Ativo Regular]
+    Q1 -->|quer_comecar| BranchB[🟢 Branch: Quer Começar]
+    Q1 -->|com_limitacoes| BranchC[🟡 Branch: Com Limitações]
+    BranchA --> Q2
+    BranchB --> Q2
+    BranchC --> Q2
+    Q2[Q2 · frequencia_semanal] --> Q3[Q3 · principal_barreira]
+    Q3 --> Q4[Q4 · capacidade_funcional]
+    Q4 --> Q5[Q5 · local_treino]
+    Q5 --> Q6{Q6 · condicoes_saude}
+    Q6 -->|safe| PN
+    Q6 -->|hipertensao_descontrolada / cardiopatia| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchCaution fill:#fffde7,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchA,BranchB branch
+    class BranchC branchCaution
+    class Basics,PN,Goal,Contact universal

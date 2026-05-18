@@ -1,0 +1,26 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · fase_masters}
+    Q1 -->|voltando| BranchV[🟢 Branch: Voltando]
+    Q1 -->|regular| BranchR[🟢 Branch: Regular]
+    Q1 -->|competidor| BranchC[🟢 Branch: Competidor]
+    BranchV --> Q2
+    BranchR --> Q2
+    BranchC --> Q2
+    Q2[Q2 · nivel_crossfit] --> Q3[Q3 · gargalo_principal]
+    Q3 --> Q4[Q4 · frequencia_real]
+    Q4 --> Q5[Q5 · area_dor]
+    Q5 --> Q6{Q6 · health_conditions}
+    Q6 -->|nenhuma / hipertensao / diabetes| PN
+    Q6 -->|cardiaca / articular_grave| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchV,BranchR,BranchC branch
+    class Basics,PN,Goal,Contact universal

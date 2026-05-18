@@ -2,33 +2,38 @@
 name: Domain layer rules
 description: Lógica pura, zero IO, .test.ts obrigatório, ≤200 linhas
 paths:
-  - "lib/domain/**/*.ts"
+  - 'lib/domain/**/*.ts'
 ---
 
 ## Regras Domain layer
 
 ### Zero IO
+
 - NÃO `import 'react'`
 - NÃO `import '@supabase/*'`
 - NÃO `fetch()`, `setTimeout()`, `Date.now()` direto (injetar via param)
 - NÃO ler `process.env` (env vem via param ou config injetado)
 
 ### Pureza
+
 - Funções determinísticas: mesmo input → mesmo output
 - Sem mutação de argumentos
 - Sem side effects (logging, error reporting → camada acima)
 
 ### Tipos
+
 - Usar `Result<T, AppError>` quando operação pode falhar de forma esperada
 - Lançar `AppError` quando falha é estado inesperado (invariant break)
 - Nunca retornar `null` quando `undefined` é semanticamente melhor
 
 ### Tamanho
+
 - Arquivo ≤ 200 linhas
 - Função ≤ 60 linhas
 - Acima: extrair sub-funções no mesmo arquivo (não criar arquivo novo só por isso)
 
 ### Testabilidade
+
 - TODA função em `lib/domain/` tem `<file>.test.ts` companheiro
 - Vitest cobre golden path + edge cases + invariant violations
 - Sem mocks (já é puro, não tem o que mockar)
@@ -72,8 +77,15 @@ import { calculateTdee } from './calculateTdee'
 
 describe('calculateTdee', () => {
   it('matches Mifflin-St Jeor reference value for adult male', () => {
-    expect(calculateTdee({ weightKg: 80, heightCm: 180, ageYears: 30, sex: 'male', activityLevel: 'moderate' }))
-      .toBeCloseTo(2780, 0)
+    expect(
+      calculateTdee({
+        weightKg: 80,
+        heightCm: 180,
+        ageYears: 30,
+        sex: 'male',
+        activityLevel: 'moderate',
+      }),
+    ).toBeCloseTo(2780, 0)
   })
 })
 ```

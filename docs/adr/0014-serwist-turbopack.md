@@ -12,6 +12,7 @@ Next.js 16 usa Turbopack default. Pesquisa 12 (PWA offline-first) recomenda Serw
 Serwist + Turbopack nativo (`@serwist/next` + `@serwist/turbopack`). Padrão oficial alinhado com princípio universal (`_CONFLITOS #8`).
 
 Configuração:
+
 - Runtime caching: NetworkFirst (API), CacheFirst (static), StaleWhileRevalidate (HTML)
 - Precache: shell + ícones + fonts
 - IndexedDB queue (idb-keyval) pra mutation offline (ADR-0015)
@@ -22,14 +23,17 @@ Configuração:
 ## Consequences
 
 **Positivo:**
+
 - Padrão oficial Next 16 (não next-pwa abandonado)
 - Compatível com React Server Components
 - DX bom (precache automático shell)
 
 **Negativo:**
+
 - Turbopack support em GA recente → risco edge case
 - Mitigação: fallback Webpack documentado
 
 **Neutro:**
+
 - Detalhes em `08-pwa-offline.md`
 - ADR-0015 (idb-keyval) é dependência direta

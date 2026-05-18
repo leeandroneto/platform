@@ -43,12 +43,14 @@ EFI Bank. Aluno paga prof direto via gateway escolhido (Asaas / Pagar.me /
 Mercado Pago / Stripe BR) — plataforma NÃO intermedia.
 
 ### Pacote A — Vendas e captação · R$ 1.500
+
 - Entrega: 30 dias
 - Mensalidade: R$ 100/mês a partir do 31º dia (30 dias de cortesia)
 - Promessa: estrutura completa para captar lead, vender programa e processar
   pagamento — sem aplicativo
 
 **Inclui:**
+
 - Subdomínio `seunome.desafit.app`
 - Página de vendas do programa
 - Página de captação com formulário
@@ -61,6 +63,7 @@ Mercado Pago / Stripe BR) — plataforma NÃO intermedia.
 - Painel de leads
 
 ### Pacote B — Aplicativo com sua marca · R$ 3.000
+
 - Entrega: 60 dias
 - Mensalidade: R$ 200/mês a partir do 11º mês
   (10 meses de isenção alinhados ao parcelamento 10×)
@@ -68,6 +71,7 @@ Mercado Pago / Stripe BR) — plataforma NÃO intermedia.
   engajamento e retenção
 
 **Inclui:**
+
 - Aplicativo com sua marca (Android + iPhone, via PWA)
 - Subdomínio `seunome.desafit.app`
 - Estrutura do programa configurada conforme método do prof
@@ -87,12 +91,14 @@ Mercado Pago / Stripe BR) — plataforma NÃO intermedia.
 - **Bônus:** Gamificação personalizada (mês 3) + 10 meses sem mensalidade
 
 ### Pacote C — Conjunto completo (recomendado) · R$ 4.000
+
 - Entrega total: 90 dias
 - Mensalidade: R$ 200/mês a partir do 11º mês
 - Promessa: operação ponta a ponta — captação, venda, app, engajamento,
   retenção — com desconto e bônus exclusivos
 
 **Inclui tudo do Pacote A + tudo do Pacote B, mais bônus exclusivos:**
+
 - Gamificação personalizada (mês 3)
 - Chatbot nutricional com IA (entregue ~1 mês após pacote)
 - 10 meses sem mensalidade
@@ -100,14 +106,15 @@ Mercado Pago / Stripe BR) — plataforma NÃO intermedia.
 
 ### Adicionais (cobrados separadamente)
 
-| Item                                | Valor     | Prazo extra |
-| ----------------------------------- | --------- | ----------- |
-| Programa adicional configurado      | R$ 800    | +10 dias    |
-| Setup tráfego pago (Meta Ads)       | R$ 1.200  | +7 dias     |
-| Site institucional                  | R$ 500    | +7 dias     |
-| Página adicional customizada        | R$ 300    | +5 dias     |
+| Item                           | Valor    | Prazo extra |
+| ------------------------------ | -------- | ----------- |
+| Programa adicional configurado | R$ 800   | +10 dias    |
+| Setup tráfego pago (Meta Ads)  | R$ 1.200 | +7 dias     |
+| Site institucional             | R$ 500   | +7 dias     |
+| Página adicional customizada   | R$ 300   | +5 dias     |
 
 ### Formas de pagamento (todos pacotes)
+
 - Pix à vista — 10% off
 - 2× Pix (assinatura + entrega final)
 - 10× cartão sem juros
@@ -134,13 +141,13 @@ nunca refator de core.
 
 `user_role` enum global com 5 valores. Nunca expandir sem pivot.
 
-| Role           | Escopo         | Função                                                                                              |
-| -------------- | -------------- | --------------------------------------------------------------------------------------------------- |
-| `admin`        | global         | Leandro / equipe plataforma — controla tenants, prompts IA, billing, impersonation, broadcast       |
-| `professional` | tenant-scoped  | Dono do tenant — cria/edita programas, gerencia alunos, recebe pagamentos                           |
-| `client`       | tenant-scoped  | Aluno final — consome programa via PWA, marca progresso, faz check-in                               |
-| `staff`        | tenant-scoped  | Assistente do `professional` dentro do tenant dele                                                  |
-| `influencer`   | global         | Afiliado — indica profissionais via link único, recebe comissão                                     |
+| Role           | Escopo        | Função                                                                                        |
+| -------------- | ------------- | --------------------------------------------------------------------------------------------- |
+| `admin`        | global        | Leandro / equipe plataforma — controla tenants, prompts IA, billing, impersonation, broadcast |
+| `professional` | tenant-scoped | Dono do tenant — cria/edita programas, gerencia alunos, recebe pagamentos                     |
+| `client`       | tenant-scoped | Aluno final — consome programa via PWA, marca progresso, faz check-in                         |
+| `staff`        | tenant-scoped | Assistente do `professional` dentro do tenant dele                                            |
+| `influencer`   | global        | Afiliado — indica profissionais via link único, recebe comissão                               |
 
 **Operação done-for-you (fase agência):** fundador executa via `admin` +
 impersonation, sem role separado.
@@ -155,9 +162,9 @@ impersonation, sem role separado.
 Bottom-nav fixa de 5 itens. Não admite hamburger nem 4/6 tabs. Escolhido pela
 necessidade do produto desafit, não cópia de outro app.
 
-| Tab          | Conteúdo                                                                            |
-| ------------ | ----------------------------------------------------------------------------------- |
-| **Início**   | Hoje + streak + próximo evento agendado                                             |
+| Tab          | Conteúdo                                                                           |
+| ------------ | ---------------------------------------------------------------------------------- |
+| **Início**   | Hoje + streak + próximo evento agendado                                            |
 | **Programa** | Estrutura: módulos, componentes destravados/bloqueados, navegação dia a dia        |
 | **Agenda**   | Lives, calls 1:1, encontros presenciais, deadlines de tarefa, check-ins semanais   |
 | **Chatbot**  | Chatbot nutricional IA (Pacote C) + dúvidas sobre programa via IA                  |
@@ -175,6 +182,7 @@ de chat).
 clientes e academias. Desktop é cenário minoritário (10%, planejamento em casa).
 
 Implica:
+
 - Painel profissional, editor, vibe coding, formulários — tudo funciona bem
   em viewport 375px com touch real
 - Touch targets ≥ 44px em todo lugar (não só PWA aluno)
@@ -191,6 +199,7 @@ Desktop é progressive enhancement, nunca premissa.
 ## 8. Restrições não-negociáveis
 
 ### Arquitetura de produto
+
 - **Multi-tenant white-label desde a primeira tabela.** Toda tabela tem
   `tenant_id`; toda RLS filtra por JWT; todo branding sai de
   `tenants.theme_tokens`.
@@ -203,6 +212,7 @@ Desktop é progressive enhancement, nunca premissa.
   `payload jsonb` validado por Zod.
 
 ### Design system
+
 - **13 paletas OKLCH oficiais.** Adicionar 14ª = pivot.
 - **APCA Lc ≥ 60 body / 75 small text / 45 UI elements.** WCAG 2.2 AA
   como fallback.
@@ -241,6 +251,7 @@ sempre tende ao MAIS rico, desde que mantenha consistência interna
 (não misturar paradigmas — escolhe um padrão moderno e segue ele).
 
 ### Disciplina de código
+
 - **Zero `eslint-disable`** exceto allowlist exata (shadcn vendored,
   third-party-component, fixtures de teste). CI bloqueia.
 - **Vocabulário banido (lint enforce):** `student`, `trainer`, `agency`,
@@ -252,6 +263,7 @@ sempre tende ao MAIS rico, desde que mantenha consistência interna
   (via rewrites + next-intl).
 
 ### Pagamentos
+
 - **Plataforma cobra prof via EFI Bank** (Pix recorrente + cartão 10×).
 - **Aluno paga prof direto** via gateway escolhido — plataforma NÃO
   intermedia na fase agência nem na fase SaaS self-service inicial.
@@ -259,12 +271,14 @@ sempre tende ao MAIS rico, desde que mantenha consistência interna
   futura (quando virar take rate sobre vendas).
 
 ### Comunicação prof ↔ aluno
+
 - **Apenas push + email.** Sem chat 1:1 in-app.
 - `component_kind='message'` é CONTEÚDO DE PROGRAMA (motivacional pré-escrita),
   não conversa.
 - **Chatbot do PWA = IA**, nunca prof.
 
 ### Acesso
+
 - **Aluno e profissional usam login email + senha** (não magic link).
   PWA fitness abre 3-5×/dia — magic link cria fricção inaceitável.
 
@@ -294,10 +308,12 @@ sem logo coexistindo em headers diferentes. Não repetir.
 ## 10. Restrições temporais
 
 ### Proposta comercial
+
 - Validade: **7 dias** a partir da emissão
 - Início dos trabalhos: após confirmação do pagamento inicial
 
 ### Setup (cronograma máximo)
+
 - Pacote A: 30 dias
 - Pacote B: 60 dias
 - Pacote C: 90 dias
@@ -305,6 +321,7 @@ sem logo coexistindo em headers diferentes. Não repetir.
   comunicação aberta semana a semana
 
 ### Mensalidade plataforma
+
 - Pacote A: cobrança inicia no 31º dia após entrega
 - Pacotes B/C: cobrança inicia no 11º mês após assinatura
   (alinhada ao fim do parcelamento 10×)
@@ -313,10 +330,10 @@ sem logo coexistindo em headers diferentes. Não repetir.
 
 ## Histórico de revisões
 
-| Data       | Mudança                                                                                       | Aprovador |
-| ---------- | --------------------------------------------------------------------------------------------- | --------- |
-| 2026-05-17 | Versão inicial — verticais agnósticas; staff mantido; beta removido (não pertence ao desafit) | Leandro   |
-| 2026-05-17 | §8 — adicionada hierarquia de 4 níveis de busca de componentes (shadcn → block → registry comunidade → custom) | Leandro   |
-| 2026-05-17 | §8 — hierarquia de busca generalizada como princípio inviolável aplicado a tudo (padrão oficial → lib madura → comunidade → custom) | Leandro   |
-| 2026-05-17 | §9 nova — Brand assets zero inline; troca de cor/logo/fonte/nome propaga via token único; lint bloqueia "desafit" literal; mesma regra recursiva pra tenant white-label                  | Leandro   |
-| 2026-05-17 | §8 — adicionado critério "premium" (privilegiar recurso moderno atual, subset rico em vez de minimalista) | Leandro   |
+| Data       | Mudança                                                                                                                                                                 | Aprovador |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — verticais agnósticas; staff mantido; beta removido (não pertence ao desafit)                                                                           | Leandro   |
+| 2026-05-17 | §8 — adicionada hierarquia de 4 níveis de busca de componentes (shadcn → block → registry comunidade → custom)                                                          | Leandro   |
+| 2026-05-17 | §8 — hierarquia de busca generalizada como princípio inviolável aplicado a tudo (padrão oficial → lib madura → comunidade → custom)                                     | Leandro   |
+| 2026-05-17 | §9 nova — Brand assets zero inline; troca de cor/logo/fonte/nome propaga via token único; lint bloqueia "desafit" literal; mesma regra recursiva pra tenant white-label | Leandro   |
+| 2026-05-17 | §8 — adicionado critério "premium" (privilegiar recurso moderno atual, subset rico em vez de minimalista)                                                               | Leandro   |

@@ -38,16 +38,19 @@ domains (
 ## Consequences
 
 **Positivo:**
+
 - 1 lookup resolve brand + tenant juntos (zero round-trip extra)
 - Subdomain grátis dia 1 = friction zero pra primeiro tenant
 - Custom domain Pacote B/C é upsell concreto (não vapor)
 - Schema permite N domains por tenant (vanity URLs futuras, locale-per-domain, etc)
 
 **Negativo:**
+
 - Custom domain SSL provisioning Cloudflare/Vercel pode demorar 5-30min (UX precisa "verificando..." state)
 - DNS misconfig do prof = ticket de suporte (mitigação: validação CNAME no UI antes de aceitar)
 
 **Neutro:**
+
 - `lib/brand/getBrandByHost.ts` renomeada pra `lib/route/getRouteByHost.ts` (retorna `{ brand, tenant }`)
 - `proxy.ts` propaga `x-brand-id` + `x-tenant-id` + `x-tenant-slug` headers
 - `BrandProvider` vira `RouteProvider` (expõe `useBrand()` + `useTenant()`)

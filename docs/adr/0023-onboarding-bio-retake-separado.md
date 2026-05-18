@@ -21,15 +21,18 @@ Quando onboarding.bio retomar:
 ## Consequences
 
 **Positivo:**
+
 - Cada produto evolui no próprio ritmo sem coupling
 - Refator/rewrite de um não afeta outro
 - LGPD/billing/auth separados (cada produto tem operador legal próprio)
 
 **Negativo:**
+
 - Duplicação de tooling base (CI, ESLint config, design system base)
 - Mitigação aceita: duplicação tolerada por simplicidade
 
 **Neutro:**
+
 - Onboarding-bio retomada NÃO é prioridade dia 1 (foco desafit M0-M4)
 - `18-transferencia.md` documenta o que migra/não migra
 - ADR-0022 (marca pai) é dependência conceitual

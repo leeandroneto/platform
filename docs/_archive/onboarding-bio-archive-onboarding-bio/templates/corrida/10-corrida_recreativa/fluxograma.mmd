@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · running_phase}
+    Q1 -->|never_ran| B1[🟢 Branch: Primeiro Passo]
+    Q1 -->|returning| B2[🟡 Branch: Recomeço]
+    Q1 -->|casual| B3[🔵 Branch: Estruturar]
+    B1 --> Q2
+    B2 --> Q2
+    B3 --> Q2
+    Q2[Q2 · current_activity] --> Q3[Q3 · main_bottleneck]
+    Q3 --> Q4[Q4 · available_days]
+    Q4 --> Q5[Q5 · has_hr_monitor]
+    Q5 --> Q6{Q6 · health_conditions}
+    Q6 -->|none / respiratory / diabetes| PN
+    Q6 -->|cardiovascular / orthopedic / recent_surgery| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchAlt fill:#e3f2fd,stroke:#1565c0
+    classDef branchWarn fill:#fffde7,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class B1 branch
+    class B2 branchWarn
+    class B3 branchAlt
+    class Basics,PN,Goal,Contact universal

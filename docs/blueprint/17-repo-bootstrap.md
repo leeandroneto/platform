@@ -8,16 +8,16 @@
 
 ## 1. Pré-requisitos
 
-| Requisito | Versão mínima | Verificar |
-|---|---|---|
-| Node.js | 24.0.0 LTS | `node -v` |
-| pnpm | 10.0.0 | `pnpm -v` (install: `corepack enable pnpm`) |
-| Git | 2.40+ | `git --version` |
-| Conta Vercel | — | `vercel --version` (instalar: `pnpm i -g vercel`) |
-| Conta Supabase | — | acessar dashboard supabase.com |
-| Conta GitHub | — | `gh --version` (instalar `gh` CLI) |
-| Claude Code | última estável | `claude --version` |
-| MCPs configurados | shadcn + Supabase + Context7 + Vercel | ver `.claude/mcp.json` |
+| Requisito         | Versão mínima                         | Verificar                                         |
+| ----------------- | ------------------------------------- | ------------------------------------------------- |
+| Node.js           | 24.0.0 LTS                            | `node -v`                                         |
+| pnpm              | 10.0.0                                | `pnpm -v` (install: `corepack enable pnpm`)       |
+| Git               | 2.40+                                 | `git --version`                                   |
+| Conta Vercel      | —                                     | `vercel --version` (instalar: `pnpm i -g vercel`) |
+| Conta Supabase    | —                                     | acessar dashboard supabase.com                    |
+| Conta GitHub      | —                                     | `gh --version` (instalar `gh` CLI)                |
+| Claude Code       | última estável                        | `claude --version`                                |
+| MCPs configurados | shadcn + Supabase + Context7 + Vercel | ver `.claude/mcp.json`                            |
 
 ---
 
@@ -66,35 +66,35 @@ Criar `.env.local` (gitignored por default Next 16).
 
 ### 5.1 Vars que MUDAM (gerar novas no setup)
 
-| Var | Origem | Comando obter |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase novo projeto | dashboard → Project Settings → API → URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase novo | dashboard → API → publishable key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase novo | dashboard → API → service_role (⚠️ secret) |
-| `SUPABASE_PROJECT_REF` | Supabase novo | URL contém `<ref>.supabase.co` |
-| `NEXT_PUBLIC_APP_URL` | `https://desafit.app` (prod) ou `http://localhost:3000` (dev) | manual |
-| `SESSION_SECRET` | gerado | `openssl rand -base64 32` |
-| `VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` | Web Push | `pnpm web-push generate-vapid-keys` |
+| Var                                      | Origem                                                        | Comando obter                              |
+| ---------------------------------------- | ------------------------------------------------------------- | ------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`               | Supabase novo projeto                                         | dashboard → Project Settings → API → URL   |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`   | Supabase novo                                                 | dashboard → API → publishable key          |
+| `SUPABASE_SERVICE_ROLE_KEY`              | Supabase novo                                                 | dashboard → API → service_role (⚠️ secret) |
+| `SUPABASE_PROJECT_REF`                   | Supabase novo                                                 | URL contém `<ref>.supabase.co`             |
+| `NEXT_PUBLIC_APP_URL`                    | `https://desafit.app` (prod) ou `http://localhost:3000` (dev) | manual                                     |
+| `SESSION_SECRET`                         | gerado                                                        | `openssl rand -base64 32`                  |
+| `VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` | Web Push                                                      | `pnpm web-push generate-vapid-keys`        |
 
 ### 5.2 Vars que MUDAM domínio dentro da mesma conta
 
-| Var | Origem |
-|---|---|
+| Var              | Origem                                                 |
+| ---------------- | ------------------------------------------------------ |
 | `RESEND_API_KEY` | mesma conta Resend, novo domain `desafit.app` verified |
-| `SENTRY_DSN` | mesma org Sentry, novo projeto `desafit-app` |
-| `POSTHOG_KEY` | mesma org PostHog, novo projeto `desafit-app` |
+| `SENTRY_DSN`     | mesma org Sentry, novo projeto `desafit-app`           |
+| `POSTHOG_KEY`    | mesma org PostHog, novo projeto `desafit-app`          |
 
 ### 5.3 Vars que REUSAM (compartilhadas entre projetos)
 
-| Var | Origem |
-|---|---|
-| `ANTHROPIC_API_KEY` | via Vercel AI Gateway (preferido) — não direto |
-| `VERCEL_AI_GATEWAY_API_KEY` | Vercel dashboard → AI Gateway |
-| `OPENAI_API_KEY` | (se aplicável — eval LLM judge) |
-| `WHATSAPP_CLOUD_TOKEN` | se mesma conta Meta Business |
-| `EFI_CLIENT_ID` + `EFI_CLIENT_SECRET` | EFI Bank (cobrança plataforma→prof) |
-| `META_PIXEL_ID` + `META_CAPI_TOKEN` | Meta Business |
-| `GA4_MEASUREMENT_ID` | Google Analytics |
+| Var                                   | Origem                                         |
+| ------------------------------------- | ---------------------------------------------- |
+| `ANTHROPIC_API_KEY`                   | via Vercel AI Gateway (preferido) — não direto |
+| `VERCEL_AI_GATEWAY_API_KEY`           | Vercel dashboard → AI Gateway                  |
+| `OPENAI_API_KEY`                      | (se aplicável — eval LLM judge)                |
+| `WHATSAPP_CLOUD_TOKEN`                | se mesma conta Meta Business                   |
+| `EFI_CLIENT_ID` + `EFI_CLIENT_SECRET` | EFI Bank (cobrança plataforma→prof)            |
+| `META_PIXEL_ID` + `META_CAPI_TOKEN`   | Meta Business                                  |
+| `GA4_MEASUREMENT_ID`                  | Google Analytics                               |
 
 ### 5.4 Vars do profissional (NÃO ficam no env do projeto)
 
@@ -113,6 +113,7 @@ Cada prof traz a dele (Asaas/Pagar.me/MP keys) — armazenadas em `platform.tena
 ```
 
 Habilitar:
+
 - Database → Extensions: `pgcrypto`, `pg_stat_statements`, `pg_trgm`
 - Auth → Providers → Email habilitado
 - Auth → Redirect URLs: `http://localhost:3000/auth/callback` + `https://desafit.app/auth/callback`
@@ -235,7 +236,7 @@ jobs:
       - run: pnpm token:audit
       - run: pnpm lint --max-warnings 0 --no-inline-config
       - run: pnpm knip
-      - run: ./scripts/grep-disables.sh  # allowlist check
+      - run: ./scripts/grep-disables.sh # allowlist check
       - run: pnpm test
       - run: pnpm build
       - run: pnpm size
@@ -298,7 +299,7 @@ Criar `.ladle/config.mjs`:
 export default {
   port: 61000,
   stories: 'components/**/*.stories.tsx',
-};
+}
 ```
 
 Adicionar scripts `package.json`:
@@ -319,8 +320,8 @@ Adicionar scripts `package.json`:
 Criar `vitest.config.ts`:
 
 ```ts
-import { defineConfig } from 'vitest/config';
-import path from 'node:path';
+import { defineConfig } from 'vitest/config'
+import path from 'node:path'
 
 export default defineConfig({
   test: {
@@ -331,16 +332,18 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, '.') },
   },
-});
+})
 ```
 
 Smoke test em `tests/smoke.test.ts`:
 
 ```ts
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest'
 describe('bootstrap', () => {
-  it('roda', () => { expect(true).toBe(true); });
-});
+  it('roda', () => {
+    expect(true).toBe(true)
+  })
+})
 ```
 
 ---
@@ -396,6 +399,7 @@ git push origin main
 ```
 
 Validar:
+
 - CI verde no GitHub Actions
 - Vercel preview deploy verde
 - Lighthouse `/login` ≥ 90 perf / 100 A11y
@@ -431,6 +435,6 @@ Detalhes em `12-sprint-plan.md`.
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — bootstrap repo passo-a-passo executável | Leandro |
+| Data       | Mudança                                                  | Aprovador |
+| ---------- | -------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — bootstrap repo passo-a-passo executável | Leandro   |

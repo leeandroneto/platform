@@ -1,0 +1,31 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · riding_style}
+    Q1 -->|xc_competitive| BranchXC[🟢 Branch: XC / Competição]
+    Q1 -->|trail_recreational| BranchTrail[🟢 Branch: Trail / Recreativo]
+    Q1 -->|enduro_mixed| BranchEnduro[🟢 Branch: Enduro / Misto]
+    BranchXC --> Q2
+    BranchTrail --> Q2
+    BranchEnduro --> Q2
+    Q2[Q2 · experience_level] --> Q3[Q3 · main_bottleneck]
+    Q3 --> Q4{Q4 · training_tools}
+    Q4 -->|power_meter| Q5[Q5 · ftp_value]
+    Q4 -->|heart_rate| Q6
+    Q4 -->|strava_only| Q6
+    Q4 -->|nothing| Q6
+    Q5 --> Q6
+    Q6{Q6 · health_conditions}
+    Q6 -->|none| PN
+    Q6 -->|knee_pain / lower_back| PN
+    Q6 -->|recent_fracture / cardiac| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q4,Q6 decision
+    class Safety safety
+    class BranchXC,BranchTrail,BranchEnduro branch
+    class Basics,PN,Goal,Contact universal

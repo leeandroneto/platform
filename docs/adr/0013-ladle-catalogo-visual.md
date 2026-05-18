@@ -16,15 +16,18 @@ Conteúdo dia 0: ~15 componentes shadcn customizados, 13 paletas OKLCH, logo sys
 ## Consequences
 
 **Positivo:**
+
 - Dev server <2s vs Storybook ~15s
 - Stories formato compatível com Storybook (migração trivial se virar limite)
 - Vercel-mantida = bom alinhamento com platform host
 
 **Negativo:**
+
 - Comunidade menor (menos addons, menos exemplos)
 - Risco abandono (Vercel projeto secundário)
 - Mitigação: stories já compatíveis Storybook
 
 **Neutro:**
+
 - Setup em `15-bootstrap-checklist.md §B6 tarefa 29`
 - Estimativa setup + 15 stories: ~3h

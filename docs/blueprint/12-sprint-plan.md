@@ -3,29 +3,31 @@
 > **Status:** accepted · **Versão:** 2026-05-17 · **Supersede:** —
 > Granularidade semanal pra cumprir cronograma `11-roadmap.md` (M0 → M4 = 16 semanas).
 > Absorve pesquisa 07 (planejamento-ordem-execucao) e princípio §39 verbatim.
-> **Regra:** sprint só fecha quando *Gate de avanço* passa — sem "85% done". Pesquisa 07 §11.
+> **Regra:** sprint só fecha quando _Gate de avanço_ passa — sem "85% done". Pesquisa 07 §11.
 
 ---
 
 ## 0. Convenções desta planilha
 
-| Campo | O que é |
-|---|---|
-| **Goal** | 1 frase. Outcome (não output). Sem feature laundry list |
-| **Deliverables** | 1-3 entregas concretas, demonstráveis end-to-end |
-| **Dependências** | Sprint X que precisa estar fechado antes |
-| **DoD** | Definition of Done — checklist binário, sem cinza |
-| **Quem domina** | `fundador manual` / `Claude Code vibe coding` / `híbrido` |
-| **Gate** | Critério único pra liberar próximo sprint. Sem isso, não avança |
+| Campo            | O que é                                                         |
+| ---------------- | --------------------------------------------------------------- |
+| **Goal**         | 1 frase. Outcome (não output). Sem feature laundry list         |
+| **Deliverables** | 1-3 entregas concretas, demonstráveis end-to-end                |
+| **Dependências** | Sprint X que precisa estar fechado antes                        |
+| **DoD**          | Definition of Done — checklist binário, sem cinza               |
+| **Quem domina**  | `fundador manual` / `Claude Code vibe coding` / `híbrido`       |
+| **Gate**         | Critério único pra liberar próximo sprint. Sem isso, não avança |
 
 **Ordem entre camadas (master plan §16.2 + §17.10 + §29.4):**
+
 1. **Schema** antes de Server Action — sem tabela+RLS, action não tem onde escrever
 2. **Server Action** antes de UI — sem `{ ok, data }`, componente não tem o que renderizar
 3. **Edge Function rodada local** antes de prompt em produção — pesquisa 07 §6: nunca aceitar 1ª saída da IA, esperar 3 iterações
-4. **Pipeline UI dia 0 (~70h)** antes de qualquer feature — _CONFLITOS #16
-5. **Funil agência (M1)** antes de PWA aluno (M2+) — _CONFLITOS #6 + pesquisa 07 §1
+4. **Pipeline UI dia 0 (~70h)** antes de qualquer feature — \_CONFLITOS #16
+5. **Funil agência (M1)** antes de PWA aluno (M2+) — \_CONFLITOS #6 + pesquisa 07 §1
 
 **Princípio §39 explícito (memória `project_desafit_principio_39_revisto.md`):**
+
 - Ferramenta entra **junto com 1º cliente** que precisar dela
 - Manual só pro 1º se cronograma apertar — sprint imediato pós-1º cliente entrega ferramenta antes do 2º
 - Adiamentos pra 3º+ cliente registram ADR
@@ -81,7 +83,7 @@
   1. Landing institucional desafit + página `/agencia` (proposta comercial) — copy via `messages/pt-BR.json` (zero hardcoded — `03-naming-vocab.md §6`)
   2. Schema `platform.leads + capture_forms + capture_submissions` + Server Action `submitCaptureForm` retornando `{ ok, data: { lead_id } }`
   3. Form multi-step RHF + Zod 4 (standard-schema resolver), mobile-first absoluto 375px
-- **Dependências:** Sprint 2 (precisa do pipeline UI dia 0 — _CONFLITOS #16)
+- **Dependências:** Sprint 2 (precisa do pipeline UI dia 0 — \_CONFLITOS #16)
 - **DoD:**
   - [ ] Form preenchido cria `lead` row + `capture_submission` row
   - [ ] Server Action retorna `{ ok, data }` ou `{ ok: false, error }` (pattern `lib/contracts/result.ts`)
@@ -306,19 +308,20 @@
 
 ## 13. Riscos por sprint (pesquisa 07 §5 — pitfalls)
 
-| Sprint | Risco principal | Mitigação |
-|---|---|---|
-| 1-2 | Gold-plating schema (54 tabelas dia 1) | Sprint 1 limita ~22 core dia 0; expansão JIT (§39) |
-| 3-4 | "Estou achando lindo" sem cliente real | 1 ligação/semana com prospect mesmo sem demo (pesquisa 07 §7) |
-| 5-8 | Frankenstein customization 1º cliente | Antes de aceitar customização: "vira feature do produto?" Sem resposta clara → recusa + sobe preço |
-| 9-12 | Permanência modo agência | Gatilhos escritos `11-roadmap.md §7.1` — sem critério, default é ficar |
-| 13-16 | Burnout silencioso solo (54% rate) | Cap 45h/sem + peer group MicroConf/Indie Hackers + 1 dia off-screen |
+| Sprint | Risco principal                        | Mitigação                                                                                          |
+| ------ | -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 1-2    | Gold-plating schema (54 tabelas dia 1) | Sprint 1 limita ~22 core dia 0; expansão JIT (§39)                                                 |
+| 3-4    | "Estou achando lindo" sem cliente real | 1 ligação/semana com prospect mesmo sem demo (pesquisa 07 §7)                                      |
+| 5-8    | Frankenstein customization 1º cliente  | Antes de aceitar customização: "vira feature do produto?" Sem resposta clara → recusa + sobe preço |
+| 9-12   | Permanência modo agência               | Gatilhos escritos `11-roadmap.md §7.1` — sem critério, default é ficar                             |
+| 13-16  | Burnout silencioso solo (54% rate)     | Cap 45h/sem + peer group MicroConf/Indie Hackers + 1 dia off-screen                                |
 
 ---
 
 ## 14. Checkpoint visual único — fim do Sprint 16
 
 Sem visual checkpoints intermediários durante refatoração — memória `feedback_skip_visual_checkpoints.md`. **Checkpoint visual único** rodado no fim do Sprint 16 (ou antes se M5+ atrasar):
+
 - Lighthouse 5 rotas (`/login`, `/dashboard/leads`, `/dashboard/capture-forms`, `/<slug>.desafit.app/`, `/<slug>.desafit.app/<programa-slug>`)
 - iPhone 14 portrait teste real (não simulator) — todos 16 sprints validados visualmente uma vez
 
@@ -326,14 +329,14 @@ Sem visual checkpoints intermediários durante refatoração — memória `feedb
 
 ## 15. Cadência semanal por sprint (pesquisa 07 §7)
 
-| Dia | Manhã (3-4h foco) | Tarde (3-4h baixo foco) |
-|---|---|---|
-| Seg | Planning sprint (30min) → 1 outcome | Outreach: 10 mensagens cold/morna |
-| Ter | Build Claude Code | Build + auto-review 1h sem IA antes commit |
-| Qua | Build | **Ligação com 1 cliente/prospect** (mesmo 20min) |
-| Qui | Build | Conteúdo: 1 post LinkedIn ou comunidade BR |
-| Sex | Retro sprint (30min) + **Demo E2E própria** | Admin: financeiro, contratos, NF, suporte |
-| Sáb-Dom | Off | Off (30min preview semana só dom à noite) |
+| Dia     | Manhã (3-4h foco)                           | Tarde (3-4h baixo foco)                          |
+| ------- | ------------------------------------------- | ------------------------------------------------ |
+| Seg     | Planning sprint (30min) → 1 outcome         | Outreach: 10 mensagens cold/morna                |
+| Ter     | Build Claude Code                           | Build + auto-review 1h sem IA antes commit       |
+| Qua     | Build                                       | **Ligação com 1 cliente/prospect** (mesmo 20min) |
+| Qui     | Build                                       | Conteúdo: 1 post LinkedIn ou comunidade BR       |
+| Sex     | Retro sprint (30min) + **Demo E2E própria** | Admin: financeiro, contratos, NF, suporte        |
+| Sáb-Dom | Off                                         | Off (30min preview semana só dom à noite)        |
 
 Cap 40-45h úteis/semana. Burnout = preditor #1 de failure solo.
 
@@ -354,6 +357,6 @@ Cap 40-45h úteis/semana. Burnout = preditor #1 de failure solo.
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — 16 sprints absorvendo pesquisa 07 + princípio §39 + dependências entre camadas explícitas | Leandro |
+| Data       | Mudança                                                                                                    | Aprovador |
+| ---------- | ---------------------------------------------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — 16 sprints absorvendo pesquisa 07 + princípio §39 + dependências entre camadas explícitas | Leandro   |

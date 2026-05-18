@@ -12,6 +12,7 @@ Master plan dizia "mobile-first PWA aluno, painel prof preferencialmente desktop
 Tudo viável em mobile 375px touch (iPhone 14 portrait padrão). Aceitar até 3 features como "ok mobile, melhor desktop" (progressive enhancement) sem bloquear MVP.
 
 Detalhes execução (pesquisa 15):
+
 - Toggle Edit/Preview canto superior direito (longe do polegar)
 - vaul `snapPoints={[0.5, 0.92]}` + `repositionInputs` + `modal` + `shouldScaleBackground={false}`
 - dnd-kit `TouchSensor {delay:200, tolerance:5}` + drag handle 44×44 + `-webkit-touch-callout: none`
@@ -24,14 +25,17 @@ Detalhes execução (pesquisa 15):
 ## Consequences
 
 **Positivo:**
+
 - Match com realidade do ICP (prof responde WhatsApp do celular entre alunos)
 - Desktop progressive enhancement = ganho grátis em pixels maiores
 - Diferencial vs concorrentes BR (Pacto/TreinoConectado fracos em mobile prof)
 
 **Negativo:**
+
 - Custo dia 0 maior (editor mobile-first 114-162h estimadas — pesquisa 11/15)
 - Algumas features desktop-natural (data table densa) precisam reformulação mobile
 
 **Neutro:**
+
 - Sprint plan inclui "testar iPhone 14 portrait" em todo Gate de sprint
 - Decisão `_CONFLITOS #11` (editor híbrido assimétrico) é consequência direta

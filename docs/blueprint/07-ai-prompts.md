@@ -8,16 +8,16 @@
 
 ## 1. Stack canônico (dia 1)
 
-| Camada | Decisão | Razão |
-|---|---|---|
-| Provider | **Vercel AI Gateway** | Zero markup confirmado em doc oficial; failover Anthropic→Bedrock→Vertex; observability nativa (cost/latency/tokens) |
-| SDK | `ai` (Vercel AI SDK v6) + `@ai-sdk/anthropic` | Padrão Vercel; `structuredOutputMode: "outputFormat"` usa JSON Outputs Anthropic GA |
-| Modelos | **Sonnet 4.6** (`anthropic/claude-sonnet-4.6`) + **Haiku 4.5** (`anthropic/claude-haiku-4.5`) | Pinados. Não trocar sem ADR |
-| Saída estruturada | `output_config.format` (JSON Outputs GA) | 0 retries por JSON inválido, schema constrained no decode |
-| Prompt caching | `cacheControl: { type: "ephemeral", ttl: "1h" }` | 1h em chatbot/componentes; 5min em outros |
-| Batch (pipeline) | Batches API -50% | "Gerar programa completo (1-2min)" — async, NÃO ZDR-eligible |
-| Extended thinking | Adaptive (Sonnet) / manual (Haiku) | Só ESTRUTURA. Resto zero-shot |
-| Eval | Promptfoo CI + Vercel AI Gateway dashboard + Sentry | Promptfoo entra quando 1º prompt customizado for criado |
+| Camada            | Decisão                                                                                       | Razão                                                                                                                |
+| ----------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Provider          | **Vercel AI Gateway**                                                                         | Zero markup confirmado em doc oficial; failover Anthropic→Bedrock→Vertex; observability nativa (cost/latency/tokens) |
+| SDK               | `ai` (Vercel AI SDK v6) + `@ai-sdk/anthropic`                                                 | Padrão Vercel; `structuredOutputMode: "outputFormat"` usa JSON Outputs Anthropic GA                                  |
+| Modelos           | **Sonnet 4.6** (`anthropic/claude-sonnet-4.6`) + **Haiku 4.5** (`anthropic/claude-haiku-4.5`) | Pinados. Não trocar sem ADR                                                                                          |
+| Saída estruturada | `output_config.format` (JSON Outputs GA)                                                      | 0 retries por JSON inválido, schema constrained no decode                                                            |
+| Prompt caching    | `cacheControl: { type: "ephemeral", ttl: "1h" }`                                              | 1h em chatbot/componentes; 5min em outros                                                                            |
+| Batch (pipeline)  | Batches API -50%                                                                              | "Gerar programa completo (1-2min)" — async, NÃO ZDR-eligible                                                         |
+| Extended thinking | Adaptive (Sonnet) / manual (Haiku)                                                            | Só ESTRUTURA. Resto zero-shot                                                                                        |
+| Eval              | Promptfoo CI + Vercel AI Gateway dashboard + Sentry                                           | Promptfoo entra quando 1º prompt customizado for criado                                                              |
 
 Decisão fechada: master plan §13 + pesquisa 03.
 
@@ -59,15 +59,15 @@ Estágio 4: COERÊNCIA
 
 ## 3. Modelos por estágio (Research B 2026-05)
 
-| Estágio | Modelo | Modo | Thinking | Razão |
-|---|---|---|---|---|
-| Identidade | **Sonnet 4.6** | sync | zero-shot | Estética/marca; vale $0.02-0.05 a mais pra acertar |
-| Estrutura | **Sonnet 4.6** | sync | **adaptive medium** | Pedagogia única do programa; vale CoT explícito |
-| Componentes (10×) | **Haiku 4.5** | batch -50% | zero-shot | Volume alto; criatividade local + schema duro |
-| Coerência | **Haiku 4.5** | batch -50% | manual budget 2-4k opcional | Auditoria estruturada |
-| Chatbot nutricional (runtime Pacote C) | **Haiku 4.5** | sync | zero-shot | $0.005/msg com cache TACO+TBCA 90% hit |
-| Pre-screen (input sanitization) | **Haiku 4.5** | sync | zero-shot | $0.0002/req |
-| LLM judge (coerência) | **Haiku 4.5** | sync | zero-shot | $0.001/caso |
+| Estágio                                | Modelo         | Modo       | Thinking                    | Razão                                              |
+| -------------------------------------- | -------------- | ---------- | --------------------------- | -------------------------------------------------- |
+| Identidade                             | **Sonnet 4.6** | sync       | zero-shot                   | Estética/marca; vale $0.02-0.05 a mais pra acertar |
+| Estrutura                              | **Sonnet 4.6** | sync       | **adaptive medium**         | Pedagogia única do programa; vale CoT explícito    |
+| Componentes (10×)                      | **Haiku 4.5**  | batch -50% | zero-shot                   | Volume alto; criatividade local + schema duro      |
+| Coerência                              | **Haiku 4.5**  | batch -50% | manual budget 2-4k opcional | Auditoria estruturada                              |
+| Chatbot nutricional (runtime Pacote C) | **Haiku 4.5**  | sync       | zero-shot                   | $0.005/msg com cache TACO+TBCA 90% hit             |
+| Pre-screen (input sanitization)        | **Haiku 4.5**  | sync       | zero-shot                   | $0.0002/req                                        |
+| LLM judge (coerência)                  | **Haiku 4.5**  | sync       | zero-shot                   | $0.001/caso                                        |
 
 Provider único: Vercel AI Gateway. Failover Anthropic→Bedrock→Vertex. Anthropic direto fallback emergência (`ANTHROPIC_API_KEY` env opcional).
 
@@ -81,9 +81,9 @@ Provider único: Vercel AI Gateway. Failover Anthropic→Bedrock→Vertex. Anthr
 
 **Solução: 2 schemas paralelos por componente:**
 
-| Schema | Onde | Constraints |
-|---|---|---|
-| `<kind>.draft.schema.ts` | Bordas LLM (request) | Sem `.min/.max/.url/.regex` — só tipos e shape |
+| Schema                    | Onde                     | Constraints                                     |
+| ------------------------- | ------------------------ | ----------------------------------------------- |
+| `<kind>.draft.schema.ts`  | Bordas LLM (request)     | Sem `.min/.max/.url/.regex` — só tipos e shape  |
 | `<kind>.strict.schema.ts` | Banco/UI (validação pós) | Estende draft + adiciona constraints de negócio |
 
 ```
@@ -94,6 +94,7 @@ lib/contracts/components/workout/
 ```
 
 **Borda LLM → banco:**
+
 ```
 parsed = WorkoutDraftSchema.parse(raw)    // shape ok (constrained decoding garante)
 return WorkoutStrictSchema.parse(parsed)  // constraints de negócio
@@ -109,21 +110,22 @@ Regra: todo `payload jsonb` gerado por IA tem par draft+strict. Strict é fonte 
 
 `cacheControl: { type: 'ephemeral', ttl: '1h' | '5min' }`. Apenas ephemeral existe — não há cache persistente.
 
-| Pricing multiplier | Valor |
-|---|---|
-| write 5min | 1.25× input |
-| write 1h | 2× input |
-| **read (hit)** | **0.1× input (90% off)** |
+| Pricing multiplier | Valor                    |
+| ------------------ | ------------------------ |
+| write 5min         | 1.25× input              |
+| write 1h           | 2× input                 |
+| **read (hit)**     | **0.1× input (90% off)** |
 
-| Estágio | TTL | Razão |
-|---|---|---|
-| Pipeline COMPONENTES | **1h** | Prof gera 10+ componentes em sequência em 30-50min |
-| Chatbot Pacote C | **1h** | Cliente conversa 5-15 msgs em uma sessão |
-| Identidade / Estrutura / Coerência | **5min** | Uso pontual |
+| Estágio                            | TTL      | Razão                                              |
+| ---------------------------------- | -------- | -------------------------------------------------- |
+| Pipeline COMPONENTES               | **1h**   | Prof gera 10+ componentes em sequência em 30-50min |
+| Chatbot Pacote C                   | **1h**   | Cliente conversa 5-15 msgs em uma sessão           |
+| Identidade / Estrutura / Coerência | **5min** | Uso pontual                                        |
 
 **Hierarquia de invalidação:** `tools → system → messages`. Mudar `tools` invalida tudo. Mudar `thinking.budget_tokens` invalida só messages.
 
 **Estrutura ótima:**
+
 ```
 [ tools: definitions ]                ← raramente muda
 [ system:
@@ -142,12 +144,12 @@ Mínimo cacheável: 4.096 tokens para Opus + Haiku 4.5; 1.024 para Sonnet 4.5/4.
 
 ## 6. Extended thinking — só ESTRUTURA
 
-| Estágio | Thinking? | Por quê |
-|---|---|---|
-| Identidade | ❌ zero-shot | Criativa estética; CoT não melhora |
-| Estrutura | ✅ adaptive medium budget 4-8k | Única decisão arquitetural; vale $0.075 extra |
-| Componentes | ❌ zero-shot | Volume alto; CoT mata margem |
-| Coerência | opcional manual budget 2-4k | Auditoria se beneficia de raciocínio explícito |
+| Estágio     | Thinking?                      | Por quê                                        |
+| ----------- | ------------------------------ | ---------------------------------------------- |
+| Identidade  | ❌ zero-shot                   | Criativa estética; CoT não melhora             |
+| Estrutura   | ✅ adaptive medium budget 4-8k | Única decisão arquitetural; vale $0.075 extra  |
+| Componentes | ❌ zero-shot                   | Volume alto; CoT mata margem                   |
+| Coerência   | opcional manual budget 2-4k    | Auditoria se beneficia de raciocínio explícito |
 
 **Sonnet 4.6** usa adaptive thinking (`thinking: { type: "adaptive" }` + `effort: "medium"`) — manual deprecated nesses modelos.
 
@@ -250,6 +252,7 @@ CREATE UNIQUE INDEX ai_prompt_active_unique ON public.ai_prompt_versions (prompt
 ```
 
 **Lookup pattern (cache 60s via `unstable_cache`):**
+
 ```
 loadPrompt(key) →
   unstable_cache(
@@ -306,6 +309,7 @@ CREATE POLICY ai_invocations_tenant_select ON public.ai_invocations
 **Volume baixo MVP:** persistir 100% dos invocations. Acima de 1M/mês, sampling 10% + materialized view diária.
 
 **`public.ai_usage_monthly` agregado pra `assertBudget`:**
+
 ```sql
 CREATE TABLE public.ai_usage_monthly (
   tenant_id uuid NOT NULL REFERENCES public.tenants(id),
@@ -345,15 +349,15 @@ Vercel AI Gateway não tem budget granular por tenant — implementar na app. `B
 
 Mínimo necessário pro chatbot Pacote C funcionar:
 
-| Helper | Onde | Função |
-|---|---|---|
-| `assertBudget(tenantId, estCents)` | `lib/ai/budget.ts` | Throw `BudgetExceededError` se cap excedido |
-| `preScreen(input)` | `lib/ai/sanitize.ts` | Pattern check + length cap |
-| `safeWrap(input, tag)` | `lib/ai/sanitize.ts` | XML wrap defensivo |
-| `maskAluno(name)` / `rehydrate(text, map)` | `lib/ai/pii.ts` | PII placeholder |
-| `loadPrompt(key)` | `lib/ai/prompts.ts` | Next 16 `'use cache'` + cacheLife('minutes') |
-| `logInvocation({...})` | `lib/ai/audit.ts` | Insert em `ai_invocations` com hashes |
-| `generateChatResponse(args)` | `lib/ai/chat.ts` | Orquestrador final |
+| Helper                                     | Onde                 | Função                                       |
+| ------------------------------------------ | -------------------- | -------------------------------------------- |
+| `assertBudget(tenantId, estCents)`         | `lib/ai/budget.ts`   | Throw `BudgetExceededError` se cap excedido  |
+| `preScreen(input)`                         | `lib/ai/sanitize.ts` | Pattern check + length cap                   |
+| `safeWrap(input, tag)`                     | `lib/ai/sanitize.ts` | XML wrap defensivo                           |
+| `maskAluno(name)` / `rehydrate(text, map)` | `lib/ai/pii.ts`      | PII placeholder                              |
+| `loadPrompt(key)`                          | `lib/ai/prompts.ts`  | Next 16 `'use cache'` + cacheLife('minutes') |
+| `logInvocation({...})`                     | `lib/ai/audit.ts`    | Insert em `ai_invocations` com hashes        |
+| `generateChatResponse(args)`               | `lib/ai/chat.ts`     | Orquestrador final                           |
 
 `generateComponent` (pipeline) só entra quando UI pipeline for construída (§39).
 
@@ -379,7 +383,7 @@ Picker no painel: SQL puro filtra (muscle/equipment/level + ILIKE no nome / `pg_
 
 Chatbot nutricional Pacote C: TBCA+TACO inteiro no `system` prompt cacheado 1h (~80k tokens, cabe em 200k contexto Haiku 4.5). Cache hit 90%+ na sessão = $0.005/conversa.
 
-**Crédito legal obrigatório** no rodapé do chatbot: *"Dados nutricionais: TBCA (USP/FORC) e TACO (NEPA/UNICAMP)."*
+**Crédito legal obrigatório** no rodapé do chatbot: _"Dados nutricionais: TBCA (USP/FORC) e TACO (NEPA/UNICAMP)."_
 
 **`pgvector` NÃO instalado dia 1.** Gatilho pra ativar: ≥100 conversas/dia agregadas OU custo IA total > R$200/mês OU 1º tenant pedir busca semântica explícita.
 
@@ -388,6 +392,7 @@ Chatbot nutricional Pacote C: TBCA+TACO inteiro no `system` prompt cacheado 1h (
 ## 14. Batches API (-50% — pipeline futuro)
 
 Quando pipeline UI entrar, oferecer 2 modos no editor:
+
 - **"Gerar agora"** (sync, 100% custo) — componente isolado
 - **"Gerar programa completo (1-2min)"** (batch -50%) — fluxo principal
 
@@ -400,6 +405,7 @@ Limites: 100k requests ou 256MB por batch. `max_tokens: 0` (pre-warming) não fu
 ## 15. Eval Promptfoo (dia 1 quando 1º prompt customizado)
 
 Golden set ~40 casos por estágio:
+
 - 5 "happy path" + 3 edge (input ambíguo, contradição, idioma misturado) + 2 adversarial (prompt injection, escopo fora)
 
 **3 camadas de métrica:**
@@ -417,12 +423,12 @@ CI: `evals/promptfooconfig.yaml` rodado em PR que toca `evals/**`, `db/schemas/*
 
 ## 16. Observabilidade em produção
 
-| Stack | Pra quê |
-|---|---|
+| Stack                           | Pra quê                                                            |
+| ------------------------------- | ------------------------------------------------------------------ |
 | **Vercel AI Gateway dashboard** | Custo, latência, tokens, error rate por modelo. ✅ essencial dia 1 |
-| **Sentry (`@sentry/nextjs`)** | Erros runtime, traces. Sentry AI ainda em beta |
-| **Tabela `ai_invocations`** | Auditoria + LGPD via hashes |
-| Helicone / Braintrust | Overengineering dia 1 (duplica Gateway) — só após validar tração |
+| **Sentry (`@sentry/nextjs`)**   | Erros runtime, traces. Sentry AI ainda em beta                     |
+| **Tabela `ai_invocations`**     | Auditoria + LGPD via hashes                                        |
+| Helicone / Braintrust           | Overengineering dia 1 (duplica Gateway) — só após validar tração   |
 
 **Drift alerts:** dia 1 basta "custo médio por tenant +50% em 7d" (Gateway dashboard). Drift semântico (qualidade caindo) é overengineering antes de 10+ tenants pagantes.
 
@@ -430,18 +436,18 @@ CI: `evals/promptfooconfig.yaml` rodado em PR que toca `evals/**`, `db/schemas/*
 
 ## 17. Anti-patterns proibidos
 
-| Anti-pattern | Razão |
-|---|---|
-| Prompt inline no código TS | Drift garantido; vai pra `public.ai_prompts` versionado |
-| `service_role` na construção do prompt | Vaza dados cross-tenant; sempre cliente RLS-enforced |
-| Texto bruto em `ai_invocations` | Viola LGPD; hash sha256 obrigatório |
-| Nome do aluno bruto no prompt | PII; `maskAluno` + `rehydrate` no frontend |
-| Schema único Zod pro LLM | Anthropic rejeita keywords; sempre 2-schema (draft + strict) |
-| `Supabase.ai.Session` built-in | EN-only (`gte-small`); use Vercel AI Gateway |
-| `pgvector` dia 1 sem volume | YAGNI; gatilho ≥100 conv/dia OU custo > R$200/mês |
-| Extended thinking em todos estágios | Custo 10× sem ganho marginal; só ESTRUTURA |
-| Cache TTL 5min em chatbot | Quebra reuso na sessão; 1h obrigatório |
-| Batches API com PII sem mask | NÃO ZDR-eligible (até 29 dias retention) |
+| Anti-pattern                           | Razão                                                        |
+| -------------------------------------- | ------------------------------------------------------------ |
+| Prompt inline no código TS             | Drift garantido; vai pra `public.ai_prompts` versionado      |
+| `service_role` na construção do prompt | Vaza dados cross-tenant; sempre cliente RLS-enforced         |
+| Texto bruto em `ai_invocations`        | Viola LGPD; hash sha256 obrigatório                          |
+| Nome do aluno bruto no prompt          | PII; `maskAluno` + `rehydrate` no frontend                   |
+| Schema único Zod pro LLM               | Anthropic rejeita keywords; sempre 2-schema (draft + strict) |
+| `Supabase.ai.Session` built-in         | EN-only (`gte-small`); use Vercel AI Gateway                 |
+| `pgvector` dia 1 sem volume            | YAGNI; gatilho ≥100 conv/dia OU custo > R$200/mês            |
+| Extended thinking em todos estágios    | Custo 10× sem ganho marginal; só ESTRUTURA                   |
+| Cache TTL 5min em chatbot              | Quebra reuso na sessão; 1h obrigatório                       |
+| Batches API com PII sem mask           | NÃO ZDR-eligible (até 29 dias retention)                     |
 
 ---
 
@@ -456,6 +462,6 @@ CI: `evals/promptfooconfig.yaml` rodado em PR que toca `evals/**`, `db/schemas/*
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — Sonnet+Haiku pinados, JSON Outputs GA, 2-schema, caching 1h, guardrails, hashes LGPD | Leandro |
+| Data       | Mudança                                                                                               | Aprovador |
+| ---------- | ----------------------------------------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — Sonnet+Haiku pinados, JSON Outputs GA, 2-schema, caching 1h, guardrails, hashes LGPD | Leandro   |

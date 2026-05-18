@@ -1,0 +1,33 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · athlete_stage}
+    Q1 -->|first_ironman| B1[🟢 Branch: Primeiro IM]
+    Q1 -->|experienced| B2[🔵 Branch: Experiente]
+    Q1 -->|comeback| B3[🟡 Branch: Retorno]
+    B1 --> Q2
+    B2 --> Q2
+    B3 --> Q2
+    Q2[Q2 · main_bottleneck] --> Q3[Q3 · weekly_training_hours]
+    Q3 --> Q4{Q4 · uses_metrics}
+    Q4 -->|yes_full| Q5[Q5 · metric_data FTP]
+    Q4 -->|yes_basic| Q6
+    Q4 -->|no| Q6
+    Q5 --> Q6
+    Q6{Q6 · health_screening}
+    Q6 -->|none| PN
+    Q6 -->|cardiac / chest_pain / diabetes / hypertension| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchBlue fill:#e3f2fd,stroke:#1565c0
+    classDef branchYellow fill:#fffde7,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q4,Q6 decision
+    class Safety safety
+    class B1 branch
+    class B2 branchBlue
+    class B3 branchYellow
+    class Basics,PN,Goal,Contact universal

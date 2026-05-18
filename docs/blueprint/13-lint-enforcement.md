@@ -24,9 +24,9 @@ Razão histórica: pesquisa 09 + análise do `eslint.config.mjs` legacy mostrou 
 
 ### 2.1 Vocab banido (1 regra, 16 termos)
 
-| Selector | Severity | Trigger ❌ | OK ✅ |
-|---|---|---|---|
-| `id-denylist` + `no-restricted-syntax` Identifier match | error | `const studentId = …` | `const clientId = …` |
+| Selector                                                | Severity | Trigger ❌            | OK ✅                |
+| ------------------------------------------------------- | -------- | --------------------- | -------------------- |
+| `id-denylist` + `no-restricted-syntax` Identifier match | error    | `const studentId = …` | `const clientId = …` |
 
 **Termos banidos** (releia `.claude/rules/naming.md` + memória `feedback_no_legacy_vocabulary`):
 
@@ -36,51 +36,51 @@ Cobre Identifier + Property + Literal string match em paths `app/`, `components/
 
 ### 2.2 i18n hardcoded (14 padrões — D-G66)
 
-| # | Selector | Trigger ❌ | OK ✅ |
-|---|---|---|---|
-| 1 | `react/jsx-no-literals` | `<Button>Salvar</Button>` | `<Button>{t('save')}</Button>` |
-| 2 | JSXAttribute name=/aria-label/ value Literal | `aria-label="Fechar"` | `aria-label={t('close')}` |
-| 3 | JSXAttribute name=/placeholder/ value Literal | `placeholder="Email"` | `placeholder={t('email')}` |
-| 4 | JSXAttribute name=/title/ value Literal | `title="Editar"` | `title={t('edit')}` |
-| 5 | JSXAttribute name=/alt/ value Literal | `alt="Logo"` | `alt={t('brand.logo')}` |
-| 6 | CallExpression toast/sonner com Literal | `toast.success('Salvo')` | `toast.success(t('saved'))` |
-| 7 | NewExpression `Error` com Literal | `throw new Error('Falhou')` | `throw new AppError('save.failed')` |
-| 8 | VariableDeclarator UI string const Literal | `const TITLE = 'Programas'` | `const TITLE = t('programs.title')` |
-| 9 | Metadata export `title`/`description` Literal | `title: 'desafit'` | `title: t('seo.home.title')` |
-| 10 | `fail()` call com Literal | `fail('not_found')` | `fail(AppError.notFound)` |
-| 11 | Zod `.message(Literal)` | `.message('obrigatório')` | `.message(t('field.required'))` |
-| 12 | React Email body Literal text | `<Text>Olá</Text>` (template) | `<Text>{t('email.hi')}</Text>` |
-| 13 | Web Push payload `body` Literal | `body: 'Hora do treino'` | `body: t('push.reminder')` |
-| 14 | Error map object Literal value | `{ not_found: 'Não achei' }` | `{ not_found: t('err.404') }` |
+| #   | Selector                                      | Trigger ❌                    | OK ✅                               |
+| --- | --------------------------------------------- | ----------------------------- | ----------------------------------- |
+| 1   | `react/jsx-no-literals`                       | `<Button>Salvar</Button>`     | `<Button>{t('save')}</Button>`      |
+| 2   | JSXAttribute name=/aria-label/ value Literal  | `aria-label="Fechar"`         | `aria-label={t('close')}`           |
+| 3   | JSXAttribute name=/placeholder/ value Literal | `placeholder="Email"`         | `placeholder={t('email')}`          |
+| 4   | JSXAttribute name=/title/ value Literal       | `title="Editar"`              | `title={t('edit')}`                 |
+| 5   | JSXAttribute name=/alt/ value Literal         | `alt="Logo"`                  | `alt={t('brand.logo')}`             |
+| 6   | CallExpression toast/sonner com Literal       | `toast.success('Salvo')`      | `toast.success(t('saved'))`         |
+| 7   | NewExpression `Error` com Literal             | `throw new Error('Falhou')`   | `throw new AppError('save.failed')` |
+| 8   | VariableDeclarator UI string const Literal    | `const TITLE = 'Programas'`   | `const TITLE = t('programs.title')` |
+| 9   | Metadata export `title`/`description` Literal | `title: 'desafit'`            | `title: t('seo.home.title')`        |
+| 10  | `fail()` call com Literal                     | `fail('not_found')`           | `fail(AppError.notFound)`           |
+| 11  | Zod `.message(Literal)`                       | `.message('obrigatório')`     | `.message(t('field.required'))`     |
+| 12  | React Email body Literal text                 | `<Text>Olá</Text>` (template) | `<Text>{t('email.hi')}</Text>`      |
+| 13  | Web Push payload `body` Literal               | `body: 'Hora do treino'`      | `body: t('push.reminder')`          |
+| 14  | Error map object Literal value                | `{ not_found: 'Não achei' }`  | `{ not_found: t('err.404') }`       |
 
 **Plugin auxiliar:** `eslint-plugin-i18next` complementa cobertura.
 
 ### 2.3 Token bypass (4 padrões)
 
-| # | Selector | Trigger ❌ | OK ✅ |
-|---|---|---|---|
-| 15 | Literal regex `/^#[0-9a-f]{3,8}$/i` | `color: '#fff'` | `color: 'oklch(var(--surface))'` |
-| 16 | Literal regex `/^rgba?\(/` | `background: 'rgb(255,0,0)'` | usar token primary |
-| 17 | MemberExpression CSS var em JS | `style={{ color: 'var(--accent)' }}` | className token shadcn |
-| 18 | JSXAttribute className Tailwind arbitrary | `className="text-[#fff]"` | `className="text-surface"` |
+| #   | Selector                                  | Trigger ❌                           | OK ✅                            |
+| --- | ----------------------------------------- | ------------------------------------ | -------------------------------- |
+| 15  | Literal regex `/^#[0-9a-f]{3,8}$/i`       | `color: '#fff'`                      | `color: 'oklch(var(--surface))'` |
+| 16  | Literal regex `/^rgba?\(/`                | `background: 'rgb(255,0,0)'`         | usar token primary               |
+| 17  | MemberExpression CSS var em JS            | `style={{ color: 'var(--accent)' }}` | className token shadcn           |
+| 18  | JSXAttribute className Tailwind arbitrary | `className="text-[#fff]"`            | `className="text-surface"`       |
 
 **Allowlist:** apenas `app/globals.css @theme` declara hex/rgba dentro do `@theme` token block. Resto do codebase usa token semantic.
 
 ### 2.4 Estrutura código (4 regras)
 
-| # | Selector | Limite | Trigger ❌ | OK ✅ |
-|---|---|---|---|---|
-| 19 | `max-lines` file | 300 | arquivo 350 linhas | quebrar em 2 files |
-| 20 | `max-lines-per-function` | 60 | função 80 linhas | extrair sub-funções |
-| 21 | `complexity` | 12 | função com 15 branches | refatorar early-return |
-| 22 | `max-params` | 4 | `function(a,b,c,d,e)` | objeto `{a,b,c,d,e}` |
+| #   | Selector                 | Limite | Trigger ❌             | OK ✅                  |
+| --- | ------------------------ | ------ | ---------------------- | ---------------------- |
+| 19  | `max-lines` file         | 300    | arquivo 350 linhas     | quebrar em 2 files     |
+| 20  | `max-lines-per-function` | 60     | função 80 linhas       | extrair sub-funções    |
+| 21  | `complexity`             | 12     | função com 15 branches | refatorar early-return |
+| 22  | `max-params`             | 4      | `function(a,b,c,d,e)`  | objeto `{a,b,c,d,e}`   |
 
 ### 2.5 Guards arquiteturais (2 regras)
 
-| # | Selector | Severity | Trigger ❌ | OK ✅ |
-|---|---|---|---|---|
-| 23 | `no-restricted-imports` `framer-motion` + `@/lib/supabase/admin` em arquivos `'use client'` | error | `import 'framer-motion'` ou admin client em RSC client | `motion/react` / data layer Server Action |
-| 24 | `'use client'` guard em `server-only` files (`lib/data/`, `app/**/actions.ts`, `lib/api/`) | error | `'use client'` no topo de `lib/data/programs.ts` | remover diretiva (RSC default) |
+| #   | Selector                                                                                    | Severity | Trigger ❌                                             | OK ✅                                     |
+| --- | ------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------ | ----------------------------------------- |
+| 23  | `no-restricted-imports` `framer-motion` + `@/lib/supabase/admin` em arquivos `'use client'` | error    | `import 'framer-motion'` ou admin client em RSC client | `motion/react` / data layer Server Action |
+| 24  | `'use client'` guard em `server-only` files (`lib/data/`, `app/**/actions.ts`, `lib/api/`)  | error    | `'use client'` no topo de `lib/data/programs.ts`       | remover diretiva (RSC default)            |
 
 ---
 
@@ -101,15 +101,16 @@ supabase/    → tag: type:data, side:server
 
 **Regra (dependência desce, nunca sobe):**
 
-| Pode importar | De |
-|---|---|
+| Pode importar         | De                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------- |
 | `app/`, `components/` | `lib/contracts/`, `lib/hooks/`, `lib/api/`, `lib/domain/`, `lib/data/` (só Server Action) |
-| `lib/hooks/` | `lib/contracts/`, `lib/domain/` |
-| `lib/data/` | `lib/contracts/`, `lib/domain/` |
-| `lib/domain/` | `lib/contracts/` (e nada mais) |
-| `lib/contracts/` | (só `zod`, `@/shared`) |
+| `lib/hooks/`          | `lib/contracts/`, `lib/domain/`                                                           |
+| `lib/data/`           | `lib/contracts/`, `lib/domain/`                                                           |
+| `lib/domain/`         | `lib/contracts/` (e nada mais)                                                            |
+| `lib/contracts/`      | (só `zod`, `@/shared`)                                                                    |
 
 **Não pode:**
+
 - `lib/data/` importar `app/` ou `components/` (Data não sabe da UI)
 - `lib/domain/` importar React, Supabase, IO (zero efeito colateral)
 - `app/(client)/*` importar `app/(admin)/*` cross-group
@@ -135,6 +136,7 @@ exit_code = (matches > 0) ? 1 : 0
 ```
 
 Allowlist explícita em ADR (8 lugares — D-G66):
+
 1. `.claude/rules/naming.md` (definição)
 2. `docs/adr/0012-lint-enforcement-dia-0.md` (este registro)
 3. `docs/_archive/*` (histórico)
@@ -186,15 +188,15 @@ Complementa APCA dual-gate runtime (Lc ≥75 body / ≥60 large / ≥45 não-tex
 
 Budgets per-rota (decisão `_CONFLITOS #20`):
 
-| Rota | First Load | Total JS |
-|---|---|---|
-| Landing pública (`/`, `/[slug]`) | 100KB | 150KB |
-| Login / signup | 80KB | 120KB |
-| PWA shell (após login) | 170KB | 240KB |
-| PWA aba (Início/Programa/Agenda/Chatbot/Perfil) | 50KB incremental | 50KB |
-| Editor form-based | 50KB incremental | 80KB |
-| Editor inline texto landing | 30KB incremental | 40KB |
-| Admin / billing | 60KB incremental | 100KB |
+| Rota                                            | First Load       | Total JS |
+| ----------------------------------------------- | ---------------- | -------- |
+| Landing pública (`/`, `/[slug]`)                | 100KB            | 150KB    |
+| Login / signup                                  | 80KB             | 120KB    |
+| PWA shell (após login)                          | 170KB            | 240KB    |
+| PWA aba (Início/Programa/Agenda/Chatbot/Perfil) | 50KB incremental | 50KB     |
+| Editor form-based                               | 50KB incremental | 80KB     |
+| Editor inline texto landing                     | 30KB incremental | 40KB     |
+| Admin / billing                                 | 60KB incremental | 100KB    |
 
 `size-limit` config em `.size-limit.ts`. Build CI falha se rota ultrapassar. Subir budget exige PR + ADR + aprovação fundador.
 
@@ -210,6 +212,7 @@ grep -RInE "eslint-disable" --include='*.{ts,tsx}' app/ components/ lib/ \
 ```
 
 2 únicos comentários aceitos no codebase:
+
 - `// eslint-disable-next-line jsx-a11y/heading-has-content — block oficial shadcn`
 - `// eslint-disable-next-line react/jsx-no-literals — third-party-component`
 
@@ -239,16 +242,16 @@ Qualquer outro disable = PR bloqueada. Adicionar novo padrão exige ADR.
 
 ## 9. Custo dia 0 vs ROI
 
-| Item | Horas estimadas |
-|---|---|
-| Setup ESLint flat + 24 regras | 6h |
-| Setup Sheriff boundaries | 2h |
-| Setup 3 grep scripts CI | 2h |
-| Setup size-limit + budgets | 2h |
-| Setup jsx-a11y strict + APCA helper | 1h |
-| Setup CI workflow + allowlist | 2h |
-| Validação smoke (commit triggering all 24 regras) | 1h |
-| **Total** | **~12-16h** |
+| Item                                              | Horas estimadas |
+| ------------------------------------------------- | --------------- |
+| Setup ESLint flat + 24 regras                     | 6h              |
+| Setup Sheriff boundaries                          | 2h              |
+| Setup 3 grep scripts CI                           | 2h              |
+| Setup size-limit + budgets                        | 2h              |
+| Setup jsx-a11y strict + APCA helper               | 1h              |
+| Setup CI workflow + allowlist                     | 2h              |
+| Validação smoke (commit triggering all 24 regras) | 1h              |
+| **Total**                                         | **~12-16h**     |
 
 **ROI.** Onboarding-bio acumulou 830 disables ao longo de 2 anos silenciando token bypass. Custo de adicionar disciplina depois: refator ~50-100h + retest manual. Fazer dia 0 = 12-16h sem dívida acumulada.
 
@@ -268,6 +271,6 @@ Qualquer outro disable = PR bloqueada. Adicionar novo padrão exige ADR.
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — 24 regras + Sheriff + 3 grep + zero disable | Leandro |
+| Data       | Mudança                                                      | Aprovador |
+| ---------- | ------------------------------------------------------------ | --------- |
+| 2026-05-17 | Versão inicial — 24 regras + Sheriff + 3 grep + zero disable | Leandro   |

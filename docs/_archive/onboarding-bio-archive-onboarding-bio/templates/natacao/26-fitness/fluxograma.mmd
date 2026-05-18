@@ -1,0 +1,27 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · nados_dominados}
+    Q1 -->|só crawl| BranchA[🟢 Branch: apenas_crawl]
+    Q1 -->|2 nados| Default[Fluxo padrão]
+    Q1 -->|3+ nados| BranchB[🟢 Branch: multiestilos]
+    BranchA --> Q2
+    Default --> Q2
+    BranchB --> Q2
+    Q2[Q2 · frequencia_piscina] --> Q3[Q3 · estrutura_treino]
+    Q3 --> Q4[Q4 · maior_dificuldade]
+    Q4 --> Q5[Q5 · contexto_piscina]
+    Q5 --> Q6[Q6 · usa_smartwatch]
+    Q6 --> Q7{Q7 · condicoes_saude}
+    Q7 -->|nenhuma / ombro / asma / ouvido| PN
+    Q7 -->|cardio ou epilepsia| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q7 decision
+    class Safety safety
+    class BranchA,BranchB branch
+    class Basics,PN,Goal,Contact universal

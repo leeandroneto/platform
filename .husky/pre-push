@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# Husky pre-push — full test + grep audits
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm vocab:audit
+pnpm i18n:audit
+pnpm token:audit
+pnpm audit:disables
+pnpm docs:validate
+pnpm test

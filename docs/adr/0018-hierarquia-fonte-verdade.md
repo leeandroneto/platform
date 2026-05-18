@@ -22,14 +22,17 @@ Regra prática: decisão nova → ADR citando master plan (linha) + pesquisa (ar
 ## Consequences
 
 **Positivo:**
+
 - Decisão de "quem ganha?" trivial
 - Master plan vira arquivo histórico (não vivo) — não pressão de manter atualizado
 - ADRs imutáveis = histórico preservado
 
 **Negativo:**
+
 - Onboarding novo (humano ou Claude) precisa aprender hierarquia
 - Mitigação: 1 parágrafo em CLAUDE.md root
 
 **Neutro:**
+
 - Detalhes em `14-docs-lifecycle.md §1, §13`
 - ADR-0017 (Michael Nygard per-arquivo) é dependência direta

@@ -1,0 +1,31 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · competition_focus}
+    Q1 -->|sprint| BranchSprint[🟢 Branch: Velocidade]
+    Q1 -->|middle_distance| Default[Fluxo padrão]
+    Q1 -->|distance| BranchDistance[🟢 Branch: Fundo]
+    Q1 -->|medley| BranchMedley[🟢 Branch: Medley]
+    BranchSprint --> Q2
+    Default --> Q2
+    BranchDistance --> Q2
+    BranchMedley --> Q2
+    Q2[Q2 · main_bottleneck] --> Q3[Q3 · season_phase]
+    Q3 --> Q4[Q4 · weekly_volume]
+    Q4 --> Q5[Q5 · uses_metrics]
+    Q5 -->|yes| Q6[Q6 · css_pace]
+    Q5 -->|sometimes / no| Q7
+    Q6 --> Q7
+    Q7{Q7 · health_conditions}
+    Q7 -->|none / asthma / knee| PN
+    Q7 -->|shoulder / cardiac / surgery| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q7 decision
+    class Safety safety
+    class BranchSprint,BranchDistance,BranchMedley branch
+    class Basics,PN,Goal,Contact universal

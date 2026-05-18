@@ -33,13 +33,22 @@
   },
   "hooks": {
     "SessionStart": [
-      { "matcher": "*", "hooks": [{ "type": "command", "command": "bash .claude/hooks/load-context.sh" }] }
+      {
+        "matcher": "*",
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/load-context.sh" }]
+      }
     ],
     "UserPromptSubmit": [
-      { "matcher": "*", "hooks": [{ "type": "command", "command": "bash .claude/hooks/vocab-warn.sh" }] }
+      {
+        "matcher": "*",
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/vocab-warn.sh" }]
+      }
     ],
     "PreToolUse": [
-      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "bash .claude/hooks/block-disables.sh" }] }
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/block-disables.sh" }]
+      }
     ]
   }
 }

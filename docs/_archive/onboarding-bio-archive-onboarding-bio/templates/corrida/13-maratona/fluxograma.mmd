@@ -1,0 +1,34 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · training_phase}
+    Q1 -->|base_building| BranchBC[🟢 Branch: Base/Construção]
+    Q1 -->|build_peak| BranchBC
+    Q1 -->|taper_race| BranchTaper[🟡 Branch: Taper/Pré-prova]
+    Q1 -->|returning| BranchReturn[🔵 Branch: Retorno]
+    BranchBC --> Q2
+    BranchTaper --> Q2
+    BranchReturn --> Q2
+    Q2[Q2 · marathon_experience] --> Q3[Q3 · weekly_frequency]
+    Q3 --> Q4[Q4 · main_bottleneck]
+    Q4 --> Q5{Q5 · recent_race}
+    Q5 -->|yes| Q6[Q6 · race_time_detail]
+    Q5 -->|no| Q7
+    Q6 --> Q7{Q7 · health_conditions}
+    Q7 -->|none| PN
+    Q7 -->|cardiac / hypertension| Safety[🚨 safetyReduced]
+    Q7 -->|diabetes / injury| PN
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchAlt fill:#e3f2fd,stroke:#1565c0
+    classDef branchWarn fill:#fffde7,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q5,Q7 decision
+    class Safety safety
+    class BranchBC branch
+    class BranchReturn branchAlt
+    class BranchTaper branchWarn
+    class Basics,PN,Goal,Contact universal

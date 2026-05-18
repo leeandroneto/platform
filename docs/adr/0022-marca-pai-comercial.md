@@ -12,6 +12,7 @@ Decisão de como múltiplas marcas (desafit + yoga + ingles + onboarding.bio ret
 Marca pai é **identidade comercial**, zero impacto técnico dia 1.
 
 **Aparece em:**
+
 - Footer (`Powered by <marca-pai>`)
 - About / Sobre
 - LGPD / termos de serviço
@@ -19,6 +20,7 @@ Marca pai é **identidade comercial**, zero impacto técnico dia 1.
 - GitHub organization
 
 **NÃO aparece em:**
+
 - Schema (continua `platform.*`)
 - Rotas (continua `<slug>.desafit.app` / `<slug>.yoga.app`)
 - Componentes
@@ -30,14 +32,17 @@ Marca pai é **identidade comercial**, zero impacto técnico dia 1.
 ## Consequences
 
 **Positivo:**
+
 - Tech permanece coerente (não vai precisar refator pra "extrair" marca pai depois)
 - Marca pai pode mudar (rename, sale, M&A) sem refator tech
 - Cada marca filha mantém autonomia visual/posicionamento
 
 **Negativo:**
+
 - Quando 2ª marca rodar, admin global precisa ser construído (esperado)
 
 **Neutro:**
+
 - Lista de "lugares onde aparece" guia revisão visual dia 1
 - ADR-0021 (schema core) é dependência direta
 - ADR-0023 (onboarding.bio retomada) reforça princípio (marca filha = repo separado)

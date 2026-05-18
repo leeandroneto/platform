@@ -11,16 +11,16 @@ Master plan e pesquisa 10 (perf-multi-vertical) propõem budgets diferentes. Pes
 
 Budgets enforced no CI dia 0 via `size-limit`:
 
-| Rota | First Load | Total JS |
-|---|---|---|
-| Landing pública (`/`, `/[slug]`) | 100KB | 150KB |
-| Login / signup | 80KB | 120KB |
-| PWA shell (após login) | 170KB | 240KB |
-| PWA aba (Início/Programa/Agenda/Chatbot/Perfil) | 50KB incremental | 50KB |
-| Editor form-based | 50KB incremental | 80KB |
-| Editor inline texto landing | 30KB incremental | 40KB |
-| Admin / billing | 60KB incremental | 100KB |
-| Influencer dashboard | 40KB incremental | 60KB |
+| Rota                                            | First Load       | Total JS |
+| ----------------------------------------------- | ---------------- | -------- |
+| Landing pública (`/`, `/[slug]`)                | 100KB            | 150KB    |
+| Login / signup                                  | 80KB             | 120KB    |
+| PWA shell (após login)                          | 170KB            | 240KB    |
+| PWA aba (Início/Programa/Agenda/Chatbot/Perfil) | 50KB incremental | 50KB     |
+| Editor form-based                               | 50KB incremental | 80KB     |
+| Editor inline texto landing                     | 30KB incremental | 40KB     |
+| Admin / billing                                 | 60KB incremental | 100KB    |
+| Influencer dashboard                            | 40KB incremental | 60KB     |
 
 Build CI falha se rota ultrapassar. PR bloqueada até reduzir ou justificar via novo ADR superseding budget específico (aprovação fundador).
 
@@ -29,14 +29,17 @@ Build CI falha se rota ultrapassar. PR bloqueada até reduzir ou justificar via 
 ## Consequences
 
 **Positivo:**
+
 - Performance ICP (Android mid-tier 4G) garantida
 - Custo de bundle inflado pego no CI, não em produção
 - Diferencial vs concorrentes BR (bundles 500KB+)
 
 **Negativo:**
+
 - Pressão constante pra reduzir bundle (custo cognitivo dev)
 - Lib externa pesada exige avaliação prévia
 
 **Neutro:**
+
 - Configurado em `.size-limit.ts` (`15-bootstrap-checklist.md tarefa 12`)
 - Reforço em `13-lint-enforcement.md §6`

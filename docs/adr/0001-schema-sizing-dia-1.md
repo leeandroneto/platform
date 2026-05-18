@@ -16,14 +16,17 @@ Princípio: schema interconectado nasce junto (FK + RLS + migrations custam refa
 ## Consequences
 
 **Positivo:**
+
 - Menos tabela órfã = menos ruído semântico pro Claude Code
 - FK + RLS desde dia 0 evita refator caro
 - Migrations curtas dia 0 (~22 tabelas) vs ~54
 
 **Negativo:**
+
 - Risco de descobrir gap só quando feature precisar (custo migration menor)
 - Cada tabela JIT exige redecisão (sem playbook permanente)
 
 **Neutro:**
+
 - Blueprint `06-data-model.md §3` lista exatas ~22 tabelas baseline
 - ADR-0002 (sem TACO) reforça princípio JIT pra KB nutricional

@@ -1,0 +1,39 @@
+flowchart TD
+    Start([Inicio]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · race_focus}
+
+    Q1 -->|first_5k / first_race| BranchFirst[🟢 Branch: Primeira Prova]
+    Q1 -->|improve_5k| Branch5K[🔵 Branch: Evoluidor 5K]
+    Q1 -->|improve_10k| Branch10K[🔵 Branch: Evoluidor 10K]
+
+    BranchFirst --> Q2
+    Branch5K --> Q2
+    Branch10K --> Q2
+
+    Q2[Q2 · training_frequency] --> Q3[Q3 · biggest_barrier]
+    Q3 --> Q4{Q4 · uses_gps}
+
+    Q4 -->|yes_watch / yes_phone| Q5[Q5 · recent_pace]
+    Q4 -->|no_gps| Q6
+
+    Q5 --> Q6{Q6 · health_conditions}
+
+    Q6 -->|none / respiratory / diabetes / recent_sedentary| PN
+    Q6 -->|cardiac / joint_injury| Safety[🚨 safetyReduced]
+    Safety --> PN
+
+    PN[personal_note · universal] --> Goal[goal · universal]
+    Goal --> Contact[contact · universal]
+    Contact --> End([relatorio IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchBlue fill:#e3f2fd,stroke:#1565c0
+    classDef universal fill:#f5f5f5,stroke:#616161
+
+    class Q1,Q4,Q6 decision
+    class Safety safety
+    class BranchFirst branch
+    class Branch5K,Branch10K branchBlue
+    class Basics,PN,Goal,Contact universal

@@ -8,7 +8,7 @@
 
 ## 1. Princípios canônicos
 
-1. **shadcn new-york dark-first 100%** — copy-paste own files (D-G10 + _CONFLITOS #8).
+1. **shadcn new-york dark-first 100%** — copy-paste own files (D-G10 + \_CONFLITOS #8).
 2. **OKLCH tokens com hue do tenant** — coração do white-label. Tudo deriva.
 3. **APCA Lc dual-gate** (Bronze): body ≥75, large ≥60, non-text ≥45. WCAG 2.2 AA como fallback.
 4. **Sombras tingidas com hue do brand** — diferencial #1 invisível-mas-sentido.
@@ -27,23 +27,23 @@ Detalhes: pesquisa 16 §10 (10 princípios canônicos).
 
 Migra verbatim de `app/preview/paletas/page.tsx` → `lib/design/palettes.ts`.
 
-| # | id | Nome | Hue | Identidade | Default pra |
-|---|---|---|---|---|---|
-| 1 | `default` | Padrão | 275 | Indigo Stripe equilibrado | SaaS default |
-| 2 | `indigo` | Indigo Profissional | 264 | Sóbrio corporativo | Coaching, mentoria |
-| 3 | `rose` | Rosé Wellness | 15 | Feminino wellness | Pilates, dança, estética |
-| 4 | `terracotta` | Terracota Earthy | 40 | Quente terroso | Yoga, terapia, holístico |
-| 5 | `sage` | Sálvia Calmo | 145 | Verde calmo | Mindfulness, nutri |
-| 6 | `navy` | Navy Performance | 260 | Azul profundo atleta | Treinamento profissional |
-| 7 | `mustard` | Mostarda Vibrante | 80 | Amarelo retrô | Branding ousado |
-| 8 | `coral` | Coral Vibrante | 25 | Vermelho-laranja energia | Functional, HIIT |
-| 9 | `pure` | Puro | 0 | Grayscale puro | Minimalista premium |
-| 10 | `minimal-warm` | Mínima Quente | 50 | Off-white wabi-sabi | Japandi, premium quiet |
-| 11 | `performance` | Performance Neon | 25 | Vermelho saturado P3 | Crossfit, calistenia |
-| 12 | `carbon` | Carbon Athletic | 250 | Gunmetal mono + signal | Whoop-style, hardcore |
-| 13 | `neon` | Neon Rave | 320 | Magenta neon cyberpunk | Underground fitness, jovem |
+| #   | id             | Nome                | Hue | Identidade                | Default pra                |
+| --- | -------------- | ------------------- | --- | ------------------------- | -------------------------- |
+| 1   | `default`      | Padrão              | 275 | Indigo Stripe equilibrado | SaaS default               |
+| 2   | `indigo`       | Indigo Profissional | 264 | Sóbrio corporativo        | Coaching, mentoria         |
+| 3   | `rose`         | Rosé Wellness       | 15  | Feminino wellness         | Pilates, dança, estética   |
+| 4   | `terracotta`   | Terracota Earthy    | 40  | Quente terroso            | Yoga, terapia, holístico   |
+| 5   | `sage`         | Sálvia Calmo        | 145 | Verde calmo               | Mindfulness, nutri         |
+| 6   | `navy`         | Navy Performance    | 260 | Azul profundo atleta      | Treinamento profissional   |
+| 7   | `mustard`      | Mostarda Vibrante   | 80  | Amarelo retrô             | Branding ousado            |
+| 8   | `coral`        | Coral Vibrante      | 25  | Vermelho-laranja energia  | Functional, HIIT           |
+| 9   | `pure`         | Puro                | 0   | Grayscale puro            | Minimalista premium        |
+| 10  | `minimal-warm` | Mínima Quente       | 50  | Off-white wabi-sabi       | Japandi, premium quiet     |
+| 11  | `performance`  | Performance Neon    | 25  | Vermelho saturado P3      | Crossfit, calistenia       |
+| 12  | `carbon`       | Carbon Athletic     | 250 | Gunmetal mono + signal    | Whoop-style, hardcore      |
+| 13  | `neon`         | Neon Rave           | 320 | Magenta neon cyberpunk    | Underground fitness, jovem |
 
-**Estrutura por paleta:** primary + primaryLight (light mode override) + secondary (+30° hue) + tertiary (-30° hue) + 5 extras (multicolor charts/badges) + 5 surfaces dark + 5 surfaces light + on-* APCA-derived = **~21 tokens efetivos**.
+**Estrutura por paleta:** primary + primaryLight (light mode override) + secondary (+30° hue) + tertiary (-30° hue) + 5 extras (multicolor charts/badges) + 5 surfaces dark + 5 surfaces light + on-\* APCA-derived = **~21 tokens efetivos**.
 
 **Surfaces:** dark L 0.13→0.37 chroma 0.015; light L 0.98→0.85 chroma ramp 0.01→0.015. Hint sutil do hue, nunca dominante.
 
@@ -57,35 +57,64 @@ Decisão fechada: master plan §7.3 + D-G76.
 
 Padrão CSS-first, sem `tailwind.config.js`:
 
-| Token category | Naming | Exemplo |
-|---|---|---|
-| Cores semânticas | `--color-<role>` | `--color-primary`, `--color-foreground`, `--color-muted-foreground` |
-| Surfaces | `--color-<surface>` | `--color-background`, `--color-card`, `--color-popover`, `--color-muted`, `--color-border`, `--color-input` |
-| Charts (5 extras) | `--color-chart-N` | `--color-chart-1` a `--color-chart-5` |
-| Semantics fixos | `--color-<state>` + `--color-<state>-foreground` | `--color-info`, `--color-success`, `--color-warning`, `--color-destructive` |
-| Sidebar (shadcn 2.0) | `--color-sidebar-*` | `--color-sidebar`, `--color-sidebar-primary`, etc |
-| Radius | `--radius` (base) + `--radius-{sm,md,lg,xl}` | base 0.625rem; derivados via `calc()` |
-| Font | `--font-sans`, `--font-mono`, `--font-brand` | Geist Sans + Geist Mono via `next/font` |
+| Token category       | Naming                                           | Exemplo                                                                                                     |
+| -------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Cores semânticas     | `--color-<role>`                                 | `--color-primary`, `--color-foreground`, `--color-muted-foreground`                                         |
+| Surfaces             | `--color-<surface>`                              | `--color-background`, `--color-card`, `--color-popover`, `--color-muted`, `--color-border`, `--color-input` |
+| Charts (5 extras)    | `--color-chart-N`                                | `--color-chart-1` a `--color-chart-5`                                                                       |
+| Semantics fixos      | `--color-<state>` + `--color-<state>-foreground` | `--color-info`, `--color-success`, `--color-warning`, `--color-destructive`                                 |
+| Sidebar (shadcn 2.0) | `--color-sidebar-*`                              | `--color-sidebar`, `--color-sidebar-primary`, etc                                                           |
+| Radius               | `--radius` (base) + `--radius-{sm,md,lg,xl}`     | base 0.625rem; derivados via `calc()`                                                                       |
+| Font                 | `--font-sans`, `--font-mono`, `--font-brand`     | Geist Sans + Geist Mono via `next/font`                                                                     |
 
 **Estratégia:** `:root` define valores OKLCH crus, `.dark` overrides. `@theme inline` mapeia `--color-X: var(--X)` — permite override runtime (white-label) sem rebuild.
 
 Detalhes: pesquisa 05 §2 (snippet completo `globals.css`).
+
+### Design tokens — uso
+
+Tabela canônica de onde cada token aparece. Use a coluna "Onde usar" pra escolher token correto; nunca hex/rgba inline (ADR-0012 — `design-tokens/no-tailwind-bypass`).
+
+| Token                                                                          | Onde usar                                                                           | Onde **não** usar                   | Validação                                                  |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------- |
+| `--color-primary`                                                              | bg de action (`<Button variant=default>`, foco ring, badge fill, progress bar fill) | body text, ícones em corpo de texto | APCA(primary, surface-2) ≥45 non-text (ADR-0032 cenário 2) |
+| `--color-primary-foreground`                                                   | text/ícone dentro de `<Button variant=default>` (Sprint 2+)                         | bg                                  | APCA(fg, primary) ≥75 (cenário 3 — Sprint 2 validator)     |
+| `--color-foreground`                                                           | body text (parágrafos, labels, headings)                                            | bg                                  | APCA(foreground, surface-1) ≥75 (ADR-0032 cenário 1)       |
+| `--color-muted-foreground`                                                     | text secundário, captions, helper text                                              | body principal                      | APCA(muted-fg, surface-1) ≥60 large                        |
+| `--color-background` (= surface-1)                                             | bg da página (`<body>`)                                                             | bg de cards (use `--color-card`)    | base do contraste body                                     |
+| `--color-card` (= surface-2)                                                   | bg de cards, sections, containers elevados                                          | bg página                           | —                                                          |
+| `--color-popover` (= surface-3)                                                | bg de dropdowns, popovers, tooltips                                                 | cards inline                        | —                                                          |
+| `--color-muted` (= surface-4)                                                  | bg de skeleton, disabled states, ghost hover                                        | text bg                             | —                                                          |
+| `--color-border`                                                               | borders 1px de cards/inputs/separators                                              | preencher área (use surface-\*)     | —                                                          |
+| `--color-input`                                                                | bg de `<input>`, `<textarea>`, `<select>`                                           | bg de container externo             | —                                                          |
+| `--color-chart-1` a `--chart-5`                                                | barras/linhas de `<Chart>` (recharts wrapper)                                       | UI fora de chart                    | —                                                          |
+| `--color-info` / `--color-success` / `--color-warning` / `--color-destructive` | bg de toast/alert/badge semântico (+ `*-foreground` pro text)                       | tema marca (use primary)            | APCA fg/bg pareados ≥75                                    |
+| `--radius` (+ sm/md/lg/xl)                                                     | border-radius em cards, buttons, inputs, badges, dialogs                            | tipografia (`text-*`) ou spacing    | Tailwind `rounded-*` lê este                               |
+| `--font-sans` / `--font-mono` / `--font-brand`                                 | `<body>` default, code blocks, headings hero                                        | inline override                     | next/font carregado via `app/layout.tsx`                   |
+
+Regras transversais:
+
+- Hex literal (`#aabbcc`) ou `rgba()` em `.ts`/`.tsx` → block (ESLint custom + hook PreToolUse)
+- Arbitrary Tailwind values em produção (`text-[14px]`, `bg-[#fff]`) → block (`design-tokens/no-tailwind-bypass`)
+- Exceções: `app/globals.css` `@theme`, `next/og` ImageResponse, blurhash inline
 
 ---
 
 ## 4. White-label runtime (D-G59)
 
 **CSS via API route** `/api/tenants/[id]/theme.css?v=N`:
+
 - Layout root referencia `<link rel="stylesheet">` em `<head>` (render-blocking, zero FOUC, zero JS)
 - Route handler emite CSS texto puro com whitelist + regex OKLCH
 - Cache `public, max-age=31536000, immutable` + cache-bust por `?v=theme_version`
 - **Zero `dangerouslySetInnerHTML`** (preserva política zero-disable)
-- Mutação theme → `revalidateTag(\`tenant-theme:${id}\`)` + bump `theme_version`
+- Mutação theme → `revalidateTag(\`tenant-theme:${id}\`)`+ bump`theme_version`
 
 `deriveTokens(palette, mode)` em `lib/design/tokens.ts`:
+
 1. Resolve hue base + chroma alvo da `PaletteSpec` Zod-validada
 2. Gera primary/secondary/tertiary com tones fixos por papel + `culori.clampChroma` (sRGB-safe)
-3. on-* via bisection APCA até atingir minLc
+3. on-\* via bisection APCA até atingir minLc
 4. 5 surfaces dark/light com chroma sutil do hue
 5. Foreground/card-fg/popover-fg bisection até Lc 90; muted-foreground até Lc 75
 6. chart-1..5 com offsets fixos do hue (split-complementary)
@@ -100,12 +129,14 @@ Detalhes: pesquisa 05 §3-§6 + master plan §7.7.
 ## 5. APCA dual-gate (D-G12)
 
 **Thresholds (`lib/design/contrast.ts`):**
+
 - body: Lc ≥ 75 (APCA Bronze)
 - large text / UI grande: Lc ≥ 60
 - non-text (ícones, borders, focus rings): Lc ≥ 45
 - WCAG 2.x AA fallback: ratio ≥ 4.5 body, ≥ 3 large
 
 **Helpers:**
+
 - `apca(fg, bg): number` — APCA Lc signed
 - `meetsApca(fg, bg, role): boolean`
 - `ensureAccessible(fg, bg, minLc): OklchColor` — bisection L até atingir
@@ -149,6 +180,7 @@ Material 3 motion tokens verificados.
 **`MotionConfig reducedMotion="user"`** no root — automático em todos children. Skip transform/layout em reduced motion; opacity/color ainda animam.
 
 **Anti-patterns proibidos (pesquisa 08 §A10):**
+
 - `motion.create()` dentro de render — define no module top level
 - `layout` em cada row de lista longa — use `layoutDependency` ou pai
 - Animar `width/height/top/left` — use `transform`/`opacity` ou `layout`
@@ -162,12 +194,14 @@ Material 3 motion tokens verificados.
 shadcn é **copy-paste** — você OWN os arquivos. Edite gerados; crie wrapper só pra variante radicalmente nova.
 
 **Regras (pesquisa 16 §4):**
+
 - `data-slot` em compound components (convenção oficial shadcn changelog mar/2026)
 - cva max **5 variants** por componente; edge-case vira componente separado (`<LoadingButton>`)
 - Slot pattern Radix para polimorfismo (`asChild`)
 - Composição com Radix headless direto quando shadcn não cobre (tooltip seta custom, hover-card timing)
 
 **Tipografia primitives obrigatórios dia 1** (custom em `components/ui/`):
+
 - `<Heading level={1..6} variant>` + asChild
 - `<Text variant="body|compact|data|code|eyebrow|label|caption|lead">`
 - `<Eyebrow>` (label uppercase pequeno)
@@ -215,12 +249,12 @@ Detalhes: master plan §8.1.
 
 4 semânticos (left-border 3px na cor):
 
-| Variant | Cor semântica | Ícone Lucide | Uso |
-|---|---|---|---|
-| `default` (info) | blue | `<Info />` | Informação neutra |
-| `success` | green | `<CheckCircle />` | Confirmação positiva |
-| `warning` | amber | `<AlertTriangle />` | Atenção, ação reversível |
-| `destructive` | red | `<AlertCircle />` | Erro, irreversível |
+| Variant          | Cor semântica | Ícone Lucide        | Uso                      |
+| ---------------- | ------------- | ------------------- | ------------------------ |
+| `default` (info) | blue          | `<Info />`          | Informação neutra        |
+| `success`        | green         | `<CheckCircle />`   | Confirmação positiva     |
+| `warning`        | amber         | `<AlertTriangle />` | Atenção, ação reversível |
+| `destructive`    | red           | `<AlertCircle />`   | Erro, irreversível       |
 
 Toast (sonner) usa mesmas 4 via `toast.success/error/warning/info()`.
 
@@ -229,6 +263,7 @@ Toast (sonner) usa mesmas 4 via `toast.success/error/warning/info()`.
 ## 10. Iconografia — Lucide React
 
 **Decisão:** `lucide-react` como única lib de ícones (pesquisa 06 §B). Razões:
+
 - Stroke 1.5-2 geométrico bate shadcn new-york
 - ~1.500+ ícones incluindo fitness (Dumbbell, BicepsFlexed, HeartPulse, Activity, Timer, Flame, Scale, Footprints, Target, Trophy)
 - ~0.1-0.5 KB gzipped por ícone tree-shaken
@@ -236,10 +271,12 @@ Toast (sonner) usa mesmas 4 via `toast.success/error/warning/info()`.
 - `LucideIcon` type pra prop forwarding
 
 **Import pattern (lint enforce):**
+
 - Named imports SEMPRE: `import { Dumbbell } from 'lucide-react'`
 - ESLint `no-restricted-imports` bane `import * as Icons from 'lucide-react'` (defeats tree-shake)
 
 **Sprite custom** em `/public/icons/sprite.svg` (build-time via `pnpm icons:build`):
+
 - Pra glyphs fitness não cobertos por Lucide (kettlebell, plate, sets-reps diagram, periodization)
 - 20% restante; threshold de adoção: 5+ ícones com estilo unificado
 - `currentColor` em todos paths — herda da `text-*` parent
@@ -257,6 +294,7 @@ Toast (sonner) usa mesmas 4 via `toast.success/error/warning/info()`.
 | `icon-2xl` | `size-10`-`size-12` | 40-48 | display-lg, splash |
 
 **A11y patterns:**
+
 - Decorative (texto adjacent): `<Dumbbell aria-hidden className="size-4" />`
 - Standalone semântico: `<HeartPulse role="img" aria-label="..." />`
 - Icon-only button: `<button aria-label="..."><Icon aria-hidden /></button>`
@@ -291,16 +329,17 @@ Sprint 2 Polish [I] (~20h) e Backlog [O]: pesquisa 16 §10 tabela completa.
 
 ## 12. Brand assets — zero inline (00-PROJETO §9)
 
-| Asset | Onde vive | Trocar = |
-|---|---|---|
-| Cor da marca desafit | 1 token OKLCH em `@theme` | editar 1 var → propaga 100% |
-| Logo desafit | 1 SVG via componente `<Logo>` único | editar 1 SVG → propaga 100% |
-| Tipografia brand | `--font-brand` em `@theme` | editar 1 var → propaga 100% |
-| Nome `"desafit"` / `"desafit.app"` | `<Logo>` ou metadata centralizada | ESLint bloqueia literal fora de allowlist |
+| Asset                              | Onde vive                           | Trocar =                                  |
+| ---------------------------------- | ----------------------------------- | ----------------------------------------- |
+| Cor da marca desafit               | 1 token OKLCH em `@theme`           | editar 1 var → propaga 100%               |
+| Logo desafit                       | 1 SVG via componente `<Logo>` único | editar 1 SVG → propaga 100%               |
+| Tipografia brand                   | `--font-brand` em `@theme`          | editar 1 var → propaga 100%               |
+| Nome `"desafit"` / `"desafit.app"` | `<Logo>` ou metadata centralizada   | ESLint bloqueia literal fora de allowlist |
 
 **Recursivo pra tenant white-label:** cor, logo, fonte, nome de cada tenant vivem em CSS via API route (D-G59). Zero hardcode, troca em runtime.
 
 **Logo system dia 1 (~6h, master plan §16 Bootstrap):**
+
 - Wordmark "desafit.app" em Geist Sans pro MVP
 - SVG vetorial customizado fica como pendência pós-MVP
 - Componente `<Logo>` único: wordmark + lockup + icon variants × 3 temas × 3 tamanhos
@@ -310,14 +349,16 @@ Razão: incidente onboarding.bio teve `onbio` / `o.b` / `onboarding.bio` / sem l
 
 ---
 
-## 13. Catálogo de componentes — Ladle (_CONFLITOS #13)
+## 13. Catálogo de componentes — Ladle (\_CONFLITOS #13)
 
 **Ladle dia 0** (não Storybook):
+
 - Vercel-mantida, 5× mais rápida que Storybook
 - Sintaxe `*.stories.tsx` compatível pra migrar depois
 - MDX nativo, hot reload React 19
 
 **Conteúdo dia 0:**
+
 - ~15 componentes shadcn customizados
 - 13 paletas OKLCH (showcase visual)
 - Logo system (3 variantes × 3 temas × 3 tamanhos)
@@ -334,12 +375,12 @@ Razão: incidente onboarding.bio teve `onbio` / `o.b` / `onboarding.bio` / sem l
 
 ## 14. Sheet vs Dialog vs Drawer — decision tree
 
-| Caso | Componente |
-|---|---|
-| Filtros mobile, edit rápido, timer descanso, confirm destructive mobile | **vaul Drawer** (snap points) |
-| Forms críticos desktop, alertas, modais bloqueantes desktop | shadcn `<Dialog>` |
-| Nav drawer desktop, cart lateral | shadcn `<Sheet>` |
-| Modal que precisa ser mobile-sheet + desktop-dialog | `<ResponsiveModal>` (wrapper híbrido) |
+| Caso                                                                    | Componente                            |
+| ----------------------------------------------------------------------- | ------------------------------------- |
+| Filtros mobile, edit rápido, timer descanso, confirm destructive mobile | **vaul Drawer** (snap points)         |
+| Forms críticos desktop, alertas, modais bloqueantes desktop             | shadcn `<Dialog>`                     |
+| Nav drawer desktop, cart lateral                                        | shadcn `<Sheet>`                      |
+| Modal que precisa ser mobile-sheet + desktop-dialog                     | `<ResponsiveModal>` (wrapper híbrido) |
 
 vaul `snapPoints={[0.5, 0.92]}` + `repositionInputs={true}` + `modal` + `shouldScaleBackground={false}` (anti black flash).
 
@@ -373,6 +414,6 @@ Pesquisa 16 §9 (todos com fonte):
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — 13 paletas + APCA + Motion presets + Lucide + Ladle | Leandro |
+| Data       | Mudança                                                              | Aprovador |
+| ---------- | -------------------------------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — 13 paletas + APCA + Motion presets + Lucide + Ladle | Leandro   |

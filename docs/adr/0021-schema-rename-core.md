@@ -32,15 +32,18 @@ onboarding.*   — legado pausado (mantém intacto no Supabase do onboarding-bio
 ## Consequences
 
 **Positivo:**
+
 - Marca pai não atrelada a tech (separation of concerns)
 - 1 schema serve 3+ marcas sem fork
 - Lookups cross-vertical triviais (mesmo `core.users`)
 
 **Negativo:**
+
 - Refator semantic em qualquer code/doc que mencionasse `desafit.*` (este blueprint inteiro usa `core.*`)
 - Marca desafit não aparece em nome técnico — pode confundir devs no início
 
 **Neutro:**
+
 - Toda referência a schema produto = `core.*` em blueprints, ADRs, código
 - `.claude/rules/schema-separation.md` reforça
 - ADR-0022 (marca pai comercial) é dependência conceitual

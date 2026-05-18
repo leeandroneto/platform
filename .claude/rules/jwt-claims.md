@@ -2,18 +2,20 @@
 name: JWT claims + RLS pattern
 description: auth.jwt() ->> 'tenant_id' + RLS wrap (select ...) 100× speedup
 paths:
-  - "supabase/migrations/**/*.sql"
-  - "supabase/functions/**/*.ts"
-  - "lib/data/**/*.ts"
+  - 'supabase/migrations/**/*.sql'
+  - 'supabase/functions/**/*.ts'
+  - 'lib/data/**/*.ts'
 ---
 
 ## JWT claims (via `custom_access_token_hook`)
 
 Cada access token de aluno/profissional carrega:
+
 - `tenant_id` (UUID do tenant ativo da membership)
 - `active_membership_role` (`platform_admin` | `professional` | `client` | `influencer` | `service_account`)
 
 **5 roles canônicos** (decisão `_CONFLITOS #19` reforça vocab):
+
 - `platform_admin` — fundador
 - `professional` — dono do tenant (NUNCA `trainer`)
 - `client` — aluno do prof (NUNCA `student`)
@@ -46,6 +48,7 @@ Tabelas tenant-scoped usam `(select public.current_tenant_id())` no policy.
 ## Smoke test obrigatório
 
 Toda tabela tenant-scoped tem teste:
+
 ```sql
 -- Insert sem JWT → bloqueado
 SET ROLE anon;

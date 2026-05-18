@@ -14,14 +14,17 @@ Sem tabela TACO/TBCA dia 1. IA gera valores nutricionais via JSON Outputs valida
 ## Consequences
 
 **Positivo:**
+
 - ~5.000 rows de seed evitados
 - Updates de dados nutricionais ficam por conta da IA (mais atualizada que TACO 2011)
 - KB sem embeddings dia 1 (decisão `07-ai-prompts.md §10`)
 
 **Negativo:**
+
 - Risco de variação entre invocações (mesma comida, calorias diferentes)
 - Mitigação: rodar smoke test Promptfoo CI com 30 alimentos comuns + tolerância ±5%
 
 **Neutro:**
+
 - Edge Function `generate-meal-plan` valida output via Zod schema strict
 - Trigger criação tabela: ≥3 reportes consistentes de alucinação por profissionais

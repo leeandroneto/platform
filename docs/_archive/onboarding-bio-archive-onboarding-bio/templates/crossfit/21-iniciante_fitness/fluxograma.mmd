@@ -1,0 +1,28 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · cf_phase}
+    Q1 -->|curious| BranchCurioso[🟢 Branch: Curioso]
+    Q1 -->|beginner| BranchAtivo[🟢 Branch: Ativo]
+    Q1 -->|adapting| BranchAtivo
+    Q1 -->|returning| BranchRetornante[🟡 Branch: Retornante]
+    BranchCurioso --> Q2
+    BranchAtivo --> Q2
+    BranchRetornante --> Q2
+    Q2[Q2 · movement_background] --> Q3[Q3 · main_barrier]
+    Q3 --> Q4[Q4 · weekly_frequency]
+    Q4 --> Q5{Q5 · health_conditions}
+    Q5 -->|none| PN
+    Q5 -->|shoulder / back / cardio / knee| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchWarn fill:#fff8e1,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q5 decision
+    class Safety safety
+    class BranchCurioso,BranchAtivo branch
+    class BranchRetornante branchWarn
+    class Basics,PN,Goal,Contact universal

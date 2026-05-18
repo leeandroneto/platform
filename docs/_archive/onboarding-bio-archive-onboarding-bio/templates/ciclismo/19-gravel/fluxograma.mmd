@@ -1,0 +1,38 @@
+flowchart TD
+    Start([Inicio]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · cycling_background}
+
+    Q1 -->|from_road| BranchRoad[🟢 Branch: Roadie em Transicao]
+    Q1 -->|from_mtb| BranchMTB[🟢 Branch: MTBiker Expandindo]
+    Q1 -->|gravel_native| BranchNative[🟢 Branch: Gravel Nativo]
+
+    BranchRoad --> Q2
+    BranchMTB --> Q2
+    BranchNative --> Q2
+
+    Q2[Q2 · main_bottleneck] --> Q3[Q3 · weekly_volume]
+    Q3 --> Q4[Q4 · training_tools]
+
+    Q4 --> HasPower{tem potenciometro?}
+    HasPower -->|sim| Q5[Q5 · ftp_value]
+    HasPower -->|nao| Q6
+    Q5 --> Q6
+
+    Q6[Q6 · terrain_profile] --> Q7{Q7 · health_conditions}
+
+    Q7 -->|none| PN
+    Q7 -->|cardiac / respiratory / diabetes| Safety[🚨 safetyReduced]
+    Q7 -->|joint_injury| PN
+    Safety --> PN
+
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatorio IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q7 decision
+    class HasPower decision
+    class Safety safety
+    class BranchRoad,BranchMTB,BranchNative branch
+    class Basics,PN,Goal,Contact universal

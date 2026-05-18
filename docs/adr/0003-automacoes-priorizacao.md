@@ -14,14 +14,17 @@ Priorizar automações por dor real reportada por profissional em uso. Sem métr
 ## Consequences
 
 **Positivo:**
+
 - Zero feature speculative dia 1
 - Cada automação tem demanda real comprovada antes de existir
 - Memória `project_desafit_principio_39_revisto` documenta
 
 **Negativo:**
+
 - Risco de aparentar "feature pobre" pra prospects que comparam com Trainerize (12+ automações nativas)
 - Mitigação: vender outcome (tempo poupado), não feature laundry list
 
 **Neutro:**
+
 - Roadmap `11-roadmap.md` registra automação por sprint conforme demanda
 - Sprint imediato pós-cliente-novo é gate obrigatório (`12-sprint-plan.md`)

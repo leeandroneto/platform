@@ -1,0 +1,31 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · body_phase}
+    Q1 -->|cutting| BranchCut[🟢 Branch: Cutting]
+    Q1 -->|lean_bulk| BranchBulk[🟢 Branch: Lean Bulk]
+    Q1 -->|recomp / maintenance / unsure| BranchInd[🟡 Branch: Indeciso]
+    BranchCut --> Q2
+    BranchBulk --> Q2
+    BranchInd --> Q2
+    Q2[Q2 · training_experience] --> Q3[Q3 · biggest_barrier]
+    Q3 --> Q4[Q4 · diet_consistency]
+    Q4 --> Q5{Q5 · knows_body_fat}
+    Q5 -->|yes| Q5b[Q5b · body_fat_value]
+    Q5 -->|no| Q6
+    Q5b --> Q6
+    Q6{Q6 · health_conditions}
+    Q6 -->|none| PN
+    Q6 -->|eating_disorder / cardiac / diabetes| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchWarn fill:#fff8e1,stroke:#f9a825
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q5,Q6 decision
+    class Safety safety
+    class BranchCut,BranchBulk branch
+    class BranchInd branchWarn
+    class Basics,PN,Goal,Contact universal

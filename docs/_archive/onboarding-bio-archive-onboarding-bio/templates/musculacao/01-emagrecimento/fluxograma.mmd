@@ -1,0 +1,40 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · journey_phase}
+
+    Q1 -->|starting| BranchStart[🟢 Branch: Início]
+    Q1 -->|restarting| BranchRestart[🟡 Branch: Recomeço]
+    Q1 -->|plateau| BranchPlateau[🔵 Branch: Platô]
+
+    BranchStart --> Q2
+    BranchRestart --> Q2
+    BranchPlateau --> Q2
+
+    Q2[Q2 · main_obstacle] --> Q3[Q3 · weekly_training]
+    Q3 --> Q4[Q4 · eating_pattern]
+    Q4 --> Q5[Q5 · available_days]
+    Q5 --> Q6{Q6 · health_conditions}
+
+    Q6 -->|nenhuma / thyroid / joint| Safe[Fluxo normal]
+    Q6 -->|cardiovascular / eating_disorder / diabetes / hypertension| Safety[🚨 safetyReduced]
+
+    Safe --> PN
+    Safety --> PN
+
+    PN[personal_note · universal] --> Goal[goal · universal]
+    Goal --> Contact[contact · universal]
+    Contact --> End([Relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchWarn fill:#fff8e1,stroke:#f9a825
+    classDef branchInfo fill:#e3f2fd,stroke:#1565c0
+    classDef universal fill:#f5f5f5,stroke:#616161
+
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchStart branch
+    class BranchRestart branchWarn
+    class BranchPlateau branchInfo
+    class Basics,PN,Goal,Contact universal

@@ -1,0 +1,33 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · comfort_level}
+    Q1 -->|fear| BranchFear[🔴 Branch: Medo]
+    Q1 -->|uncomfortable| BranchDefault[🟡 Branch: Desconforto]
+    Q1 -->|manage| BranchManage[🟢 Branch: Se Vira]
+    BranchFear --> Q2
+    BranchDefault --> Q2
+    BranchManage --> Q2
+    Q2[Q2 · primary_motivation] --> Q3[Q3 · main_barrier]
+    Q3 --> Q4[Q4 · weekly_availability]
+    Q4 --> Q5[Q5 · pool_access]
+    Q5 --> Q6{Q6 · health_conditions}
+    Q6 -->|none| PN
+    Q6 -->|cardiac / epilepsy / respiratory| Safety[🚨 safetyReduced]
+    Q6 -->|joint_pain| PN
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal]
+    Goal --> Contact[contact · universal]
+    Contact --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchWarn fill:#fff8e1,stroke:#f9a825
+    classDef branchDanger fill:#ffebee,stroke:#c62828
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchManage branch
+    class BranchDefault branchWarn
+    class BranchFear branchDanger
+    class Basics,PN,Goal,Contact universal

@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · ow_phase}
+    Q1 -->|pool_transition| BranchA[🟢 Branch: Transição Piscina→Mar]
+    Q1 -->|distance_progression| BranchB[🟡 Branch: Evolução de Distância]
+    Q1 -->|competitive_performance| BranchC[🔵 Branch: Performance Competitiva]
+    BranchA --> Q2
+    BranchB --> Q2
+    BranchC --> Q2
+    Q2[Q2 · main_barrier] --> Q3[Q3 · training_routine]
+    Q3 --> Q4[Q4 · ow_access]
+    Q4 --> Q5[Q5 · tracking_tools]
+    Q5 --> Q6{Q6 · health_screening}
+    Q6 -->|none| PN
+    Q6 -->|cardiac / seizure / diabetes / asthma| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef branchMid fill:#fff8e1,stroke:#f9a825
+    classDef branchAdv fill:#e3f2fd,stroke:#1565c0
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q6 decision
+    class Safety safety
+    class BranchA branch
+    class BranchB branchMid
+    class BranchC branchAdv
+    class Basics,PN,Goal,Contact universal

@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Início]) --> Basics[basics · universal]
+    Basics --> Q1{Q1 · cycling_identity}
+    Q1 -->|starting| BranchStart[🟢 Branch: Começando]
+    Q1 -->|regular| BranchRegular[🟢 Branch: Regular]
+    Q1 -->|competitor| BranchComp[🟢 Branch: Competidor]
+    BranchStart --> Q2
+    BranchRegular --> Q2
+    BranchComp --> Q2
+    Q2[Q2 · main_bottleneck] --> Q3[Q3 · weekly_rides]
+    Q3 --> Q4{Q4 · measurement_tools}
+    Q4 -->|power_meter| Q5[Q5 · ftp_value]
+    Q4 -->|hr_monitor| Q6
+    Q4 -->|gps_only| Q6
+    Q4 -->|nothing| Q6
+    Q5 --> Q6
+    Q6[Q6 · longest_ride] --> Q7{Q7 · health_conditions}
+    Q7 -->|none / hypertension / diabetes| PN
+    Q7 -->|cardiac / surgery / chest_pain| Safety[🚨 safetyReduced]
+    Safety --> PN
+    PN[personal_note · universal] --> Goal[goal · universal] --> Contact[contact · universal] --> End([relatório IA])
+
+    classDef decision fill:#fff3e0,stroke:#f57c00
+    classDef safety fill:#ffebee,stroke:#c62828
+    classDef branch fill:#e8f5e9,stroke:#2e7d32
+    classDef universal fill:#f5f5f5,stroke:#616161
+    class Q1,Q4,Q7 decision
+    class Safety safety
+    class BranchStart,BranchRegular,BranchComp branch
+    class Basics,PN,Goal,Contact universal

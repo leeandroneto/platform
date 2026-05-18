@@ -9,7 +9,7 @@
 ## 0. Como usar este checklist
 
 - **Path destino:** `C:/Users/leean/Desktop/desafit/` (FORA do working dir atual `onboarding-bio/`)
-- **Ordem importa.** Cada tarefa lista *Dependência* (qual deve estar pronta antes)
+- **Ordem importa.** Cada tarefa lista _Dependência_ (qual deve estar pronta antes)
 - **Done = critério explícito.** Não marcar [x] sem cumprir
 - **Commits após cada bloco** (1-5, 6-10, 11-15, 16-20, 21-25, 26-30) — facilita rollback se algo quebrar
 - **Acompanhar com `12-sprint-plan.md`** (Sprint 1-2 cobrem este checklist)
@@ -335,17 +335,18 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 ## Resumo de horas
 
-| Bloco | Tarefas | Horas |
-|---|---|---|
-| 1 — Foundation | 1-5 | ~1h |
-| 2 — Boilerplate + tokens | 6-10 | ~11h |
-| 3 — Boundaries + CI + shadcn | 11-15 | ~16h |
-| 4 — White-label + primitives | 16-20 | ~18h |
-| 5 — Premium patterns | 21-25 | ~42h |
-| 6 — Contracts + Claude + final | 26-30 | ~12h |
-| **Total** | **30** | **~100h estimado bruto** |
+| Bloco                          | Tarefas | Horas                    |
+| ------------------------------ | ------- | ------------------------ |
+| 1 — Foundation                 | 1-5     | ~1h                      |
+| 2 — Boilerplate + tokens       | 6-10    | ~11h                     |
+| 3 — Boundaries + CI + shadcn   | 11-15   | ~16h                     |
+| 4 — White-label + primitives   | 16-20   | ~18h                     |
+| 5 — Premium patterns           | 21-25   | ~42h                     |
+| 6 — Contracts + Claude + final | 26-30   | ~12h                     |
+| **Total**                      | **30**  | **~100h estimado bruto** |
 
 **Compressão alvo ~70h** via:
+
 - Paralelizar tarefas independentes (tarefas 4, 5 paralelas a 1-3)
 - Claude Code vibe coding em tarefas mecânicas (transferência paletas, skeleton, lucide grid)
 - Reuso direto onboarding-bio (paletas valores, ESLint regex, jsx-a11y block)
@@ -393,7 +394,7 @@ Sem todos ✅ → não começar M1 (decisão `_CONFLITOS #16` + master plan §33
 - `02-stack.md` (stack travado)
 - `04-camadas-imports.md` (Sheriff detalhes)
 - `05-design-system.md` (13 paletas, APCA, Motion)
-- `06-data-model.md` §3 (schema baseline platform.*)
+- `06-data-model.md` §3 (schema baseline platform.\*)
 - `12-sprint-plan.md` Sprint 1-2 (alinhamento)
 - `13-lint-enforcement.md` (24 regras + CI)
 - `16-claude-code.md` (CLAUDE.md + hooks)
@@ -403,6 +404,6 @@ Sem todos ✅ → não começar M1 (decisão `_CONFLITOS #16` + master plan §33
 
 ## Histórico
 
-| Data | Mudança | Aprovador |
-|---|---|---|
-| 2026-05-17 | Versão inicial — 30 tarefas em 6 blocos ~70h | Leandro |
+| Data       | Mudança                                      | Aprovador |
+| ---------- | -------------------------------------------- | --------- |
+| 2026-05-17 | Versão inicial — 30 tarefas em 6 blocos ~70h | Leandro   |
