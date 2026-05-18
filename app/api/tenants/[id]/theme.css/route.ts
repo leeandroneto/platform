@@ -40,7 +40,6 @@ async function getTenantTheme(tenantId: string): Promise<TenantTheme | null> {
   const admin = createAdminClient()
 
   const { data, error } = await admin
-    .schema('platform')
     .from('tenants')
     .select(
       `

@@ -91,7 +91,7 @@ Site institucional `desafit.app` + funil agência pronto pra capturar 1º lead r
 - Form captação multi-step (mobile-first, schema-driven — blueprint/09-pacote-a.md §3.1)
 - Edge Function `generate-assessment` (IA Sonnet 4.6 via Vercel AI Gateway — blueprint/07-ai-prompts.md)
 - WhatsApp lead handoff (`wa.me/<phone>?text=<msg pré-formatada>`)
-- Schema `platform.leads` + `capture_forms` + `capture_submissions` ativos
+- Schema `public.leads` + `capture_forms` + `capture_submissions` ativos
 - Webhook Meta CAPI configurado
 - Pixel Meta + GA4 instrumentados
 - Dashboard básico de leads (`/admin/leads` — fundador vê, ainda sem painel prof)

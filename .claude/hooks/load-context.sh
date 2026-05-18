@@ -10,10 +10,10 @@ cat <<'EOF'
     student, trainer, intake, wizard, prospect, diagnostic, customization,
     workspace, framer-motion, aluno (folder), reflexao, pilares, proximo_passo
 
-  Schema:
-    public.*     — auth/system compartilhado
-    platform.*   — multi-marca multi-vertical (produto principal — ADR-0025)
-    onboarding.* — legado pausado (NÃO usar neste greenfield)
+  Schema (ADR-0033 — schema único):
+    public.*     — TUDO (catálogos + produto + RLS-protected tenant data)
+    auth.*       — Supabase managed (não tocar)
+    storage.*    — Supabase managed (não tocar)
 
   Brand multi-marca:
     SEMPRE env.NEXT_PUBLIC_BRAND_NAME / BRAND_DOMAIN / BRAND_PARENT

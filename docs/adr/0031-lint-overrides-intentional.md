@@ -1,7 +1,7 @@
 # 0031. Lint overrides intencionais (escopos pre-positioned)
 
 Date: 2026-05-17
-Status: accepted
+Status: accepted (schema `platform.*` consolidado em `public.*` via ADR-0033 — `lib/contracts/database.ts` regenerado só `public`, sem mudança nas regras de override)
 
 ## Context
 

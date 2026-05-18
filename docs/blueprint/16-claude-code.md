@@ -37,7 +37,7 @@ SaaS self-service M5+ (ano 2).
 
 **Marca pai:** identidade comercial (footer/about/legal). Zero tech dia 1.
 Schema base é multi-marca: `desafit.app` + `yoga.app` futuro + `ingles.app`
-futuro compartilham o mesmo schema `platform.*`.
+futuro compartilham o mesmo schema `public.*`.
 
 Identidade completa, decisões, modelo multi-tenant: `docs/blueprint/00-PROJETO.md`.
 
@@ -70,7 +70,7 @@ next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Ladle.
 ## Schemas separados (regra crítica)
 
 - `public.*` — compartilhado (auth, system)
-- `platform.*` — multi-marca multi-vertical (produto principal)
+- `public.*` — multi-marca multi-vertical (produto principal)
 - `onboarding.*` — legado pausado (NÃO usado no desafit greenfield)
 
 Em data layer: `client.schema('platform').from('programs')`. `public` é default.

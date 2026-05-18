@@ -38,9 +38,10 @@ export async function fnName(client: SupabaseClient, ...args: TArgs): Promise<TR
 - Função ≤ 60 linhas
 - Arquivo ≤ 300 linhas
 
-### Schema explícito
+### Schema único `public` (ADR-0033)
 
-Sempre `client.schema('platform').from('tabela')`. Nunca string `'platform.tabela'`.
+`client.from('tabela')` sem `.schema()` qualifier. Schema único depois da
+consolidação `platform.*` → `public.*`.
 
 ## Exemplo
 
@@ -51,7 +52,6 @@ import { AppError } from '@/lib/contracts/errors'
 
 export async function listPrograms(client: SupabaseClient, tenantId: string) {
   const { data, error } = await client
-    .schema('platform')
     .from('programs')
     .select('id, title, slug, published_at')
     .eq('tenant_id', tenantId)

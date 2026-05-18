@@ -1,7 +1,7 @@
 # 0028. Pools de customização (paletas, fontes, shapes) no banco
 
 Date: 2026-05-17
-Status: superseded by 0029 (paletas: clone pattern em vez de `custom_primary_oklch`)
+Status: superseded by 0029 (paletas: clone pattern em vez de `custom_primary_oklch`) + schema `platform.*` consolidado em `public.*` via ADR-0033
 Supersedes: 0027 (parcial — schema de tenant ajustado)
 
 ## Why superseded

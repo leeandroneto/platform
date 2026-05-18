@@ -23,10 +23,14 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 - Migration `0004_restore_rls_helper_grants` — restaurado GRANT EXECUTE em `current_tenant_id()` e `current_user_role()` (necessário pra RLS USING clauses)
 - 5 storage buckets — avatars, programs-covers, components-media, tenant-logos, brand-assets
 - Scripts auto-update docs — `pnpm adr:index` + `pnpm docs:validate` + `pnpm docs:status`
-- ADR-0031 — 7 lint overrides intencionais por path (`components/ui/**`, `scripts/**`, etc) documentando escopo onde regras globais não fazem sentido
-- ADR-0032 — escopo do validator APCA de paletas; primary é bg de action (não fg de texto), validamos cenários reais (body+nonText)
+- ADR-0031 — 10 lint overrides intencionais por path (shadcn vendor + scripts CLI + configs + boundary exceptions + generated types + seed data + boot-time throws)
+- ADR-0032 — escopo do validator APCA de paletas; primary é bg de action (não fg de texto), validamos cenários reais (body+filled-block, threshold APCA-W3 Silver 30)
+- ADR-0033 — consolidação `platform.*` → `public.*` (1 schema único). Migration 0005 movimentou 25 tabelas + reescreveu 8 functions + 3 policies + 3 defaults; schema platform dropado em 0006. MCP/PostgREST/tooling agora canonicamente
 - Rota `/portal` (`app/(client)/portal/`) — área do cliente final EN puro, multi-vertical compatible (substitui `/aluno/*` rewrite, que era fitness-only)
 - Blueprint 05 §3 ganhou tabela "Design tokens — uso" com onde-usar/não-usar de cada token
+- ADR-0034 — Vertical slice (`features/<name>/` self-contained) + entitlements model (`public.plans.features jsonb` + `lib/entitlements/` server+client helpers + Sheriff feature-to-feature boundaries + ESLint rule `plan-gates-required`). Adicionar feature = criar 1 pasta; remover = deletar 1 pasta
+- ADR-0035 — UX de feature gating em 3 tipos: A (visible + paywall modal pra niche), B (visible + tooltip pra core), C (quota banner pra limites numéricos). 5 componentes shared em `lib/entitlements/components/` (EntitlementBadge, EntitlementGate, PaywallModal, QuotaBanner, UpgradeCTA)
+- Tarefa 25.5 inserida no Checklist 15 — vertical slice setup + entitlements + migration 0006 plans table
 
 ### Changed
 
@@ -39,9 +43,10 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ### Removed
 
-- `platform.tenant_branding` tabela — branding inline em `platform.tenants` (ADR-0028)
-- `platform.tenants.custom_primary_oklch` coluna — substituído por clone pattern via `platform.palettes.source_palette_id` (ADR-0029)
+- `platform.tenant_branding` tabela — branding inline em `public.tenants` (ADR-0028)
+- `platform.tenants.custom_primary_oklch` coluna — substituído por clone pattern via `public.palettes.source_palette_id` (ADR-0029)
 - `platform.brands.primary_color_oklch` coluna — sempre via `default_palette_id` FK (ADR-0028)
+- Schema `platform` — consolidado em `public` (ADR-0033)
 - Rewrite `/aluno/:path* → /client/:path*` em `vercel.ts` — `aluno` é fitness-only; rota EN `/portal` cobre todas verticais
 - Fallback hardcoded `'desafit.app'` em `proxy.ts`, `app/layout.tsx`, `lib/env.ts` — brand resolution puramente via host + DB lookup
 

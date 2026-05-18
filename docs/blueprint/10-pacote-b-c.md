@@ -40,7 +40,7 @@ Tudo do Pacote A **+** o aplicativo do aluno com a sua marca **+** 1 programa es
 - Hierarquia `Programa → Módulo → Componente`
 - 11 component kinds dia 1: `workout, meal_plan, video_lesson, lesson, scheduled_live, individual_call, in_person_class, check_in, material, message, task`
 - Schedule engine 4 release modes: `immediate / relative (day_offset) / fixed_date / after_completion`
-- Migração de alunos via planilha CSV (`platform.import_jobs`)
+- Migração de alunos via planilha CSV (`public.import_jobs`)
 - Player vídeo Bunny Stream embedded (PoP São Paulo sub-29ms)
 - Biblioteca 800+ exercícios (`public.kb_exercises` — free-exercise-db)
 - Biblioteca pessoal de vídeos do prof (Bunny Stream upload)
@@ -59,9 +59,9 @@ Tudo do Pacote A **+** o aplicativo do aluno com a sua marca **+** 1 programa es
 - Form 3 campos default (energia 1-10 / sono 1-10 / mood emoji 5-step)
 - Customizável via `component_kind='check_in'` `payload.fields`
 - Foto pesagem semanal (opcional, não diário)
-- Streak de dias consecutivos (`platform.workout_logs` agregado)
-- Gamificação personalizada (bônus mês 3) — `platform.achievements` + `platform.badges`
-- Galeria antes/depois (`platform.progress_photos` com `kind enum('front'/'side'/'back')`)
+- Streak de dias consecutivos (`public.workout_logs` agregado)
+- Gamificação personalizada (bônus mês 3) — `public.achievements` + `public.badges`
+- Galeria antes/depois (`public.progress_photos` com `kind enum('front'/'side'/'back')`)
 - Histórico completo de progresso (line chart Recharts)
 
 **Push notifications branded** (5 templates dia 1 — blueprint/08-pwa-offline.md §9.5):
@@ -133,14 +133,14 @@ Tudo do Pacote A + B **+** integrações + automações + módulos extras + supo
 - Editor visual de automações em `/dashboard/automations` (tier 3 editor — vibe coding pipeline)
 - Triggers: signup, enrollment, X dias sem atividade, completou módulo, completou programa, cobrança falhou, antes do término do plano
 - Ações: enviar email (template), enviar push, marcar tag, mudar status, criar tarefa pro prof
-- Scheduler via Supabase `pg_cron` + Edge Function `process-scheduled-jobs` + tabela `platform.scheduled_jobs`
+- Scheduler via Supabase `pg_cron` + Edge Function `process-scheduled-jobs` + tabela `public.scheduled_jobs`
 - Retries exponential backoff (3 tries) + deduplicação `event_id`
 
 **Módulos extras do programa** (até 3 adicionais):
 
 - Fundador configura via vibe coding (`public.ai_prompts` chave `vibe.component.<kind>.<vertical>`)
 - Ou import de template oficial (`public.program_templates` clonável)
-- Cada módulo = `platform.modules` row com N `components` filhos
+- Cada módulo = `public.modules` row com N `components` filhos
 - Limite 3 dentro do pacote; programas adicionais cobrados separadamente (R$ 800 cada — proposta_desafit.html)
 
 **Chatbot nutricional IA** (bônus, entrega ~1 mês após Pacote C):
@@ -150,7 +150,7 @@ Tudo do Pacote A + B **+** integrações + automações + módulos extras + supo
 - Cache hit 90%+ na sessão = $0.005/conversa
 - Aluno informa o que tem disponível → bot calcula porções exatas pra bater meta calórica/macros
 - Guardrails: XML wrap input + pre-screen Haiku + LLM judge ("contém conselho médico?") + PII mask
-- Schema: `platform.chatbot_threads` + `platform.chatbot_messages`
+- Schema: `public.chatbot_threads` + `public.chatbot_messages`
 - Budget cap $2/mês por tenant Pacote C (`lib/ai/budget.ts`)
 - Crédito legal obrigatório no rodapé: _"Dados nutricionais: TBCA (USP/FORC) e TACO (NEPA/UNICAMP)."_
 
@@ -262,7 +262,7 @@ Gateways suportados dia 1 (blueprint/09-pacote-a.md §5): Asaas (BRL) + Stripe (
 **Não pode adiar (entra junto com 1º cliente C):**
 
 - Webhook Hotmart/Kiwify
-- Schema `platform.scheduled_jobs` + Edge Function processor
+- Schema `public.scheduled_jobs` + Edge Function processor
 - Chatbot IA Pacote C (não tem versão manual viável)
 
 Memória: `project_desafit_principio_39_revisto.md`.

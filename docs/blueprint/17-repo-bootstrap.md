@@ -98,7 +98,7 @@ Criar `.env.local` (gitignored por default Next 16).
 
 ### 5.4 Vars do profissional (NÃO ficam no env do projeto)
 
-Cada prof traz a dele (Asaas/Pagar.me/MP keys) — armazenadas em `platform.tenant_gateway_credentials` (Supabase Vault) por tenant. Zero hardcoded em `.env`.
+Cada prof traz a dele (Asaas/Pagar.me/MP keys) — armazenadas em `public.tenant_gateway_credentials` (Supabase Vault) por tenant. Zero hardcoded em `.env`.
 
 ---
 
@@ -271,7 +271,7 @@ Se não funcionar: configurar `.claude/mcp.json` apontando pra Supabase token.
 
 ---
 
-## 14. Primeira migration (schema baseline `platform.*`)
+## 14. Primeira migration (schema baseline `public.*`)
 
 Executar `mcp__supabase__apply_migration` com schema baseline conforme `06-data-model.md §3` + `15-bootstrap-checklist.md tarefa 25`:
 

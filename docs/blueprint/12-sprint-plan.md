@@ -51,7 +51,7 @@
   - [ ] `pnpm typecheck` 0 erros
   - [ ] `pnpm lint --max-warnings 0` 0/0
   - [ ] Migration aplicada — `mcp__supabase__list_tables` retorna ~22 tabelas
-  - [ ] Smoke RLS: insert direto em `platform.programs` sem JWT → bloqueado
+  - [ ] Smoke RLS: insert direto em `public.programs` sem JWT → bloqueado
 - **Quem domina:** **fundador manual** (decisões one-way door — pesquisa 07 §12). Claude Code só revisa migration final.
 - **Gate:** signup smoke — criar conta nova via form → trigger cria `profiles + tenants + memberships` atomicamente → JWT carrega `tenant_id + active_membership_role`. Sem isso, Sprint 2 não começa.
 
@@ -81,7 +81,7 @@
 - **Goal:** landing `desafit.app` no ar + form captação multi-step funcionando + schema `leads/capture_forms/capture_submissions` com Server Actions.
 - **Deliverables:**
   1. Landing institucional desafit + página `/agencia` (proposta comercial) — copy via `messages/pt-BR.json` (zero hardcoded — `03-naming-vocab.md §6`)
-  2. Schema `platform.leads + capture_forms + capture_submissions` + Server Action `submitCaptureForm` retornando `{ ok, data: { lead_id } }`
+  2. Schema `public.leads + capture_forms + capture_submissions` + Server Action `submitCaptureForm` retornando `{ ok, data: { lead_id } }`
   3. Form multi-step RHF + Zod 4 (standard-schema resolver), mobile-first absoluto 375px
 - **Dependências:** Sprint 2 (precisa do pipeline UI dia 0 — \_CONFLITOS #16)
 - **DoD:**
@@ -135,7 +135,7 @@
 - **Deliverables:**
   1. `/dashboard/capture-forms` — CrudManager pra `capture_forms.fields jsonb` (campos schema-driven)
   2. Email transacional Resend domain do prof verified + templates (assessment, welcome, payment confirmation)
-  3. Tabela `platform.coupons` + UI CRUD + checkout link copy-paste do gateway externo do prof
+  3. Tabela `public.coupons` + UI CRUD + checkout link copy-paste do gateway externo do prof
 - **Dependências:** Sprint 5 (tenant criado pra ter onde configurar)
 - **DoD:**
   - [ ] Prof cria form modalidade musculação em <10min
@@ -264,7 +264,7 @@
 - **Deliverables:**
   1. 8º tenant criado e operando
   2. Cliente upgrade A→B fecha — PWA Serwist branded começa (M4 começa Pacote B por demanda real, não preventivo — princípio §39)
-  3. Schema `platform.programs + components` ativo + 1º programa estruturado criado por aquele prof
+  3. Schema `public.programs + components` ativo + 1º programa estruturado criado por aquele prof
 - **Dependências:** Sprint 13 + cliente real pedindo PWA (sem demanda, não constrói)
 - **DoD:**
   - [ ] 8 tenants pagantes simultâneos

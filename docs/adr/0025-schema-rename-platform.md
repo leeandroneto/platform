@@ -1,7 +1,7 @@
 # 0025. Schema rename `core.*` → `platform.*`
 
 Date: 2026-05-17
-Status: accepted
+Status: superseded by 0033 (schema `platform.*` consolidado em `public.*` em 2026-05-18 — naming "platform" sobrevive como nome do repo/projeto, não schema)
 Supersedes: 0021
 
 ## Context

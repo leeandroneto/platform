@@ -29,11 +29,11 @@ plan e evita re-eval por row (~100× mais rápido em queries com 10k+ rows):
 
 ```sql
 -- ✅ correto
-CREATE POLICY tenant_isolation ON platform.programs FOR ALL
+CREATE POLICY tenant_isolation ON public.programs FOR ALL
 USING (tenant_id = (SELECT (auth.jwt() ->> 'tenant_id')::uuid));
 
 -- ❌ errado — sem wrap, re-eval por row
-CREATE POLICY tenant_isolation ON platform.programs FOR ALL
+CREATE POLICY tenant_isolation ON public.programs FOR ALL
 USING (tenant_id = (auth.jwt() ->> 'tenant_id')::uuid);
 ```
 
@@ -52,7 +52,7 @@ Toda tabela tenant-scoped tem teste:
 ```sql
 -- Insert sem JWT → bloqueado
 SET ROLE anon;
-INSERT INTO platform.programs (tenant_id, title) VALUES ('00000000-0000-0000-0000-000000000000', 'test');
+INSERT INTO public.programs (tenant_id, title) VALUES ('00000000-0000-0000-0000-000000000000', 'test');
 -- ERROR: new row violates row-level security policy
 ```
 

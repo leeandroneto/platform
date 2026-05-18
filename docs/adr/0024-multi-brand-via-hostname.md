@@ -1,7 +1,7 @@
 # 0024. Multi-brand via hostname, não env
 
 Date: 2026-05-17
-Status: accepted
+Status: accepted (schema `platform.*` consolidado em `public.*` via ADR-0033 — `public.brands` agora)
 
 ## Context
 

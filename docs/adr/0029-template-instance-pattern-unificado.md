@@ -1,7 +1,7 @@
 # 0029. Template→Instance pattern unificado (pages, programs, forms, paletas)
 
 Date: 2026-05-17
-Status: accepted
+Status: accepted (schema `platform.*` consolidado em `public.*` via ADR-0033 — templates oficiais em `public.*_templates`, instâncias em `public.{pages,programs,capture_forms,palettes}`)
 Supersedes: 0028 (paletas: substitui `tenants.custom_primary_oklch` por clone pattern)
 
 ## Context

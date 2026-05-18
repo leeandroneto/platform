@@ -1,7 +1,7 @@
 # 0026. Multi-domain por tenant (subdomain grátis + custom domain)
 
 Date: 2026-05-17
-Status: accepted
+Status: accepted (schema `platform.*` consolidado em `public.*` via ADR-0033 — `public.domains` agora)
 
 ## Context
 

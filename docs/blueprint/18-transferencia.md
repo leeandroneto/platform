@@ -65,7 +65,7 @@ Tudo abaixo é regenerado do zero seguindo blueprint:
 | `app/**` (todas páginas)                                                        | Regeneradas via Claude Code seguindo blueprint. Vocab e padrões mudaram (core não desafit, sem onboarding wizard, etc) |
 | `components/**`                                                                 | Regenera via `pnpm dlx shadcn@latest add` + customs auditados via §6                                                   |
 | `lib/data/**`, `lib/hooks/**`, `lib/domain/**`, `lib/api/**`, `lib/services/**` | Escrever do zero seguindo `01-arquitetura.md` + `04-camadas-imports.md`                                                |
-| `supabase/migrations/**`                                                        | Schema novo via `mcp__supabase__apply_migration` (`platform.*` não `desafit.*` nem `onboarding.*`)                     |
+| `supabase/migrations/**`                                                        | Schema novo via `mcp__supabase__apply_migration` (`public.*` não `desafit.*` nem `onboarding.*`)                     |
 | `supabase/functions/**`                                                         | Edge Functions novas (`generate-assessment`, etc) conforme `07-ai-prompts.md`                                          |
 | `messages/pt-BR.json`                                                           | i18n novo (vocab limpo conforme `03-naming-vocab.md`)                                                                  |
 | `.env.local`                                                                    | Chaves NOVAS conforme matriz `17-repo-bootstrap.md §5`                                                                 |

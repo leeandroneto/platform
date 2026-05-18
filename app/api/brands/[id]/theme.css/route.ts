@@ -28,7 +28,6 @@ interface BrandTheme {
 async function getBrandTheme(brandId: string): Promise<BrandTheme | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
-    .schema('platform')
     .from('brands')
     .select(
       `

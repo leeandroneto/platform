@@ -46,14 +46,13 @@ next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Ladle.
 
 ---
 
-## Schemas separados (regra crítica)
+## Schema único (ADR-0033 — superseded ADR-0025)
 
-- `public.*` — compartilhado (auth, system)
-- `platform.*` — multi-marca multi-vertical (produto principal — ADR-0025)
-- `onboarding.*` — legado pausado (NÃO usado neste greenfield)
+- `public.*` — tudo do produto (37 tabelas dia 0). RLS é a fronteira de segurança, não schema
+- `auth.*`, `storage.*`, `realtime.*` — Supabase managed (não tocar)
 
-Em data layer: `client.schema('platform').from('programs')`. `public` é default.
-Detalhes: `.claude/rules/schema-separation.md`.
+Em data layer: `client.from('programs')`. Sem `.schema()` qualifier.
+Detalhes: ADR-0033.
 
 ---
 
@@ -76,9 +75,8 @@ const brand = useBrand()
 return <h1>{brand.name}</h1>
 ```
 
-Verticalização via `platform.tenants.vertical` + `component.kind` polimórfico
-
-- JSONB internal keys. Mesmo schema serve todas marcas filhas.
+Verticalização via `public.tenants.vertical` + `component.kind` polimórfico
++ JSONB internal keys. Mesmo schema serve todas marcas filhas.
 
 ---
 

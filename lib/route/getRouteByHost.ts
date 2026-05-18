@@ -44,9 +44,8 @@ export async function getRouteByHost(host: string): Promise<ResolvedRoute | null
 
   const admin = createAdminClient()
 
-  // 1. Lookup em platform.domains (tenant subdomain ou custom)
+  // 1. Lookup em public.domains (tenant subdomain ou custom)
   const { data: domain } = await admin
-    .schema('platform')
     .from('domains')
     .select(
       `
@@ -73,9 +72,8 @@ export async function getRouteByHost(host: string): Promise<ResolvedRoute | null
     return route
   }
 
-  // 2. Lookup em platform.brands (brand-root, landing institucional)
+  // 2. Lookup em public.brands (brand-root, landing institucional)
   const { data: brand } = await admin
-    .schema('platform')
     .from('brands')
     .select(
       'id, name, host, default_palette_id, logo_url, default_vertical, parent_label, theme_version',

@@ -1,7 +1,7 @@
 # 0027. Tenant customization scope (cor, tipografia, shape)
 
 Date: 2026-05-17
-Status: superseded by 0028 (schema parcial — princípio "3 eixos dia 1" mantido)
+Status: superseded by 0028 (schema parcial — princípio "3 eixos dia 1" mantido) + schema `platform.*` consolidado em `public.*` via ADR-0033
 
 ## Why superseded
 

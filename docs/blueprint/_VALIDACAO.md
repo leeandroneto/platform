@@ -177,11 +177,11 @@ Verificar com `grep -rE "(student|trainer|intake|wizard|prospect|diagnostic|cust
 
 ---
 
-## 10. Schema rename `desafit.*` → `core.*` → `platform.*`
+## 10. Schema rename `desafit.*` → `core.*` → `public.*`
 
 Grep final pós-rename ADR-0025:
 
-- `platform.*` referências: ✅ majoritárias (~110 ocorrências)
+- `public.*` referências: ✅ majoritárias (~110 ocorrências)
 - `core.<table>` em código/docs: ✅ 0 hits (rename completo)
 - `desafit.<table>` em código/docs: ✅ 0 hits
 - `desafit.app` (URL/brand domain): ✅ OK e esperado
@@ -194,7 +194,7 @@ Grep final pós-rename ADR-0025:
 - `proxy.ts` Next 16 com lookup de brand ✅
 - `app/api/brands/[id]/theme.css/route.ts` (CSS via API D-G59) ✅
 - ESLint rule `brand/no-brand-hardcode` bloqueia literal `desafit`/`yoga.app`/`ingles.app` ✅
-- `platform.brands` tabela adicionada ao baseline 0001_initial.md ✅
+- `public.brands` tabela adicionada ao baseline 0001_initial.md ✅
 
 ## 12. Boilerplate dia 0 completo (61 arquivos)
 

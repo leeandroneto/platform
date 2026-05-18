@@ -210,7 +210,7 @@ Formato canônico:
 
 ### Removed
 
-- Tabela `platform.unused_audit` (não tinha consumer há 90 dias)
+- Tabela `public.unused_audit` (não tinha consumer há 90 dias)
 
 ### Fixed
 

@@ -52,7 +52,7 @@ Referências: `00-PROJETO.md §3` · proposta_desafit.html · master plan §0.5.
 
 ## 3. Componentes técnicos dia 1
 
-### 3.1 Captação branded (`platform.capture_forms` + `capture_submissions` + `leads`)
+### 3.1 Captação branded (`public.capture_forms` + `capture_submissions` + `leads`)
 
 - Form multi-step, **mobile-first absoluto** (375px viewport touch real)
 - Schema-driven via `capture_forms.fields jsonb` — Zod 4 `discriminatedUnion` por field type
@@ -77,7 +77,7 @@ Padrão: pesquisa 02 §3.4 (vibe coding pipeline UX) + blueprint/08-pwa-offline.
 
 ### 3.3 Landing institucional do prof
 
-- Schema `platform.pages` com `draft_blocks` + `published_blocks jsonb`
+- Schema `public.pages` com `draft_blocks` + `published_blocks jsonb`
 - Renderer SSR de blocos (11 tipos base — pesquisa 02 §4.4)
 - **Tier 1 editor dia 1** (D-G69 — \_CONFLITOS #11): form-based em vaul bottom sheet (sem drag-drop)
 - Tier 2 drag-drop entra no Pacote B
@@ -111,7 +111,7 @@ Padrão: pesquisa 02 §3.4 (vibe coding pipeline UX) + blueprint/08-pwa-offline.
 
 - Plataforma cria link via API do gateway escolhido pelo prof (Asaas/Pagar.me/MP/Stripe BR)
 - Redirect ou iframe pro link — aluno paga lá (UX nativa do gateway, cuida do PCI)
-- Webhook chega → atualiza `platform.payments.status = 'paid'`
+- Webhook chega → atualiza `public.payments.status = 'paid'`
 - Sem enrollment automático no Pacote A (não há PWA pra liberar acesso)
 - Sucesso → redirect `/<slug>/sucesso` com confirmação + próximos passos via WhatsApp
 
@@ -119,7 +119,7 @@ Detalhes: master plan §24.3 (adapter PaymentLinkProvider).
 
 ### 3.8 Cupons configuráveis
 
-- Schema `platform.coupons (tenant_id, code, discount_type enum('percent'/'fixed'), discount_amount_minor, currency, max_uses, max_uses_per_client, expires_at, applicable_to enum)`
+- Schema `public.coupons (tenant_id, code, discount_type enum('percent'/'fixed'), discount_amount_minor, currency, max_uses, max_uses_per_client, expires_at, applicable_to enum)`
 - CRUD admin via painel prof (`/dashboard/sales/coupons`)
 - Validação no checkout (server action)
 
@@ -165,7 +165,7 @@ Ordem de implementação (master plan §24.3):
 | 4     | Mercado Pago               | BRL                 | Quando 1º tenant pedir                                          |
 | 5     | Stripe BR (BRL via Stripe) | BRL                 | Quando demanda aparecer                                         |
 
-Tenant cola credenciais em `/dashboard/settings/payment` (encrypted em `platform.payment_methods.gateway_config jsonb` via pgcrypto).
+Tenant cola credenciais em `/dashboard/settings/payment` (encrypted em `public.payment_methods.gateway_config jsonb` via pgcrypto).
 
 Detalhes: master plan §24.3 + pesquisa 01 §2.1.
 

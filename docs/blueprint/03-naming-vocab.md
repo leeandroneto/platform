@@ -70,14 +70,14 @@ Memória relacionada: `feedback_vocab_check_before_response.md`.
 | `staff`          | Colaborador do profissional dentro do tenant                                     | enum `user_role`/`membership_role` |
 | `admin`          | Leandro/equipe plataforma (role global, fora memberships)                        | enum `user_role`                   |
 | `influencer`     | Afiliado (role global, fora memberships)                                         | enum `user_role`                   |
-| `program`        | Produto vendido (curso, desafio, mentoria)                                       | `platform.programs`                |
-| `module`         | Subdivisão flexível dentro de programa (nome configurável: "Semana 1", "Fase 1") | `platform.modules`                 |
-| `component`      | Unidade atômica de conteúdo                                                      | `platform.components`              |
-| `component.kind` | Polimorfismo via enum (11 kinds dia 1)                                           | enum `desafit.component_kind`      |
-| `enrollment`     | Cliente matriculado em programa                                                  | `platform.enrollments`             |
-| `cohort`         | Turma com início/fim fixo                                                        | `platform.cohorts`                 |
-| `capture_form`   | Formulário de captação branded                                                   | `platform.capture_forms`           |
-| `lead`           | Inscrito no capture_form                                                         | `platform.leads`                   |
+| `program`        | Produto vendido (curso, desafio, mentoria)                                       | `public.programs`                |
+| `module`         | Subdivisão flexível dentro de programa (nome configurável: "Semana 1", "Fase 1") | `public.modules`                 |
+| `component`      | Unidade atômica de conteúdo                                                      | `public.components`              |
+| `component.kind` | Polimorfismo via enum (11 kinds dia 1)                                           | enum `public.component_kind`       |
+| `enrollment`     | Cliente matriculado em programa                                                  | `public.enrollments`             |
+| `cohort`         | Turma com início/fim fixo                                                        | `public.cohorts`                 |
+| `capture_form`   | Formulário de captação branded                                                   | `public.capture_forms`           |
+| `lead`           | Inscrito no capture_form                                                         | `public.leads`                   |
 | `assessment`     | Relatório gerado por IA pós-capture_form                                         | derivado de `capture_submissions`  |
 | `setup`          | Fluxo pós-signup (4 telas na fase SaaS, manual na fase agência)                  | rotas `app/(setup)/`               |
 | `theme_tokens`   | Branding do tenant (JSONB)                                                       | `tenants.theme_tokens`             |

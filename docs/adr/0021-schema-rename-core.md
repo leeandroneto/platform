@@ -1,7 +1,7 @@
 # 0021. Schema rename `desafit.*` → `core.*` (multi-marca)
 
 Date: 2026-05-17
-Status: superseded by 0025
+Status: superseded by 0025 (schema `platform.*` posteriormente consolidado em `public.*` via ADR-0033)
 
 ## Why superseded
 

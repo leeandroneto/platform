@@ -23,7 +23,7 @@ Goal: repo `platform/` cria, builda, deploya em Vercel. Schema baseline ~24 tabe
 5. [ ] **Copiar boilerplate** seguindo `_boilerplate/README.md §Como usar`
 6. [ ] Migration `0001_initial` via `mcp__supabase__apply_migration` (guia em `_boilerplate/supabase/migrations/0001_initial.md`)
 7. [ ] Smoke signup: novo email cria `profiles+tenants+memberships` atomicamente
-8. [ ] Configurar domínio dia 1: `desafit.app` apontando pro Vercel deploy + INSERT `platform.brands`
+8. [ ] Configurar domínio dia 1: `desafit.app` apontando pro Vercel deploy + INSERT `public.brands`
 
 **Gate Sprint 1:** `pnpm build` + signup smoke + DNS resolvendo. Sem isso, Sprint 2 não começa.
 
@@ -83,7 +83,7 @@ Cap 40-45h. Burnout = preditor #1 de failure solo (`ADR-0005`).
 
 (`ADR-0017` Bezos framing + `11-roadmap.md §9`)
 
-- Schema novo (`platform.*`) — antes de migration final
+- Schema novo (`public.*`) — antes de migration final
 - Modelo de billing (split EFI/Stripe)
 - Contratos LGPD/operador
 - Vocab banido (lint enforce)

@@ -1,5 +1,6 @@
 import './globals.css'
 
+import { Suspense } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
@@ -44,37 +45,43 @@ export const viewport: Viewport = {
   ],
 }
 
-// Resolve link href + version pro CSS de tema do tenant/brand.
-function buildThemeLink(route: Awaited<ReturnType<typeof getRouteByHost>>) {
-  if (!route) return null
-  const isTenant = Boolean(route.tenant)
-  const id = route.tenant?.id ?? route.brand.id
-  const version = route.tenant?.theme_version ?? route.brand.theme_version ?? 1
-  const path = isTenant ? 'tenants' : 'brands'
-  return { href: `/api/${path}/${id}/theme.css?v=${version}`, version }
-}
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+// ─── Dynamic shell: lê host + faz lookup brand/tenant + emite theme CSS ──
+// Encapsulado em Suspense pra Next 16 cacheComponents — body shell static,
+// dynamic content streamed (PPR-style). Theme `<link>` hoisted pra <head>
+// via precedence prop do React.
+async function DynamicShell({ children }: { children: React.ReactNode }) {
   const h = await headers()
   const host = h.get('host')
   const route = host ? await getRouteByHost(host) : null
-  const themeLink = buildThemeLink(route)
-  const fontVars = `${geistSans.variable} ${geistMono.variable}`
+
+  const themeId = route?.tenant?.id ?? route?.brand.id
+  const themeVersion = route?.tenant?.theme_version ?? route?.brand.theme_version ?? 1
+  const themePath = route?.tenant ? 'tenants' : 'brands'
+  const themeHref = themeId
+    ? `/api/${themePath}/${themeId}/theme.css?v=${themeVersion}`
+    : null
+
+  if (!route) return children
 
   return (
-    <html lang="pt-BR" className={fontVars} suppressHydrationWarning>
-      <head>
-        {themeLink && <link rel="stylesheet" href={themeLink.href} precedence="default" />}
-      </head>
+    <>
+      {themeHref && <link rel='stylesheet' href={themeHref} precedence='default' />}
+      <RouteProvider brand={route.brand} tenant={route.tenant}>
+        {children}
+        <Toaster richColors closeButton position='top-center' />
+      </RouteProvider>
+    </>
+  )
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const fontVars = `${geistSans.variable} ${geistMono.variable}`
+  return (
+    <html lang='pt-BR' className={fontVars} suppressHydrationWarning>
       <body>
-        {route ? (
-          <RouteProvider brand={route.brand} tenant={route.tenant}>
-            {children}
-            <Toaster richColors closeButton position="top-center" />
-          </RouteProvider>
-        ) : (
-          children
-        )}
+        <Suspense fallback={children}>
+          <DynamicShell>{children}</DynamicShell>
+        </Suspense>
       </body>
     </html>
   )

@@ -6,21 +6,27 @@
 
 ---
 
-## 1. Schemas separados (2, não 3)
+## 1. Schema único (ADR-0033 — supersede ADR-0025)
 
-Greenfield desafit usa **apenas 2 schemas Postgres**:
+Greenfield desafit usa **apenas 1 schema Postgres** pra produto (`public`),
+mais os schemas managed do Supabase:
 
-| Schema      | Conteúdo                                                                                         | Origem          |
-| ----------- | ------------------------------------------------------------------------------------------------ | --------------- |
-| `public.*`  | Cross-cutting (auth, tenants, memberships, billing plataforma, IA, KB, currencies)               | Padrão Supabase |
-| `desafit.*` | Produto (programs, modules, components, enrollments, capture_forms, leads, pages, payments, etc) | Domínio desafit |
+| Schema       | Conteúdo                                                                                                                                       | Origem            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| `public.*`   | TUDO — catálogos (verticals, currencies, templates oficiais, ai_prompts) + tenant data (brands, tenants, programs, components, etc.) com RLS   | Schema único      |
+| `auth.*`     | Supabase Auth (users, sessions, identities)                                                                                                    | Supabase managed  |
+| `storage.*`  | Supabase Storage (objects, buckets, policies)                                                                                                  | Supabase managed  |
+| `realtime.*` | Supabase Realtime                                                                                                                              | Supabase managed  |
 
-**Sem `onboarding.*`** — legado pausado vive só no histórico do outro repo (master plan §16.1). Schema "3 schemas" do briefing referencia o padrão antigo (public + desafit + onboarding) — desafit greenfield descarta o terceiro.
+Histórico: dia 0 separou `public.*` (produto) de `public.*` (catálogos)
+(ADR-0021 → 0025). Consolidado em `public.*` em 2026-05-18 (ADR-0033) porque:
+MCP/PostgREST/tooling defaultam pra public; RLS já cobre segurança real; schema
+não é segurança; conversa com Supabase AI confirmou ganho operacional.
 
 Data layer usa:
 
-- `client.from('tenants')` → schema `public` (default)
-- `client.schema('desafit').from('programs')` → schema `desafit`
+- `client.from('programs')` → schema `public` (default, sem qualifier)
+- Nada de `client.schema('platform')` — schema removido
 
 ---
 
@@ -49,36 +55,36 @@ Anti-pattern proibido (master plan §32.4 lição #12): tabela `system_*` config
 | `public.slug_blocklist`                                                       | Subdomínios reservados (admin/api/app/dashboard/etc)                         |
 | `public.current_tenant_id()` + `custom_access_token_hook` + `handle_new_user` | Functions/triggers Auth (não são tabelas mas vivem em `public`)              |
 
-### 3.2 `platform.*` brand + tenant (dia 0 — ~10) ADR-0024/0026/0028
+### 3.2 `public.*` brand + tenant (dia 0 — ~10) ADR-0024/0026/0028
 
 | Tabela                                | Propósito                                                                                                                                                                                                                     |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platform.brands`                     | Marca filha (`desafit`/`yoga`/`ingles`). `host`, `default_palette_id FK platform.palettes`, `logo_url`, `default_vertical`, `parent_label`, `theme_version` (ADR-0024)                                                        |
-| `platform.palettes`                   | Pool 13 paletas (seed `is_official=true`) + custom. `brand_id` nullable (null=todas marcas). OKLCH completo + surfaces 5+5 + hue (ADR-0028)                                                                                   |
-| `platform.fonts`                      | Pool 7 fontes (Geist/Inter/Outfit/Lora/Manrope/Plus Jakarta/Space Grotesk). `brand_id` nullable (ADR-0028)                                                                                                                    |
-| `platform.shape_presets`              | Pool 3 (sharp/rounded/pill). `brand_id` nullable (ADR-0028)                                                                                                                                                                   |
-| `platform.tenants`                    | Empresa do prof. `brand_id` FK, `slug`, `vertical`, `palette_id FK`, `custom_primary_oklch text null`, `font_id FK`, `shape_preset_id FK`, `logo_url`, `theme_version`, `default_locale/currency/tz`, `pixels jsonb` Meta/GA4 |
-| `platform.domains`                    | 1:N de tenant. `host`, `kind enum('subdomain'/'custom')`, `is_primary`, `verified_at`, `ssl_status enum` (ADR-0026)                                                                                                           |
-| `platform.profiles`                   | 1:1 com `auth.users` — perfil base                                                                                                                                                                                            |
-| `platform.memberships`                | `(tenant_id, user_id, role enum)` UNIQUE pair. 5 roles: `platform_admin/professional/client/influencer/service_account`                                                                                                       |
-| `platform.subscriptions`              | Mensalidade plataforma EFI Bank cobrada do prof. `package enum('A'/'B'/'C')`, money pair, `monthly_grace_period_until`                                                                                                        |
-| `platform.tenant_gateway_credentials` | Asaas/Stripe/MP keys do prof (Supabase Vault encrypted)                                                                                                                                                                       |
+| `public.brands`                     | Marca filha (`desafit`/`yoga`/`ingles`). `host`, `default_palette_id FK public.palettes`, `logo_url`, `default_vertical`, `parent_label`, `theme_version` (ADR-0024)                                                        |
+| `public.palettes`                   | Pool 13 paletas (seed `is_official=true`) + custom. `brand_id` nullable (null=todas marcas). OKLCH completo + surfaces 5+5 + hue (ADR-0028)                                                                                   |
+| `public.fonts`                      | Pool 7 fontes (Geist/Inter/Outfit/Lora/Manrope/Plus Jakarta/Space Grotesk). `brand_id` nullable (ADR-0028)                                                                                                                    |
+| `public.shape_presets`              | Pool 3 (sharp/rounded/pill). `brand_id` nullable (ADR-0028)                                                                                                                                                                   |
+| `public.tenants`                    | Empresa do prof. `brand_id` FK, `slug`, `vertical`, `palette_id FK`, `custom_primary_oklch text null`, `font_id FK`, `shape_preset_id FK`, `logo_url`, `theme_version`, `default_locale/currency/tz`, `pixels jsonb` Meta/GA4 |
+| `public.domains`                    | 1:N de tenant. `host`, `kind enum('subdomain'/'custom')`, `is_primary`, `verified_at`, `ssl_status enum` (ADR-0026)                                                                                                           |
+| `public.profiles`                   | 1:1 com `auth.users` — perfil base                                                                                                                                                                                            |
+| `public.memberships`                | `(tenant_id, user_id, role enum)` UNIQUE pair. 5 roles: `platform_admin/professional/client/influencer/service_account`                                                                                                       |
+| `public.subscriptions`              | Mensalidade plataforma EFI Bank cobrada do prof. `package enum('A'/'B'/'C')`, money pair, `monthly_grace_period_until`                                                                                                        |
+| `public.tenant_gateway_credentials` | Asaas/Stripe/MP keys do prof (Supabase Vault encrypted)                                                                                                                                                                       |
 
-### 3.3 `platform.*` produto (dia 0 — ~11)
+### 3.3 `public.*` produto (dia 0 — ~11)
 
 | Tabela                         | Propósito                                                                                                                                                                                                      |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platform.programs`            | `(tenant_id, vertical_id, title, cover_image_url, price money pair, cohort_type enum, enrollment_window jsonb, source_template_id, status, tags[])`                                                            |
-| `platform.modules`             | `(program_id, title, position)`                                                                                                                                                                                |
-| `platform.components`          | `(tenant_id, module_id, kind enum, schema_version, payload jsonb, status)`. **11 kinds** (workout/meal_plan/lesson/video_lesson/material/check_in/scheduled_live/individual_call/in_person_class/message/task) |
-| `platform.component_schedules` | `(component_id, day_offset OR unlock_at, unlock_rule jsonb)` — 4 release modes                                                                                                                                 |
-| `platform.enrollments`         | `(tenant_id, program_id, client_user_id, cohort_start_date, started_at, completed_at, paused_at, status, payment_id)`                                                                                          |
-| `platform.payments`            | `(tenant_id, enrollment_id, gateway enum, gateway_ref, kind enum, money pair, status, captured_at, external_payment_url)`                                                                                      |
-| `platform.capture_forms`       | `(tenant_id, fields jsonb, redirect_url)`                                                                                                                                                                      |
-| `platform.capture_submissions` | `(capture_form_id, answers jsonb)`                                                                                                                                                                             |
-| `platform.leads`               | `(tenant_id, email, name, phone, source, status, submitted_at)`                                                                                                                                                |
-| `platform.assessments`         | Relatório IA gerado por Edge Function (`tenant_id, lead_id, payload jsonb, model, created_at`)                                                                                                                 |
-| `platform.push_subscriptions`  | Web Push subs. 1 par Vapid **por tenant** (RFC 8292) em `tenants.vapid_*`                                                                                                                                      |
+| `public.programs`            | `(tenant_id, vertical_id, title, cover_image_url, price money pair, cohort_type enum, enrollment_window jsonb, source_template_id, status, tags[])`                                                            |
+| `public.modules`             | `(program_id, title, position)`                                                                                                                                                                                |
+| `public.components`          | `(tenant_id, module_id, kind enum, schema_version, payload jsonb, status)`. **11 kinds** (workout/meal_plan/lesson/video_lesson/material/check_in/scheduled_live/individual_call/in_person_class/message/task) |
+| `public.component_schedules` | `(component_id, day_offset OR unlock_at, unlock_rule jsonb)` — 4 release modes                                                                                                                                 |
+| `public.enrollments`         | `(tenant_id, program_id, client_user_id, cohort_start_date, started_at, completed_at, paused_at, status, payment_id)`                                                                                          |
+| `public.payments`            | `(tenant_id, enrollment_id, gateway enum, gateway_ref, kind enum, money pair, status, captured_at, external_payment_url)`                                                                                      |
+| `public.capture_forms`       | `(tenant_id, fields jsonb, redirect_url)`                                                                                                                                                                      |
+| `public.capture_submissions` | `(capture_form_id, answers jsonb)`                                                                                                                                                                             |
+| `public.leads`               | `(tenant_id, email, name, phone, source, status, submitted_at)`                                                                                                                                                |
+| `public.assessments`         | Relatório IA gerado por Edge Function (`tenant_id, lead_id, payload jsonb, model, created_at`)                                                                                                                 |
+| `public.push_subscriptions`  | Web Push subs. 1 par Vapid **por tenant** (RFC 8292) em `tenants.vapid_*`                                                                                                                                      |
 
 **Total core dia 0:** ~27 tabelas (subiu de 22 por brands+palettes+fonts+shape_presets+domains+assessments ADRs 0024/0026/0028).
 
@@ -86,8 +92,8 @@ Anti-pattern proibido (master plan §32.4 lição #12): tabela `system_*` config
 
 | Tabela                     | Propósito                                                                                                                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platform.push_templates`  | `(tenant_id null=global, template_key, lang, title, body, frequency_cap, enabled bool)`. 5 default seed: morning_workout, message_received, inactivity_3d, streak_milestone, weekly_checkin |
-| `platform.email_templates` | `(tenant_id null=global, template_key, lang, subject, body_html, body_text, enabled bool)`. 4 default seed: enrollment_welcome, checkin_reminder, program_completed, dunning_attempt_1      |
+| `public.push_templates`  | `(tenant_id null=global, template_key, lang, title, body, frequency_cap, enabled bool)`. 5 default seed: morning_workout, message_received, inactivity_3d, streak_milestone, weekly_checkin |
+| `public.email_templates` | `(tenant_id null=global, template_key, lang, subject, body_html, body_text, enabled bool)`. 4 default seed: enrollment_welcome, checkin_reminder, program_completed, dunning_attempt_1      |
 
 ---
 
@@ -99,39 +105,39 @@ Tabelas decididas em schema mas materialização adiada:
 
 | Tabela                     | Quando                                                                |
 | -------------------------- | --------------------------------------------------------------------- |
-| `platform.pages`           | Landing pública branded — schema dia 0; fundador monta JSON via admin |
-| `platform.page_versions`   | Histórico publicações pra rollback                                    |
-| `platform.coupons`         | Cupons aluno — Pacote A inclui                                        |
-| `platform.payment_methods` | Credenciais gateway prof (encrypted)                                  |
+| `public.pages`           | Landing pública branded — schema dia 0; fundador monta JSON via admin |
+| `public.page_versions`   | Histórico publicações pra rollback                                    |
+| `public.coupons`         | Cupons aluno — Pacote A inclui                                        |
+| `public.payment_methods` | Credenciais gateway prof (encrypted)                                  |
 | `public.page_templates`    | Templates oficiais clonáveis                                          |
-| `public.platform_coupons`  | Cupons plataforma (vs `platform.coupons` prof→aluno)                  |
+| `public.platform_coupons`  | Cupons plataforma (vs `public.coupons` prof→aluno)                  |
 
 ### 4.2 Entram com 1º cliente Pacote B/C (~8)
 
 | Tabela                      | Quando                                                                                                        |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `platform.progress_metrics` | `(tenant_id, enrollment_id, metric_kind, value, unit, captured_at)` — linha por métrica (não 18 cols rígidas) |
-| `platform.progress_photos`  | `(tenant_id, enrollment_id, file_url, captured_at, kind enum('front'/'side'/'back'))`                         |
-| `platform.check_ins`        | Agregado de respostas de componentes `check_in`                                                               |
-| `platform.workout_logs`     | `(tenant_id, enrollment_id, component_id, set_idx, weight_kg, reps, completed_at)`                            |
-| `platform.achievements`     | Catálogo conquistas por tenant (gamificação Pacote B/C bônus mês 3)                                           |
-| `platform.badges`           | `(tenant_id, enrollment_id, achievement_id, awarded_at)`                                                      |
-| `platform.push_messages`    | Audit log push (template_key, recipient, sent_at, status)                                                     |
-| `platform.email_messages`   | Audit log email Resend (subject, resend_id, opened_at)                                                        |
+| `public.progress_metrics` | `(tenant_id, enrollment_id, metric_kind, value, unit, captured_at)` — linha por métrica (não 18 cols rígidas) |
+| `public.progress_photos`  | `(tenant_id, enrollment_id, file_url, captured_at, kind enum('front'/'side'/'back'))`                         |
+| `public.check_ins`        | Agregado de respostas de componentes `check_in`                                                               |
+| `public.workout_logs`     | `(tenant_id, enrollment_id, component_id, set_idx, weight_kg, reps, completed_at)`                            |
+| `public.achievements`     | Catálogo conquistas por tenant (gamificação Pacote B/C bônus mês 3)                                           |
+| `public.badges`           | `(tenant_id, enrollment_id, achievement_id, awarded_at)`                                                      |
+| `public.push_messages`    | Audit log push (template_key, recipient, sent_at, status)                                                     |
+| `public.email_messages`   | Audit log email Resend (subject, resend_id, opened_at)                                                        |
 
 ### 4.3 Entram com Pacote C bônus IA chatbot (~3)
 
 | Tabela                                                                 | Quando                                                               |
 | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `platform.chatbot_threads`                                             | `(tenant_id, enrollment_id, kind enum('nutrition'/'program_q'))`     |
-| `platform.chatbot_messages`                                            | `(thread_id, role enum('user'/'assistant'), content, tokens, model)` |
+| `public.chatbot_threads`                                             | `(tenant_id, enrollment_id, kind enum('nutrition'/'program_q'))`     |
+| `public.chatbot_messages`                                            | `(thread_id, role enum('user'/'assistant'), content, tokens, model)` |
 | `public.ai_prompts` + versions + `ai_invocations` + `ai_usage_monthly` | IA versionada (cobertos em 07-ai-prompts.md)                         |
 
 ### 4.4 Entram quando IA pipeline vibe coding ativar (§39, fase 2)
 
 | Tabela                                        | Quando                                                                          |
 | --------------------------------------------- | ------------------------------------------------------------------------------- |
-| `platform.import_jobs`                        | `(tenant_id, kind enum('clients_csv'), status, errors jsonb)` — migração alunos |
+| `public.import_jobs`                        | `(tenant_id, kind enum('clients_csv'), status, errors jsonb)` — migração alunos |
 | `public.program_templates`                    | Templates programa por vertical (clonáveis)                                     |
 | `public.kb_exercises` (~870 free-exercise-db) | Picker biblioteca exercícios                                                    |
 | `public.kb_foods` (~2500 TBCA + TACO)         | Chatbot nutricional system prompt cacheado                                      |
@@ -146,11 +152,11 @@ Tabelas decididas em schema mas materialização adiada:
 | `public.cancellation_feedback`                                           | 5+ cancelamentos/mês                             |
 | `public.referrals` + `public.commissions` + `public.payout_requests`     | Programa afiliado lançar                         |
 | `public.notification_preferences` (flexível por evento, não 13 booleans) | UI settings push pedir                           |
-| `platform.scheduled_jobs`                                                | Cron jobs internos (drip emails, push agendados) |
-| `desafit.whatsapp_messages`                                              | OBA WhatsApp ativada (mês 4-6)                   |
-| `desafit.client_profiles`                                                | Dados tenant-scoped do client                    |
-| `desafit.tenant_capture_forms`                                           | Tenant ativa template + customiza                |
-| `desafit.system_seeds`                                                   | Idempotência de seeds                            |
+| `public.scheduled_jobs`                                                | Cron jobs internos (drip emails, push agendados) |
+| `public.whatsapp_messages`                                              | OBA WhatsApp ativada (mês 4-6)                   |
+| `public.client_profiles`                                                | Dados tenant-scoped do client                    |
+| `public.tenant_capture_forms`                                           | Tenant ativa template + customiza                |
+| `public.system_seeds`                                                   | Idempotência de seeds                            |
 | `public.lgpd.consent_logs`                                               | Incidente real exigir                            |
 | `public.lgpd.data_subject_requests`                                      | 5+ DSRs/mês                                      |
 
@@ -221,7 +227,7 @@ Toda tabela tenant-scoped:
 ### 6.4 Admin global bypass
 
 ```sql
-CREATE POLICY x_admin_full_access ON platform.programs
+CREATE POLICY x_admin_full_access ON public.programs
   FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM public.profiles p
                  WHERE p.id = auth.uid() AND p.role = 'admin'));
@@ -260,18 +266,18 @@ Hot queries em `payload jsonb`:
 
 ```sql
 -- GIN com jsonb_path_ops (mais leve, indexa @> @? operadores comuns)
-CREATE INDEX components_payload_gin ON platform.components
+CREATE INDEX components_payload_gin ON public.components
   USING gin (payload jsonb_path_ops);
 
-CREATE INDEX components_kind_idx ON platform.components (kind);
+CREATE INDEX components_kind_idx ON public.components (kind);
 
 -- Generated column pra hot query "todos workouts com peso > 100kg"
-ALTER TABLE platform.components ADD COLUMN max_weight_kg numeric
+ALTER TABLE public.components ADD COLUMN max_weight_kg numeric
   GENERATED ALWAYS AS (
     (jsonb_path_query_first(payload, '$.blocks[*].sets[*].weight_kg ? (@ != null)')::text)::numeric
   ) STORED;
 
-CREATE INDEX components_max_weight_idx ON platform.components (max_weight_kg)
+CREATE INDEX components_max_weight_idx ON public.components (max_weight_kg)
   WHERE kind = 'workout';
 ```
 
@@ -331,8 +337,8 @@ Memória relacionada: `feedback_use_apply_migration.md`.
 
 **Sem tabela `messages`.** Comunicação assíncrona one-way (prof→aluno):
 
-- **Push:** prof dispara via `/dashboard/clients/[id]/notify` ou automação. Tabela `platform.push_messages` (audit log) + `public.push_subscriptions` (endpoints)
-- **Email:** prof dispara via `/dashboard/clients/[id]/email`. Templates Resend + react-email. Log em `platform.email_messages`
+- **Push:** prof dispara via `/dashboard/clients/[id]/notify` ou automação. Tabela `public.push_messages` (audit log) + `public.push_subscriptions` (endpoints)
+- **Email:** prof dispara via `/dashboard/clients/[id]/email`. Templates Resend + react-email. Log em `public.email_messages`
 - **Conteúdo de programa = `component.kind='message'`:** mensagem motivacional pré-escrita no roteiro do dia X. Aluno abre, lê, marca como lido. **Não é conversa.**
 - **Chat com IA:** tab Chatbot do PWA (Pacote C) é com IA nutricional, não com prof
 
@@ -356,7 +362,7 @@ Toda tabela-chave tem `deleted_at timestamptz NULL`.
 | Dual system normalizado + JSONB (`client_transformations` + `intake_calculation_archive`)                           | Escolher 1 modelo. Para conteúdo flexível → JSONB. Para query estruturada → tabela normalizada. Nunca os 2                                                       |
 | 4 `system_*` config tables (BMI/lead status/plan features/pricing) com 0 rows                                       | TS constants em `lib/constants/*.ts` + função pura em `lib/domain/`                                                                                              |
 | Audit table generic 0-rows (`professional_customization_history`)                                                   | Sentry + log pino estruturado cobre. Tabela JIT quando UI "histórico" pedir                                                                                      |
-| 5 tabelas Branding/Content rígidas (`testimonials`, `locations`, `methodology_pillars`, `credentials`, `faq_items`) | JSONB `blocks` em `platform.pages.published_blocks` (pattern §12 master plan)                                                                                    |
+| 5 tabelas Branding/Content rígidas (`testimonials`, `locations`, `methodology_pillars`, `credentials`, `faq_items`) | JSONB `blocks` em `public.pages.published_blocks` (pattern §12 master plan)                                                                                    |
 | `auth.jwt()->>'tenant_id'` direto em RLS                                                                            | `(select public.current_tenant_id())` wrap (100× speedup)                                                                                                        |
 | Schema-per-tenant                                                                                                   | Single-DB + RLS + `tenant_id` (não escala >100 tenants schema-per-tenant)                                                                                        |
 | `decimal price` solto                                                                                               | Par `<x>_amount_minor int + <x>_currency text`                                                                                                                   |
