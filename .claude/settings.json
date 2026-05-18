@@ -50,7 +50,7 @@
         "hooks": [
           { "type": "command", "command": "bash .claude/hooks/protect-eslint.sh" },
           { "type": "command", "command": "bash .claude/hooks/block-disable-content.sh" },
-          { "type": "command", "command": "bash .claude/hooks/block-disables.sh" }
+          { "type": "command", "command": "bash .claude/hooks/block-token-bypass.sh" }
         ]
       },
       {

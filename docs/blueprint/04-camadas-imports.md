@@ -269,9 +269,10 @@ Detalhes: pesquisa 04 §2.3 · master plan §1.6.
 
 ## 14. Hooks Claude Code complementares (defesa dia 0)
 
-`.claude/hooks/block-disables.sh` (PreToolUse Edit|Write|MultiEdit):
+`.claude/hooks/block-token-bypass.sh` (PreToolUse Write|Edit):
 
-- Bloqueia `eslint-disable`, `@ts-ignore`, `@ts-nocheck` em arquivos editados (deny + reason)
+- Bloqueia hex/rgba literal em `.ts/.tsx` fora allowlist — token bypass (ADR-0012)
+- Renomeado de `block-disables.sh` em ADR-0036 §B; disable comments agora vão para `block-disable-content.sh` separado
 
 `.claude/hooks/format-on-write.sh` (PostToolUse):
 

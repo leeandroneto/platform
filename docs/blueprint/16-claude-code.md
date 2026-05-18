@@ -371,8 +371,8 @@ Configuração em `.claude/mcp.json` ou via CLI Claude Code init.
     "SessionStart": ".claude/hooks/load-context.sh",
     "UserPromptSubmit": ".claude/hooks/vocab-warn.sh",
     "PreToolUse": {
-      "Write": ".claude/hooks/block-disables.sh",
-      "Edit": ".claude/hooks/block-disables.sh",
+      "Write": ".claude/hooks/block-token-bypass.sh",
+      "Edit": ".claude/hooks/block-token-bypass.sh",
     },
   },
 }
@@ -396,7 +396,7 @@ Configuração em `.claude/mcp.json` ou via CLI Claude Code init.
 
 - `00-PROJETO.md` §6 (regras code) · §8 (princípio universal busca)
 - `_CONFLITOS.md` #12 (lint enforcement) · #17 (ADR) · #18 (hierarquia verdade) · #21 (schema core)
-- `13-lint-enforcement.md` (hook block-disables alinha com ESLint dia 0)
+- `13-lint-enforcement.md` (hook block-token-bypass alinha com ESLint dia 0; renomeado em ADR-0036)
 - `14-docs-lifecycle.md` §6 (`.claude/rules/*` via paths) · §7 (CLAUDE.md <200) · §10 (memória)
 - `15-bootstrap-checklist.md` tarefas 27, 28 (criação CLAUDE.md + hooks)
 - `17-repo-bootstrap.md` (setup hooks no repo novo)

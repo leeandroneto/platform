@@ -368,7 +368,7 @@ Criar 3 hooks conforme `16-claude-code.md §4`:
 
 ```powershell
 New-Item -ItemType Directory -Path ".claude/hooks"
-# Criar scripts: load-context.sh, vocab-warn.sh, block-disables.sh
+# Criar scripts: load-context.sh, vocab-warn.sh, block-token-bypass.sh (+ protect-eslint.sh, block-disable-content.sh, component-research-gate.sh — ADR-0036)
 # Conteúdo: ver 16-claude-code.md
 ```
 

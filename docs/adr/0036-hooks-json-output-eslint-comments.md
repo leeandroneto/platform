@@ -44,8 +44,10 @@ Emitido em stdout, exit 0. `exit 2` é proibido (bug `#13744`).
 
 ### B. 4 hooks PreToolUse `.claude/hooks/`
 
-1. **`block-disables.sh`** (matcher `Write|Edit`) — hex/rgba literal em `.ts/.tsx`
-   fora allowlist `globals.css|icon.tsx|apple-icon.tsx|opengraph-image.tsx|blurhash`
+1. **`block-token-bypass.sh`** (matcher `Write|Edit`) — hex/rgba literal em `.ts/.tsx`
+   fora allowlist `globals.css|icon.tsx|apple-icon.tsx|opengraph-image.tsx|blurhash`.
+   Renomeado de `block-disables.sh` para refletir o escopo real (token bypass);
+   a responsabilidade de disable comments foi extraída para `block-disable-content.sh` (#3)
 2. **`protect-eslint.sh`** (matcher `Write|Edit`) — bloqueia Write/Edit em
    `eslint.config.{mjs,cjs,js,ts}`. Mudar regra ESLint exige ADR superseding
    0012/0036
