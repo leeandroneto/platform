@@ -20,13 +20,23 @@ INPUT=$(cat)
 
 TOOL_NAME=$(echo "$INPUT" | grep -oE '"tool_name"\s*:\s*"[^"]*"' | head -1 | sed -E 's/.*"([^"]*)"$/\1/')
 
-# So Write cria arquivo novo. Edit modifica existente (gate ja foi passado).
-if [ "$TOOL_NAME" != "Write" ]; then
+FILE_PATH=$(echo "$INPUT" | grep -oE '"file_path"\s*:\s*"[^"]*"' | head -1 | sed -E 's/.*"file_path"\s*:\s*"(.*)"$/\1/')
+NORMALIZED=$(echo "$FILE_PATH" | tr '\\' '/')
+
+# ADR-0040 §A — zona quarentenada components/ui/**. Edit categoricamente BLOQUEADO
+# (vendor surface). Canal unico: Bash `npx shadcn add <slug>` reescreve primitive
+# inteira. Customizacao vai em components/app-*.tsx (3 wrappers dia 0 + JIT).
+if [ "$TOOL_NAME" = "Edit" ] && echo "$NORMALIZED" | grep -qE '(^|/)components/ui/.+\.(ts|tsx)$'; then
+  cat <<'EOF'
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"components/ui/* e zona quarentenada (ADR-0040 §A) — Edit BLOQUEADO. Canal unico de modificacao: Bash `npx shadcn add <slug>`. Customizacao composta vai em components/app-*.tsx. Detalhes: .claude/rules/shadcn-zone.md."}}
+EOF
   exit 0
 fi
 
-FILE_PATH=$(echo "$INPUT" | grep -oE '"file_path"\s*:\s*"[^"]*"' | head -1 | sed -E 's/.*"file_path"\s*:\s*"(.*)"$/\1/')
-NORMALIZED=$(echo "$FILE_PATH" | tr '\\' '/')
+# Demais Edits passam (gate de marker so se aplica a Write criando arquivo novo).
+if [ "$TOOL_NAME" != "Write" ]; then
+  exit 0
+fi
 
 # Match: caminho contem segmento components/ + extensao .ts/.tsx
 MATCH=0

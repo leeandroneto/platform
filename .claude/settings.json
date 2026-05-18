@@ -50,12 +50,19 @@
         "hooks": [
           { "type": "command", "command": "bash .claude/hooks/protect-eslint.sh" },
           { "type": "command", "command": "bash .claude/hooks/block-disable-content.sh" },
-          { "type": "command", "command": "bash .claude/hooks/block-token-bypass.sh" }
+          { "type": "command", "command": "bash .claude/hooks/block-token-bypass.sh" },
+          { "type": "command", "command": "bash .claude/hooks/component-research-gate.sh" }
         ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/post-shadcn-add.sh" }]
       },
       {
-        "matcher": "Write",
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/component-research-gate.sh" }]
+        "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/format-on-write.sh" }]
       }
     ]
   }

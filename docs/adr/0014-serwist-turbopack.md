@@ -1,6 +1,6 @@
 # 0014. Serwist + Turbopack para PWA service worker
 
-Date: 2026-05-17
+Date: 2026-05-17 · Atualizado 2026-05-18 (Etapa 10A — migração `@serwist/next` → `@serwist/turbopack`)
 Status: accepted
 
 ## Context
@@ -9,16 +9,26 @@ Next.js 16 usa Turbopack default. Pesquisa 12 (PWA offline-first) recomenda Serw
 
 ## Decision
 
-Serwist + Turbopack nativo (`@serwist/next` + `@serwist/turbopack`). Padrão oficial alinhado com princípio universal (`_CONFLITOS #8`).
+Serwist + Turbopack via `@serwist/turbopack` (NÃO `@serwist/next` que NÃO suporta Turbopack — warning explícito do plugin).
 
-Configuração:
+### Setup canônico (Etapa 10A 2026-05-18):
 
-- Runtime caching: NetworkFirst (API), CacheFirst (static), StaleWhileRevalidate (HTML)
-- Precache: shell + ícones + fonts
-- IndexedDB queue (idb-keyval) pra mutation offline (ADR-0015)
-- Background Sync API → fallback foreground flusher iOS
+1. Deps: `@serwist/turbopack` + `serwist` + `esbuild` (dev) + `@serwist/next` permanece como peer dep
+2. `next.config.ts`: `import { withSerwist } from '@serwist/turbopack'` + `export default withSerwist(withNextIntl(baseConfig))`
+3. SW source: `app/sw.ts` (mesmo)
+4. Route handler dinâmico: `app/serwist/[path]/route.ts` usa `createSerwistRoute()` — SW servido em `/serwist/sw.js` (não mais `/sw.js`)
+5. Config (additionalPrecacheEntries, swSrc, useNativeEsbuild) vive na route handler — NÃO em next.config.ts
 
-**Fallback:** se Serwist+Turbopack quebrar no dia 0 bootstrap → novo ADR documenta fallback pra Webpack só em `next build` produção. Não inventar solução nova.
+### Cache strategies (mantém):
+
+- Runtime caching: NetworkFirst (API), CacheFirst (static), StaleWhileRevalidate (HTML) — via `defaultCache` em sw.ts
+- Precache: shell + ícones + fonts + `/offline` fallback
+- IndexedDB queue (idb-keyval) pra mutation offline (ADR-0015) — JIT Sprint 14+
+- Background Sync API → fallback foreground flusher iOS — JIT Sprint 14+
+
+### Registration JIT:
+
+`SerwistProvider` (client component que registra SW via `navigator.serviceWorker.register`) NÃO instalado dia 0. JIT quando Feature 1 precisar de offline real. Manifest+ícones funcionam sem registration (PWA install card aparece).
 
 ## Consequences
 

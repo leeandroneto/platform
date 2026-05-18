@@ -6,10 +6,13 @@
 import type { SheriffConfig } from '@softarc/sheriff-core'
 
 const config: SheriffConfig = {
+  enableBarrelLess: true,
   tagging: {
     'app/<feature>': ['type:feature', 'side:server'],
     'app/api/<route>': ['type:feature', 'side:server'],
     'components/<group>': ['type:shared'],
+    // shadcn primitives — tag `kind:primitive` específica (zona quarentenada ADR-0040 §A).
+    // Permite depRule restrita: primitives importam só de contracts, não de domain/data.
     'components/ui/<component>': ['type:shared', 'kind:primitive'],
     'lib/contracts/<topic>': ['type:shared', 'kind:contracts'],
     'lib/domain/<topic>': ['type:shared', 'kind:domain'],
@@ -38,6 +41,7 @@ const config: SheriffConfig = {
     'type:data': ['type:shared'],
     'kind:domain': ['kind:contracts'],
     'kind:contracts': [],
+    // primitives shadcn só dependem de contracts (vendor surface — não vaza pra domain/data)
     'kind:primitive': ['kind:contracts'],
     'kind:entitlements': ['type:shared', 'kind:contracts'],
     'kind:public-api': ['type:shared'],

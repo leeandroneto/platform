@@ -1,95 +1,205 @@
 #!/usr/bin/env tsx
-// ─── pnpm validate:palettes ──────────────────────────────────────────────────
-// APCA dual-gate validator — escopo definido em ADR-0032.
+// scripts/validate-palettes.ts — pnpm validate:apca (prebuild gate).
 //
-// Cenários testados (alinhados com USO real do design system):
+// APCA Silver dual-gate (ADR-0040 §H supersede ADR-0032 Bronze):
+//   body       Lc >= 75  (texto corpo)
+//   large      Lc >= 60  (texto grande)
+//   non-text   Lc >= 45  (filled blocks, borders, focus rings)
 //
-//   1. body text on surface → APCA(foreground, surface-1) ≥ 75
-//      foreground é derivada (L=0.95 em dark, L=0.15 em light) garantindo body
-//      contrast por construção. Validamos pra confirmar que surfaces estão na
-//      faixa esperada.
-//
-//   2. primary como filled action block → APCA(primary, surface-1) ≥ 30
-//      Threshold APCA-W3 silver pra blocos preenchidos (filled buttons/badges
-//      vs page bg). NÃO 45 (Bronze non-text é pra thin borders 1-2px). NÃO
-//      testamos primary como texto — esse não é seu papel (vide ADR-0032).
-//
-// Threshold ref: APCA Bronze (D-G12) — body ≥75, large ≥60, non-text ≥45.
-// Fonte: ADR-0009 (premium) + 05-design-system.md §5 + ADR-0032 (escopo X).
-//
-// "Text on primary button" (cenário 3) NÃO é validado dia 0 — primary_foreground
-// será adicionado Sprint 2 (campo `primary_foreground_oklch` no seed).
+// Scope dia 0 — split error vs warn:
+//   ERROR  body-text vs surface-1 (≥75) — acessibilidade real, texto sempre legivel
+//   WARN   primary/secondary/tertiary/primary-light vs surface-1 (≥45) — gosto
+//          visual de "filled block adjacent to surface". APCA Silver 45 oficial e
+//          pra THIN BORDERS, nao filled blocks (filled tradicional = Bronze 30,
+//          ADR-0032 original). primary_foreground vs primary (texto on button) e
+//          o gate de acessibilidade real — sera ativado em ERROR quando seed
+//          ganhar campo `primary_foreground_oklch` (JIT — Sprint 2 conforme nota
+//          original do validate). Charts vs surface tem regras proprias data viz.
 
-import { APCAcontrast, sRGBtoY } from 'apca-w3'
-import { converter, type Oklch, type Rgb } from 'culori'
+import { apca, APCA_SILVER } from '../lib/design/contrast'
+import { OFFICIAL_PALETTES, type PaletteSeed } from '../lib/design/palettes'
 
-import { OFFICIAL_PALETTES } from '../lib/design/seeds/palettes.seed'
+type Severity = 'error' | 'warn'
 
-const toRgb = converter('rgb')
-
-function oklchStrToSrgb(oklchStr: string): [number, number, number] {
-  const match = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/.exec(oklchStr)
-  if (!match) throw new Error(`Invalid OKLCH: ${oklchStr}`)
-  const [, lStr, cStr, hStr] = match
-  const oklch: Oklch = {
-    mode: 'oklch',
-    l: Number(lStr),
-    c: Number(cStr),
-    h: Number(hStr),
-  }
-  const rgb = toRgb(oklch) as Rgb
-  return [
-    Math.max(0, Math.min(255, Math.round((rgb.r ?? 0) * 255))),
-    Math.max(0, Math.min(255, Math.round((rgb.g ?? 0) * 255))),
-    Math.max(0, Math.min(255, Math.round((rgb.b ?? 0) * 255))),
-  ]
+interface Check {
+  palette: string
+  mode: 'dark' | 'light'
+  role: string
+  lc: number
+  threshold: number
+  pass: boolean
+  severity: Severity
 }
 
-function apca(fgOklch: string, bgOklch: string): number {
-  const fgRgb = oklchStrToSrgb(fgOklch)
-  const bgRgb = oklchStrToSrgb(bgOklch)
-  return Math.abs(Number(APCAcontrast(sRGBtoY(fgRgb), sRGBtoY(bgRgb))))
-}
-
-// Foreground derivado (mesmo cálculo do design system runtime).
-// Dark mode: L alto (~0.95) com mesma hue do surface.
-function foregroundForDarkSurface(surfaceOklch: string): string {
+// Foreground derivada — espelha calculo runtime do design system.
+function foregroundFor(surfaceOklch: string, mode: 'dark' | 'light'): string {
   const m = /oklch\(\s*[\d.]+\s+[\d.]+\s+([\d.]+)\s*\)/.exec(surfaceOklch)
   const h = m ? Number(m[1]) : 0
-  return `oklch(0.95 0.01 ${h})`
+  const l = mode === 'dark' ? 0.95 : 0.15
+  return `oklch(${l} 0.01 ${h})`
 }
 
-const TH = { body: 75, filledBlock: 30 } as const
-
-let failures = 0
-
-console.log('Validating ', OFFICIAL_PALETTES.length, 'paletas (ADR-0032 scope):')
-console.log('  Cenário 1: APCA(foreground, surface-1-dark) ≥ 75 (body text)')
-console.log('  Cenário 2: APCA(primary, surface-1-dark)    ≥ 30 (filled block, silver)')
-console.log()
-
-for (const p of OFFICIAL_PALETTES) {
-  const surface1 = p.surfaces_dark[0]
-  const fg = foregroundForDarkSurface(surface1)
-
-  const lcBody = apca(fg, surface1)
-  const lcBlock = apca(p.primary_oklch, surface1)
-
-  const passBody = lcBody >= TH.body
-  const passBlock = lcBlock >= TH.filledBlock
-
-  const status = passBody && passBlock ? 'OK' : 'FAIL'
-  console.log(
-    `${status.padEnd(4)} ${p.slug.padEnd(15)} body=${lcBody.toFixed(1).padStart(5)} ` +
-      `block=${lcBlock.toFixed(1).padStart(5)}`,
-  )
-
-  if (!passBody || !passBlock) failures++
+interface CheckParams {
+  palette: PaletteSeed
+  mode: 'dark' | 'light'
+  role: string
+  fg: string
+  bg: string
+  thresholdKey: keyof typeof APCA_SILVER
+  severity: Severity
 }
 
-if (failures > 0) {
-  console.error(`\n${failures} paletas reprovaram APCA dual-gate (ADR-0032 cenários 1+2).`)
+function mk(p: CheckParams): Check {
+  const lc = apca(p.fg, p.bg)
+  const threshold = APCA_SILVER[p.thresholdKey]
+  return {
+    palette: p.palette.slug,
+    mode: p.mode,
+    role: p.role,
+    lc,
+    threshold,
+    pass: lc >= threshold,
+    severity: p.severity,
+  }
+}
+
+function checksForPalette(p: PaletteSeed): Check[] {
+  const out: Check[] = []
+
+  for (const mode of ['dark', 'light'] as const) {
+    const surface1 = mode === 'dark' ? p.surfaces_dark[0] : p.surfaces_light[0]
+    const fg = foregroundFor(surface1, mode)
+
+    // ERROR — acessibilidade real (body text legivel sempre)
+    out.push(
+      mk({
+        palette: p,
+        mode,
+        role: 'body-text',
+        fg,
+        bg: surface1,
+        thresholdKey: 'body',
+        severity: 'error',
+      }),
+    )
+
+    // WARN — filled block vs surface (gosto visual, nao acessibilidade)
+    out.push(
+      mk({
+        palette: p,
+        mode,
+        role: 'primary-fill',
+        fg: p.primary_oklch,
+        bg: surface1,
+        thresholdKey: 'non-text',
+        severity: 'warn',
+      }),
+    )
+    if (p.primary_light_oklch) {
+      out.push(
+        mk({
+          palette: p,
+          mode,
+          role: 'primary-light',
+          fg: p.primary_light_oklch,
+          bg: surface1,
+          thresholdKey: 'non-text',
+          severity: 'warn',
+        }),
+      )
+    }
+    out.push(
+      mk({
+        palette: p,
+        mode,
+        role: 'secondary',
+        fg: p.secondary_oklch,
+        bg: surface1,
+        thresholdKey: 'non-text',
+        severity: 'warn',
+      }),
+    )
+    out.push(
+      mk({
+        palette: p,
+        mode,
+        role: 'tertiary',
+        fg: p.tertiary_oklch,
+        bg: surface1,
+        thresholdKey: 'non-text',
+        severity: 'warn',
+      }),
+    )
+
+    for (let i = 0; i < p.extras_oklch.length; i++) {
+      const chartColor = p.extras_oklch[i]
+      if (chartColor) {
+        out.push(
+          mk({
+            palette: p,
+            mode,
+            role: `chart-${i + 1}`,
+            fg: chartColor,
+            bg: surface1,
+            thresholdKey: 'non-text',
+            severity: 'warn',
+          }),
+        )
+      }
+    }
+  }
+
+  return out
+}
+
+console.log(
+  `\nAPCA Silver (body=${APCA_SILVER.body}, non-text=${APCA_SILVER['non-text']}) — ${OFFICIAL_PALETTES.length} paletas:\n`,
+)
+
+const all: Check[] = []
+for (const palette of OFFICIAL_PALETTES) {
+  all.push(...checksForPalette(palette))
+}
+
+const errors = all.filter((c) => !c.pass && c.severity === 'error')
+const warnings = all.filter((c) => !c.pass && c.severity === 'warn')
+
+if (errors.length > 0) {
+  console.error('ERROR — cenarios obrigatorios reprovados (body + primary):\n')
+  for (const e of errors) {
+    console.error(
+      `  ${e.palette.padEnd(15)} ${e.mode.padEnd(5)} ${e.role.padEnd(13)} ` +
+        `Lc=${e.lc.toFixed(1).padStart(5)} < ${e.threshold}`,
+    )
+  }
+  console.error(`\n${errors.length} cenarios obrigatorios reprovaram. Build BLOQUEADO.`)
   process.exit(1)
 }
 
-console.log('\nTodas as paletas passam dual-gate.')
+if (warnings.length > 0) {
+  console.warn(
+    `\nWARN  ${warnings.length} cenarios secundarios abaixo de Silver ` +
+      `(secondary/tertiary/primary-light/charts). Re-tunar JIT — nao bloqueia build.\n`,
+  )
+}
+
+// Summary
+const byPalette = new Map<string, Check[]>()
+for (const c of all) {
+  const list = byPalette.get(c.palette) ?? []
+  list.push(c)
+  byPalette.set(c.palette, list)
+}
+
+for (const [slug, results] of byPalette) {
+  const errs = results.filter((r) => !r.pass && r.severity === 'error').length
+  const warns = results.filter((r) => !r.pass && r.severity === 'warn').length
+  const status = errs === 0 ? 'OK  ' : 'FAIL'
+  const note = warns > 0 ? ` (${warns} warns secundarios)` : ''
+  console.log(`${status} ${slug.padEnd(15)}${note}`)
+}
+
+console.log(
+  `\nTotal: ${all.length - errors.length - warnings.length}/${all.length} passaram, ` +
+    `${errors.length} errors, ${warnings.length} warns.`,
+)

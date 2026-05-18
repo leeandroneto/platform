@@ -81,25 +81,25 @@ Gatilhos de upgrade: master plan §29.8.
 
 ## 5. Dev / Build
 
-| Pacote                                                     | Versão                                       | Razão                                              |
-| ---------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------- |
-| `pnpm`                                                     | **10.x** (NUNCA npm/yarn)                    | `packageManager` pinado em package.json            |
-| Node                                                       | **24 LTS** (.nvmrc)                          | Default Next 16                                    |
-| `eslint`                                                   | **9.x flat config (.ts)**                    | `eslint.config.ts` nativo (v9.18+)                 |
-| `typescript-eslint`                                        | strict-type-checked + stylistic-type-checked | Preset oficial pro devs proficient                 |
-| `@softarc/sheriff-core` + `@softarc/eslint-plugin-sheriff` | latest                                       | Boundary rules tag-based (D-G57)                   |
-| `@eslint-community/eslint-plugin-eslint-comments`          | latest                                       | Bane `eslint-disable` (D-G11)                      |
-| `eslint-plugin-better-tailwindcss`                         | latest                                       | Único que suporta Tailwind v4                      |
-| `eslint-plugin-jsx-a11y` strict                            | latest                                       | A11y baseline                                      |
-| `prettier` 3.x + `prettier-plugin-tailwindcss`             | latest                                       | `tailwindFunctions: ['cn','cva','tv']`             |
-| `husky` 9.x + `lint-staged`                                | latest                                       | Pre-commit `--no-inline-config --max-warnings 0`   |
-| `@commitlint/cli` + `config-conventional`                  | latest                                       | Conventional Commits                               |
-| `vitest` 4.x                                               | latest                                       | Unit + contract tests                              |
-| `@playwright/test` + `@axe-core/playwright`                | latest                                       | E2E + a11y                                         |
-| `ladle` 5.x                                                | latest                                       | Catálogo componentes (D-G dia 0 — \_CONFLITOS #13) |
-| `knip`                                                     | latest                                       | Dead code + unused deps                            |
-| `size-limit` + `size-limit-action` GHA                     | latest                                       | Bundle budgets (D-G64)                             |
-| `renovate` (config restritivo)                             | hosted                                       | Major bloqueado (D-G62)                            |
+| Pacote                                                     | Versão                                       | Razão                                                                                                                              |
+| ---------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm`                                                     | **10.x** (NUNCA npm/yarn)                    | `packageManager` pinado em package.json                                                                                            |
+| Node                                                       | **24 LTS** (.nvmrc)                          | Default Next 16                                                                                                                    |
+| `eslint`                                                   | **9.x flat config (.ts)**                    | `eslint.config.ts` nativo (v9.18+)                                                                                                 |
+| `typescript-eslint`                                        | strict-type-checked + stylistic-type-checked | Preset oficial pro devs proficient                                                                                                 |
+| `@softarc/sheriff-core` + `@softarc/eslint-plugin-sheriff` | latest                                       | Boundary rules tag-based (D-G57)                                                                                                   |
+| `@eslint-community/eslint-plugin-eslint-comments`          | latest                                       | Bane `eslint-disable` (D-G11)                                                                                                      |
+| `eslint-plugin-better-tailwindcss`                         | 4.5+                                         | Único v4-native (ADR-0040 §B: 9 ERROR + 1 WARN customizado, NÃO recommended-error puro — conflito com prettier-plugin-tailwindcss) |
+| `eslint-plugin-jsx-a11y` strict                            | latest                                       | A11y baseline                                                                                                                      |
+| `prettier` 3.x + `prettier-plugin-tailwindcss`             | latest                                       | `tailwindFunctions: ['cn','cva','tv']`                                                                                             |
+| `husky` 9.x + `lint-staged`                                | latest                                       | Pre-commit `--no-inline-config --max-warnings 0`                                                                                   |
+| `@commitlint/cli` + `config-conventional`                  | latest                                       | Conventional Commits                                                                                                               |
+| `vitest` 4.x                                               | latest                                       | Unit + contract tests                                                                                                              |
+| `@playwright/test` + `@axe-core/playwright`                | latest                                       | E2E + a11y                                                                                                                         |
+| `storybook` 10.x + `@storybook/nextjs-vite`                | 10.4+                                        | Catálogo componentes — ADR-0038 supersede Ladle (MCP server + Chromatic + addon-a11y axe-core)                                     |
+| `knip`                                                     | latest                                       | Dead code + unused deps                                                                                                            |
+| `size-limit` + `size-limit-action` GHA                     | latest                                       | Bundle budgets (D-G64)                                                                                                             |
+| `renovate` (config restritivo)                             | hosted                                       | Major bloqueado (D-G62)                                                                                                            |
 
 **Trade-offs aceitos:**
 

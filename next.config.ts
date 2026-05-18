@@ -1,4 +1,14 @@
 import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+import { withSerwist } from '@serwist/turbopack'
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
+
+// Serwist Turbopack (ADR-0014 + blueprint 08). SW source em app/sw.ts, servido
+// dinamicamente via /serwist/sw.js (route handler em app/serwist/[path]/route.ts).
+// Configuracao adicional (cacheOnNavigation, additionalPrecacheEntries, etc) vive
+// na route handler — @serwist/turbopack withSerwist apenas habilita o pipeline.
 
 const baseConfig: NextConfig = {
   // ─── Next 16.2 features (promovidos pra top-level) ──────────────────────
@@ -33,18 +43,7 @@ const baseConfig: NextConfig = {
   // Rodar: ANALYZE=true pnpm build
 }
 
-// ─── Serwist (PWA service worker — ADR-0014) — DEFERRED ──────────────────
-// PWA entra em Sprint 14 (1º upgrade A→B, Pacote B/C). Princípio §39:
-// ferramenta entra com 1º cliente real que precisa. Reativar:
-//   1. pnpm add @serwist/next @serwist/turbopack (já instalados — manter)
-//   2. Criar app/sw.ts (template em docs/blueprint/_boilerplate/sw/)
-//   3. Descomentar e usar:
-//        import withSerwist from '@serwist/next'
-//        export default withSerwist({
-//          swSrc: 'app/sw.ts',
-//          swDest: 'public/sw.js',
-//          cacheOnNavigation: true,
-//          reloadOnOnline: true,
-//          disable: process.env.NODE_ENV === 'development',
-//        })(baseConfig)
-export default baseConfig
+// ─── Serwist + next-intl wire (Etapa 10A PWA) ──────────────────────────────
+// Ordem: withSerwist(withNextIntl(baseConfig)) — Serwist envolve por fora (gera SW
+// na fase final do build). next-intl injeta plugin via createNextIntlPlugin.
+export default withSerwist(withNextIntl(baseConfig))

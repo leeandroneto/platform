@@ -1,93 +1,112 @@
 # Status — `platform`
 
-> Gerado por `pnpm docs:status` em **2026-05-18** + seção **Phase A** anotada manualmente.
-> NOTA: Próxima execução de `pnpm docs:status` SOBRESCREVE a seção Phase A.
-> Migrar essa info pra script generator quando consolidar.
+> Regenerado manualmente 2026-05-18 pós PLANO-MESTRE-DIA-0 Etapa 14.
+> NOTA: `pnpm docs:status` SOBRESCREVE este arquivo. Migrar info de Phase A + Plano dia 0 pra generator quando consolidar.
 
 ---
 
-## Phase A — **CLOSED** ✅
+## PLANO-MESTRE-DIA-0 (em execução)
 
-| Item           | Status                                                                                                         |
-| -------------- | -------------------------------------------------------------------------------------------------------------- |
-| Commits        | 5 (bootstrap → consolidate → vertical slice → revert C cirúrgico → knip fix)                                   |
-| Hash final     | a ser commitado — chore: knip config + adr-0034 §4 entitlements distinction                                    |
-| Batch 1        | **10/10 verde** (typecheck + lint + 4 audits + docs:validate + knip + test + build + size + validate:palettes) |
-| ADRs           | 35 (0001-0035) — 0 inconsistências (`pnpm docs:validate`)                                                      |
-| Schema DB      | 38 tabelas em `public.*` (37 base + `plans`) — schema único pós ADR-0033                                       |
-| Lint overrides | 10 (ADR-0031 §1-§10) — §11 reverted no fix                                                                     |
-
-### Histórico Phase A
-
-| Commit    | O quê                                                                             | Quando     |
-| --------- | --------------------------------------------------------------------------------- | ---------- |
-| `95a092d` | bootstrap dia 0 + Phase A inicial — fundação                                      | 2026-05-17 |
-| `f66e91f` | consolidação `platform.*` → `public.*` (ADR-0033)                                 | 2026-05-18 |
-| `a94a8bf` | vertical slice + Sheriff + ESLint (ADR-0034)                                      | 2026-05-18 |
-| `7818df1` | entitlements + plans + UX components (ADR-0034/0035) — **parcialmente revertido** | 2026-05-18 |
-| `4be49e3` | revert cirúrgico Commit C (componentes UX) + Zod boundary + Provider wired        | 2026-05-18 |
-| (este)    | knip config (features/\*\* + entitlements entries + lint-staged) + ADR-0034 §4    | 2026-05-18 |
+| Etapa | Tema                                                                           | Status         |
+| ----- | ------------------------------------------------------------------------------ | -------------- |
+| 1-5   | CLAUDE.md + rules + Etapa 5 i18n setup canônico                                | ✅             |
+| 6     | APCA Silver validator                                                          | ✅             |
+| 7     | 3 wrappers obrigatórios (AppForm, AppToast, AppEntitlementGate)                | ✅             |
+| 8     | 3 typography (Heading, Text, Muted)                                            | ✅             |
+| 9     | `<Logo>` wordmark dinâmico                                                     | ✅             |
+| 10    | PWA per-tenant (manifest + icons + splash + theme-color + safe-area + Serwist) | ✅             |
+| 10A   | Serwist Turbopack (ADR-0014 atualizado)                                        | ✅             |
+| 10B   | Apple Touch Icon + splash 3 sizes                                              | ✅             |
+| 11    | Bundle budgets `.size-limit.json`                                              | ✅             |
+| 12    | Storybook 10 supersede Ladle (ADR-0038)                                        | ✅             |
+| 13    | Makerkit RPCs entitlements (ADR-0039)                                          | ✅             |
+| 14    | Cleanup geral docs + ressalvas                                                 | 🟡 em execução |
+| 15    | Blueprints 19/20 novos (wrapper-strategy + i18n-strategy)                      | ⏳             |
+| 16    | Validação completa                                                             | ⏳             |
+| 17    | Teste memória JIT                                                              | ⏳             |
+| 18    | Commit local                                                                   | ⏳             |
 
 ---
 
-## Próxima sessão — backlog leve
+## Phase A — **CLOSED** ✅ (consolidado pré-plano dia 0)
 
-1. **§9 seeds** — confirmar se as 13 paletas estão em arquivo único (`palettes.seed.ts`) ou separadas por paleta. Se separadas em arquivos pequenos, `max-lines off` em `lib/design/seeds/**` é over-permissivo → remover override §9 de ADR-0031.
-
-2. **§10 RouteProvider** — confirmar se `throw new Error('useBrand() fora de <RouteProvider>')` pode usar factory `AppError.providerMissing('RouteProvider')` em `lib/contracts/errors.ts` (precisa criar a factory). Se sim, override §10 vira desnecessário.
-
-3. **ADR-0036 — Component creation discipline + hooks** — pendente. Aguardando pesquisa que está rodando em paralelo (Claude Desktop). Vai definir sistêmica de prevenção pra evitar repetir o incidente `7818df1`:
-   - Hierarquia obrigatória de busca antes de criar (shadcn blocks → comunidade → custom)
-   - Hooks PreToolUse Write pra `lib/**/components/**` perguntar "pesquisou?"
-   - Lint rule pra detectar UI components sem props pra copy
-
-4. **Tarefa 14 — Motion presets** — aguarda fechamento da pesquisa + ADR-0036.
+| Item             | Status                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| Pre-pesquisa     | 5 commits (`95a092d` → `4be49e3`) — bootstrap + consolidate + slice + revert cirúrgico + knip fix             |
+| Phase A Final F1 | hooks JSON output + 6 hooks PreToolUse (ADR-0036)                                                             |
+| Phase A Final F2 | shadcn MCP + wrapper pattern + hierarquia registries (ADR-0037)                                               |
+| Phase A Final F3 | Storybook 10 (ADR-0038) — feito em Etapa 12 do plano                                                          |
+| Phase A Final F4 | Makerkit RPCs (ADR-0039) — feito em Etapa 13 do plano                                                         |
+| Phase A Final F5 | cleanup — Etapa 14 do plano em andamento                                                                      |
+| Batch validação  | typecheck ✅ · lint 0/0 ✅ · 4 audits ✅ · docs:validate ✅ · test ✅ · build ✅ · size ✅ · validate:apca ✅ |
 
 ---
 
 ## Git
 
-| Campo                               | Valor                                      |
-| ----------------------------------- | ------------------------------------------ |
-| Branch                              | `master`                                   |
-| Commits                             | 6 (auto-snapshot pode estar desatualizado) |
-| Última mudança em `CLAUDE.md`       | 2026-05-18                                 |
-| Última mudança em `docs/adr/`       | 2026-05-18                                 |
-| Última mudança em `docs/blueprint/` | 2026-05-18                                 |
+| Campo                          | Valor                                                       |
+| ------------------------------ | ----------------------------------------------------------- |
+| Branch                         | `master`                                                    |
+| Commits                        | conferir via `git log --oneline`                            |
+| Última mudança CLAUDE.md       | 2026-05-18 (Storybook + Makerkit + Logo + blueprints 19/20) |
+| Última mudança docs/adr/       | 2026-05-18 (ADR-0038, 0039, 0040 patches)                   |
+| Última mudança docs/blueprint/ | 2026-05-18 (02, 05, 11, 14, 15, 16 patches)                 |
 
 ## Package
 
 - **Versão:** `0.1.0`
 
-## ADRs
+## ADRs (estado atual)
 
-- **Total:** 35
-- **accepted:** 30 (com nota Status pra 0033 em 4 deles)
-- **superseded:** 4 (0021 → 0025; 0025 → 0033; 0027 → 0028; 0028 → 0029)
-- **Último:** ADR-0035 — UX de feature gating: visible + badge PRO + paywall (2026-05-18)
+- **Total:** 42 (0001-0042 — ADR-0036/37/38/39/40/41/42 adicionados pós Phase A pré-pesquisa)
+- **accepted:** 36+
+- **superseded:** 6+ (0021 → 0025; 0025 → 0033; 0027 → 0028; 0028 → 0029; 0013 → 0038; ADR-0034 arch → ADR-0039)
+- **Último:** ADR-0042 — elevation tokens 3 níveis (Etapa 10 plano)
 
 ## Blueprints
 
-- **Total:** 19 arquivos em `docs/blueprint/`
+- **Total:** 18 (`docs/blueprint/01-18.md`)
+- **Planejados Etapa 15:** `19-wrapper-strategy.md` + `20-i18n-strategy.md`
+
+## `.claude/rules/`
+
+- **Total:** 15 rules path-loaded
+- **Adições ADR-0040 §L:** i18n, contrast, shadcn-zone, design-tokens, brand, entitlements
+- **Adições pós ADR-0040:** tenant-content, design-references
 
 ## Migrations
 
-- **Total documentado:** 2 (0001_initial.md + 0005_consolidate_to_public.md)
-- **Aplicadas no Supabase:** 0001-0008 (8 migrations)
+- **Aplicadas no Supabase (`platform` project):** 0001-0009 (9 migrations)
   - 0001 baseline (platform.\*)
   - 0002 grants
   - 0003 security hardening
   - 0004 restore rls grants
   - 0005 consolidate platform → public
-  - 0006 drop platform schema (cleanup PostgREST cache)
-  - 0007 add plans table (+ seed 3 planos)
-  - 0008 drop platform schema again (cleanup recorrente PGRST)
-- ℹ️ Para estado real aplicado, rode `mcp__supabase__list_migrations` via Claude Code.
+  - 0006 drop platform schema
+  - 0007 add plans table (+ seed 3 planos A/B/C)
+  - 0008 drop platform schema again
+  - 0009 entitlement RPCs (`feature_usage` table + 4 RPCs + trigger `on_subscription_created`) — ADR-0039
+- ℹ️ Para estado real aplicado: `mcp__plugin_supabase_supabase__list_migrations`.
 
-## Pendências (TODO / FIXME / PENDING em `docs/`)
+## Storybook (ADR-0038)
 
-_Nenhum TODO/FIXME/PENDING encontrado em `docs/`._
+- **Framework:** `@storybook/nextjs-vite` 10.4
+- **Stories co-localizadas:** `components/**/*.stories.tsx` (9 stories dia 0)
+- **MCP endpoint:** `localhost:6006/mcp` (registrado em `.mcp.json`)
+- **Addons:** addon-a11y (axe), addon-docs, addon-mcp, Chromatic, addon-vitest
+- **Build:** `pnpm build-storybook` ~3.4s
+
+## Bundle (`pnpm size`)
+
+- **app-baseline-js:** 177.67K / 500K brotli (margem 65%)
+- **static-css:** 18.64K / 50K brotli (margem 63%)
+
+## Pendências técnicas conhecidas
+
+- `lib/contracts/database.ts` regenerar quando PostgREST cache descongelar (TYPES-PENDING casts em `lib/entitlements/server.ts`) — incidente 2026-05-18
+- Plano Etapa 15 — 2 blueprints novos
+- Plano Etapa 16-18 — validação + memória + commit
 
 ---
 
-_Próxima geração: rodar `pnpm docs:status` após qualquer mudança significativa em ADRs/blueprints/migrations. Seção Phase A será sobrescrita — migrar pra script generator quando consolidar._
+_Próxima geração: rodar `pnpm docs:status` após cleanup final. Migrar Phase A + Plano dia 0 pra script generator quando consolidar._

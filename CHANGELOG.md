@@ -12,6 +12,8 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ### Added
 
+- ADR-0040 — Fechamento dia 0 (shadcn zone quarantine + i18n + APCA Silver + 3 wrappers + 3 typography + 6 rules JIT). Consolida Pesquisas 17/18/19/20/21. Substitui ADR-0031 §1+§7. Atualiza ADR-0037 §B operacionalmente. Plano executável: `docs/plans/PLANO-MESTRE-DIA-0.md` (11 etapas ~11h30)
+- 6 novos `.claude/rules/*.md` (granular, carregados por path glob): `i18n.md` (next-intl + AppError factory + Zod factory + tenant override architecture), `contrast.md` (APCA Silver + 4 helpers + matrix), `shadcn-zone.md` (zona quarentenada + 3 wrappers OBRIGATÓRIOS + checklist pós-add), `design-tokens.md` (usos canônicos + anti-patterns), `brand.md` (env vars + useBrand + multi-vertical keys), `entitlements.md` (requireEntitlement + AppError i18n + plan-gates). Cada um com seção "Condição de revisitar" obrigatória (regra Pesquisa 20)
 - Bootstrap completo do greenfield `platform` — Next.js 16, React 19, Tailwind v4, Supabase `@supabase/ssr` 0.10, Motion 12 (ADR-0008, ADR-0014)
 - 29 ADRs Michael Nygard (ADR-0017) cobrindo decisões fundacionais — schema sizing, multi-brand, multi-domain, template→instance, RLS performance
 - 18 blueprints técnicos em `docs/blueprint/` cobrindo arquitetura, stack, design system, data model, AI prompts, PWA, packages A/B/C, roadmap, lint, docs lifecycle

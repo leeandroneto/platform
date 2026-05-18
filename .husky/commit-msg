@@ -1,5 +1,3 @@
 #!/usr/bin/env sh
-# Husky commit-msg — Conventional Commits validation
-. "$(dirname -- "$0")/_/husky.sh"
-
+# Husky commit-msg — Conventional Commits validation (Husky v9 — sem linha legacy)
 pnpm exec commitlint --edit "$1"

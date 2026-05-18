@@ -10,7 +10,7 @@
 
 1. **shadcn new-york dark-first 100%** — copy-paste own files (D-G10 + \_CONFLITOS #8).
 2. **OKLCH tokens com hue do tenant** — coração do white-label. Tudo deriva.
-3. **APCA Lc dual-gate** (Bronze): body ≥75, large ≥60, non-text ≥45. WCAG 2.2 AA como fallback.
+3. **APCA Lc dual-gate** (Silver — naming oficial APCA-W3, mesmos números): body ≥75, large ≥60, non-text ≥45. Ver ADR-0040 §H. WCAG 2.2 AA como fallback.
 4. **Sombras tingidas com hue do brand** — diferencial #1 invisível-mas-sentido.
 5. **`tabular-nums` + spacing 8-pt + line-height rítmica** = 80% da percepção "designed".
 6. **Motion 12 springs > tweens.** 3 presets (snappy/soft/pop). Material 3 easings literais.
@@ -126,14 +126,16 @@ Detalhes: pesquisa 05 §3-§6 + master plan §7.7.
 
 ---
 
-## 5. APCA dual-gate (D-G12)
+## 5. APCA dual-gate Silver (ADR-0040 §H)
 
 **Thresholds (`lib/design/contrast.ts`):**
 
-- body: Lc ≥ 75 (APCA Bronze)
+- body: Lc ≥ 75 (APCA **Silver** — naming oficial APCA-W3; mesmo número que rotulávamos "Bronze" antes)
 - large text / UI grande: Lc ≥ 60
-- non-text (ícones, borders, focus rings): Lc ≥ 45
+- non-text (ícones, borders, focus rings, filled blocks): Lc ≥ 45
 - WCAG 2.x AA fallback: ratio ≥ 4.5 body, ≥ 3 large
+
+**Decisão filled blocks vs borders (ADR-0040 §H):** APCA 45 destinado a borders/ícones. Filled blocks largos (e.g. card primary fill com `--color-primary` em surface) ficam como WARN em `validate-palettes.ts` (gosto visual, não acessibilidade); body permanece ERROR. 12/13 paletas seed Bronze original passavam APCA Silver body=75; só filled blocks Silver 45 ficam soft-fail.
 
 **Helpers:**
 
@@ -200,24 +202,15 @@ shadcn é **copy-paste** — você OWN os arquivos. Edite gerados; crie wrapper 
 - Slot pattern Radix para polimorfismo (`asChild`)
 - Composição com Radix headless direto quando shadcn não cobre (tooltip seta custom, hover-card timing)
 
-**Tipografia primitives obrigatórios dia 1** (custom em `components/ui/`):
+**Tipografia primitives dia 0** (custom em `components/ui/`, ADR-0040 §F supersede):
 
-- `<Heading level={1..6} variant>` + asChild
-- `<Text variant="body|compact|data|code|eyebrow|label|caption|lead">`
-- `<Eyebrow>` (label uppercase pequeno)
-- `<Metric value unit delta>` (número grande + delta colored)
-- `<DataCell label value>`
-- `<Code inline|block>`
-- `<Section title? description? tone>`
-- `<Stack direction gap>`
-- `<Container>` (max-width + padding tokens)
-- `<VisuallyHidden>` (SR-only)
-- `<EmptyState>` (wrapper shadcn `Empty` com defaults)
-- `<Divider>` (re-export Separator com tokens)
+- ✅ `<Heading level={1..4}>` + asChild + `as` semantic override — DONE Etapa 8
+- ✅ `<Text variant="body|body-sm|lead">` + asChild — DONE Etapa 8
+- ✅ `<Muted>` (text-sm text-muted-foreground) — DONE Etapa 8. Substitui `Eyebrow` na lista dia 0 (uso textual mais frequente em UIs SaaS — caption/helper/timestamp).
 
-Razão: ausência destes primitives custou 330+ violações no onboarding-bio.
+**JIT (gatilho uso real, ADR-0040 §F):** `<Eyebrow>` uppercase smallcap, `<Code>`, `<Stack>`, `<Container>`, `<EmptyState>`, `<Metric>` (com tabular-nums Inter ss01), `<DataCell>`, `<Section>`, `<Divider>`, `<VisuallyHidden>`.
 
-Detalhes: pesquisa 06 §A (12 primitives final).
+Razão: 3 primitives dia 0 (Heading/Text/Muted) cobrem ~85% das call sites Sprint 1-2. Os 9 JIT entram quando feature concreta pedir — Vercel Academy: passthrough wrapper "doubles design system size".
 
 ---
 
@@ -304,26 +297,27 @@ Detalhes: pesquisa 06 §B + master plan §8.6.
 
 ---
 
-## 11. Patterns visuais premium dia 1 (todos [E])
+## 11. Patterns visuais premium dia 1 (revisado pós ADR-0040 + Etapas 8/10)
 
-Sprint 1 Foundation (~30h — pesquisa 16 §10 tabela final):
+**5 dia 0 — DONE Etapas 8-10 (PLANO-MESTRE-DIA-0):**
 
-1. **OKLCH tokens system** — 3 níveis surfaces + tinted shadows (`oklch(var(--brand-l)...)`)
-2. **Typography 8-pt scale + tabular-nums + Inter ss01** — line-height rítmica `text-{xs,sm,base,lg,xl,2xl,3xl,4xl}`
-3. **shadcn new-york + 5 cva variants curados** (Button/Card/Badge/Input/Dialog)
-4. **Compound Card com `data-slot` pattern** — permite styling externo via `[&_[data-slot=card-title]]`
-5. **White-label runtime: `--brand-h/c` injection + 13 paletas testadas** (D-G59)
-6. **Skeleton shimmer custom** (substitui pulse default) — `background-attachment: fixed` unifica shimmer através múltiplos elementos
-7. **Vaul bottom-sheet customizado** + handle + `safe-area-inset-bottom`
-8. **Tab bar com `layoutId` Motion indicator** — sliding pill animado entre tabs
-9. **Header sticky com blur condicional** (threshold scroll > 8px) — backdrop-filter só quando scrolled
-10. **Sonner customizado** — tokens próprios, durations curadas (success 3s, info 3.5s, error 5s)
-11. **Motion springs preset** + `whileTap={{scale:0.97}}` em CTAs
-12. **`theme-color` por rota + manifest + splash iOS**
+1. **OKLCH tokens system** — surfaces + tinted via `@theme` + tokens elevation 3 níveis (ADR-0042)
+2. **White-label runtime** — `/api/{tenants,brands}/[id]/theme.css?v=N` + 13 paletas seed APCA Silver validadas
+3. **Skeleton shimmer custom** — `@keyframes shimmer` em `globals.css` (Etapa 10 sub-item 6)
+4. **`theme-color` dual `(prefers-color-scheme: dark|light)`** + safe-area `viewportFit:'cover'` + splash iOS 3 sizes per-tenant via Satori
+5. **MotionConfig provider** com `reducedMotion="user"` + transition 260ms padrão (`components/motion-provider.tsx`)
 
-Sprint 2 Polish [I] (~20h) e Backlog [O]: pesquisa 16 §10 tabela completa.
+**7 JIT documentados em `.claude/rules/shadcn-zone.md` (gatilho explícito):**
 
-**Cortado permanente:** Confetti em milestone (não-premium); Three.js (negativo); Pull-to-refresh custom (mid-tier Android GPU); SVG sprite fitness (até Lucide não cobrir caso real).
+6. Vaul bottom-sheet customizado (snap points + safe-area) — gatilho: primeira tela mobile com sheet
+7. Tab bar com `layoutId` Motion indicator — gatilho: PWA aluno tab bar
+8. Sonner customizado tokens próprios — gatilho: feature pedir cor/icone fora padrão (`useAppToast` semântica cobre 80%)
+9. Compound Card data-slot pattern — gatilho: regra de 3 cards similares
+10. Typography Inter ss01 + tabular-nums — gatilho: primeira tela com KPI/Metric numeric
+11. Header sticky blur condicional — gatilho: tela com scroll longo
+12. cva variants curados (Button/Card/etc) — JIT por componente conforme feature pede variant
+
+**Cortado permanente:** Confetti em milestone; Three.js; Pull-to-refresh custom; SVG sprite fitness (Lucide cobre).
 
 ---
 

@@ -1,8 +1,12 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import { defineConfig } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import betterTailwind from 'eslint-plugin-better-tailwindcss' // ADR-0040 §B
+import i18next from 'eslint-plugin-i18next'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import storybook from 'eslint-plugin-storybook'
 import unusedImports from 'eslint-plugin-unused-imports'
 
 // ════════════════════════════════════════════════════════════════════════════════
@@ -184,10 +188,121 @@ const brandHardcodePlugin = {
   },
 }
 
+// ════════════════════════════════════════════════════════════════════════════════
+// CSS var em JSX style (blueprint 13 regra 17 — ADR-0040 §J)
+// Bloqueia style={{ color: 'var(--accent)' }} — use className token shadcn.
+// ════════════════════════════════════════════════════════════════════════════════
+const cssVarInStylePlugin = {
+  rules: {
+    'no-css-var-in-style': {
+      meta: {
+        type: 'problem',
+        messages: {
+          inline:
+            'CSS var em style={{ ... }} — use className com token semantic shadcn (bg-primary, text-foreground, etc).',
+        },
+        schema: [],
+      },
+      create(context) {
+        return {
+          "JSXAttribute[name.name='style'] Property > Literal"(node) {
+            if (typeof node.value !== 'string') return
+            if (/var\(--/.test(node.value)) {
+              context.report({ node, messageId: 'inline' })
+            }
+          },
+        }
+      },
+    },
+  },
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// 'use client' guard em server-only files (blueprint 13 regra 24 — ADR-0040 §J)
+// Bloqueia 'use client' em lib/data/**, lib/api/**, app/**/actions.ts
+// ════════════════════════════════════════════════════════════════════════════════
+const serverOnlyGuardPlugin = {
+  rules: {
+    'no-use-client-in-server': {
+      meta: {
+        type: 'problem',
+        messages: {
+          forbidden:
+            "'use client' em arquivo server-only ({{path}}) — remova diretiva. RSC default. Data/API são server-only.",
+        },
+        schema: [],
+      },
+      create(context) {
+        const filename = context.filename ?? context.getFilename?.()
+        if (!filename) return {}
+        const normalized = filename.replace(/\\/g, '/')
+        const isServerOnly =
+          /\/lib\/data\//.test(normalized) ||
+          /\/lib\/api\//.test(normalized) ||
+          /\/app\/.*\/actions\.ts$/.test(normalized)
+        if (!isServerOnly) return {}
+        return {
+          ExpressionStatement(node) {
+            if (
+              node.directive === 'use client' ||
+              (node.expression?.type === 'Literal' && node.expression.value === 'use client')
+            ) {
+              context.report({
+                node,
+                messageId: 'forbidden',
+                data: { path: normalized.split('/').slice(-3).join('/') },
+              })
+            }
+          },
+        }
+      },
+    },
+  },
+}
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-
+  // ─── i18next plugin flat recommended (ADR-0040 §J) ────────────────────────
+  // Bloqueia hardcoded strings em JSX. Override `components/ui/**` desliga.
+  i18next.configs['flat/recommended'],
+  // ─── eslint-plugin-better-tailwindcss (ADR-0040 §B + blueprint 02 §5) ──────
+  // Único plugin v4-native. Preset 'recommended' + customização cirúrgica:
+  //  - enforce-consistent-class-order DESLIGADO (conflita com prettier-plugin-tailwindcss
+  //    issue tailwindlabs/prettier-plugin-tailwindcss#278). Prettier sorta no save.
+  //  - enforce-consistent-line-wrapping + no-unnecessary-whitespace + variant-order
+  //    DESLIGADOS (prettier cobre layout/whitespace; RTL é JIT).
+  //  - no-unknown-classes: WARN dia 0 com detectComponentClasses:true.
+  //    Promove pra ERROR quando globals.css cobrir 100% tokens (gatilho JIT
+  //    em .claude/rules/design-tokens.md "Condição de revisitar").
+  //  - Correctness (conflicts, duplicates, restricted, shorthand, deprecated,
+  //    important-position, variable-syntax, canonical) MANTÉM error — esse é
+  //    o valor real do plugin sobre design-tokens/no-tailwind-bypass custom.
+  {
+    files: ['**/*.{ts,tsx,jsx}'],
+    plugins: { 'better-tailwindcss': betterTailwind },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'app/globals.css',
+      },
+    },
+    rules: {
+      'better-tailwindcss/no-conflicting-classes': 'error',
+      'better-tailwindcss/no-duplicate-classes': 'error',
+      'better-tailwindcss/no-restricted-classes': 'error',
+      'better-tailwindcss/no-deprecated-classes': 'error',
+      'better-tailwindcss/enforce-shorthand-classes': 'error',
+      'better-tailwindcss/enforce-consistent-important-position': 'error',
+      'better-tailwindcss/enforce-consistent-variable-syntax': 'error',
+      'better-tailwindcss/enforce-canonical-classes': 'error',
+      'better-tailwindcss/no-unknown-classes': ['warn', { detectComponentClasses: true }],
+      'better-tailwindcss/enforce-consistent-class-order': 'off',
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/no-unnecessary-whitespace': 'off',
+      'better-tailwindcss/enforce-consistent-variant-order': 'off',
+      'better-tailwindcss/enforce-logical-properties': 'off',
+    },
+  },
   // ─── Linter options globais (ADR-0036) ────────────────────────────────────
   // reportUnusedDisableDirectives:error — disable orfao = erro CI
   // noInlineConfig — bloqueia /* eslint */ comments mudarem regras inline
@@ -197,7 +312,6 @@ const eslintConfig = defineConfig([
       noInlineConfig: true,
     },
   },
-
   // ─── eslint-comments plugin (ADR-0036) ────────────────────────────────────
   // no-use:error — proibe TODO disable comment (ADR-0012 allowlist agora retirada)
   // require-description:error — defesa adicional caso no-use seja override-ed
@@ -212,8 +326,9 @@ const eslintConfig = defineConfig([
       '@eslint-community/eslint-comments/no-unused-disable': 'error',
     },
   },
-
   // ─── Ignore generated / vendored ──────────────────────────────────────────
+  // messages/**/*.json sao i18n strings (ADR-0040 §G) — ESLint nao aplica regras
+  // TS/JSX a JSON puro, manter limpo via JSON Schema apenas.
   {
     ignores: [
       '.next/**',
@@ -224,13 +339,17 @@ const eslintConfig = defineConfig([
       'playwright-report/**',
       'docs/_archive/**',
       'public/**',
+      'messages/**/*.json',
+      'storybook-static/**', // ADR-0038 build artifact
     ],
   },
-
-  // ─── jsx-a11y strict (WCAG 2.2 AA) ────────────────────────────────────────
-  // Plugin já registrado por eslint-config-next/core-web-vitals — não re-registrar.
+  // ─── jsx-a11y strict (WCAG 2.2 AA — ADR-0031 §1) ──────────────────────────
+  // Plugin vem do nextVitals[0] (que ja scopa por files). Meu bloco precisa
+  // de `files:` filter pra que ESLint 9 herde o plugin — global rules sem
+  // files filter falham com "could not find plugin".
   // Auditado de onboarding-bio:eslint.config.mjs:84-123.
   {
+    files: ['**/*.{ts,tsx,jsx,js,mjs,cjs}'],
     rules: {
       'jsx-a11y/anchor-has-content': 'error',
       'jsx-a11y/aria-activedescendant-has-tabindex': 'error',
@@ -270,7 +389,6 @@ const eslintConfig = defineConfig([
       'jsx-a11y/anchor-is-valid': 'off', // next/link handles
     },
   },
-
   // ─── Strict unused vars + sizes ───────────────────────────────────────────
   {
     rules: {
@@ -289,7 +407,6 @@ const eslintConfig = defineConfig([
       'max-params': ['error', 4],
     },
   },
-
   // ─── i18n hardcoded — 14 padrões (D-G66) ─────────────────────────────────
   {
     rules: {
@@ -386,10 +503,32 @@ const eslintConfig = defineConfig([
           selector: "CallExpression[callee.property.name='message'] > Literal",
           message: 'Zod .message() hardcoded — use t() from next-intl.',
         },
+        // ─── ADR-0040 §J — 4 selectors faltantes (14/14 padrões blueprint 13) ───
+        {
+          selector:
+            "ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[id.name='metadata'] Property[key.name=/^(title|description)$/] > Literal",
+          message:
+            'metadata title/description hardcoded — use getTranslations(\"seo\") em generateMetadata.',
+        },
+        {
+          selector:
+            'JSXElement[openingElement.name.name=/^(Text|Heading|Paragraph)$/] > Literal[value=/^[A-ZÀ-Ý][a-zà-ÿ ]{2,}/]',
+          message:
+            'react-email <Text>/<Heading> com literal — use t() ou import de messages/email.',
+        },
+        {
+          selector:
+            "Property[key.name='body'][value.type='Literal'][value.value=/^[A-ZÀ-Ý][a-zà-ÿ ]{2,}/]",
+          message: 'push.body hardcoded — use messages/push.<event>.body via t() em Edge Function.',
+        },
+        {
+          selector:
+            "Property[key.type='Identifier'][value.type='Literal'][value.value=/^[A-ZÀ-Ý][a-zà-ÿ ]{4,}/][parent.parent.type='VariableDeclarator'][parent.parent.id.name=/^(ERROR_MAP|ERRORS|MESSAGES)$/i]",
+          message: 'Error map literal — chave deve apontar pra t() ou AppError factory.',
+        },
       ],
     },
   },
-
   // ─── Import sort + unused imports ─────────────────────────────────────────
   // Auditado de onboarding-bio:eslint.config.mjs:196-220.
   {
@@ -413,7 +552,6 @@ const eslintConfig = defineConfig([
       'unused-imports/no-unused-imports': 'error',
     },
   },
-
   // ─── Import bans ──────────────────────────────────────────────────────────
   // Auditado de onboarding-bio:eslint.config.mjs:229-247.
   {
@@ -437,7 +575,6 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-
   // ─── Architectural boundary: lib/ must not import from app/ ───────────────
   {
     files: ['lib/**/*.ts', 'lib/**/*.tsx'],
@@ -464,7 +601,6 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-
   // ─── Admin client BYPASS RLS: forbidden em client components + hooks ─────
   // Server Actions (app/**/actions.ts) e Edge Functions OK importar.
   {
@@ -484,22 +620,24 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-
-  // ─── Custom plugins: token bypass + vocab + brand + plan-gates ────────────
+  // ─── Custom plugins: token bypass + vocab + brand + plan-gates + css-var-in-style + server-only-guard ────────────
   {
     plugins: {
       'design-tokens': tokenBypassPlugin,
       vocab: vocabBanPlugin,
       brand: brandHardcodePlugin,
       'plan-gates': planGatesPlugin,
+      'css-var-in-style': cssVarInStylePlugin,
+      'server-only-guard': serverOnlyGuardPlugin,
     },
     rules: {
       'design-tokens/no-tailwind-bypass': 'error',
       'vocab/no-banned-vocab': 'error',
       'brand/no-brand-hardcode': 'error',
+      'css-var-in-style/no-css-var-in-style': 'error',
+      'server-only-guard/no-use-client-in-server': 'error',
     },
   },
-
   // ─── ADR-0034 §6 — plan-gates obrigatório em features/<name>/index.ts ─────
   {
     files: ['features/*/index.ts'],
@@ -507,28 +645,42 @@ const eslintConfig = defineConfig([
       'plan-gates/plan-gates-required': 'error',
     },
   },
-
   // ─── Test files relaxed ───────────────────────────────────────────────────
   {
     files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', 'tests/**/*'],
     rules: {
       'no-restricted-imports': 'off',
       'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
       'vocab/no-banned-vocab': 'off',
       'brand/no-brand-hardcode': 'off',
       'max-lines-per-function': 'off',
     },
   },
-
+  // ─── Stories relaxed (ADR-0040 §E + ADR-0038 §config) ───────────────────
+  // Stories são showcase visual — hardcoded swatches OKLCH, rounded-*, text-* sao
+  // didaticos por design (mostrar o token, nao usar o wrapper que esconde). Toast
+  // i18n keys mockadas pra demo. Vocab banido tambem off (Button "Storybook" etc).
+  {
+    files: ['**/*.stories.{ts,tsx,mjs}', '**/__stories__/**/*.{ts,tsx}'],
+    rules: {
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
+      'design-tokens/no-tailwind-bypass': 'off',
+      'no-restricted-syntax': 'off',
+      'vocab/no-banned-vocab': 'off',
+    },
+  },
   // ─── i18n message files relaxed ───────────────────────────────────────────
   {
     files: ['messages/**/*.json'],
     rules: { 'react/jsx-no-literals': 'off' },
   },
-
-  // ─── ADR-0031 §1 — components/ui/** + components/<blocks> (shadcn vendor) ─
-  // ADR-0008: shadcn 100% canon. Vendor pattern usa literais EN, hex inexistente
-  // via @theme, jsx-a11y patterns vendor-specific, throw Error pra context misuse.
+  // ─── ADR-0040 §A — Zona quarentenada components/ui/** (Pesquisa 18 Q1) ───
+  // Lista NARROWEST POSSIBLE: desliga só regras de estilo (vendor surface
+  // shadcn viola por design). Mantém regras de BUG ativas mesmo em vendor.
+  // Hook component-research-gate.sh bloqueia Edit direto — canal único: Bash npx shadcn add.
+  // Wrapper customização vai em components/app-*.tsx (3 obrigatórios + JIT).
   {
     files: [
       'components/ui/**/*.{ts,tsx}',
@@ -536,19 +688,52 @@ const eslintConfig = defineConfig([
       'components/{app-sidebar,nav-*,section-cards,site-header,chart-area-interactive,search-form,team-switcher,login-form,version-switcher,data-table}.tsx',
     ],
     rules: {
+      // OFF — estilo (shadcn primitives violam por design)
       'react/jsx-no-literals': 'off',
+      'react/display-name': 'off',
+      'react/no-unknown-property': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      'no-restricted-syntax': 'off',
       'design-tokens/no-tailwind-bypass': 'off',
+      'css-var-in-style/no-css-var-in-style': 'off',
+      'i18next/no-literal-string': 'off',
       'max-lines': 'off',
       'max-lines-per-function': 'off',
       complexity: 'off',
       'react-hooks/set-state-in-effect': 'off',
-      'no-restricted-syntax': 'off',
       'jsx-a11y/click-events-have-key-events': 'off',
       'jsx-a11y/no-noninteractive-element-interactions': 'off',
       'jsx-a11y/anchor-has-content': 'off',
+      'jsx-a11y/no-autofocus': 'off',
+      // OFF — simple-import-sort (ADR-0040 §A — vendor mantem order original shadcn)
+      'simple-import-sort/imports': 'off',
+      'simple-import-sort/exports': 'off',
+      // OFF — better-tailwindcss (ADR-0040 §B — vendor surface; prettier + design-tokens cobrem)
+      'better-tailwindcss/no-conflicting-classes': 'off',
+      'better-tailwindcss/no-duplicate-classes': 'off',
+      'better-tailwindcss/no-restricted-classes': 'off',
+      'better-tailwindcss/no-deprecated-classes': 'off',
+      'better-tailwindcss/enforce-shorthand-classes': 'off',
+      'better-tailwindcss/enforce-consistent-important-position': 'off',
+      'better-tailwindcss/enforce-consistent-variable-syntax': 'off',
+      'better-tailwindcss/enforce-canonical-classes': 'off',
+      'better-tailwindcss/no-unknown-classes': 'off',
+      // ON — bugs reais (mantém mesmo em vendor)
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/consistent-type-imports': 'error',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
-
   // ─── ADR-0031 §2 — scripts/** (CLI one-shot, sem limites de aplicação) ────
   {
     files: ['scripts/**/*.{ts,tsx,mjs,js}'],
@@ -558,9 +743,10 @@ const eslintConfig = defineConfig([
       complexity: 'off',
       'vocab/no-banned-vocab': 'off',
       'brand/no-brand-hardcode': 'off',
+      'i18next/no-literal-string': 'off',
+      'react/jsx-no-literals': 'off',
     },
   },
-
   // ─── ADR-0031 §3 — eslint.config.mjs (arquivo lista os vocab banidos) ─────
   {
     files: ['eslint.config.mjs'],
@@ -570,7 +756,6 @@ const eslintConfig = defineConfig([
       'max-lines': 'off',
     },
   },
-
   // ─── ADR-0031 §4 — lib/supabase/admin.ts (wrapper canônico) ───────────────
   {
     files: ['lib/supabase/admin.ts'],
@@ -578,7 +763,6 @@ const eslintConfig = defineConfig([
       'no-restricted-imports': 'off',
     },
   },
-
   // ─── ADR-0031 §5 — lib/route/getRouteByHost.ts (lookup pré-RLS no edge) ───
   {
     files: ['lib/route/getRouteByHost.ts'],
@@ -587,23 +771,18 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
-
-  // ─── ADR-0031 §6 — .ladle/config.mjs (export default {} é a API Ladle) ────
-  {
-    files: ['.ladle/**/*.{mjs,js,ts,tsx}'],
-    rules: {
-      'import/no-anonymous-default-export': 'off',
-    },
-  },
-
-  // ─── ADR-0031 §7 — hooks/use-mobile.ts (SSR-safe pattern oficial shadcn) ──
+  // ─── ADR-0031 §6 removido — Ladle saiu, substituído por Storybook (ADR-0038).
+  // Override era pra `.ladle/config.mjs export default {}`. Storybook usa
+  // `defineMain`/`Preview` types — não precisa override de regra.
+  // ─── ADR-0031 §7 — hooks/use-mobile.ts (SSR-safe pattern shadcn) ────────
+  // Dep block shadcn sidebar. Pattern useState(undefined)+useEffect+matchMedia
+  // é oficial shadcn — aceitável "external store sync".
   {
     files: ['hooks/use-mobile.ts'],
     rules: {
       'react-hooks/set-state-in-effect': 'off',
     },
   },
-
   // ─── ADR-0031 §8 — lib/contracts/database.ts (gerado por supabase CLI) ────
   {
     files: ['lib/contracts/database.ts'],
@@ -612,7 +791,6 @@ const eslintConfig = defineConfig([
       'max-lines-per-function': 'off',
     },
   },
-
   // ─── ADR-0031 §9 — lib/design/seeds/** (long data files, JSON-like) ───────
   {
     files: ['lib/design/seeds/**/*.ts'],
@@ -621,17 +799,16 @@ const eslintConfig = defineConfig([
       'max-lines-per-function': 'off',
     },
   },
-
   // ─── ADR-0031 §10 — boot-time throws antes de i18n estar disponível ───────
   // env validation + React context misuse — t() não está acessível aqui.
+  // ─── grep-disables.sh contract (ADR-0012) ─────────────────────────────────
   {
     files: ['lib/env.ts', 'lib/route/RouteProvider.tsx'],
     rules: {
       'no-restricted-syntax': 'off',
     },
   },
-
-  // ─── grep-disables.sh contract (ADR-0012) ─────────────────────────────────
+  ...storybook.configs['flat/recommended'],
 ])
 
 export default eslintConfig

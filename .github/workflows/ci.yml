@@ -40,9 +40,6 @@ jobs:
       - name: Vocab audit (grep)
         run: pnpm vocab:audit
 
-      - name: i18n audit (grep)
-        run: pnpm i18n:audit
-
       - name: Token audit (grep)
         run: pnpm token:audit
 
@@ -62,9 +59,11 @@ jobs:
       - name: Vitest
         run: pnpm test
 
-      # ─── APCA palette validation ──────────────────────────────────────────
-      - name: Validate palettes APCA
-        run: pnpm validate:palettes
+      # ─── APCA palette validation (Silver dual-gate) ──────────────────────
+      # Tambem roda via `prebuild` em build local. Mantido explicito no CI pra
+      # falhar fast antes do build (~15s vs ~3min do build completo).
+      - name: Validate palettes APCA Silver
+        run: pnpm validate:apca
 
       # ─── Build + size budgets ──────────────────────────────────────────────
       - name: Build

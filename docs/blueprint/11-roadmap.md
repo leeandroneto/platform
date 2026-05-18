@@ -56,6 +56,22 @@ Esqueleto operacional + CI dia 0 + design system tokenizado + signup smoke funci
 - shadcn 100% instalado (componentes + blocks relevantes)
 - PWA manifest base + Serwist SW skeleton (`@serwist/next` + `@serwist/turbopack`)
 
+### 2.2.1 Phase A Final pós-pesquisa (estado pós PLANO-MESTRE-DIA-0)
+
+Origem: pesquisa `docs/research/17-guardrails-ia-shadcn-governanca.md` (2026-05-18) expôs gap sistêmico do incidente Commit `7818df1` (componentes UX criados sem hierarquia shadcn + ESLint afrouxado).
+
+**Status atual:**
+
+- ✅ **F1** — Hooks PreToolUse JSON output + 6 hooks (ADR-0036)
+- ✅ **F2** — shadcn MCP + wrapper pattern + hierarquia registries (ADR-0037)
+- ✅ **F3** — Storybook 10 supersede Ladle (ADR-0038) — Etapa 12 PLANO-MESTRE-DIA-0
+- ✅ **F4** — Makerkit entitlements RPCs (ADR-0039) — Etapa 13 PLANO-MESTRE-DIA-0
+- 🟡 **F5** — Cleanup docs + ressalvas — Etapa 14 PLANO-MESTRE-DIA-0 (em andamento)
+
+**+ ADR-0040 fechamento dia 0** (PLANO-MESTRE-DIA-0 Etapas 1-11) — shadcn-zone + i18n + APCA Silver + 3 wrappers obrigatórios + 3 typography + Logo + PWA per-tenant.
+
+Bloqueava M0 fechar — agora F1/F2/F3/F4 verdes, F5 cleanup final.
+
 ### 2.3 Gate de saída (M0 fecha quando)
 
 - `pnpm build` passa em CI

@@ -19,8 +19,19 @@ cat <<'EOF'
     SEMPRE env.NEXT_PUBLIC_BRAND_NAME / BRAND_DOMAIN / BRAND_PARENT
     NUNCA hardcoded 'desafit' / 'yoga.app' / 'ingles.app'
 
-  Decisões: docs/adr/NNNN-*.md (23 ADRs dia 0)
+  Decisões: docs/adr/NNNN-*.md (40 ADRs). ADR-0040 = fechamento dia 0.
   Hierarquia: 00-PROJETO > ADR > Blueprint > Master Plan arquivado > Memória
+
+  Rules path-loaded (.claude/rules/*.md):
+    Por path: data-layer, domain-logic, server-actions, features, jwt-claims, components
+    ADR-0040: i18n, contrast, shadcn-zone, design-tokens, brand, entitlements
+
+  Zona quarentenada shadcn (ADR-0040 §A-§E):
+    components/ui/* = Edit BLOQUEADO. Canal único: npx shadcn add via Bash.
+    Wrapper customização em components/app-*.tsx — 3 obrigatórios + demais JIT.
+    Passthrough proibido (Vercel Academy).
+
+  Plano ativo: docs/plans/PLANO-MESTRE-DIA-0.md
 
 ═══════════════════════════════════════════════════════════════════════════════
 EOF

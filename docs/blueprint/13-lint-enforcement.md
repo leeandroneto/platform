@@ -146,14 +146,17 @@ Allowlist explícita em ADR (8 lugares — D-G66):
 7. README ADR (índice)
 8. `CHANGELOG.md` quando referenciar superseded vocab
 
-### 4.2 `pnpm i18n:audit`
+### 4.2 ~~`pnpm i18n:audit`~~ REMOVIDO 2026-05-18 (ADR-0040 §K)
 
-```bash
-# grep textual zero-tolerance — captura literal hardcoded em paths críticos
-grep -RInE ">[A-ZÀ-Ý][^<>{}]{2,}<" --include='*.tsx' app/ components/ \
-  | grep -v "{t(" | grep -v "{...t" \
-  | grep -v "^.*messages/"
-```
+Script `scripts/i18n-audit.sh` foi removido — camada redundante quando ESLint cobre 14/14 padrões (i18next plugin + 12 `no-restricted-syntax` selectors). Defesa em profundidade era 3 camadas (ESLint + grep + lint-staged); agora é 2 (ESLint + lint-staged via pre-commit).
+
+Razão: blueprint 13 prometeu 24 regras ESLint, mas implementação dia 0 cobria só ~10. Etapa 2 do `docs/plans/PLANO-MESTRE-DIA-0.md` completou pra 14/14 padrões — script grep vira ruído.
+
+Padrões i18n cobertos por ESLint:
+
+- `react/jsx-no-literals` (1)
+- `eslint-plugin-i18next` flat recommended (~3 patterns)
+- `no-restricted-syntax` × 12 selectors (aria-label, placeholder, title, alt, toast, Error, fail, .message, metadata.title, react-email Text, push.body, error-map value)
 
 ### 4.3 `pnpm token:audit`
 

@@ -1,0 +1,40 @@
+{
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "submit": "Enviar"
+  },
+  "errors": {
+    "generic": "Algo deu errado. Tente novamente.",
+    "network": "Sem conexão.",
+    "not_found": "Não encontrado.",
+    "forbidden": "Acesso negado.",
+    "unauthorized": "Autenticação necessária.",
+    "offline": "Você está offline. Algumas funcionalidades podem estar indisponíveis.",
+    "rate_limited": "Muitas requisições. Aguarde um momento."
+  },
+  "validation": {
+    "required": "Campo obrigatório",
+    "invalid_email": "Email inválido",
+    "min_length": "Mínimo {min} caracteres",
+    "max_length": "Máximo {max} caracteres"
+  },
+  "feedback": {
+    "saved": "Salvo com sucesso.",
+    "deleted": "Excluído com sucesso.",
+    "copied": "Copiado."
+  },
+  "entitlements": {
+    "locked": "Recurso bloqueado",
+    "upgrade_description": "Faça upgrade do plano pra desbloquear este recurso.",
+    "upgrade_cta": "Fazer upgrade",
+    "feature_blocked": "Este recurso exige upgrade do plano.",
+    "quota_exceeded": "Limite atingido. Faça upgrade ou aguarde o próximo período."
+  }
+}

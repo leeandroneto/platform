@@ -1,7 +1,9 @@
 # 0031. Lint overrides intencionais (escopos pre-positioned)
 
 Date: 2026-05-17
-Status: accepted (schema `platform.*` consolidado em `public.*` via ADR-0033 — `lib/contracts/database.ts` regenerado só `public`, sem mudança nas regras de override)
+Status: accepted
+
+> **NOTA:** Parcialmente atualizado por ADR-0040 §A — §1 (components/ui/\*_ + blocks shadcn) e §7 (hooks/use-mobile.ts) REINSTAURADOS 2026-05-18 com lista narrowest da Pesquisa 18 Q1. §2-§6/§8-§10 mantidos (escopo não-shadcn). §6 removido em 2026-05-18 (Ladle → Storybook via ADR-0038). Histórico: schema `platform._`consolidado em`public.\*` via ADR-0033.
 
 ## Context
 

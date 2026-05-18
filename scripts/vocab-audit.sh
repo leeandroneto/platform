@@ -8,7 +8,7 @@ set -e
 
 BANNED='\b(student|trainer|intake|wizard|prospect|diagnostic|customization|workspace|framer-motion|reflexao|pilares|proximo_passo)\b'
 
-# Allowlist (decisão D-G66 — 8 lugares legítimos)
+# Allowlist (decisão D-G66 — 8 lugares legítimos + roles canon)
 ALLOWLIST=(
   '.claude/rules/naming.md'
   'docs/adr/0012-lint-enforcement-dia-0.md'
@@ -19,6 +19,8 @@ ALLOWLIST=(
   'ADR-[0-9]+ mention OK:'
   'docs/adr/README\.md'
   'CHANGELOG\.md'
+  # lib/domain/roles.ts e .test.ts — documentam + testam que 'student'/'trainer' sao banidos
+  'lib/domain/roles\.(ts|test\.ts)'
 )
 
 # Build allowlist grep expression

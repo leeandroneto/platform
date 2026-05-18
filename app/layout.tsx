@@ -4,6 +4,8 @@ import { Suspense } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 
 import { Toaster } from 'sonner'
 
@@ -11,6 +13,8 @@ import { EntitlementProvider } from '@/lib/entitlements/EntitlementProvider'
 import { getEntitlementSnapshot } from '@/lib/entitlements/server'
 import { getRouteByHost } from '@/lib/route/getRouteByHost'
 import { RouteProvider } from '@/lib/route/RouteProvider'
+
+import { MotionProvider } from '@/components/motion-provider'
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -24,15 +28,22 @@ const geistMono = Geist_Mono({
   display: 'swap',
 })
 
-// ─── Metadata dinâmico por brand + tenant (ADR-0024 + 0026) ───────────────
+// ─── Metadata dinâmico por brand + tenant (ADR-0024 + 0026 + Etapa 10 PWA) ─
 export async function generateMetadata(): Promise<Metadata> {
   const h = await headers()
   const tenantSlug = h.get('x-tenant-slug')
   const brandName = h.get('x-brand-name') ?? 'platform'
   const title = tenantSlug ? `${tenantSlug} · ${brandName}` : brandName
+  const appTitle = tenantSlug ?? brandName
   return {
     title: { default: title, template: `%s · ${title}` },
     description: 'Plataforma white-label multi-vertical',
+    // PWA: iOS apple-mobile-web-app-* metas (ADR-0040 + blueprint 08 §15).
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'black-translucent',
+      title: appTitle,
+    },
   }
 }
 
@@ -41,6 +52,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // viewportFit:cover habilita env(safe-area-inset-*) em iOS PWA standalone (blueprint 08 §5).
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: dark)', color: 'oklch(0.13 0.01 275)' },
     { media: '(prefers-color-scheme: light)', color: 'oklch(0.98 0.01 275)' },
@@ -57,6 +70,65 @@ function buildThemeHref(route: Awaited<ReturnType<typeof getRouteByHost>>): stri
   return `/api/${path}/${id}/theme.css?v=${version}`
 }
 
+// Resolve href do manifest.webmanifest pro tenant/brand atual (Etapa 10 PWA).
+function buildManifestHref(route: Awaited<ReturnType<typeof getRouteByHost>>): string | null {
+  if (!route) return null
+  const tenant = route.tenant
+  const id = tenant?.id ?? route.brand.id
+  const version = tenant?.theme_version ?? route.brand.theme_version ?? 1
+  const path = tenant ? 'tenants' : 'brands'
+  return `/api/${path}/${id}/manifest.webmanifest?v=${version}`
+}
+
+// apple-touch-icon 180x180 — iOS Safari ignora manifest icons + le essa tag
+// preferencialmente (Lighthouse audit obrigatorio + iOS PWA install).
+function buildAppleTouchIconHref(route: Awaited<ReturnType<typeof getRouteByHost>>): string | null {
+  if (!route) return null
+  const tenant = route.tenant
+  const id = tenant?.id ?? route.brand.id
+  const version = tenant?.theme_version ?? route.brand.theme_version ?? 1
+  const path = tenant ? 'tenants' : 'brands'
+  return `/api/${path}/${id}/icon/180?v=${version}`
+}
+
+// iOS splash screens 3 sizes (Etapa 10B) — cobertura ~80% devices ativos 2026.
+// Outros 3 sizes JIT quando tenant reclamar. apple-touch-startup-image requer
+// media query exato por device (width × height × DPR).
+const SPLASH_ENTRIES: readonly { size: string; media: string }[] = [
+  // iPhone 17/16/15 Pro Max — 430x932 logical, 3x DPR
+  {
+    size: '1290x2796',
+    media:
+      '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
+  },
+  // iPhone 17/16/15 Pro/standard — 393x852 logical, 3x DPR
+  {
+    size: '1179x2556',
+    media:
+      '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
+  },
+  // iPad Pro generico — 1024x1366 logical, 2x DPR
+  {
+    size: '2048x2732',
+    media:
+      '(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
+  },
+] as const
+
+function buildSplashHrefs(
+  route: Awaited<ReturnType<typeof getRouteByHost>>,
+): Array<{ href: string; media: string }> | null {
+  if (!route) return null
+  const tenant = route.tenant
+  const id = tenant?.id ?? route.brand.id
+  const version = tenant?.theme_version ?? route.brand.theme_version ?? 1
+  const path = tenant ? 'tenants' : 'brands'
+  return SPLASH_ENTRIES.map(({ size, media }) => ({
+    href: `/api/${path}/${id}/splash/${size}?v=${version}`,
+    media,
+  }))
+}
+
 // ─── Dynamic shell: lê host + faz lookup brand/tenant + emite theme CSS ──
 // Encapsulado em Suspense pra Next 16 cacheComponents — body shell static,
 // dynamic content streamed (PPR-style). Theme `<link>` hoisted pra <head>
@@ -66,30 +138,56 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
   const host = h.get('host')
   const route = host ? await getRouteByHost(host) : null
 
-  if (!route) return children
+  // NextIntlClientProvider envelopa SEMPRE (mesmo sem route) — client components
+  // chamam useTranslations independente de ter brand resolvida. ADR-0040 §G.
+  const messages = await getMessages()
+  const locale = await getLocale()
+
+  if (!route) {
+    return (
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        {children}
+      </NextIntlClientProvider>
+    )
+  }
 
   // Hidrata EntitlementProvider com snapshot do tenant (null se sem subscription)
   // — ADR-0034 §4. Sem isso useEntitlement client retorna sempre 'no allowed'.
   const entitlements = await getEntitlementSnapshot()
   const themeHref = buildThemeHref(route)
+  const manifestHref = buildManifestHref(route)
+  const appleTouchIconHref = buildAppleTouchIconHref(route)
+  const splashHrefs = buildSplashHrefs(route)
 
   return (
     <>
       {themeHref && <link rel="stylesheet" href={themeHref} precedence="default" />}
-      <RouteProvider brand={route.brand} tenant={route.tenant}>
-        <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
-          {children}
-          <Toaster richColors closeButton position="top-center" />
-        </EntitlementProvider>
-      </RouteProvider>
+      {manifestHref && <link rel="manifest" href={manifestHref} />}
+      {appleTouchIconHref && <link rel="apple-touch-icon" href={appleTouchIconHref} />}
+      {splashHrefs?.map((s) => (
+        <link key={s.href} rel="apple-touch-startup-image" href={s.href} media={s.media} />
+      ))}
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <MotionProvider>
+          <RouteProvider brand={route.brand} tenant={route.tenant}>
+            <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
+              {children}
+              <Toaster richColors closeButton position="top-center" />
+            </EntitlementProvider>
+          </RouteProvider>
+        </MotionProvider>
+      </NextIntlClientProvider>
     </>
   )
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// <html lang> dinâmico via getLocale() — RootLayout async (Next 16 OK).
+// Fallback 'pt-BR' fica embutido no i18n/request.ts (locale fixo dia 0).
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const fontVars = `${geistSans.variable} ${geistMono.variable}`
+  const locale = await getLocale()
   return (
-    <html lang="pt-BR" className={fontVars} suppressHydrationWarning>
+    <html lang={locale} className={fontVars} suppressHydrationWarning>
       <body>
         <Suspense fallback={children}>
           <DynamicShell>{children}</DynamicShell>

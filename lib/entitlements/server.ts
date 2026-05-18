@@ -1,9 +1,21 @@
-// lib/entitlements/server.ts — runtime helpers server-side (ADR-0034 §4).
-// Lê subscription do tenant atual (via JWT) e resolve features do plano.
-// Cache in-memory TTL 60s por tenant pra evitar DB lookup por request.
+// lib/entitlements/server.ts — runtime helpers server-side (ADR-0039 supersede ADR-0034 §4).
 //
-// Boundary DB → runtime usa Zod parse (PlanFeaturesSchema + PlanSlugSchema)
-// pra falhar com erro tipado se shape do jsonb drift.
+// Mudanca chave: RPCs PostgreSQL substituem queries diretas.
+//  - requireEntitlement -> can_use_feature(tenant_id, feature)
+//  - getEntitlement -> get_entitlement(tenant_id, feature) RETURNS TABLE
+//  - requireQuota -> can_use_feature + read feature_usage row
+//  - getQuotaSnapshot -> get_entitlement reading usage jsonb
+//  - incrementQuotaUsage -> update_feature_quota_usage(tenant_id, feature, delta)
+//
+// getEntitlementSnapshot ainda le plans.features direto (bulk pra hidratar Provider).
+// RPCs sao usadas pra decisoes per-feature onde atomicidade importa.
+//
+// Cache in-memory 60s por tenant na leitura bulk (snapshot) — nao no can_use_feature
+// porque DB e fonte de verdade pra quota mutavel.
+//
+// NOTE: types das RPCs novas (can_use_feature, get_entitlement, update_feature_quota_usage)
+// ainda nao estao em lib/contracts/database.ts — PostgREST schema cache descongelar +
+// `pnpm supabase gen types > lib/contracts/database.ts`. Casts localizados marcados com `// TYPES-PENDING`.
 
 import 'server-only'
 
@@ -21,19 +33,29 @@ interface CacheEntry {
 }
 const cache = new Map<string, CacheEntry>()
 
-async function loadForCurrentTenant(): Promise<CacheEntry | null> {
+interface GetEntitlementRow {
+  plan_slug: string
+  feature_value: unknown
+  usage: { count?: number } | null
+  period_end: string | null
+}
+
+async function getCurrentTenantId(): Promise<string | null> {
+  const client = await createClient()
+  const tenantRpc = await client.rpc('current_tenant_id')
+  return tenantRpc.data ?? null
+}
+
+async function loadSnapshotForCurrentTenant(): Promise<CacheEntry | null> {
   const client = await createClient()
 
-  // 1) Tenant atual via JWT claim (RLS helper).
   const tenantRpc = await client.rpc('current_tenant_id')
   const tenantId = tenantRpc.data
   if (!tenantId) return null
 
-  // 2) Cache hit pelo tenant_id.
   const cached = cache.get(tenantId)
   if (cached && cached.expiresAt > Date.now()) return cached
 
-  // 3) Subscription ativa do tenant (RLS já filtra pelo tenant atual).
   const subRes = await client
     .from('subscriptions')
     .select('package')
@@ -45,7 +67,6 @@ async function loadForCurrentTenant(): Promise<CacheEntry | null> {
 
   if (!subRes.data?.package) return null
 
-  // Validação de boundary: se DB tem valor fora do enum, falha explícito.
   const slugParsed = PlanSlugSchema.safeParse(subRes.data.package)
   if (!slugParsed.success) {
     throw AppError.internal(
@@ -54,8 +75,6 @@ async function loadForCurrentTenant(): Promise<CacheEntry | null> {
     )
   }
 
-  // 4) Features do plano. RLS de public.plans permite SELECT anon+authenticated
-  // quando is_active=true — não precisa de admin client.
   const planRes = await client
     .from('plans')
     .select('slug, features')
@@ -65,7 +84,6 @@ async function loadForCurrentTenant(): Promise<CacheEntry | null> {
 
   if (!planRes.data) return null
 
-  // Validação de boundary: jsonb pode estar mal-formado se admin editar fora do app.
   const featuresParsed = PlanFeaturesSchema.safeParse(planRes.data.features)
   if (!featuresParsed.success) {
     throw AppError.internal(
@@ -92,23 +110,35 @@ function buildUpgradeUrl(feature: string): string {
   return `/upgrade?feature=${encodeURIComponent(feature)}`
 }
 
-function isFeatureAllowed(features: PlanFeatures, key: string): boolean {
-  const value = (features as unknown as Record<string, unknown>)[key]
-  if (typeof value === 'boolean') return value
-  if (typeof value === 'number') return value === -1 || value > 0
-  return false
-}
-
-/** Resolve entitlement pra feature sem lançar. Retorna metadata pra CTA. */
+/**
+ * Resolve entitlement pra feature via RPC can_use_feature (atomic DB lookup).
+ * Combina com snapshot pra retornar plan slug + upgrade URL.
+ */
 export async function resolveEntitlement(feature: string): Promise<EntitlementResolution> {
-  const data = await loadForCurrentTenant()
-  if (!data) {
+  const tenantId = await getCurrentTenantId()
+  if (!tenantId) {
     return { allowed: false, plan: null, upgradeUrl: buildUpgradeUrl(feature) }
   }
-  const allowed = isFeatureAllowed(data.features, feature)
+
+  const client = await createClient()
+  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
+  const rpc = (
+    client.rpc as unknown as (
+      fn: 'can_use_feature',
+      args: { p_tenant_id: string; p_feature: string },
+    ) => Promise<{ data: boolean | null; error: unknown }>
+  )('can_use_feature', { p_tenant_id: tenantId, p_feature: feature })
+
+  const { data: allowed, error } = await rpc
+  if (error) {
+    throw AppError.internal(`can_use_feature RPC failed for feature=${feature}`, error)
+  }
+
+  const snapshot = await loadSnapshotForCurrentTenant()
+  const plan = snapshot?.slug ?? null
   return {
-    allowed,
-    plan: data.slug,
+    allowed: allowed === true,
+    plan,
     upgradeUrl: allowed ? null : buildUpgradeUrl(feature),
   }
 }
@@ -120,12 +150,16 @@ export async function resolveEntitlement(feature: string): Promise<EntitlementRe
 export async function requireEntitlement(feature: string): Promise<void> {
   const resolved = await resolveEntitlement(feature)
   if (resolved.allowed) return
-  throw AppError.forbidden(`Feature "${feature}" requires plan upgrade`)
+  throw AppError.forbidden({
+    key: 'entitlements.feature_blocked',
+    fallback: `Feature "${feature}" requires plan upgrade`,
+    metadata: { feature, plan: resolved.plan },
+  })
 }
 
 /** Features completas do plano do tenant atual (null se sem subscription). */
 export async function getEntitlements(): Promise<PlanFeatures | null> {
-  const data = await loadForCurrentTenant()
+  const data = await loadSnapshotForCurrentTenant()
   return data?.features ?? null
 }
 
@@ -137,36 +171,114 @@ export async function getEntitlementSnapshot(): Promise<{
   features: PlanFeatures | null
   plan: PlanSlug | null
 }> {
-  const data = await loadForCurrentTenant()
+  const data = await loadSnapshotForCurrentTenant()
   return { features: data?.features ?? null, plan: data?.slug ?? null }
 }
 
-/** Snapshot de quota corrente vs limite (pra banner sticky). */
-export async function getQuotaSnapshot(
-  key: keyof PlanFeatures,
-  currentCount: number,
-): Promise<QuotaSnapshot> {
-  const data = await loadForCurrentTenant()
-  if (!data) return { used: currentCount, limit: 0, nearLimit: true }
+/**
+ * Snapshot de quota corrente vs limite via RPC get_entitlement.
+ * Substitui assinatura antiga (key, currentCount) — count agora vem do DB
+ * (tabela feature_usage atualizada por update_feature_quota_usage).
+ */
+export async function getQuotaSnapshot(key: keyof PlanFeatures): Promise<QuotaSnapshot> {
+  const tenantId = await getCurrentTenantId()
+  if (!tenantId) return { used: 0, limit: 0, nearLimit: true }
 
-  const rawLimit = data.features[key]
-  if (typeof rawLimit !== 'number') {
-    return { used: currentCount, limit: null, nearLimit: false }
+  const client = await createClient()
+  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
+  const rpc = (
+    client.rpc as unknown as (
+      fn: 'get_entitlement',
+      args: { p_tenant_id: string; p_feature: string },
+    ) => Promise<{ data: GetEntitlementRow[] | null; error: unknown }>
+  )('get_entitlement', { p_tenant_id: tenantId, p_feature: String(key) })
+
+  const { data, error } = await rpc
+  if (error) {
+    throw AppError.internal(`get_entitlement RPC failed for feature=${String(key)}`, error)
+  }
+
+  const row = data?.[0]
+  if (!row) return { used: 0, limit: 0, nearLimit: true }
+
+  const used = row.usage?.count ?? 0
+  const rawLimit = typeof row.feature_value === 'number' ? row.feature_value : null
+  if (rawLimit === null) {
+    return { used, limit: null, nearLimit: false }
   }
   const limit = rawLimit === -1 ? null : rawLimit
-  const nearLimit = limit !== null && currentCount >= limit * 0.8
-  return { used: currentCount, limit, nearLimit }
+  const nearLimit = limit !== null && used >= limit * 0.8
+  return { used, limit, nearLimit }
 }
 
 /** Lança AppError.forbidden() se a quota numérica foi atingida. */
-export async function requireQuota(key: keyof PlanFeatures, currentCount: number): Promise<void> {
-  const snapshot = await getQuotaSnapshot(key, currentCount)
-  if (snapshot.limit !== null && snapshot.used >= snapshot.limit) {
-    throw AppError.forbidden(`Quota "${String(key)}" reached: ${snapshot.used}/${snapshot.limit}`)
+export async function requireQuota(key: keyof PlanFeatures): Promise<void> {
+  const tenantId = await getCurrentTenantId()
+  if (!tenantId) {
+    throw AppError.forbidden({
+      key: 'entitlements.feature_blocked',
+      fallback: 'Tenant not resolved',
+      metadata: { feature: String(key) },
+    })
+  }
+
+  const client = await createClient()
+  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
+  const rpc = (
+    client.rpc as unknown as (
+      fn: 'can_use_feature',
+      args: { p_tenant_id: string; p_feature: string },
+    ) => Promise<{ data: boolean | null; error: unknown }>
+  )('can_use_feature', { p_tenant_id: tenantId, p_feature: String(key) })
+
+  const { data: allowed, error } = await rpc
+  if (error) {
+    throw AppError.internal(`can_use_feature RPC failed for quota=${String(key)}`, error)
+  }
+
+  if (allowed === true) return
+
+  const snapshot = await getQuotaSnapshot(key)
+  throw AppError.forbidden({
+    key: 'entitlements.quota_exceeded',
+    fallback: `Quota "${String(key)}" reached: ${snapshot.used}/${snapshot.limit ?? '∞'}`,
+    metadata: { feature: String(key), used: snapshot.used, limit: snapshot.limit },
+  })
+}
+
+/**
+ * Incrementa (ou decrementa, com delta negativo) contador de quota via RPC.
+ * Chame APOS criar/deletar recurso. UPSERT atomico no DB, idempotente >= 0.
+ */
+export async function incrementQuotaUsage(
+  key: keyof PlanFeatures,
+  delta: number = 1,
+): Promise<void> {
+  const tenantId = await getCurrentTenantId()
+  if (!tenantId) {
+    throw AppError.internal('Cannot increment quota: tenant not resolved')
+  }
+
+  const client = await createClient()
+  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
+  const rpc = (
+    client.rpc as unknown as (
+      fn: 'update_feature_quota_usage',
+      args: { p_tenant_id: string; p_feature: string; p_delta: number },
+    ) => Promise<{ data: null; error: unknown }>
+  )('update_feature_quota_usage', {
+    p_tenant_id: tenantId,
+    p_feature: String(key),
+    p_delta: delta,
+  })
+
+  const { error } = await rpc
+  if (error) {
+    throw AppError.internal(`update_feature_quota_usage RPC failed for ${String(key)}`, error)
   }
 }
 
-/** Invalida cache do tenant (chame após mudança de plano). */
+/** Invalida cache do tenant (chame após mudança de plano via webhook Stripe). */
 export function invalidateEntitlementCache(tenantId?: string) {
   if (tenantId) cache.delete(tenantId)
   else cache.clear()

@@ -1,7 +1,7 @@
 # Claude — contexto do projeto
 
 > Carregado no início de toda sessão. **Mantenha curto e atualizado.**
-> Última atualização: 2026-05-17
+> Última atualização: 2026-05-18 (ADR-0038 Storybook + ADR-0039 Makerkit RPCs — fechamento dia 0)
 
 ---
 
@@ -25,13 +25,21 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 
 ## Onde fica cada coisa
 
-| Info                            | Arquivo canônico                  |
-| ------------------------------- | --------------------------------- |
-| Regras code carregadas por path | `.claude/rules/*.md`              |
-| Constituição imutável           | `docs/blueprint/00-PROJETO.md`    |
-| Decisões fechadas (ADRs)        | `docs/adr/NNNN-*.md`              |
-| Blueprints técnicos             | `docs/blueprint/NN-*.md`          |
-| Histórico arquivado             | `docs/_archive/` (referência JIT) |
+| Info                            | Arquivo canônico                   |
+| ------------------------------- | ---------------------------------- |
+| Regras code carregadas por path | `.claude/rules/*.md` (15 rules)    |
+| Constituição imutável           | `docs/blueprint/00-PROJETO.md`     |
+| Decisões fechadas (ADRs)        | `docs/adr/NNNN-*.md`               |
+| Blueprints técnicos             | `docs/blueprint/NN-*.md`           |
+| Plano ativo                     | `docs/plans/PLANO-MESTRE-DIA-0.md` |
+| Histórico arquivado             | `docs/_archive/` (referência JIT)  |
+
+`.claude/rules/*.md` (carregamento por path glob):
+
+- `naming` · `abstractions` · `layers` · `data-layer` · `domain-logic` · `server-actions` · `features` · `jwt-claims` · `components`
+- **i18n** · **contrast** · **shadcn-zone** · **design-tokens** · **brand** · **entitlements** (ADR-0040 §L — cada um tem "Condição de revisitar")
+- **tenant-content** (hierarquia 4 níveis copy/landing — decisão dia 0: template+slots, não block builder)
+- **design-references** (71 DESIGN.md em `docs/references/design-systems/` — APENAS mood/hierarquia/density, NUNCA tokens literais)
 
 Conflito entre docs: ADR > Blueprint > Master Plan (arquivado) > Memória.
 
@@ -42,7 +50,8 @@ Conflito entre docs: ADR > Blueprint > Master Plan (arquivado) > Memória.
 Next 16 (App Router, Turbopack, `proxy.ts`) · React 19 · Tailwind v4
 (`@theme` OKLCH) · shadcn new-york dark-first · Motion 12 (`motion/react`,
 NUNCA `framer-motion`) · Supabase `@supabase/ssr` 0.10 · Zod 4 + RHF 7 ·
-next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Ladle.
+next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Storybook 10
+(`@storybook/nextjs-vite`, ADR-0038 supersede Ladle) · Serwist (`@serwist/turbopack`, ADR-0014).
 
 ---
 
@@ -67,16 +76,17 @@ const brand = await getBrandByHost(req.headers.get('host'))
 // brand: { id, name, host, primary_color_oklch, logo_url, default_vertical }
 ```
 
-Em componentes RSC:
+Em componentes RSC + Client:
 
 ```tsx
-import { useBrand } from '@/lib/brand/BrandProvider'
+import { useBrand } from '@/lib/route/RouteProvider'
 const brand = useBrand()
-return <h1>{brand.name}</h1>
+return <h1>{brand.name}</h1> // ou <Logo /> wordmark dinâmico
 ```
 
 Verticalização via `public.tenants.vertical` + `component.kind` polimórfico
-+ JSONB internal keys. Mesmo schema serve todas marcas filhas.
+
+- JSONB internal keys. Mesmo schema serve todas marcas filhas.
 
 ---
 
@@ -102,6 +112,12 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **Nomenclatura:** DB+code+folders EN; URL+UI PT-BR via `t()` next-intl
 - **Brand:** SEMPRE via `useBrand()` / hostname lookup. NUNCA hardcoded
 - **Vocab banido:** ver `.claude/rules/naming.md` antes de qualquer code
+- **shadcn primitives:** zona quarentenada, Edit bloqueado em `components/ui/*`. Canal único: `npx shadcn add` via Bash. Wrapper composto em `components/app-*.tsx` SÓ com valor agregado (passthrough proibido). Ver `.claude/rules/shadcn-zone.md`
+- **i18n:** `t('chave')` desde primeira string. Estrutura `messages/<locale>/<namespace>.json`. AppError aceita `string | { key, fallback }`. Ver `.claude/rules/i18n.md`
+- **APCA Silver:** body Lc ≥75, large ≥60, non-text ≥45. Gate em `prebuild` script. Ver `.claude/rules/contrast.md`
+- **Entitlements server:** `requireEntitlement(feature)` + `requireQuota(key)` + `incrementQuotaUsage(key, delta)` chamam RPCs (ADR-0039). API client (`useEntitlement`, `useQuota`) + `AppEntitlementGate` inalterados. Ver `.claude/rules/entitlements.md`
+- **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx`. MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
+- **Blueprints novos:** `19-wrapper-strategy.md` (consolida ADR-0040 §E + §F) + `20-i18n-strategy.md` (consolida ADR-0040 §G) — Etapa 15 do plano
 
 ---
 
@@ -123,7 +139,8 @@ Antes de PR: rodar os 6 acima.
 ## Abstrações disponíveis (use antes de criar)
 
 `useServerAction(action)` · `CopyButton`/`useCopy` · `ok()`/`fail()` ·
-`renderEmail(el)` · `useBrand()` · `getBrandByHost()`. Lista completa:
-`.claude/rules/abstractions.md`.
+`renderEmail(el)` · `useBrand()` · `getBrandByHost()` · `<Logo>` wordmark ·
+`useAppToast()` · `<AppForm>` · `<AppEntitlementGate>` · `<Heading>`/`<Text>`/`<Muted>`.
+Lista completa: `.claude/rules/abstractions.md`.
 
 Criar abstração nova: 3+ usos + ADR (pesquisa 04).

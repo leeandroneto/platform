@@ -394,6 +394,35 @@ E adicionar em Vercel env vars (production + preview + development).
 
 ---
 
+## FASE 6.5 — Phase A Final pós-pesquisa (status: planned) 🤖
+
+> **Inserida entre Fase 6 e Fase 7** após pesquisa `docs/research/17-guardrails-ia-shadcn-governanca.md` (2026-05-18) expor gap sistêmico no incidente Commit `7818df1`.
+
+**Fonte única:** `docs/plans/PHASE-A-FINAL.md`
+
+**5 fases, ~2-3 dias úteis, bloqueia continuação pra Fase 7:**
+
+1. **F1 — Hooks PreToolUse JSON output + ESLint comments plugin** (~1 dia)
+   Bug `anthropics/claude-code#13744`: `exit 2` não bloqueia. Migrar 3 hooks existentes + 3 novos (`protect-eslint`, `block-disable-content`, `component-research-gate`). **ADR-0036**.
+
+2. **F2 — shadcn MCP + wrapper pattern** (~half-day)
+   `claude mcp add shadcn`. Wrapper obrigatório (`components/app-*`). Hierarquia granular: blocks → primitives → @origin-ui → @kibo-ui → @billingsdk → @aceternity → @reui → @tremor → custom. **ADR-0037** atualiza ADR-0008.
+
+3. **F3 — Storybook 10 substitui Ladle** (~3h)
+   Storybook tem MCP server, Ladle não. Pra solo + IA, MCP > velocidade cold start. **ADR-0038** supersede ADR-0013.
+
+4. **F4 — Makerkit entitlements recipe** (~3-4h)
+   RPCs PostgreSQL (`can_use_feature`, `get_entitlement`, `increment_feature_usage`) substituem lookup direto. `feature_usage` table pra tracking quotas. **ADR-0039** supersede arquitetura ADR-0034 (mantém vertical slice + plan-gates).
+
+5. **F5 — Cleanup docs + resolve ressalvas backlog** (~2h)
+   CLAUDE.md, blueprints 13/15, CHANGELOG. Ressalvas §9 seeds + §10 RouteProvider AppError factory.
+
+**Critério de saída:** 5 commits Phase A Final + Batch 1 10/10 verde + `_status.md` marca Phase A 100% closed definitivo.
+
+**Princípio §39 mantido:** mesmo com MCP, NÃO criar componentes UX. Defer JIT continua valendo.
+
+---
+
 ## FASE 7 — Validação completa (status: pendente) 🤖
 
 ```powershell

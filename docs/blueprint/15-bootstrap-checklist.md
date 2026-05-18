@@ -167,12 +167,12 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 - **Ação:** `pnpm add motion`. Criar `lib/design/motion.ts` com 6 durations (50/100/200/300/500/700ms — Material 3), 5 easings (standard/standard-decelerate/standard-accelerate/emphasized/emphasized-decelerate), 4 springs (snappy/gentle/bouncy/slow). `'use client'`.
 - **Done:** import `import { duration, ease, spring } from '@/lib/design/motion'` funciona.
 
-### 15. APCA dual-gate validator (`lib/design/contrast.ts`)
+### 15. APCA dual-gate validator (`lib/design/contrast.ts`) — substituída por ADR-0040 §H+§I
 
-- **Estimativa:** 6h
+- **Estimativa original:** 6h. **Real:** ~1h (etapa 5 PLANO-MESTRE-DIA-0)
 - **Dependência:** tarefa 7
-- **Ação:** `pnpm add apca-w3`. Helper `assertWcagWithApca(fg, bg, kind: 'body'|'large'|'non-text')` aplicando dual-gate Lc ≥75 / ≥60 / ≥45 + traditional WCAG 4.5/3.0 como fallback informativo. Build script `scripts/validate-palettes.ts` testa as 13 paletas no CI.
-- **Done:** rodar `pnpm validate:palettes` em CI → falha se combo paleta-X reprovar APCA.
+- **Status:** substituída pelo plano executável `docs/plans/PLANO-MESTRE-DIA-0.md` Etapa 5. ADR-0040 §H adota Silver dual-gate (75/60/45) substituindo Bronze (75/30). Helpers `apca`, `meetsApca`, `ensureAccessible`, `pickReadableForeground` extraídos de `scripts/validate-palettes.ts` pra `lib/design/contrast.ts`. Matrix completa: 13 paletas × roles × {primary, danger, surface, chart-1..5} × {on-surface, on-primary}. Wire `prebuild` script (ADR-0040 §I).
+- **Done:** `pnpm validate:apca && pnpm build` verde com paleta seed correta; vermelho se corromper 1 valor.
 
 **Commit bloco 3:** `chore: sheriff + ci + shadcn + motion + apca`
 
@@ -189,14 +189,14 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 ### 17. Skeleton shimmer + surface elevation + border ghost + tabular-nums
 
+- **Status:** ✅ DONE Etapa 10 sub-item 6 (PLANO-MESTRE-DIA-0)
 - **Estimativa:** ~4h (1+2+1+0.5h)
 - **Dependência:** tarefa 13
 - **Entregas:**
-  - `<Skeleton>` premium (shimmer gradient OKLCH, não cinza)
-  - `<Surface elevation={0|1|2}>` (3 níveis tinted shadow)
-  - Border ghost tokens `--border-ghost-{subtle,strong}`
-  - `.tabular-nums` utility no `app/globals.css` aplicada em `<Metric>` e `<DataCell>`
-- **Done:** Ladle renderiza cada variação
+  - `<Skeleton>` premium shimmer gradient OKLCH em `app/globals.css` (`@keyframes shimmer`)
+  - 3 elevation tokens (`--elevation-flat`, `--elevation-raised`, `--elevation-overlay` — ADR-0042)
+  - `<Metric>` + `<DataCell>` + tabular-nums JIT (quando primeira tela com KPI surgir)
+- **Done:** Storybook renderiza paletas + motion presets (ADR-0038)
 
 ### 18. Catálogo Lucide ~80 ícones
 
@@ -216,14 +216,14 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 ### 20. Safe areas iOS + status bar tint + splash + tab bar
 
+- **Status:** ✅ PARCIAL DONE Etapa 10 (PLANO-MESTRE-DIA-0)
 - **Estimativa:** ~6h (1+1+2+2h)
 - **Dependência:** tarefas 17, 18
 - **Entregas:**
-  - `env(safe-area-inset-top/bottom/left/right)` em layout PWA
-  - `<meta name="theme-color">` tint per rota (light/dark match)
-  - Splash screen 6 sizes (iPhone 14/15/16 + iPad) em `public/splash/`
-  - `<TabBar>` mobile com tint + active indicator animado (Motion 12 spring)
-- **Done:** Add to Home Screen iPhone 14 → splash custom + safe areas respeitadas + tab bar com indicator
+  - ✅ `env(safe-area-inset-*)` via `viewportFit: 'cover'` em `app/layout.tsx`
+  - ✅ `<meta name="theme-color">` dual `(prefers-color-scheme: dark/light)` em layout `viewport` (cores OKLCH dos surfaces)
+  - ✅ Splash screens 3 sizes per-tenant via Satori (`/api/{tenants,brands}/[id]/splash/[size]`) — 1290x2796/1179x2556/2048x2732 cobrindo ~80% devices (6→3 reduzido por pesquisa)
+  - 🟡 `<TabBar>` JIT — gatilho: primeira tela PWA aluno (ver `.claude/rules/shadcn-zone.md` JIT bullet)
 
 **Commit bloco 4:** `chore: white-label runtime + primitives + ios safe areas`
 
@@ -260,12 +260,15 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 ### 24. Install banner custom iOS + Logo system
 
+- **Status:** ✅ PARCIAL DONE Etapas 9/10 (PLANO-MESTRE-DIA-0)
 - **Estimativa:** 8h (2+6h)
 - **Dependência:** tarefa 20
 - **Entregas:**
-  - `<InstallBanner>` custom (iOS detect + Safari instructions; Android beforeinstallprompt event)
-  - Logo system completo: `<Logo variant={'wordmark'|'icon'|'horizontal'} theme={'light'|'dark'|'auto'} size={'sm'|'md'|'lg'}>` + Apple Touch Icon 180×180 + PWA icons (192, 512, maskable) + Open Graph 1200×630 + ESLint rule bloqueando literal "desafit"/"desafit.app" fora allowlist (`_CONFLITOS #16` brand assets zero inline)
-- **Done:** PWA install banner aparece após heuristic (não bloqueia 1º load); `<Logo>` renderiza 9 combinações sem layout shift
+  - 🟡 `<InstallBanner>` JIT — gatilho: primeiro aluno cadastrado no PWA tenant
+  - ✅ Apple Touch Icon 180×180 dinâmico per-tenant (`/api/{tenants,brands}/[id]/icon/180`) + PWA icons (192, 512) via Satori (`/api/...icon/[size]`) + manifest.webmanifest per-tenant
+  - ✅ `<Logo>` **wordmark Geist Sans** dia 0 (`components/ui/logo.tsx` — 00-PROJETO §9 constitucional). Lê `brand.name` via `useBrand()`. Variants `icon` + `horizontal` JIT (exigem asset SVG do designer)
+  - ✅ ESLint `brand/no-brand-hardcode` regra ativa bloqueando literais "desafit"/"yoga.app"/"ingles.app"
+- **Done:** Manifest+icons+splash renderizam per-tenant; `<Logo>` exibe wordmark dinâmico
 
 ### 25. Schema baseline `0001_initial.sql` via MCP
 
@@ -279,6 +282,21 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 ---
 
 ## Bloco 6: Contracts + features + hooks Claude + setup final (tarefas 26-30)
+
+### 25.4. Phase A Final (Fases 1-5 pós-pesquisa)
+
+- **Estimativa:** 2-3 dias úteis
+- **Dependência:** Phase A pré-pesquisa CLOSED (commits `95a092d` → `27be5ee`)
+- **Fonte única:** `docs/plans/PHASE-A-FINAL.md`
+- **Bloqueia:** Tarefa 14 (Motion presets) — só começa após Fase 5 verde
+- **Origem:** pesquisa `docs/research/17-guardrails-ia-shadcn-governanca.md`
+- **Entregáveis resumo:**
+  - Fase 1: Hooks PreToolUse JSON output (bug `#13744`) + `@eslint-community/eslint-plugin-eslint-comments` — **ADR-0036**
+  - Fase 2: shadcn MCP server + wrapper pattern (`components/app-*.tsx`) + `.claude/rules/components.md` — **ADR-0037**
+  - Fase 3: Storybook 10 substitui Ladle (MCP server + Chromatic) — **ADR-0038** supersede ADR-0013
+  - Fase 4: Makerkit entitlements recipe (RPCs PostgreSQL + `feature_usage`) — **ADR-0039** supersede arquitetura ADR-0034
+  - Fase 5: Cleanup docs + resolve ressalvas backlog (§9 seeds, §10 RouteProvider)
+- **Done:** Phase A status `_status.md` = closed definitivo, 9 commits Phase A no histórico, Batch 1 10/10 verde após cada fase
 
 ### 25.5. Vertical slice `features/` + entitlements model (ADR-0034, ADR-0035)
 
@@ -338,12 +356,14 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
   - `vocab-reminder.sh` — UserPromptSubmit warns se prompt mencionar vocab banido
 - **Done:** triggerar cada hook manualmente confirma comportamento
 
-### 29. Ladle setup + primeiras stories
+### 29. Storybook 10 + primeiras stories (ADR-0038 supersede Ladle)
 
-- **Estimativa:** 3h
+- **Status:** ✅ DONE Etapa 12 (PLANO-MESTRE-DIA-0)
+- **Estimativa:** ~3h
 - **Dependência:** tarefas 13, 17, 18, 19, 20
-- **Ação:** `pnpm add -D @ladle/react`. Configurar `.ladle/config.mjs`. Criar 15 stories: 13 paletas + Motion presets + logo system + skeleton + surface + vaul + sonner + tab bar + tokens grid + Lucide grid + APCA validator visual + NumberTicker + Hero + Avatar + InstallBanner.
-- **Done:** `pnpm ladle serve` sobe em `:61000` com 15 stories navegáveis
+- **Ação:** `pnpm dlx storybook@latest init` (framework `@storybook/nextjs-vite` auto-detectado). Config em `.storybook/main.ts` (stories co-localizadas `components/**/*.stories.tsx`) + `preview.tsx` com NextIntl/Route/Entitlement providers globais. Addons: `addon-a11y` (axe-core), `addon-docs`, `addon-mcp` (HTTP `localhost:6006/mcp` em `.mcp.json`), Chromatic, addon-vitest.
+- **Stories iniciais:** 3 wrappers (AppForm/AppToast/AppEntitlementGate) + 3 typography (Heading/Text/Muted) + Logo + 13 paletas catalog + Motion presets (durations + eases + springs).
+- **Done:** `pnpm storybook` em `:6006`. `pnpm build-storybook` ✅ 3.4s. Ladle removido (`@ladle/react`, `.ladle/`, scripts `ladle:*`, ESLint override §6).
 
 ### 30. Primeiro commit `chore: bootstrap dia 0`
 

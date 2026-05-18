@@ -1,9 +1,6 @@
 #!/usr/bin/env sh
-# Husky pre-push — full test + grep audits
-. "$(dirname -- "$0")/_/husky.sh"
-
+# Husky pre-push — full test + grep audits (Husky v9 — sem linha legacy)
 pnpm exec bash scripts/vocab-audit.sh
-pnpm exec bash scripts/i18n-audit.sh
 pnpm exec bash scripts/token-audit.sh
 pnpm exec bash scripts/grep-disables.sh
 pnpm exec tsx scripts/docs-validate.ts

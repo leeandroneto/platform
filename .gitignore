@@ -37,3 +37,6 @@ test-results/
 *.tsbuildinfo
 .size-limit.json
 .claude/scheduled_tasks.lock
+
+*storybook.log
+storybook-static

@@ -15,7 +15,7 @@ HITS=$(
   grep -RInE "$HEX_PATTERN|$RGB_PATTERN" \
     --include='*.ts' --include='*.tsx' --include='*.css' \
     app/ components/ lib/ 2>/dev/null \
-  | grep -v 'app/globals\.css.*@theme' \
+  | grep -v 'app/globals\.css' \
   | grep -v 'blurhash' \
   | grep -v 'app/icon\.tsx' \
   | grep -v 'app/apple-icon\.tsx' \

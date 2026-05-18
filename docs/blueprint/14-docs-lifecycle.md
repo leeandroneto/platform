@@ -86,7 +86,21 @@ Rodar `pnpm adr:index` após cada ADR criado. CI valida que README.md está sinc
 
 ## 5. Blueprints — geração 1× + atualização via PR
 
-**Origem.** Blueprints (`docs/blueprint/01-18.md`) nasceram desta sessão pré-código (CHUNK 1-7 da conversa). Cada um cobre 1 tema de fundação.
+**Origem.** Blueprints (`docs/blueprint/01-18.md`) nasceram da sessão pré-código (CHUNK 1-7 da conversa). Cada um cobre 1 tema de fundação.
+
+**Adições pós ADR-0040 (PLANO-MESTRE-DIA-0 Etapa 15):**
+
+- `19-wrapper-strategy.md` — consolida ADR-0040 §E/§F + Pesquisa 19/20 + `.claude/rules/shadcn-zone.md` (3 wrappers obrigatórios + 42+ JIT + hierarquia ADR-0037)
+- `20-i18n-strategy.md` — consolida ADR-0040 §G + Pesquisa 21 + `.claude/rules/i18n.md` (next-intl 4 + setup canônico + AppError factory + tenant_copy_overrides JIT)
+
+**Referências cruzadas atualizadas (2026-05-18):**
+
+- ADR-0036 — hooks JSON output stdout (#13744 contornado)
+- ADR-0037 — wrapper pattern + hierarquia registries
+- ADR-0038 — Storybook 10 supersede Ladle
+- ADR-0039 — Makerkit RPCs entitlements (supersede arquitetura ADR-0034)
+- ADR-0040 — fechamento dia 0 12-section catch-all
+- ADR-0042 — elevation tokens 3 níveis
 
 **Lifecycle pós-bootstrap.**
 

@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-# Husky pre-commit — lint-staged + typecheck
-. "$(dirname -- "$0")/_/husky.sh"
-
+# Husky pre-commit — lint-staged + typecheck (Husky v9 — sem linha legacy)
 pnpm exec lint-staged
 pnpm exec tsc --noEmit

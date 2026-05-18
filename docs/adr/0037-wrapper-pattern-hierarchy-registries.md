@@ -3,6 +3,8 @@
 Date: 2026-05-18
 Status: accepted
 
+> **NOTA:** §A (hierarquia registries) mantém autoridade. §B (wrapper pattern) atualizada operacionalmente por ADR-0040 §E — 3 wrappers compostos OBRIGATÓRIOS dia 0 (AppForm, AppToast, AppEntitlementGate) + demais JIT + passthrough proibido (Vercel Academy).
+
 ## Context
 
 ADR-0008 instituiu princípio universal "shadcn 100% + hierarquia de busca" com

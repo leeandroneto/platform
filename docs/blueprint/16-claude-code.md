@@ -254,9 +254,26 @@ Conteúdo: `'use server'` no topo, return `Result<T, AppError>`, chama `lib/data
 
 ---
 
-## 4. 3 Hooks Claude Code dia 0
+## 4. 6 Hooks Claude Code dia 0 (atualizado 2026-05-18)
 
-Configurados em `.claude/hooks/*` + `settings.json` referenciando triggers.
+Configurados em `.claude/hooks/*` + `settings.json` referenciando triggers. Lista atual reflete evolução pós ADR-0036 (JSON output stdout) + Phase A Final F1/F2 + ADR-0040.
+
+**PreToolUse (gate determinístico — bloqueia se violação):**
+
+- `protect-eslint.sh` — Edit/Write em `eslint.config.*` exige marker `ADR-NNNN` no diff + arquivo ADR existir em `docs/adr/`. Evolução 2026-05-18 (incidente `7818df1` motivou).
+- `block-token-bypass.sh` — bloqueia `#hex`, `rgba(`, classes Tailwind arbitrary `[#...]` em `.ts/.tsx` (allowlist: `globals.css`, `app/api/.../theme.css/route.ts`, JSX em ImageResponse Satori build-time).
+- `component-research-gate.sh` — bloqueia Write/Edit em `components/ui/**`, `features/<f>/components/**`, `lib/<area>/components/**` sem marker `// RESEARCH:` linha 1. Reforça zona quarentenada (ADR-0040 §A/§C).
+
+**PostToolUse (efeito colateral — não bloqueia):**
+
+- `post-shadcn-add.sh` — após Bash `shadcn add`, injeta checklist 6 passos via stderr (ADR-0040 §D).
+- `format-on-write.sh` — após Write/Edit, roda `pnpm prettier --write <file>`.
+
+**SessionStart:**
+
+- `load-context.sh` — imprime resumo curto (vocab banido, schema único `public.*`, ADR-0040 fechamento dia 0, plano ativo, hierarquia conflito).
+
+**UserPromptSubmit:** (descontinuado dia 0 — `load-context.sh` cobre via session reminder + vocab vai capturado por ESLint pré-commit; reintroduzir se vocab violations recorrentes em prompt)
 
 ### 4.1 `SessionStart` — carrega contexto crítico
 
@@ -337,16 +354,46 @@ Não criar dia 0. Avaliar quando workflow repetir 5+ vezes:
 
 ---
 
-## 8. MCPs configurados dia 0
+## 8. MCPs configurados dia 0 (estado atual `.mcp.json`)
 
-(Reforço `15-bootstrap-checklist.md §B3`)
+- **shadcn MCP** — `mcp__shadcn__*` pra add components, audit, listar registries (stdio)
+- **Context7 MCP** — `mcp__context7__*` pra fetch docs atuais (stdio)
+- **Storybook MCP** — HTTP `localhost:6006/mcp` quando Storybook dev rodando (ADR-0038). Expõe stories como catálogo Claude/Cursor.
 
-- **shadcn MCP** — `mcp__shadcn__*` pra add components, audit, listar registries
-- **Supabase MCP** — `mcp__supabase__*` pra `apply_migration`, `list_tables`, `get_logs`, `execute_sql`
-- **Context7 MCP** — `mcp__context7__*` pra fetch docs atuais (Next 16, React 19, Tailwind v4, Motion 12)
+**MCPs disponíveis via plugin (não em `.mcp.json` local, vêm do ambiente):**
+
+- **Supabase MCP** — `mcp__plugin_supabase_supabase__*` pra `apply_migration`, `list_tables`, `get_logs`, `execute_sql`, `generate_typescript_types`
 - **Vercel MCP** — `mcp__plugin_vercel_vercel__*` pra deploy, logs, env vars
 
-Configuração em `.claude/mcp.json` ou via CLI Claude Code init.
+Configuração em `.mcp.json` (root do repo, versionado).
+
+## 8.1 `.claude/rules/*.md` (estado atual 2026-05-18)
+
+15 rules path-loaded via frontmatter `paths:`. Lista canônica (substitui §3 quando contradição):
+
+**Padrões de código (path-loaded):**
+
+- `naming` · `abstractions` · `layers` · `data-layer` · `domain-logic` · `server-actions` · `features` · `jwt-claims` · `components`
+
+**ADR-0040 §L (fechamento dia 0 — cada uma tem "Condição de revisitar"):**
+
+- `i18n` · `contrast` · `shadcn-zone` · `design-tokens` · `brand` · `entitlements`
+
+**Adições pós ADR-0040:**
+
+- `tenant-content` — hierarquia 4 níveis copy/landing (decisão: template+slots dia 0; block builder JIT)
+- `design-references` — 71 DESIGN.md em `docs/references/design-systems/` (mood/density APENAS — NUNCA tokens literais)
+
+## 8.2 ADRs relevantes dia 0
+
+- ADR-0033 — schema único `public.*`
+- ADR-0034 — vertical slice + entitlements model (arquitetura supersedida por ADR-0039 mas tipos mantidos)
+- ADR-0036 — hooks JSON output stdout (bug anthropics/claude-code#13744 contornado)
+- ADR-0037 — wrapper pattern + hierarquia registries
+- ADR-0038 — Storybook 10 supersede Ladle
+- ADR-0039 — Makerkit RPCs entitlements
+- ADR-0040 — fechamento dia 0 (shadcn-zone + i18n + APCA Silver — 12 §A-§L)
+- ADR-0042 — elevation tokens 3 níveis
 
 ---
 
