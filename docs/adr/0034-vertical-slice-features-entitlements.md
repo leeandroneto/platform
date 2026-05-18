@@ -175,6 +175,13 @@ in-memory TTL 60s (paga raras vezes, lê milhares). Validação Zod no boundary
 DB → runtime via `PlanFeaturesSchema` + `PlanSlugSchema` em
 `lib/contracts/entitlements.ts` (substitui casts `as unknown as` perigosos).
 
+**Estrutura habilitante vs superfície UX.**
+`lib/entitlements/{server,client,types,EntitlementProvider}.ts` são
+pre-positioned dia 1 — API canônica universal pra features futuras chamarem
+(`requireEntitlement`, `useEntitlement`). Componentes UX
+(`lib/entitlements/components/*`) são deferidos JIT — superfície UX precisa
+de caso real pra validar. Mesmo ADR, distinção essencial.
+
 **Componentes UX (`lib/entitlements/components/`) — DEFERIDOS JIT.** Tentativa
 inicial 2026-05-18 (commit `7818df1`) criou 5 componentes do zero com strings
 PT-BR hardcoded, sem usar shadcn `<Progress>`, `<Card>`, `<AspectRatio>`, etc.

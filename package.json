@@ -13,7 +13,7 @@
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "size": "size-limit",
-    "knip": "knip",
+    "knip": "knip --exclude binaries",
     "vocab:audit": "bash scripts/vocab-audit.sh",
     "i18n:audit": "bash scripts/i18n-audit.sh",
     "token:audit": "bash scripts/token-audit.sh",

@@ -13,6 +13,9 @@ const config: KnipConfig = {
   $schema: 'https://unpkg.com/knip@5/schema.json',
 
   entry: [
+    // Husky shell hooks chamam binárias node_modules via pnpm exec
+    '.husky/pre-commit',
+    '.husky/pre-push',
     // Scripts CLI (não detectado por plugin)
     'scripts/**/*.ts',
     // Tests (vitest + playwright + smoke)
@@ -22,9 +25,27 @@ const config: KnipConfig = {
     'lib/supabase/{client,server,admin}.ts',
     'lib/route/getRouteByHost.ts',
     'lib/design/seeds/**/*.ts',
+    // lib/entitlements/server.ts e client.ts são entry points arquiteturais
+    // (ADR-0034 §4). Definem API canônica pra TODAS features futuras chamarem.
+    // Diferente de componentes UX (deferidos JIT pelo mesmo ADR) — API server-side
+    // é universal, não varia por feature. Mantido pre-positioned intencionalmente.
+    'lib/entitlements/{server,client}.ts',
+    // Result<T, AppError> helpers + RouteProvider hooks — entry points API canônicos
+    // (ADR layers.md + ADR-0024). Sprint 1+ consumers crescem rápido. Pre-positioned.
+    'lib/contracts/result.ts',
+    'lib/route/RouteProvider.tsx',
+    'lib/env.ts',
+    'lib/route/types.ts',
   ],
 
-  project: ['app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.ts', 'hooks/**/*.{ts,tsx}'],
+  project: [
+    'app/**/*.{ts,tsx}',
+    'components/**/*.{ts,tsx}',
+    'features/**/*.{ts,tsx}',
+    'lib/**/*.ts',
+    'lib/**/*.tsx',
+    'hooks/**/*.{ts,tsx}',
+  ],
 
   ignore: [
     // Generated por supabase CLI
@@ -33,6 +54,10 @@ const config: KnipConfig = {
     'lib/contracts/money.ts',
     // Block shadcn aguardando consumer Sprint 5+
     'components/version-switcher.tsx',
+    // features/_template — scaffold reference (ADR-0034). NÃO é feature ativa.
+    // Existe pra ser copiado quando adicionar feature real. Knip flagaria como
+    // unused files (sem consumer em app/) — mas é proposital.
+    'features/_template/**',
   ],
 
   // Helpers/types pre-positioned (§39 JIT — primeiro consumer Sprint 2+).
@@ -76,11 +101,10 @@ const config: KnipConfig = {
     '@softarc/sheriff-core',
     'blurhash',
     'eslint-plugin-i18next',
+    'lint-staged', // chamado via .husky/pre-commit (`pnpm exec lint-staged`) — knip não trace pnpm exec
     'prettier-plugin-tailwindcss',
     'tailwindcss', // imported via globals.css
   ],
-
-  ignoreBinaries: [],
 }
 
 export default config

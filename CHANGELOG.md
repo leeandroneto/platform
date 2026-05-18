@@ -52,6 +52,14 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 - Rewrite `/aluno/:path* → /client/:path*` em `vercel.ts` — `aluno` é fitness-only; rota EN `/portal` cobre todas verticais
 - Fallback hardcoded `'desafit.app'` em `proxy.ts`, `app/layout.tsx`, `lib/env.ts` — brand resolution puramente via host + DB lookup
 
+### Fixed
+
+- `knip.config.ts` faltava `features/**` path em `project` + entitlements `{server,client}.ts` em `entry` + `lint-staged` em `ignoreDependencies` (tech debt do Commit B detectado em Phase A close — knip reportava falsos positivos `requireEntitlement`/`FeatureGate` unused porque consumers em `features/_template/` estavam fora do scope)
+- Reverted commit `7818df1` parcial — deletado `lib/entitlements/components/` + ESLint override §11 (criação de componentes UX violou ADR-0008 hierarquia e multi-tenant white-label). Mantido stack canônica (server/client/types/Provider). Componentes deferidos JIT (ADR-0034 §4 + ADR-0035 atualizados)
+- `app/layout.tsx` agora wire `<EntitlementProvider>` com snapshot do server (sem isso `useEntitlement` retornava sempre permissive)
+- `lib/entitlements/server.ts` agora valida boundary DB → runtime via `PlanFeaturesSchema`/`PlanSlugSchema` Zod (substitui 2 casts `as unknown as` perigosos)
+- `lib/contracts/entitlements.ts` novo — SSOT Zod schemas dos entitlements
+
 ### Security
 
 - RLS habilitada em 100% das tabelas tenant-scoped com policies separadas por operação (SELECT/INSERT/UPDATE/DELETE)
