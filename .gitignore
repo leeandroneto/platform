@@ -36,3 +36,4 @@ test-results/
 # Misc
 *.tsbuildinfo
 .size-limit.json
+.claude/scheduled_tasks.lock

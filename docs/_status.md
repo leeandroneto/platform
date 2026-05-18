@@ -8,12 +8,12 @@
 
 ## Git
 
-| Campo | Valor |
-|---|---|
-| Branch | `master` |
-| Commits | 2 |
-| Última mudança em `CLAUDE.md` | 2026-05-18 |
-| Última mudança em `docs/adr/` | 2026-05-18 |
+| Campo                               | Valor      |
+| ----------------------------------- | ---------- |
+| Branch                              | `master`   |
+| Commits                             | 4          |
+| Última mudança em `CLAUDE.md`       | 2026-05-18 |
+| Última mudança em `docs/adr/`       | 2026-05-18 |
 | Última mudança em `docs/blueprint/` | 2026-05-18 |
 
 ## Package
