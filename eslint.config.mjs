@@ -105,6 +105,56 @@ const vocabBanPlugin = {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════
+// Plan gates required — vertical slice (ADR-0034)
+// features/<name>/index.ts deve re-exportar plan-gates pra garantir gate declarativo
+// ════════════════════════════════════════════════════════════════════════════════
+const planGatesPlugin = {
+  rules: {
+    'plan-gates-required': {
+      meta: {
+        type: 'problem',
+        messages: {
+          missing:
+            "features/<name>/index.ts deve re-exportar de './plan-gates' (ADR-0034 §5). Sem plan-gates = feature sem gate declarativo = lint error.",
+        },
+        schema: [],
+      },
+      create(context) {
+        // Aplica só em features/<name>/index.ts
+        const filename = context.filename ?? context.getFilename?.()
+        if (!filename) return {}
+        const normalized = filename.replace(/\\/g, '/')
+        const match = /\/features\/([^/]+)\/index\.ts$/.exec(normalized)
+        if (!match) return {}
+        // Ignora a pasta _template (é referência, não feature ativa) — opcional.
+        // Aqui mantemos enforce também em _template pra servir de exemplo correto.
+
+        let hasGateReexport = false
+
+        function check(node) {
+          if (!node.source) return
+          const src = node.source.value
+          if (typeof src !== 'string') return
+          if (src === './plan-gates' || src.endsWith('/plan-gates')) {
+            hasGateReexport = true
+          }
+        }
+
+        return {
+          ExportNamedDeclaration: check,
+          ExportAllDeclaration: check,
+          'Program:exit'(node) {
+            if (!hasGateReexport) {
+              context.report({ node, messageId: 'missing' })
+            }
+          },
+        }
+      },
+    },
+  },
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
 // Brand hardcoded — multi-marca via env (ADR-0021/0022)
 // Bloqueia 'desafit'/'yoga'/'ingles' literais fora do allowlist
 // ════════════════════════════════════════════════════════════════════════════════
@@ -409,17 +459,26 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // ─── Custom plugins: token bypass + vocab + brand ─────────────────────────
+  // ─── Custom plugins: token bypass + vocab + brand + plan-gates ────────────
   {
     plugins: {
       'design-tokens': tokenBypassPlugin,
       vocab: vocabBanPlugin,
       brand: brandHardcodePlugin,
+      'plan-gates': planGatesPlugin,
     },
     rules: {
       'design-tokens/no-tailwind-bypass': 'error',
       'vocab/no-banned-vocab': 'error',
       'brand/no-brand-hardcode': 'error',
+    },
+  },
+
+  // ─── ADR-0034 §6 — plan-gates obrigatório em features/<name>/index.ts ─────
+  {
+    files: ['features/*/index.ts'],
+    rules: {
+      'plan-gates/plan-gates-required': 'error',
     },
   },
 

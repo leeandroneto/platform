@@ -184,7 +184,7 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 - **Estimativa:** 4h
 - **Dependência:** tarefas 7, 15
-- **Ação:** route handler GET retorna `Content-Type: text/css` com OKLCH tokens derivados de `platform.tenants.primary_color`. Headers: `Cache-Control: public, max-age=86400, immutable` + `?v=N` versionado.
+- **Ação:** route handler GET retorna `Content-Type: text/css` com OKLCH tokens derivados de `public.tenants.primary_color`. Headers: `Cache-Control: public, max-age=86400, immutable` + `?v=N` versionado.
 - **Done:** `<link rel="stylesheet" href="/api/tenants/abc/theme.css?v=1">` injeta tokens em runtime sem `dangerouslySetInnerHTML`. Zero FOUC.
 
 ### 17. Skeleton shimmer + surface elevation + border ghost + tabular-nums
@@ -271,14 +271,43 @@ Total estimado: 60-80h (alvo ~70h conforme `_CONFLITOS #16`).
 
 - **Estimativa:** 8h
 - **Dependência:** tarefas 4, 8
-- **Ação:** chamar `mcp__supabase__apply_migration` com schema completo `platform.*` baseline (~22 tabelas — `06-data-model.md §3`) + trigger `handle_new_user` + `custom_access_token_hook` + RLS pattern `(select public.current_tenant_id())` em todas tabelas tenant-scoped + 5 storage buckets.
+- **Ação:** chamar `mcp__supabase__apply_migration` com schema completo `public.*` baseline (~22 tabelas — `06-data-model.md §3`) + trigger `handle_new_user` + `custom_access_token_hook` + RLS pattern `(select public.current_tenant_id())` em todas tabelas tenant-scoped + 5 storage buckets.
 - **Done:** `mcp__supabase__list_tables` retorna ~22 tabelas. Smoke RLS: insert sem JWT → bloqueado. Trigger smoke: signup novo cria `profiles + tenants + memberships` atomicamente.
 
 **Commit bloco 5:** `chore: visual premium + logo system + schema baseline`
 
 ---
 
-## Bloco 6: Contracts + hooks Claude + setup final (tarefas 26-30)
+## Bloco 6: Contracts + features + hooks Claude + setup final (tarefas 26-30)
+
+### 25.5. Vertical slice `features/` + entitlements model (ADR-0034, ADR-0035)
+
+- **Estimativa:** 5h
+- **Dependência:** tarefas 11 (Sheriff), 25 (schema baseline)
+- **Entregas:**
+  - `features/` pasta criada no root
+  - `features/_template/` exemplo cobrindo estrutura canônica:
+    `plan-gates.ts` + `contracts.ts` + `data.ts` + `handlers.ts` + `hooks.ts`
+    - `components/` + `__tests__/` + `index.ts`
+  - `sheriff.config.ts` atualizado com tagging por feature + depRules
+    bloqueando cross-feature imports (só via `kind:public-api`)
+  - `eslint.config.mjs` ganha rule custom `plan-gates-required` —
+    toda pasta em `features/<name>/` exige `plan-gates.ts` exportando `*Gate`
+  - `lib/entitlements/` runtime:
+    - `server.ts` — `requireEntitlement()`, `getEntitlements()`, `requireQuota()`
+    - `client.ts` — `useEntitlement()`, `useQuota()` hooks
+    - `types.ts` — `FeatureGate`, `PlanFeatures`, `PlanSlug` types
+    - `components/` — `<EntitlementBadge>`, `<EntitlementGate>`,
+      `<PaywallModal>`, `<QuotaBanner>`, `<UpgradeCTA>` (ADR-0035 uxPattern A/B/C)
+  - Migration `0007_add_plans_table` — `public.plans (id, slug, name, monthly_amount_minor, setup_amount_minor, currency, features jsonb, is_active, sort_order)` + seed 3 planos (Pacote A R$100/mês + R$1.500 setup, B R$200/mês + R$3.000 setup, C R$200/mês + R$4.000 setup) com entitlements canônicos
+  - `.claude/rules/features.md` — regra carregada quando edita `features/**`
+    explicando convenção pra Claude Code
+- **Done:**
+  - `features/_template/` lint + typecheck verde
+  - Sheriff bloqueia `features/A` importar `features/B/data.ts` (só `features/B/index.ts`)
+  - ESLint bloqueia criar `features/X/` sem `plan-gates.ts`
+  - `public.plans` populada com 3 planos via seed
+  - Ladle story renderiza `<PaywallModal feature="chatbot" />`
 
 ### 26. `lib/contracts/` SSOT (Zod + Result + AppError + adapters)
 

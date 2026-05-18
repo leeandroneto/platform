@@ -45,6 +45,16 @@ export const viewport: Viewport = {
   ],
 }
 
+// Resolve href do theme CSS pro tenant/brand atual.
+function buildThemeHref(route: Awaited<ReturnType<typeof getRouteByHost>>): string | null {
+  if (!route) return null
+  const tenant = route.tenant
+  const id = tenant?.id ?? route.brand.id
+  const version = tenant?.theme_version ?? route.brand.theme_version ?? 1
+  const path = tenant ? 'tenants' : 'brands'
+  return `/api/${path}/${id}/theme.css?v=${version}`
+}
+
 // ─── Dynamic shell: lê host + faz lookup brand/tenant + emite theme CSS ──
 // Encapsulado em Suspense pra Next 16 cacheComponents — body shell static,
 // dynamic content streamed (PPR-style). Theme `<link>` hoisted pra <head>
@@ -54,21 +64,16 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
   const host = h.get('host')
   const route = host ? await getRouteByHost(host) : null
 
-  const themeId = route?.tenant?.id ?? route?.brand.id
-  const themeVersion = route?.tenant?.theme_version ?? route?.brand.theme_version ?? 1
-  const themePath = route?.tenant ? 'tenants' : 'brands'
-  const themeHref = themeId
-    ? `/api/${themePath}/${themeId}/theme.css?v=${themeVersion}`
-    : null
-
   if (!route) return children
+
+  const themeHref = buildThemeHref(route)
 
   return (
     <>
-      {themeHref && <link rel='stylesheet' href={themeHref} precedence='default' />}
+      {themeHref && <link rel="stylesheet" href={themeHref} precedence="default" />}
       <RouteProvider brand={route.brand} tenant={route.tenant}>
         {children}
-        <Toaster richColors closeButton position='top-center' />
+        <Toaster richColors closeButton position="top-center" />
       </RouteProvider>
     </>
   )
@@ -77,7 +82,7 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const fontVars = `${geistSans.variable} ${geistMono.variable}`
   return (
-    <html lang='pt-BR' className={fontVars} suppressHydrationWarning>
+    <html lang="pt-BR" className={fontVars} suppressHydrationWarning>
       <body>
         <Suspense fallback={children}>
           <DynamicShell>{children}</DynamicShell>
