@@ -36,25 +36,69 @@ esta regra é o playbook.
 
 ---
 
-## Hierarquia granular (ADR-0008 + ADR-0037)
+## Hierarquia em 3 categorias (ADR-0008 + ADR-0037)
 
-Ordem de busca (alta → baixa prioridade):
+Ordem pesquisada 2026-05-18 (web survey direto dos catálogos).
 
-| #   | Fonte                 | Slug pra MCP / npm   | Quando                                                          |
-| --- | --------------------- | -------------------- | --------------------------------------------------------------- |
-| 1   | shadcn **blocks**     | `shadcn` blocks      | Padrão composto pronto (dashboard, auth, sidebar)               |
-| 2   | shadcn **primitives** | `shadcn` ui          | Building blocks: button, input, dialog, sheet, card...          |
-| 3   | `@origin-ui/*`        | `@origin-ui/<name>`  | Variações ricas de primitives (avatar-stack, multi-select)      |
-| 4   | `@kibo-ui/*`          | `@kibo-ui/<name>`    | Padrões SaaS (announcement-bar, color-picker, kbd)              |
-| 5   | `@billingsdk/*`       | `@billingsdk/<name>` | Billing-specific (price-table, plan-card, usage-meter)          |
-| 6   | `@aceternity/*`       | `@aceternity/<name>` | Marketing/landing (hero animado, sparkles, beam)                |
-| 7   | `@reui/*`             | `@reui/<name>`       | Charts + data-viz extensions                                    |
-| 8   | `@tremor/*`           | `@tremor/<name>`     | Dashboard analytics (ainda mantido pós-shadcn merge)            |
-| 9   | **custom**            | —                    | Última opção. Justifica no marker (`// RESEARCH: custom — ...`) |
+### Categoria 1 — Vendor canônico (instalado em `components/ui/`)
+
+| #   | Fonte             | Como adicionar                     | Quando                                                                  |
+| --- | ----------------- | ---------------------------------- | ----------------------------------------------------------------------- |
+| 1   | shadcn blocks     | `mcp__shadcn__search` filtro block | Composição pronta (dashboard, auth, sidebar). Blocks-first se cobre 80% |
+| 2   | shadcn primitives | `mcp__shadcn__list-components`     | Building blocks: button, input, dialog, sheet, card, drawer, sonner     |
+
+### Categoria 2 — Catálogos copy-paste shadcn-compatible
+
+**Não são `pnpm add`** (não existem como npm dependency). Copiados via
+`npx shadcn add <url-do-registry>` ou manual pra `components/app-<nome>.tsx`
+ou `features/<X>/components/`.
+
+| #   | Catálogo       | Site           | Forte em                                                                | A11y                                |
+| --- | -------------- | -------------- | ----------------------------------------------------------------------- | ----------------------------------- |
+| 3   | **Origin UI**  | origin-ui.com  | Variações ricas de primitives (multi-select, time picker, avatar-stack) | Radix + React Aria                  |
+| 4   | **Kibo UI**    | kibo-ui.com    | Padrões SaaS (kbd, announcement-bar, color-picker, dropzone)            | Shadcnblocks-backed                 |
+| 5   | **Reui**       | reui.io        | **Data-grid TanStack v8** (29 comp), 1003+ componentes totais           | Boa                                 |
+| 6   | **Tremor**     | tremor.so      | Dashboard analytics (KPI, sparkline, area, gauge) — 35+ comp            | Boa (mas design tokens divergentes) |
+| 7   | **billingsdk** | billingsdk.com | Billing UI (price-table, plan-card, customer-portal)                    | WCAG-optimized                      |
+
+### Categoria 3 — Custom
+
+| #   | Fonte  | Quando                                                           |
+| --- | ------ | ---------------------------------------------------------------- |
+| 8   | custom | Última opção. Justifica no marker. ADR se for reusável (3+ usos) |
 
 **Regra de fechamento:** parar na primeira camada que atende. Não pular pra
-custom pulando @origin-ui/etc só porque "parece mais rápido". Pesquisa < 3min
-via MCP é regra, não opcional.
+custom pulando catálogos só porque "parece mais rápido". Pesquisa < 3min via
+MCP é regra, não opcional.
+
+---
+
+## Aceternity — fora do produto
+
+**NÃO usar Aceternity UI dentro do PWA produto.**
+
+- **Incompatível com stack** — Framer Motion-heavy; CLAUDE.md enforça
+  `motion/react` (`framer-motion` em vocab banido ESLint)
+- **Paywall** — $199 lifetime pros blocks principais
+- **Mobile-first violation** — animações 3D/sparkles/beam matam Core Web
+  Vitals (ADR-0020 bundle budgets per-rota)
+- **A11y vaga** — sem audit reference (Origin UI declara React Aria
+  explicitamente; Aceternity faz claim genérico)
+
+Reservado pra marketing/landing externo se algum dia houver — nunca dentro
+do produto.
+
+---
+
+## Libs primitivas — infra ortogonal à hierarquia
+
+NÃO entram na busca por componente. Stack travado em CLAUDE.md:
+
+- `motion@12` — animação custom. Presets em `lib/design/motion.ts` (tarefa 14)
+- `vaul@1` — drawer primitive. Usar via `components/ui/drawer.tsx` (shadcn wrapper)
+- `sonner@2` — toast primitive. Usar via `components/ui/sonner.tsx` (shadcn wrapper)
+- Radix — internamente em shadcn primitives
+- React Aria — internamente em Origin UI / Kibo UI
 
 ---
 

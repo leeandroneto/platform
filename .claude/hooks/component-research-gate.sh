@@ -7,8 +7,8 @@
 #   - lib/**/components/**/*.{ts,tsx}
 #
 # Exige linha 1 com '// RESEARCH: <fonte>' apontando origem (shadcn block, primitive,
-# @origin-ui, @kibo-ui, @billingsdk, @aceternity, @reui, @tremor, ou justificativa
-# explicita pra custom). Hierarquia em ADR-0008/0037.
+# origin-ui, kibo-ui, reui, tremor, billingsdk, ou justificativa explicita pra
+# custom). Hierarquia ordenada em ADR-0008/0037. Aceternity fora do produto.
 #
 # Razao: incidente 7818df1 (revertido em 4be49e3) - Claude criou 5 componentes UX
 # do zero violando ADR-0008 hierarquia. Componentes UX SO sao criados JIT
@@ -44,7 +44,7 @@ HEAD=$(echo "$CONTENT" | head -c 300)
 
 if ! echo "$HEAD" | grep -qE '// RESEARCH: '; then
   cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Componente UX sem marker '// RESEARCH: <fonte>' nos primeiros 300 chars. Hierarquia (ADR-0008/0037): shadcn blocks -> primitives -> @origin-ui -> @kibo-ui -> @billingsdk -> @aceternity -> @reui -> @tremor -> custom. Antes de criar: 1) mcp__shadcn__search + mcp__storybook__list-components; 2) escolher fonte MAIS ALTA na hierarquia; 3) inserir marker linha 1 com link/justificativa; 4) so entao Write. Componentes UX SO JIT (Phase A Final principio)."}}
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Componente UX sem marker '// RESEARCH: <fonte>' nos primeiros 300 chars. Hierarquia (ADR-0008/0037, pesquisa 2026-05-18): vendor canonico (shadcn blocks -> primitives) -> catalogos copy-paste (origin-ui -> kibo-ui -> reui -> tremor -> billingsdk) -> custom. Aceternity fora do produto (Framer Motion incompat). Antes de criar: 1) mcp__shadcn__search + mcp__shadcn__list-components; 2) escolher fonte MAIS ALTA; 3) inserir marker linha 1; 4) so entao Write. Componentes UX SO JIT."}}
 EOF
   exit 0
 fi
