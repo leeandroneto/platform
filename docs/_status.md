@@ -11,7 +11,7 @@
 | Campo                               | Valor      |
 | ----------------------------------- | ---------- |
 | Branch                              | `master`   |
-| Commits                             | 4          |
+| Commits                             | 5          |
 | Última mudança em `CLAUDE.md`       | 2026-05-18 |
 | Última mudança em `docs/adr/`       | 2026-05-18 |
 | Última mudança em `docs/blueprint/` | 2026-05-18 |

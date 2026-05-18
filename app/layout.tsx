@@ -7,6 +7,8 @@ import { headers } from 'next/headers'
 
 import { Toaster } from 'sonner'
 
+import { EntitlementProvider } from '@/lib/entitlements/EntitlementProvider'
+import { getEntitlementSnapshot } from '@/lib/entitlements/server'
 import { getRouteByHost } from '@/lib/route/getRouteByHost'
 import { RouteProvider } from '@/lib/route/RouteProvider'
 
@@ -66,14 +68,19 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
 
   if (!route) return children
 
+  // Hidrata EntitlementProvider com snapshot do tenant (null se sem subscription)
+  // — ADR-0034 §4. Sem isso useEntitlement client retorna sempre 'no allowed'.
+  const entitlements = await getEntitlementSnapshot()
   const themeHref = buildThemeHref(route)
 
   return (
     <>
       {themeHref && <link rel="stylesheet" href={themeHref} precedence="default" />}
       <RouteProvider brand={route.brand} tenant={route.tenant}>
-        {children}
-        <Toaster richColors closeButton position="top-center" />
+        <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
+          {children}
+          <Toaster richColors closeButton position="top-center" />
+        </EntitlementProvider>
       </RouteProvider>
     </>
   )

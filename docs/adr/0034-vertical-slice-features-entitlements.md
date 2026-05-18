@@ -171,7 +171,17 @@ export function useQuota(key: string): { used: number; limit: number | null; nea
 ```
 
 Helpers leem do JWT (`tenant.subscription.plan_id` → `plans.features`). Cache
-in-memory TTL 60s (paga raras vezes, lê milhares).
+in-memory TTL 60s (paga raras vezes, lê milhares). Validação Zod no boundary
+DB → runtime via `PlanFeaturesSchema` + `PlanSlugSchema` em
+`lib/contracts/entitlements.ts` (substitui casts `as unknown as` perigosos).
+
+**Componentes UX (`lib/entitlements/components/`) — DEFERIDOS JIT.** Tentativa
+inicial 2026-05-18 (commit `7818df1`) criou 5 componentes do zero com strings
+PT-BR hardcoded, sem usar shadcn `<Progress>`, `<Card>`, `<AspectRatio>`, etc.
+Revertido. **Próxima tentativa**: pesquisar primeiro registry shadcn blocks +
+comunidade (Cadenza, origin-ui, aceternity, kibo-ui) — só compor o que sobrar
+após pesquisa. **Toda copy via props** (nada inline — viola multi-tenant
+white-label). Entra com 1ª feature gated real, não preventivamente.
 
 ### 5. `plan-gates.ts` obrigatório em toda feature
 

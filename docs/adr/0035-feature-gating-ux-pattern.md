@@ -105,7 +105,9 @@ export const chatbotGate: FeatureGate = {
 }
 ```
 
-### Componentes shared em `lib/entitlements/components/`
+### Componentes shared em `lib/entitlements/components/` — DEFERIDOS JIT
+
+Lista de componentes previstos (entrega futura — vide nota abaixo):
 
 - `<EntitlementBadge plan="C" />` — badge "PRO" / "C" canto botão
 - `<EntitlementGate feature="chatbot">` — wrapper que esconde/marca/intercepta
@@ -114,6 +116,24 @@ export const chatbotGate: FeatureGate = {
 - `<UpgradeCTA from="A" to="C" feature="chatbot" />` — CTA unificado
 
 Toda feature usa esses 5 componentes — UI consistente sem reinventar.
+
+**Status componentes (2026-05-18):** **deferidos pra entrada JIT** (próxima
+sprint, com 1ª feature gated real). Tentativa inicial em commit `7818df1`
+criou componentes do zero com strings PT-BR hardcoded e sem usar primitives
+disponíveis (`<Progress>`, `<Card>`, `<AspectRatio>`) — revertido.
+
+Próxima implementação **deve obrigatoriamente**:
+
+1. Pesquisar registry shadcn blocks (`ui.shadcn.com/blocks`) + comunidade
+   (Cadenza, origin-ui, aceternity, kibo-ui) antes de criar do zero
+2. Usar primitives já instaladas (`<Progress>`, `<Card>`, `<Badge>`, `<Dialog>`,
+   `<AspectRatio>`) em vez de reinventar layout
+3. **Toda copy via props** (`title`, `description`, `cta`, `aria-label`) —
+   zero string inline (viola multi-tenant white-label + ADR-0012)
+4. Mapeamento `nextPlan` (A→B→C) **vem dos dados** (`public.plans.sort_order`),
+   nunca hardcoded no UI
+5. ESLint `react/jsx-no-literals` permanece **on** — sem override §11 (rule está
+   protegendo o sistema, não estorvando)
 
 ### Animação Motion (ADR-0014)
 

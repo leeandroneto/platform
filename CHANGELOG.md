@@ -29,7 +29,9 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 - Rota `/portal` (`app/(client)/portal/`) — área do cliente final EN puro, multi-vertical compatible (substitui `/aluno/*` rewrite, que era fitness-only)
 - Blueprint 05 §3 ganhou tabela "Design tokens — uso" com onde-usar/não-usar de cada token
 - ADR-0034 — Vertical slice (`features/<name>/` self-contained) + entitlements model (`public.plans.features jsonb` + `lib/entitlements/` server+client helpers + Sheriff feature-to-feature boundaries + ESLint rule `plan-gates-required`). Adicionar feature = criar 1 pasta; remover = deletar 1 pasta
-- ADR-0035 — UX de feature gating em 3 tipos: A (visible + paywall modal pra niche), B (visible + tooltip pra core), C (quota banner pra limites numéricos). 5 componentes shared em `lib/entitlements/components/` (EntitlementBadge, EntitlementGate, PaywallModal, QuotaBanner, UpgradeCTA)
+- ADR-0035 — UX de feature gating em 3 tipos: A (visible + paywall modal pra niche), B (visible + tooltip pra core), C (quota banner pra limites numéricos). **Componentes shared `lib/entitlements/components/` — DEFERIDOS JIT** (tentativa inicial em 7818df1 criou do zero com strings hardcoded; revertida)
+- `lib/contracts/entitlements.ts` — Zod schemas (`PlanFeaturesSchema`, `PlanSlugSchema`) usados como boundary DB → runtime em `lib/entitlements/server.ts` (substitui casts `as unknown as` perigosos)
+- `EntitlementProvider` wired em `app/layout.tsx` — DynamicShell fetcha snapshot via `getEntitlementSnapshot()` e hidrata client context (sem isso `useEntitlement` retornava sempre permissive)
 - Tarefa 25.5 inserida no Checklist 15 — vertical slice setup + entitlements + migration 0006 plans table
 
 ### Changed

@@ -1,9 +1,13 @@
 // lib/entitlements/server.ts — runtime helpers server-side (ADR-0034 §4).
 // Lê subscription do tenant atual (via JWT) e resolve features do plano.
 // Cache in-memory TTL 60s por tenant pra evitar DB lookup por request.
+//
+// Boundary DB → runtime usa Zod parse (PlanFeaturesSchema + PlanSlugSchema)
+// pra falhar com erro tipado se shape do jsonb drift.
 
 import 'server-only'
 
+import { PlanFeaturesSchema, PlanSlugSchema } from '@/lib/contracts/entitlements'
 import { AppError } from '@/lib/contracts/errors'
 import { createClient } from '@/lib/supabase/server'
 
@@ -22,7 +26,7 @@ async function loadForCurrentTenant(): Promise<CacheEntry | null> {
 
   // 1) Tenant atual via JWT claim (RLS helper).
   const tenantRpc = await client.rpc('current_tenant_id')
-  const tenantId = (tenantRpc.data ?? null) as string | null
+  const tenantId = tenantRpc.data
   if (!tenantId) return null
 
   // 2) Cache hit pelo tenant_id.
@@ -39,23 +43,45 @@ async function loadForCurrentTenant(): Promise<CacheEntry | null> {
     .limit(1)
     .maybeSingle()
 
-  const subPackage = (subRes.data?.package ?? null) as PlanSlug | null
-  if (!subPackage) return null
+  if (!subRes.data?.package) return null
+
+  // Validação de boundary: se DB tem valor fora do enum, falha explícito.
+  const slugParsed = PlanSlugSchema.safeParse(subRes.data.package)
+  if (!slugParsed.success) {
+    throw AppError.internal(
+      `Invalid plan slug in subscriptions table: ${subRes.data.package}`,
+      slugParsed.error,
+    )
+  }
 
   // 4) Features do plano. RLS de public.plans permite SELECT anon+authenticated
   // quando is_active=true — não precisa de admin client.
   const planRes = await client
     .from('plans')
     .select('slug, features')
-    .eq('slug', subPackage)
+    .eq('slug', slugParsed.data)
     .eq('is_active', true)
     .maybeSingle()
 
   if (!planRes.data) return null
 
+  // Validação de boundary: jsonb pode estar mal-formado se admin editar fora do app.
+  const featuresParsed = PlanFeaturesSchema.safeParse(planRes.data.features)
+  if (!featuresParsed.success) {
+    throw AppError.internal(
+      `Invalid features jsonb in plans.${slugParsed.data}`,
+      featuresParsed.error,
+    )
+  }
+
+  const slugRowParsed = PlanSlugSchema.safeParse(planRes.data.slug)
+  if (!slugRowParsed.success) {
+    throw AppError.internal(`Invalid plan slug in plans table: ${planRes.data.slug}`)
+  }
+
   const entry: CacheEntry = {
-    slug: planRes.data.slug as PlanSlug,
-    features: planRes.data.features as unknown as PlanFeatures,
+    slug: slugRowParsed.data,
+    features: featuresParsed.data,
     expiresAt: Date.now() + CACHE_TTL_MS,
   }
   cache.set(tenantId, entry)
@@ -73,9 +99,7 @@ function isFeatureAllowed(features: PlanFeatures, key: string): boolean {
   return false
 }
 
-/**
- * Resolve entitlement pra feature sem lançar. Retorna metadata pra CTA.
- */
+/** Resolve entitlement pra feature sem lançar. Retorna metadata pra CTA. */
 export async function resolveEntitlement(feature: string): Promise<EntitlementResolution> {
   const data = await loadForCurrentTenant()
   if (!data) {
@@ -103,6 +127,18 @@ export async function requireEntitlement(feature: string): Promise<void> {
 export async function getEntitlements(): Promise<PlanFeatures | null> {
   const data = await loadForCurrentTenant()
   return data?.features ?? null
+}
+
+/**
+ * Snapshot completo features + plan slug — usado no layout pra hidratar
+ * o EntitlementProvider (server → client boundary).
+ */
+export async function getEntitlementSnapshot(): Promise<{
+  features: PlanFeatures | null
+  plan: PlanSlug | null
+}> {
+  const data = await loadForCurrentTenant()
+  return { features: data?.features ?? null, plan: data?.slug ?? null }
 }
 
 /** Snapshot de quota corrente vs limite (pra banner sticky). */

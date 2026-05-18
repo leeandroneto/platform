@@ -578,22 +578,6 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // ─── ADR-0031 §11 — lib/entitlements/components/** + Ladle stories ───────
-  // Componentes shared shipam com copy default (PT-BR strings descritivas).
-  // i18n vem em tarefa later — adicionar t() wrappers exige Provider config.
-  // Stories Ladle usam export default {} anonimo (convenção do framework).
-  {
-    files: [
-      'lib/entitlements/components/**/*.tsx',
-      '**/*.stories.tsx',
-      '**/__stories__/**/*.tsx',
-    ],
-    rules: {
-      'react/jsx-no-literals': 'off',
-      'import/no-anonymous-default-export': 'off',
-    },
-  },
-
   // ─── ADR-0031 §8 — lib/contracts/database.ts (gerado por supabase CLI) ────
   {
     files: ['lib/contracts/database.ts'],

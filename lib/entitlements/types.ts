@@ -1,34 +1,19 @@
 // lib/entitlements/types.ts
 // Types canônicos do modelo de entitlements (ADR-0034 + ADR-0035).
 // Importável de qualquer lugar (zero runtime dependency).
+//
+// Shapes validados via Zod vivem em `@/lib/contracts/entitlements`.
+// Aqui ficam só os types puros + tipos UI (UxPattern, FeatureGate, etc).
 
-/** Slug dos 3 planos canônicos (ADR-0034 seed). */
-export type PlanSlug = 'A' | 'B' | 'C'
+import type { PlanFeatures, PlanSlug } from '@/lib/contracts/entitlements'
+
+export type { PlanFeatures, PlanSlug }
 
 /** UX pattern por feature (ADR-0035). */
 export type UxPattern = 'A' | 'B' | 'C'
 //                      ^ paywall modal
 //                          ^ tooltip + soft banner
 //                              ^ quota banner
-
-/**
- * Shape do payload `public.plans.features` (jsonb).
- * schema_version 1 = MVP dia 1.
- */
-export interface PlanFeatures {
-  schema_version: 1
-  // ─── Boolean entitlements ────────────────────────────────────────
-  chatbot: boolean
-  custom_domain: boolean
-  ai_assessment: boolean
-  branded_pwa: boolean
-  white_label_full: boolean
-  automations: boolean
-  // ─── Quotas numéricas (-1 = ilimitado) ───────────────────────────
-  max_programs: number
-  max_clients: number
-  max_storage_gb: number
-}
 
 /** Copy do paywall modal pra feature de tipo A. */
 export interface PaywallCopy {
@@ -42,8 +27,12 @@ export interface PaywallCopy {
  * Cada `features/<name>/plan-gates.ts` exporta um *Gate.
  */
 export interface FeatureGate {
-  /** Chave em `public.plans.features` (camelCase ou snake_case alinhado ao jsonb). */
-  feature: keyof PlanFeatures | (string & {})
+  /**
+   * Chave em `public.plans.features` (string snake_case alinhado ao jsonb).
+   * Mantemos como `string` ampla (em vez de `keyof PlanFeatures`) porque features
+   * novas podem aparecer no jsonb antes do schema TS ser regenerado.
+   */
+  feature: string
   /** Planos que liberam essa feature. */
   requiredPlans: readonly PlanSlug[]
   /** Planos atuais permitidos pra CTA de upgrade (ex.: A pode subir pra C). */
