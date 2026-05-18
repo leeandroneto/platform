@@ -76,6 +76,7 @@
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
     "@commitlint/types": "^21.0.1",
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.7.1",
     "@ladle/react": "^5.1.1",
     "@playwright/test": "^1.60.0",
     "@size-limit/preset-app": "^12.1.0",

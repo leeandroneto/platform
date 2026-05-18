@@ -1,3 +1,4 @@
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import { defineConfig } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
@@ -186,6 +187,31 @@ const brandHardcodePlugin = {
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+
+  // ─── Linter options globais (ADR-0036) ────────────────────────────────────
+  // reportUnusedDisableDirectives:error — disable orfao = erro CI
+  // noInlineConfig — bloqueia /* eslint */ comments mudarem regras inline
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+      noInlineConfig: true,
+    },
+  },
+
+  // ─── eslint-comments plugin (ADR-0036) ────────────────────────────────────
+  // no-use:error — proibe TODO disable comment (ADR-0012 allowlist agora retirada)
+  // require-description:error — defesa adicional caso no-use seja override-ed
+  // no-unused-disable:error — orfaos (defesa em profundidade vs linterOptions)
+  {
+    plugins: {
+      '@eslint-community/eslint-comments': eslintComments,
+    },
+    rules: {
+      '@eslint-community/eslint-comments/no-use': 'error',
+      '@eslint-community/eslint-comments/require-description': 'error',
+      '@eslint-community/eslint-comments/no-unused-disable': 'error',
+    },
+  },
 
   // ─── Ignore generated / vendored ──────────────────────────────────────────
   {
