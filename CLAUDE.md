@@ -25,16 +25,19 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 
 ## Onde fica cada coisa
 
-| Info                            | Arquivo canônico                               |
-| ------------------------------- | ---------------------------------------------- |
-| Regras code carregadas por path | `.claude/rules/*.md` (16 rules)                |
-| Constituição imutável           | `docs/blueprint/00-PROJETO.md`                 |
-| Decisões fechadas (ADRs)        | `docs/adr/NNNN-*.md`                           |
-| Blueprints técnicos             | `docs/blueprint/NN-*.md`                       |
-| Plano ativo                     | `docs/plans/PLANO-DIA-1-AGENCY-FUNNEL.md`      |
-| Plano anterior (referência)     | `docs/plans/PLANO-MESTRE-DIA-0.md` (dia 0)     |
-| Pesquisa autoritativa Feature 1 | `docs/research/23-form-system-architecture.md` |
-| Histórico arquivado             | `docs/_archive/` (referência JIT)              |
+| Info                              | Arquivo canônico                                                                        |
+| --------------------------------- | --------------------------------------------------------------------------------------- |
+| Regras code carregadas por path   | `.claude/rules/*.md` (17 rules)                                                         |
+| Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                          |
+| Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                    |
+| Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                |
+| Plano ativo                       | `docs/plans/PLANO-DIA-1-AGENCY-FUNNEL.md`                                               |
+| Plano anterior (referência)       | `docs/plans/PLANO-MESTRE-DIA-0.md` (dia 0)                                              |
+| Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms, 24 pages, 25 reports, 26 design vibes — dispatching) |
+| Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                  |
+| Log cronológico de mudanças       | `CHANGELOG.md`                                                                          |
+| Status corrente do projeto        | `docs/_status.md`                                                                       |
+| Histórico arquivado               | `docs/_archive/` (referência JIT)                                                       |
 
 `.claude/rules/*.md` (carregamento por path glob):
 
@@ -43,8 +46,9 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 - **tenant-content** (hierarquia 4 níveis copy/landing — decisão dia 0: template+slots, não block builder)
 - **forms-engine** (Plano Dia 1 — Form Engine + Page Engine, vocab, catálogo blocks, IA pipeline, versionamento Hotmart-like)
 - **design-references** (71 DESIGN.md em `docs/references/design-systems/` — APENAS mood/hierarquia/density, NUNCA tokens literais)
+- **docs-writing** (gatilho: ao criar/atualizar doc; mapa de "qual tipo de info vai em qual arquivo")
 
-Conflito entre docs: ADR > Blueprint > Master Plan (arquivado) > Memória.
+Conflito entre docs: ADR > Blueprint > Plano ativo > Memória > Session reflection.
 
 ---
 
