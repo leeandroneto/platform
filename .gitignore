@@ -40,3 +40,5 @@ test-results/
 
 *storybook.log
 storybook-static
+
+.vercel

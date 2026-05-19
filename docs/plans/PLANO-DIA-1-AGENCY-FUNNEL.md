@@ -35,6 +35,106 @@ Se uma decisão da Fase 1 inviabiliza Fase 2, ela está errada. Validar com perg
 
 ---
 
+## 0.2 PAUSA — Design system rethink (2026-05-19)
+
+> **Estado:** trabalho de Etapa 0a (infra) está concluído. Antes de continuar
+> Etapa 0b (catálogos + operations), pausa pra resolver arquitetura de design
+> system completa. Pesquisa 26 (white-label premium + templates + vibes)
+> dispatching.
+
+### Insight estratégico
+
+Hoje temos **13 paletas isoladas** — uma dimensão só. Pra plataforma de
+criação self-service entregar premium consistente, precisa modelo melhor:
+
+- **Template (estilo)** = bundle de tokens estruturais não-cromáticos
+  (tipografia hierarchy, shapes, spacing, motion, density, photography style)
+- **Palette** = cores aplicadas POR CIMA do template (escolhidas das 13+ ou
+  custom OKLCH, validado APCA Silver runtime)
+- **Combinação válida** = template × palette × content (matriz curada, nem
+  toda combinação permitida)
+
+Profissional escolhe 1 template (5-8 archetypes) + 1 palette (13+). Não combina
+14 dimensões. Vertical sugere template inicial (fitness→performance,
+yoga→wellness, idiomas→friendly).
+
+### Inspirações catalogadas (78 brands em `docs/references/design-systems/`)
+
+Arquetipos candidatos extraídos das 78 marcas:
+
+1. **Premium minimalista** (Linear, Vercel, Apple) — mono accent, Geist, sharp shapes, flat depth, massive whitespace
+2. **Editorial acolhedor** (Sanity, Notion, Stripe) — serif headings, cream surfaces, generous whitespace, soft shapes
+3. **Fintech sofisticado** (Stripe, Revolut, Wise) — gradient sutil, weight-300, rounded media, glass
+4. **Dev-tools dark** (Supabase, Cursor, Warp) — dark canvas, emerald accent, monospace eyebrows
+5. **Performance atlético** (Nike, Whoop-style, Tesla) — condensed caps, signal accent, dense data layout, sharp shapes
+6. **Builder ousado** (Webflow, Framer, Figma) — bold caps, black/blue, motion-first
+7. **Wellness orgânico** (Mastercard cream, Clay) — warm cream canvas, soft gradients, art-directed
+8. **AI-conversational** (Claude, Cohere, Anthropic) — terracotta/warm accent, editorial layout, friendly
+
+Os 78 DESIGN.md são **mina de ouro** — cada um traz 12-15 typography variants,
+spacing system explícito, do's/don'ts. Vale extrair patterns universais.
+
+### Pesquisas em queue de integração (Pausadas até design system resolver)
+
+| Pesquisa                                            | Status                               | Quando integrar                                           |
+| --------------------------------------------------- | ------------------------------------ | --------------------------------------------------------- |
+| `docs/research/24-page-engine-architecture.md`      | ✅ Pronta, ~67 KB, decisões cravadas | Após design system resolver — pode ajustar block taxonomy |
+| `docs/research/25-ai-reports-architecture.md`       | ✅ Pronta, ~64 KB, decisões cravadas | Antes de Etapa 4 (Pipeline pós-submit)                    |
+| `docs/research/26-design-system-vibes` (a disparar) | 🟡 Prompt em drafting                | Antes de Etapa 0b (catálogos + operations)                |
+
+**Decisões da Research 24 a integrar:**
+
+- Block taxonomy MVP 7 blocks: `section`, `hero`, `feature-grid`, `testimonial-grid`, `pricing-cards`, `cta`, `embed-form`
+- Zod 4: `z.union()` lazy + ordenar por frequência (workaround `discriminatedUnion + lazy` bug)
+- Next 16.2: `cacheTag` + `cacheLife` estáveis (sem `unstable_`)
+- AI edit: JSON Patch RFC 6902 + EASE (-31% tokens)
+- Editor visual real só Fase 2 com Liveblocks Storage; LWW + ETag + 409 Conflict resolve dia 1
+- ISR via `'use cache' + cacheTag('page:{tenant_id}:{slug}')` + `revalidateTag` no publish
+- og:image dinâmica via `ImageResponse` (next/og + Satori)
+- LGPD: CookieConsent v3.1.0+ (@orestbida MIT)
+- MCPs: clonar padrão Webflow (18 tools), Builder.io (Publish/Hybrid split irrelevante)
+
+**Decisões da Research 25 a integrar:**
+
+- Sonnet 4.6 default, Haiku 4.5 fallback/scoring/enrichment, Opus 4.7 premium tier
+- Opus 4.7 alerta: tokenizer +35% tokens (custo direto)
+- AI SDK v6: NÃO usar `generateObject`/`streamObject` (deprecated) — `generateText({ output: Output.object({ schema }) })`
+- ReportContent shape: `{ sections: [executive_summary, findings, recommendations, action_items, next_steps, disclaimers] }` discriminated union por kind
+- Disclaimers injetados DETERMINISTICAMENTE (não pelo LLM) — LGPD + CFM/CFN obrigatório fitness/nutrição
+- Pipeline Vercel Workflow (GA 16-abr-2026): `'use workflow'` + `'use step'` — não chain Queues manuais
+- Budget $0,02/submission viável só com caching agressivo prefix (~3500 tokens estáveis system+few-shot+brand)
+- Resend rate limit 5 req/s por team — usar Batch API quando fanout
+- BotID Basic free; Deep Analysis $1/1k SÓ se spam > 2%
+- Geolocation via `geolocation()` de `@vercel/functions` (não `req.geo` deprecated)
+- LGPD: opt-in explícito + unsubscribe one-click obrigatório + retention 24m default
+- Moat real: `ai_prompt_versions` curados + 30 goldens/vertical + LLM-as-judge weekly + painel priorizado
+
+### O que muda no escopo Fase 1 (preliminar — confirma após pesquisa 26)
+
+- **Etapa 0b (catálogos)** ganha conceito de "template" antes do domain catalog
+- **§3.7 (Infra)** ganha skills MCPs novos (Impeccable, etc — a pesquisar)
+- **§3 (Primitivos)** ganha "TemplateSpec" como entidade primária, paletas viram dimensão secundária
+- **Vibe coding (Etapa 3)** ganha "vibe matching" — IA escolhe template baseado em brief/foto referência
+- **Etapa 6 (Funil ponta-a-ponta)** ganha template demo aplicado pra confirmar premium
+
+Material que CONTINUA sem mudança:
+
+- Schema Form Engine, Page Engine — já em produção
+- Migrations 0015-0017 aplicadas (forms align + reserves + cross-table)
+- 13 paletas atuais (continuam vivas como dimensão color)
+- Tokens shape/motion/elevation (continuam — só são empacotados em templates)
+- 47 shadcn primitives (intactos)
+- Wrapper pattern (intacto)
+
+### Próxima ação imediata
+
+Disparar Pesquisa 26 — White-label premium architecture (template+palette+vibes
+
+- photo handling + AI matching + mobile vs desktop + PWA + componentes shadcn
+  adaptáveis). Prompt em drafting na conversa.
+
+---
+
 ## 0.1 Decisões consolidadas pós-pesquisa 23 (fonte autoritativa)
 
 > Estas 5 decisões fecham os conflitos identificados ao cruzar este plano com

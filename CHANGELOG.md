@@ -10,6 +10,35 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Added (2026-05-19 — Infra externa Fase 1 + design rethink)
+
+- Migration `0015_forms_align_research_23` — rename `capture_forms`→`forms`, `capture_submissions`→`form_submissions`, `assessments`→`form_reports` (zero consumers no código, grep confirmou). +25 colunas (kind enum 8 valores, vertical, status, logic_rules jsonb, bot_score, ip_address_hashed, idempotency_key, share_token, content_md, blob_url, etc). Nova tabela `form_versions` espelhando `page_versions` (snapshot Hotmart-like). Vocab canônico pesquisa 23 §18 aplicado no banco.
+- Migration `0016_structural_reserves` — `tenants.lifecycle_state` enum (provisioning/active/suspended/pending_deletion/deleted) + `suspended_at/reason` + `deletion_scheduled_at`. Novas tabelas: `audit_log` (append-only via RLS), `notifications` (in-app, schema reserve Fase 2), `tenant_webhooks` + `webhook_deliveries` (outgoing com retry, schema reserve Fase 2). Todas seguem 3-layer defense.
+- Migration `0017_cross_table_tenant_consistency` — função `assert_tenant_match()` (SECURITY INVOKER, dynamic SQL via TG_ARGV) + 11 triggers BEFORE INSERT/UPDATE em form_submissions, form_versions, form_reports, leads, page_versions, enrollments, modules, components, component_schedules, webhook_deliveries. Defesa em profundidade pro achado 4 da auditoria RLS.
+- Pesquisa 24 (`docs/research/24-page-engine-architecture.md`) — Page Engine architecture (67 KB, 25 perguntas respondidas). Highlights: Zod 4 bug discriminatedUnion+lazy, JSON Patch RFC 6902 + EASE (-31% tokens), Next 16.2 cacheTag estável, 7 blocks MVP, ISR via `'use cache' + cacheTag('page:{tenant_id}:{slug}')`, og:image dinâmica Satori. Integração ADIADA até design system resolver.
+- Pesquisa 25 (`docs/research/25-ai-reports-architecture.md`) — AI Reports architecture (64 KB, 24 perguntas respondidas). Highlights: AI SDK v6 `generateObject` deprecated → `generateText({ output: Output.object({ schema }) })`, ReportContent modular discriminated union por section_kind, disclaimers determinísticos (não pelo LLM) obrigatório LGPD+CFM/CFN, Vercel Workflow GA 16-abr-2026, budget $0,02/submission viável só com caching agressivo. Integração antes Etapa 4 do plano.
+- Infra externa Fase 1 fechada: GitHub `leeandroneto/platform` (Hobby), Vercel project `platform` em gru1 com auto-deploy on push, Resend domain verified + API key, Upstash Redis sa-east-1, Vercel CLI 54.1.0 local. Domain `desafit.app` apex canonical (www redirect). Vercel AI Gateway key gerada.
+- Plano §0.2 (PAUSA design system rethink) — captura inflexão estratégica: template (estilo) × palette × content separation. 13 paletas isoladas não bastam pra white-label premium. Pesquisa 26 dispatching (~1500 linhas alvo) cobrindo archetypes das 78 marcas em `docs/references/design-systems/`, photo handling, mobile/desktop philosophy, PWA-specific, shadcn variants per template, vibe matching from photo, antifragility validation.
+- `docs/_sessions/2026-05-19-design-rethink-mcp-scaffold.md` — formato novo de session reflection notes (não-decidido, pra sobreviver compactação contexto). Captura insights soltos antes de virarem ADR.
+- Skill Impeccable instalado (`npx skills add pbakaus/impeccable`) — `/audit` + `/polish` combat AI generic patterns (29+ anti-patterns).
+- Plano §3.7 ganhou estratégia MCP scaffold: cada operation Fase 1 auto-registra como tool MCP via convenção. Endpoint `/api/mcp/[transport]/route.ts` existe mas retorna 503 em produção até Fase 2.
+
+### Changed
+
+- `vercel.ts` — 3 crons removidos (Hobby permite 1x/dia, `*/5 * * * *` bloqueava deploy). Rotas `/api/cron/*` não existem ainda. JIT re-adicionar quando rotas forem criadas. Comentário no arquivo lista os 5 crons previstos.
+- `.storybook/preview.tsx` — Geist + Geist_Mono via next/font carregados como CSS vars no decorator. mockBrand.name continua `'storybook'` (placeholder neutro — brand real vem de DB lookup por hostname em produção, ADR-0024).
+- `CLAUDE.md` — 16 rules listadas (adicionada `forms-engine`), plano ativo aponta pra `PLANO-DIA-1-AGENCY-FUNNEL.md`, adicionada referência a `docs/research/23-form-system-architecture.md`.
+- `.claude/rules/naming.md` — `intake` → `lead-capture` (substitui `capture_form`). Adicionados termos canônicos: `block`, `step`, `submission`, `response`, `report`, `version`, `logic rule`. Exceções: `field` em libs externas (RHF), `branch` em git, `question` em UI/copy PT-BR OK.
+- `.claude/rules/i18n.md` — seção "Conteúdo gerado por tenant — NÃO usa `t()`" + paths-exception ESLint pra renderers (`components/app-form-renderer*`, `components/app-page-renderer*`, etc).
+- `.claude/rules/forms-engine.md` (criada) — path-loaded em `lib/contracts/form*`, `lib/forms/**`, `lib/engines/**`, `components/app-form-*`, `app/api/forms/**`. Cobre vocabulário, shape canônica FormDefinition, JSON Logic, pipeline pós-submit, trava de custo IA, anti-patterns, gatilhos de revisão.
+- ~~`components/_showcase/shapes.stories.tsx`~~ — tentei criar mas hook bloqueou (CSS vars em `style` viola ADR-0012/0036). JIT quando `@theme inline` em globals.css ganhar utilities mapeando `--shape-*` e `--elevation-*` pra classes Tailwind, OU pesquisa 26 redefinir abordagem.
+
+### Security (2026-05-19)
+
+- Storage policies audit confirmado: zero gap (INSERT policies em avatars/tenant-logos/components-media/programs-covers TÊM path validation via `with_check` — falso alarme da minha auditoria inicial que olhou só `qual`).
+- HaveIBeenPwned password protection: skipped (Pro-only). Mitigado por password strength existente (lower/upper/digit/symbol).
+- Branch protection GitHub: skipped (Pro-only). Mitigado por pre-push hook que roda lint+typecheck+test+audit antes de cada push.
+
 ### Added
 
 - ADR-0040 — Fechamento dia 0 (shadcn zone quarantine + i18n + APCA Silver + 3 wrappers + 3 typography + 6 rules JIT). Consolida Pesquisas 17/18/19/20/21. Substitui ADR-0031 §1+§7. Atualiza ADR-0037 §B operacionalmente. Plano executável: `docs/plans/PLANO-MESTRE-DIA-0.md` (11 etapas ~11h30)
