@@ -12,10 +12,6 @@
 //
 // Cache in-memory 60s por tenant na leitura bulk (snapshot) — nao no can_use_feature
 // porque DB e fonte de verdade pra quota mutavel.
-//
-// NOTE: types das RPCs novas (can_use_feature, get_entitlement, update_feature_quota_usage)
-// ainda nao estao em lib/contracts/database.ts — PostgREST schema cache descongelar +
-// `pnpm supabase gen types > lib/contracts/database.ts`. Casts localizados marcados com `// TYPES-PENDING`.
 
 import 'server-only'
 
@@ -121,15 +117,11 @@ export async function resolveEntitlement(feature: string): Promise<EntitlementRe
   }
 
   const client = await createClient()
-  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
-  const rpc = (
-    client.rpc as unknown as (
-      fn: 'can_use_feature',
-      args: { p_tenant_id: string; p_feature: string },
-    ) => Promise<{ data: boolean | null; error: unknown }>
-  )('can_use_feature', { p_tenant_id: tenantId, p_feature: feature })
+  const { data: allowed, error } = await client.rpc('can_use_feature', {
+    p_tenant_id: tenantId,
+    p_feature: feature,
+  })
 
-  const { data: allowed, error } = await rpc
   if (error) {
     throw AppError.internal(`can_use_feature RPC failed for feature=${feature}`, error)
   }
@@ -185,20 +177,16 @@ export async function getQuotaSnapshot(key: keyof PlanFeatures): Promise<QuotaSn
   if (!tenantId) return { used: 0, limit: 0, nearLimit: true }
 
   const client = await createClient()
-  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
-  const rpc = (
-    client.rpc as unknown as (
-      fn: 'get_entitlement',
-      args: { p_tenant_id: string; p_feature: string },
-    ) => Promise<{ data: GetEntitlementRow[] | null; error: unknown }>
-  )('get_entitlement', { p_tenant_id: tenantId, p_feature: String(key) })
+  const { data, error } = await client.rpc('get_entitlement', {
+    p_tenant_id: tenantId,
+    p_feature: String(key),
+  })
 
-  const { data, error } = await rpc
   if (error) {
     throw AppError.internal(`get_entitlement RPC failed for feature=${String(key)}`, error)
   }
 
-  const row = data?.[0]
+  const row = data?.[0] as GetEntitlementRow | undefined
   if (!row) return { used: 0, limit: 0, nearLimit: true }
 
   const used = row.usage?.count ?? 0
@@ -223,15 +211,11 @@ export async function requireQuota(key: keyof PlanFeatures): Promise<void> {
   }
 
   const client = await createClient()
-  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
-  const rpc = (
-    client.rpc as unknown as (
-      fn: 'can_use_feature',
-      args: { p_tenant_id: string; p_feature: string },
-    ) => Promise<{ data: boolean | null; error: unknown }>
-  )('can_use_feature', { p_tenant_id: tenantId, p_feature: String(key) })
+  const { data: allowed, error } = await client.rpc('can_use_feature', {
+    p_tenant_id: tenantId,
+    p_feature: String(key),
+  })
 
-  const { data: allowed, error } = await rpc
   if (error) {
     throw AppError.internal(`can_use_feature RPC failed for quota=${String(key)}`, error)
   }
@@ -260,19 +244,12 @@ export async function incrementQuotaUsage(
   }
 
   const client = await createClient()
-  // TYPES-PENDING: regenerar database.ts apos PostgREST cache descongelar.
-  const rpc = (
-    client.rpc as unknown as (
-      fn: 'update_feature_quota_usage',
-      args: { p_tenant_id: string; p_feature: string; p_delta: number },
-    ) => Promise<{ data: null; error: unknown }>
-  )('update_feature_quota_usage', {
+  const { error } = await client.rpc('update_feature_quota_usage', {
     p_tenant_id: tenantId,
     p_feature: String(key),
     p_delta: delta,
   })
 
-  const { error } = await rpc
   if (error) {
     throw AppError.internal(`update_feature_quota_usage RPC failed for ${String(key)}`, error)
   }

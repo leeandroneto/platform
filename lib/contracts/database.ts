@@ -747,6 +747,47 @@ export type Database = {
           },
         ]
       }
+      feature_usage: {
+        Row: {
+          created_at: string
+          feature: string
+          id: string
+          period_end: string
+          period_start: string
+          tenant_id: string
+          updated_at: string
+          usage: Json
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          tenant_id: string
+          updated_at?: string
+          usage?: Json
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          tenant_id?: string
+          updated_at?: string
+          usage?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'feature_usage_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       fonts: {
         Row: {
           brand_id: string | null
@@ -1914,6 +1955,35 @@ export type Database = {
           },
         ]
       }
+      tenant_push_secrets: {
+        Row: {
+          created_at: string
+          tenant_id: string
+          updated_at: string
+          vapid_private_key: string
+        }
+        Insert: {
+          created_at?: string
+          tenant_id: string
+          updated_at?: string
+          vapid_private_key: string
+        }
+        Update: {
+          created_at?: string
+          tenant_id?: string
+          updated_at?: string
+          vapid_private_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'tenant_push_secrets_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: true
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       tenants: {
         Row: {
           brand_id: string
@@ -1933,7 +2003,6 @@ export type Database = {
           slug: string
           theme_version: number
           updated_at: string
-          vapid_private_key: string | null
           vapid_public_key: string | null
           vertical: string
         }
@@ -1955,7 +2024,6 @@ export type Database = {
           slug: string
           theme_version?: number
           updated_at?: string
-          vapid_private_key?: string | null
           vapid_public_key?: string | null
           vertical: string
         }
@@ -1977,7 +2045,6 @@ export type Database = {
           slug?: string
           theme_version?: number
           updated_at?: string
-          vapid_private_key?: string | null
           vapid_public_key?: string | null
           vertical?: string
         }
@@ -2078,12 +2145,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_use_feature: {
+        Args: { p_feature: string; p_tenant_id: string }
+        Returns: boolean
+      }
       current_tenant_id: { Args: never; Returns: string }
       current_user_role: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       default_font_id: { Args: never; Returns: string }
       default_palette_id: { Args: never; Returns: string }
       default_shape_preset_id: { Args: never; Returns: string }
+      get_entitlement: {
+        Args: { p_feature: string; p_tenant_id: string }
+        Returns: {
+          feature_value: Json
+          period_end: string
+          plan_slug: string
+          usage: Json
+        }[]
+      }
+      reset_feature_quota_monthly: { Args: never; Returns: undefined }
+      update_feature_quota_usage: {
+        Args: { p_delta: number; p_feature: string; p_tenant_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
