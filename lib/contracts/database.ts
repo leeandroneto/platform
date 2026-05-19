@@ -195,57 +195,52 @@ export type Database = {
           },
         ]
       }
-      assessments: {
+      audit_log: {
         Row: {
-          ai_invocation_id: string | null
-          created_at: string
-          deleted_at: string | null
-          id: string
-          lead_id: string
-          model: string
-          payload: Json
-          tenant_id: string
-          updated_at: string
+          action: string
+          actor_role: string | null
+          actor_user_id: string | null
+          after_jsonb: Json | null
+          before_jsonb: Json | null
+          id: number
+          ip_address_hashed: string | null
+          occurred_at: string
+          target_id: string | null
+          target_table: string
+          tenant_id: string | null
+          user_agent: string | null
         }
         Insert: {
-          ai_invocation_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          lead_id: string
-          model: string
-          payload: Json
-          tenant_id: string
-          updated_at?: string
+          action: string
+          actor_role?: string | null
+          actor_user_id?: string | null
+          after_jsonb?: Json | null
+          before_jsonb?: Json | null
+          id?: number
+          ip_address_hashed?: string | null
+          occurred_at?: string
+          target_id?: string | null
+          target_table: string
+          tenant_id?: string | null
+          user_agent?: string | null
         }
         Update: {
-          ai_invocation_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          lead_id?: string
-          model?: string
-          payload?: Json
-          tenant_id?: string
-          updated_at?: string
+          action?: string
+          actor_role?: string | null
+          actor_user_id?: string | null
+          after_jsonb?: Json | null
+          before_jsonb?: Json | null
+          id?: number
+          ip_address_hashed?: string | null
+          occurred_at?: string
+          target_id?: string | null
+          target_table?: string
+          tenant_id?: string | null
+          user_agent?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'assessments_ai_invocation_id_fkey'
-            columns: ['ai_invocation_id']
-            isOneToOne: false
-            referencedRelation: 'ai_invocations'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'assessments_lead_id_fkey'
-            columns: ['lead_id']
-            isOneToOne: false
-            referencedRelation: 'leads'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'assessments_tenant_id_fkey'
+            foreignKeyName: 'audit_log_tenant_id_fkey'
             columns: ['tenant_id']
             isOneToOne: false
             referencedRelation: 'tenants'
@@ -306,114 +301,6 @@ export type Database = {
             columns: ['default_vertical']
             isOneToOne: false
             referencedRelation: 'verticals'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      capture_forms: {
-        Row: {
-          created_at: string
-          deleted_at: string | null
-          display_name: string
-          fields: Json
-          id: string
-          is_active: boolean
-          redirect_url: string | null
-          slug: string
-          source_template_id: string | null
-          source_template_version: number | null
-          tenant_id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          deleted_at?: string | null
-          display_name: string
-          fields: Json
-          id?: string
-          is_active?: boolean
-          redirect_url?: string | null
-          slug: string
-          source_template_id?: string | null
-          source_template_version?: number | null
-          tenant_id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          deleted_at?: string | null
-          display_name?: string
-          fields?: Json
-          id?: string
-          is_active?: boolean
-          redirect_url?: string | null
-          slug?: string
-          source_template_id?: string | null
-          source_template_version?: number | null
-          tenant_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'capture_forms_source_template_id_fkey'
-            columns: ['source_template_id']
-            isOneToOne: false
-            referencedRelation: 'form_templates'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'capture_forms_tenant_id_fkey'
-            columns: ['tenant_id']
-            isOneToOne: false
-            referencedRelation: 'tenants'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      capture_submissions: {
-        Row: {
-          answers: Json
-          capture_form_id: string
-          created_at: string
-          deleted_at: string | null
-          id: string
-          submitted_at: string
-          tenant_id: string
-          updated_at: string
-        }
-        Insert: {
-          answers: Json
-          capture_form_id: string
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          submitted_at?: string
-          tenant_id: string
-          updated_at?: string
-        }
-        Update: {
-          answers?: Json
-          capture_form_id?: string
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          submitted_at?: string
-          tenant_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'capture_submissions_capture_form_id_fkey'
-            columns: ['capture_form_id']
-            isOneToOne: false
-            referencedRelation: 'capture_forms'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'capture_submissions_tenant_id_fkey'
-            columns: ['tenant_id']
-            isOneToOne: false
-            referencedRelation: 'tenants'
             referencedColumns: ['id']
           },
         ]
@@ -847,6 +734,188 @@ export type Database = {
           },
         ]
       }
+      form_reports: {
+        Row: {
+          ai_invocation_id: string | null
+          blob_url: string | null
+          content_md: string | null
+          cost_cents: number | null
+          created_at: string
+          deleted_at: string | null
+          error_message: string | null
+          form_submission_id: string | null
+          id: string
+          lead_id: string
+          model: string
+          payload: Json
+          share_expires_at: string | null
+          share_token: string | null
+          status: string
+          tenant_id: string
+          tokens_cached: number | null
+          updated_at: string
+        }
+        Insert: {
+          ai_invocation_id?: string | null
+          blob_url?: string | null
+          content_md?: string | null
+          cost_cents?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          error_message?: string | null
+          form_submission_id?: string | null
+          id?: string
+          lead_id: string
+          model: string
+          payload: Json
+          share_expires_at?: string | null
+          share_token?: string | null
+          status?: string
+          tenant_id: string
+          tokens_cached?: number | null
+          updated_at?: string
+        }
+        Update: {
+          ai_invocation_id?: string | null
+          blob_url?: string | null
+          content_md?: string | null
+          cost_cents?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          error_message?: string | null
+          form_submission_id?: string | null
+          id?: string
+          lead_id?: string
+          model?: string
+          payload?: Json
+          share_expires_at?: string | null
+          share_token?: string | null
+          status?: string
+          tenant_id?: string
+          tokens_cached?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'assessments_ai_invocation_id_fkey'
+            columns: ['ai_invocation_id']
+            isOneToOne: false
+            referencedRelation: 'ai_invocations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'assessments_lead_id_fkey'
+            columns: ['lead_id']
+            isOneToOne: false
+            referencedRelation: 'leads'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'assessments_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'form_reports_form_submission_id_fkey'
+            columns: ['form_submission_id']
+            isOneToOne: false
+            referencedRelation: 'form_submissions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      form_submissions: {
+        Row: {
+          anonymous_id: string | null
+          answers: Json
+          bot_score: number | null
+          completed_at: string | null
+          consent_log: Json
+          created_at: string
+          deleted_at: string | null
+          duration_seconds: number | null
+          form_id: string
+          id: string
+          idempotency_key: string | null
+          ip_address_hashed: string | null
+          responder_email: string | null
+          responder_phone: string | null
+          source_url: string | null
+          started_at: string | null
+          status: string
+          submitted_at: string
+          tenant_id: string
+          updated_at: string
+          user_agent: string | null
+          utm: Json | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          answers: Json
+          bot_score?: number | null
+          completed_at?: string | null
+          consent_log?: Json
+          created_at?: string
+          deleted_at?: string | null
+          duration_seconds?: number | null
+          form_id: string
+          id?: string
+          idempotency_key?: string | null
+          ip_address_hashed?: string | null
+          responder_email?: string | null
+          responder_phone?: string | null
+          source_url?: string | null
+          started_at?: string | null
+          status?: string
+          submitted_at?: string
+          tenant_id: string
+          updated_at?: string
+          user_agent?: string | null
+          utm?: Json | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          answers?: Json
+          bot_score?: number | null
+          completed_at?: string | null
+          consent_log?: Json
+          created_at?: string
+          deleted_at?: string | null
+          duration_seconds?: number | null
+          form_id?: string
+          id?: string
+          idempotency_key?: string | null
+          ip_address_hashed?: string | null
+          responder_email?: string | null
+          responder_phone?: string | null
+          source_url?: string | null
+          started_at?: string | null
+          status?: string
+          submitted_at?: string
+          tenant_id?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'capture_submissions_capture_form_id_fkey'
+            columns: ['form_id']
+            isOneToOne: false
+            referencedRelation: 'forms'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'capture_submissions_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       form_templates: {
         Row: {
           brand_id: string | null
@@ -913,12 +982,151 @@ export type Database = {
           },
         ]
       }
+      form_versions: {
+        Row: {
+          created_at: string
+          fields_snapshot: Json
+          form_id: string
+          id: string
+          logic_snapshot: Json
+          published_at: string
+          published_by_user_id: string | null
+          tenant_id: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          fields_snapshot: Json
+          form_id: string
+          id?: string
+          logic_snapshot?: Json
+          published_at?: string
+          published_by_user_id?: string | null
+          tenant_id: string
+          version: number
+        }
+        Update: {
+          created_at?: string
+          fields_snapshot?: Json
+          form_id?: string
+          id?: string
+          logic_snapshot?: Json
+          published_at?: string
+          published_by_user_id?: string | null
+          tenant_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'form_versions_form_id_fkey'
+            columns: ['form_id']
+            isOneToOne: false
+            referencedRelation: 'forms'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'form_versions_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      forms: {
+        Row: {
+          created_at: string
+          current_version_id: string | null
+          deleted_at: string | null
+          display_name: string
+          fields: Json
+          id: string
+          is_active: boolean
+          kind: string
+          logic_rules: Json
+          redirect_url: string | null
+          retention_days: number
+          slug: string
+          source_template_id: string | null
+          source_template_version: number | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          vertical: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_version_id?: string | null
+          deleted_at?: string | null
+          display_name: string
+          fields: Json
+          id?: string
+          is_active?: boolean
+          kind?: string
+          logic_rules?: Json
+          redirect_url?: string | null
+          retention_days?: number
+          slug: string
+          source_template_id?: string | null
+          source_template_version?: number | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          vertical?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_version_id?: string | null
+          deleted_at?: string | null
+          display_name?: string
+          fields?: Json
+          id?: string
+          is_active?: boolean
+          kind?: string
+          logic_rules?: Json
+          redirect_url?: string | null
+          retention_days?: number
+          slug?: string
+          source_template_id?: string | null
+          source_template_version?: number | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          vertical?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'capture_forms_source_template_id_fkey'
+            columns: ['source_template_id']
+            isOneToOne: false
+            referencedRelation: 'form_templates'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'capture_forms_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'forms_current_version_fk'
+            columns: ['current_version_id']
+            isOneToOne: false
+            referencedRelation: 'form_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       leads: {
         Row: {
-          capture_submission_id: string | null
           created_at: string
           deleted_at: string | null
           email: string
+          form_submission_id: string | null
           id: string
           name: string | null
           phone: string | null
@@ -929,10 +1137,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          capture_submission_id?: string | null
           created_at?: string
           deleted_at?: string | null
           email: string
+          form_submission_id?: string | null
           id?: string
           name?: string | null
           phone?: string | null
@@ -943,10 +1151,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          capture_submission_id?: string | null
           created_at?: string
           deleted_at?: string | null
           email?: string
+          form_submission_id?: string | null
           id?: string
           name?: string | null
           phone?: string | null
@@ -959,9 +1167,9 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'leads_capture_submission_id_fkey'
-            columns: ['capture_submission_id']
+            columns: ['form_submission_id']
             isOneToOne: false
-            referencedRelation: 'capture_submissions'
+            referencedRelation: 'form_submissions'
             referencedColumns: ['id']
           },
           {
@@ -1055,6 +1263,47 @@ export type Database = {
           },
           {
             foreignKeyName: 'modules_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          occurred_at: string
+          payload_jsonb: Json
+          read_at: string | null
+          tenant_id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          occurred_at?: string
+          payload_jsonb?: Json
+          read_at?: string | null
+          tenant_id: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          occurred_at?: string
+          payload_jsonb?: Json
+          read_at?: string | null
+          tenant_id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_tenant_id_fkey'
             columns: ['tenant_id']
             isOneToOne: false
             referencedRelation: 'tenants'
@@ -1984,6 +2233,59 @@ export type Database = {
           },
         ]
       }
+      tenant_webhooks: {
+        Row: {
+          active: boolean
+          created_at: string
+          deleted_at: string | null
+          event: string
+          failure_count: number
+          id: string
+          last_failure_at: string | null
+          last_success_at: string | null
+          secret: string
+          tenant_id: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          deleted_at?: string | null
+          event: string
+          failure_count?: number
+          id?: string
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          secret: string
+          tenant_id: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          deleted_at?: string | null
+          event?: string
+          failure_count?: number
+          id?: string
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          secret?: string
+          tenant_id?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'tenant_webhooks_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       tenants: {
         Row: {
           brand_id: string
@@ -1992,8 +2294,10 @@ export type Database = {
           default_locale: string
           default_tz: string
           deleted_at: string | null
+          deletion_scheduled_at: string | null
           font_id: string
           id: string
+          lifecycle_state: string
           logo_url: string | null
           name: string
           owner_user_id: string | null
@@ -2001,6 +2305,8 @@ export type Database = {
           pixels: Json
           shape_preset_id: string
           slug: string
+          suspended_at: string | null
+          suspended_reason: string | null
           theme_version: number
           updated_at: string
           vapid_public_key: string | null
@@ -2013,8 +2319,10 @@ export type Database = {
           default_locale?: string
           default_tz?: string
           deleted_at?: string | null
+          deletion_scheduled_at?: string | null
           font_id?: string
           id?: string
+          lifecycle_state?: string
           logo_url?: string | null
           name: string
           owner_user_id?: string | null
@@ -2022,6 +2330,8 @@ export type Database = {
           pixels?: Json
           shape_preset_id?: string
           slug: string
+          suspended_at?: string | null
+          suspended_reason?: string | null
           theme_version?: number
           updated_at?: string
           vapid_public_key?: string | null
@@ -2034,8 +2344,10 @@ export type Database = {
           default_locale?: string
           default_tz?: string
           deleted_at?: string | null
+          deletion_scheduled_at?: string | null
           font_id?: string
           id?: string
+          lifecycle_state?: string
           logo_url?: string | null
           name?: string
           owner_user_id?: string | null
@@ -2043,6 +2355,8 @@ export type Database = {
           pixels?: Json
           shape_preset_id?: string
           slug?: string
+          suspended_at?: string | null
+          suspended_reason?: string | null
           theme_version?: number
           updated_at?: string
           vapid_public_key?: string | null
@@ -2139,6 +2453,60 @@ export type Database = {
           sort_order?: number
         }
         Relationships: []
+      }
+      webhook_deliveries: {
+        Row: {
+          attempts: number
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          event_payload: Json
+          id: string
+          last_attempted_at: string | null
+          status: string
+          tenant_id: string
+          webhook_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          event_payload: Json
+          id?: string
+          last_attempted_at?: string | null
+          status?: string
+          tenant_id: string
+          webhook_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          event_payload?: Json
+          id?: string
+          last_attempted_at?: string | null
+          status?: string
+          tenant_id?: string
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'webhook_deliveries_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'webhook_deliveries_webhook_id_fkey'
+            columns: ['webhook_id']
+            isOneToOne: false
+            referencedRelation: 'tenant_webhooks'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
     Views: {

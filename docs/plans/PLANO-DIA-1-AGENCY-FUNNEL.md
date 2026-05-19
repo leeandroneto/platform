@@ -146,11 +146,12 @@ Se uma decisão da Fase 1 inviabiliza Fase 2, ela está errada. Validar com perg
 
 **Sequência cronológica (sem números fixos — outras migrations paralelas podem entrar à frente):**
 
-1. ✅ `0013_security_hardening_v2` — APLICADA 2026-05-19 (conversa paralela). Doc: `docs/migrations/0013_security_hardening_v2.md`
-2. ✅ `0014_constraint_cleanup` — APLICADA 2026-05-19 (conversa paralela). PK/FK/index cleanup pós-auditoria. Doc: `docs/migrations/0014_constraint_cleanup.md`. **Nota:** essa migration referencia tabela `page_versions` (já existe de migration anterior, fora do escopo do Plano Dia 1 — pode ser PWA per-tenant ou outro contexto). **Antes de aplicar `page_engine_minimal`, validar se conflita com `page_versions` existente.**
-3. ⏳ `form_engine` — todas as tabelas de form + `prompt_templates` unificada + enums + RLS
-4. ⏳ `page_engine_minimal` — `pages` + `page_templates` (+ possivelmente `page_versions` se já não cobrir caso de uso da Fase 1)
-5. ⏳ `page_engine_full` — JIT Fase 2 quando estudo de seções/componentes maturar
+1. ✅ `0013_security_hardening_v2` — APLICADA 2026-05-19. Doc: `docs/migrations/0013_security_hardening_v2.md`
+2. ✅ `0014_constraint_cleanup` — APLICADA 2026-05-19. PK/FK/index cleanup. Doc: `docs/migrations/0014_constraint_cleanup.md`
+3. ✅ `0015_forms_align_research_23` — APLICADA 2026-05-19. Rename `capture_forms→forms`, `capture_submissions→form_submissions`, `assessments→form_reports`. Adicionadas colunas (kind enum, vertical, status, logic_rules, bot_score, ip_address_hashed, idempotency_key, share_token, etc). Criada `form_versions` espelhando `page_versions`. Zero consumers no código antes da migration (grep confirmou) → rename seguro.
+4. ✅ `0016_structural_reserves` — APLICADA 2026-05-19. Reservas estruturais: `tenants.lifecycle_state` (+ suspended_at/reason, deletion_scheduled_at), `audit_log` (append-only via RLS), `notifications` (in-app, Fase 2), `tenant_webhooks` + `webhook_deliveries` (outgoing webhooks com retry, Fase 2).
+5. ✅ `0017_cross_table_tenant_consistency` — APLICADA 2026-05-19. Função `assert_tenant_match()` + 11 triggers em tabelas críticas (enrollments, modules, components, component_schedules, form_submissions, form_versions, form_reports, leads, page_versions, webhook_deliveries). Defesa em profundidade (achado 4 da auditoria RLS).
+6. ⏳ `page_engine_full` — JIT Fase 2 quando estudo de seções/componentes maturar (page_engine_minimal já existia no schema dia 0 — `pages`/`page_versions`/`page_templates`)
 
 **Regra de numeração:** sequencial conforme aplicação real. **NÃO travar números neste plano.** Cada migration aplicada deve ser comunicada aqui pra manter alinhamento. Próxima migration (form*engine) será aplicada com número sequencial atual no banco — provavelmente `0015*\*` se nenhuma outra entrar antes.
 
@@ -375,7 +376,12 @@ Disparado quando estudo dedicado de seções/componentes/templates de landing ma
 
 - [✅] Migration `0013_security_hardening_v2` aplicada
 - [✅] Migration `0014_constraint_cleanup` aplicada (PK/FK/index cleanup pós-auditoria)
-- [⏳] Validar se `page_versions` (pré-existente, vista no 0014) conflita com plano `page_engine_minimal`
+- [✅] Migration `0015_forms_align_research_23` aplicada (rename `capture_*→form_*` + colunas pesquisa 23 + `form_versions`)
+- [✅] Migration `0016_structural_reserves` aplicada (tenant lifecycle + audit_log + notifications + tenant_webhooks + webhook_deliveries)
+- [✅] Migration `0017_cross_table_tenant_consistency` aplicada (`assert_tenant_match` + 11 triggers — defesa em profundidade)
+- [✅] Types regenerados (`lib/contracts/database.ts` — 48 tabelas, zero TYPES-PENDING)
+- [✅] `pnpm typecheck` verde após regen
+- [✅] `page_engine_minimal` JÁ EXISTIA no schema dia 0 (`pages` + `page_versions` + `page_templates`) — não precisa nova migration
 - [✅] Rewrite deste plano consolidado (este doc)
 - [✅] `.claude/rules/naming.md` atualizada (vocab + lead-capture)
 - [✅] `.claude/rules/i18n.md` atualizada (seção conteúdo do tenant)
