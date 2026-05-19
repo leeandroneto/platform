@@ -41,12 +41,15 @@ export const config: VercelConfig = {
   redirects: [{ source: '/home', destination: '/', permanent: true }],
 
   // ─── Crons ────────────────────────────────────────────────────────────
-  // Cleanup de jobs assíncronos + agregação de métricas diárias.
-  crons: [
-    { path: '/api/cron/process-scheduled-jobs', schedule: '*/5 * * * *' },
-    { path: '/api/cron/aggregate-metrics-daily', schedule: '0 3 * * *' },
-    { path: '/api/cron/cleanup-stale-uploads', schedule: '0 4 * * *' },
-  ],
+  // Removidos do vercel.ts dia 1 — Hobby plan permite só 1x/dia.
+  // JIT re-adicionar quando rotas `/api/cron/*` forem criadas:
+  //   - daily-retention-cleanup (Fase 1) — delete submissions > forms.retention_days
+  //   - weekly-eval-forms (Fase 1) — Slack alert se score IA cai >10%
+  //   - aggregate-metrics-daily (Fase 2) — agregação analytics
+  //   - cleanup-stale-uploads (Fase 1-2) — limpa Blob órfãos
+  //   - process-scheduled-jobs (Fase 3, Program Engine) — */5 min, EXIGE Vercel Pro
+  // Plan §3.8 do PLANO-DIA-1 lista os 2 primeiros.
+  // crons: [],
 
   // ─── Functions config ─────────────────────────────────────────────────
   // Padrão Fluid Compute (Node.js, default 2026); região alinhada com Supabase BR.
