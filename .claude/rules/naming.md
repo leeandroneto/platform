@@ -27,7 +27,7 @@ paths:
 | ---------------------------------- | --------------------------------- |
 | `student`                          | `client`                          |
 | `trainer`                          | `professional`                    |
-| `intake`                           | `capture_form`                    |
+| `intake`                           | `lead-capture` (kind do form)     |
 | `wizard`                           | `setup`                           |
 | `prospect`                         | `lead`                            |
 | `diagnostic`, `diagnostico`        | `assessment`                      |
@@ -42,6 +42,33 @@ paths:
 | `onboarding.bio`, `onboarding-bio` | nada — não citar (legado pausado) |
 | `desafit` hardcoded                | `env.NEXT_PUBLIC_BRAND_NAME`      |
 
+## Vocabulário canônico de motores (Form Engine + Page Engine — Plano Dia 1)
+
+Termos oficiais EN (DB + código). Aplicado em `lib/contracts/form*`, `lib/contracts/page*`,
+`lib/forms/**`, `lib/engines/**`, `components/app-form-*`, `components/app-page-*`,
+`app/(admin)/forms/**`, `app/(public)/**/f/**`, migrations relacionadas.
+
+| Conceito                | Termo canônico    | A evitar em código (uso livre em UI/docs PT-BR) |
+| ----------------------- | ----------------- | ----------------------------------------------- |
+| Objeto inteiro          | `form`            | quiz, survey, questionnaire (são `kind`)        |
+| Bloco no form           | `block`           | field                                           |
+| Bloco que é pergunta    | `input block`     | question                                        |
+| Container de blocos     | `step`            | page, section                                   |
+| Definição publicada     | `version`         | revision                                        |
+| Resposta de uma pessoa  | `submission`      | response (1 submission tem N responses)         |
+| Resposta de um block    | `response`        | answer                                          |
+| Resultado IA gerado     | `report`          | analysis, summary                               |
+| Critério IA pra geração | `generation rule` | guideline                                       |
+| Padrão pré-pronto       | `template`        | preset, recipe                                  |
+| Variante A/B            | `variant`         | experiment-arm                                  |
+| Regra condicional       | `logic rule`      | conditional, branch (em código)                 |
+
+Enum `forms.kind` (Postgres):
+`'form' | 'quiz' | 'survey' | 'assessment' | 'check-in' | 'lead-capture' | 'onboarding' | 'brief'`
+
+- `brief` = form que alimenta IA pra gerar artifact (kind interno do feature "vibe coding")
+- "vibe coding" continua sendo o NOME DA FEATURE (ação do profissional), não kind no banco.
+
 ## Aplicação
 
 Antes de qualquer resposta/código/doc: varrer mentalmente contra essa lista.
@@ -54,3 +81,7 @@ propagar.
 - `lgpd/` (acronimo legal BR)
 - JSONB internal keys AI-bound legados (`pilares`, `reflexao`, `ato_*`) só
   em migration de dados — emitir como EN sempre que possível
+- `field` aparece em libs externas (React Hook Form `<FormField>`) — uso da lib OK,
+  nosso domínio usa `block`/`input block`
+- `branch` em docs sobre git branches (não condicional de form) — OK
+- `question` em UI/copy PT-BR ("Pergunta 3 de 7") — OK; em código continua `block`
