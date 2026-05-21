@@ -58,7 +58,13 @@ Detalhamento completo em §17 Open questions ativas.
 
 ### Background workstreams (se ativos)
 
-- (preencher quando dispatch acontecer — atualmente: nenhum)
+Dispatch 2026-05-21 (3 agents Sonnet paralelos — background):
+
+- **research-40 shadcn registry deep-dive** ⏳ — MCP `shadcn@canary registry:mcp`, private registries, namespace, composition, auth flow. Output: `docs/research/40-shadcn-registry-deep-dive.md`
+- **research-41 batch audit TweakCN Fases 5+6+7** ⏳ — consolidação S5.0/S6.0/S7.0 com dependency graph + EXTRACT/ADAPT/SKIP/DEFER decisões. Output: `docs/research/41-audit-tweakcn-fases-5-6-7.md`
+- **i18n wireup execução** ⏳ — `i18n/request.ts` + next.config plugin + `messages/pt-BR/common.json` + layout wrap NextIntlClientProvider + audit script. Self-contained low risk.
+
+(Atualizar pra ✅ + commit hash quando cada agent reportar conclusão.)
 
 ---
 
