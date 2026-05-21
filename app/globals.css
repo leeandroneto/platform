@@ -1,21 +1,32 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   globals.css — Tailwind v4 @theme tokens semânticos
+   globals.css — Tailwind v4 @theme universals (ADR-0044 pivot TweakCN-way)
    ════════════════════════════════════════════════════════════════════════════
-   Paletas, fontes e shapes NÃO são hardcoded aqui (ADR-0028).
-   Vivem em platform.{palettes,fonts,shape_presets} no banco e são injetados em
-   runtime via <link rel="stylesheet" href="/api/.../theme.css?v=N"> no layout.
+   Filosofia universal vs per-tenant (ADR-0044 §2 + research/29):
+     - Per-tenant (32 cores + 3 fontes + radius + 6 shadow primitives +
+       letter-spacing + spacing-opt) NÃO vivem aqui. Vivem em
+       <style precedence="theme"> runtime gerado por
+       lib/design/build-theme-css.ts (Fase 1 emite DEFAULT_THEME via layout.tsx;
+       Fase 4 troca por snapshot do tenant).
+     - Universais (mobile chrome iOS HIG, z-index, motion durations/easings,
+       spacing scale Carbon 8-base, breakpoint, frosted glass) vivem aqui.
+       Imutáveis cross-tenant.
 
-   Este arquivo define só:
-   1. Tokens estáticos (Geist defaults, semantic colors fixos, safe areas)
-   2. Fallbacks da paleta 'default' (caso /api/theme.css falhe ou demore)
-   3. shadcn vars mapeadas pros tokens (componentes herdam automático)
+   Removidos pós-pivot (vocab banido ADR-0044 §13 + naming.md):
+     - --color-surface-{1..5}, --color-surface-light-{1..5} (roles invented)
+     - --color-primary, --color-secondary, --color-tertiary fallback
+     - --color-info, --color-success, --color-warning (semantic invented)
+     - --shape-card/--shape-button/etc (ADR-0028 superseded ADR-0044 §5)
+     - --elevation-flat/--elevation-raised/--elevation-overlay (ADR-0042
+       superseded ADR-0044 §3 — 8 níveis shadow algorítmicos)
+     - --brand-hue (acoplava cores a uma única dimensão)
+     - @theme inline @ mapping --color-* → shadcn vars (shadcn lê var canonical
+       direto agora)
    ════════════════════════════════════════════════════════════════════════════ */
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
-/* ─── Content scan scope — exclui docs/ legacy (que tem text-* literal nos archives) ─ */
+/* ─── Content scan scope — exclui docs/tests/build artefacts ──────────────── */
 @source not "../docs";
 @source not "../tests";
 @source not "../.next";
@@ -24,96 +35,123 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* ─── Fonts (default — sobrescrito por /api/theme.css quando tenant escolhe) ─ */
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-brand: var(--font-sans);
+  /* ════════════════════════════════════════════════════════════════════════
+     Mobile primitives — iOS HIG / Material 3 padrões universais
+     ════════════════════════════════════════════════════════════════════════ */
 
-  /* ─── Brand hue (default 275 — sobrescrito por tenant via /api/theme.css) ─ */
-  --brand-hue: 275;
+  /* Touch target mínimo HIG (44px) + variante comfortable (48px material). */
+  --touch-min: 44px;
+  --touch-comfortable: 48px;
 
-  /* ─── Shape tokens (ADR-0028 — sobrescritos por tenant) ────────────────── */
-  --shape-card: 12px;
-  --shape-button: 10px;
-  --shape-input: 8px;
-  --shape-badge: 6px;
-  --shape-avatar: 9999px;
-
-  --radius: 0.625rem; /* default 'rounded' preset (ADR-0028 seed) */
-
-  /* ─── Surfaces dark (derivadas de --brand-hue) ──────────────────────────── */
-  --color-surface-1: oklch(0.13 0.01 var(--brand-hue));
-  --color-surface-2: oklch(0.17 0.01 var(--brand-hue));
-  --color-surface-3: oklch(0.22 0.012 var(--brand-hue));
-  --color-surface-4: oklch(0.29 0.013 var(--brand-hue));
-  --color-surface-5: oklch(0.37 0.015 var(--brand-hue));
-
-  /* ─── Surfaces light (derivadas de --brand-hue) ─────────────────────────── */
-  --color-surface-light-1: oklch(0.98 0.01 var(--brand-hue));
-  --color-surface-light-2: oklch(0.96 0.011 var(--brand-hue));
-  --color-surface-light-3: oklch(0.93 0.012 var(--brand-hue));
-  --color-surface-light-4: oklch(0.89 0.013 var(--brand-hue));
-  --color-surface-light-5: oklch(0.85 0.015 var(--brand-hue));
-
-  /* ─── Semantic state colors (estáticos — não mudam por tenant) ──────────── */
-  --color-info: oklch(0.68 0.13 235);
-  --color-success: oklch(0.68 0.13 145);
-  --color-warning: oklch(0.78 0.15 75);
-  --color-destructive: oklch(0.66 0.19 25);
-
-  /* ─── Fallbacks paleta 'default' (sobrescritos por /api/theme.css) ─────── */
-  /* Valores correspondem a OFFICIAL_PALETTES[0] em lib/design/seeds/palettes.seed.ts */
-  --color-primary: oklch(0.58 0.18 275);
-  --color-primary-light: oklch(0.52 0.2 275);
-  --color-secondary: oklch(0.65 0.01 275);
-  --color-tertiary: oklch(0.75 0.12 80);
-
-  --color-chart-1: oklch(0.5 0.05 195);
-  --color-chart-2: oklch(0.5 0.04 145);
-  --color-chart-3: oklch(0.55 0.06 80);
-  --color-chart-4: oklch(0.5 0.07 25);
-  --color-chart-5: oklch(0.45 0.05 260);
-
-  /* ─── Safe areas iOS ────────────────────────────────────────────────────── */
+  /* Safe areas iOS PWA (env() requer viewport-fit:cover em layout.tsx). */
   --inset-safe-top: env(safe-area-inset-top);
   --inset-safe-bottom: env(safe-area-inset-bottom);
   --inset-safe-left: env(safe-area-inset-left);
   --inset-safe-right: env(safe-area-inset-right);
 
-  /* ─── Elevation (3-níveis — ADR-0042) ───────────────────────────────────── */
-  /* Filosofia "flat-ish profissional": Linear-leaning. NÃO Apple cinematográfico. */
-  /* flat = sem shadow, border only (cards inline em listings)                   */
-  /* raised = shadow sutil (cards destacados, dropdowns)                          */
-  /* overlay = shadow forte (dialog, sheet, drawer, popover acima de conteúdo)    */
-  --elevation-flat: 0 0 0 1px var(--color-border);
-  --elevation-raised: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 3px 0 rgb(0 0 0 / 0.06);
-  --elevation-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* dvh evita Safari URL bar bug (ESLint no-vh-in-mobile-aware enforce). */
+  --mobile-full-height: 100dvh;
 
-  /* ─── Skeleton shimmer (Etapa 10B) ──────────────────────────────────────── */
-  /* Substitui animate-pulse shadcn default por shimmer gradient continuo.        */
-  /* Uso: className="animate-shimmer bg-gradient-to-r ..." — bg lê var(--color-*) */
-  /* do tenant via theme.css endpoint (white-label automático).                    */
-  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  /* Mobile chrome heights — usados em PWA aluno (bottom nav, mini-player). */
+  --mobile-nav-height: 56px;
+  --fab-size: 56px;
+  --sticky-cta-height: 64px;
+  --mini-player-height: 64px;
 
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
+  /* Press feedback Material — usado em :active scale transform. */
+  --press-scale: 0.97;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Frosted glass primitives — Apple-style backdrop blur
+     ════════════════════════════════════════════════════════════════════════ */
+  --frosted-blur: 20px;
+  --frosted-saturate: 1.8;
+  --frosted-opacity: 0.72;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Z-index canonical — escala plana ortogonal
+     ════════════════════════════════════════════════════════════════════════ */
+  --z-content: 0;
+  --z-sticky: 10;
+  --z-fab: 20;
+  --z-mini-player: 25;
+  --z-nav-bottom: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Motion — durations + easings canonical (Material 3 / Polaris)
+     ════════════════════════════════════════════════════════════════════════ */
+  --duration-instant: 50ms;
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 320ms;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Spacing scale Carbon 8-base — universal numérica ortogonal a --spacing
+     (per-tenant Tailwind v4 base). Coexistem sem conflito (research/29 §2.3).
+     ════════════════════════════════════════════════════════════════════════ */
+  --spacing-0: 0;
+  --spacing-1: 0.125rem; /* 2px */
+  --spacing-2: 0.25rem; /* 4px */
+  --spacing-3: 0.5rem; /* 8px */
+  --spacing-4: 0.75rem; /* 12px */
+  --spacing-5: 1rem; /* 16px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-7: 2rem; /* 32px */
+  --spacing-8: 2.5rem; /* 40px */
+  --spacing-9: 3rem; /* 48px */
+  --spacing-10: 4rem; /* 64px */
+  --spacing-12: 5rem; /* 80px */
+  --spacing-16: 6rem; /* 96px */
+  --spacing-20: 8rem; /* 128px */
+  --spacing-24: 10rem; /* 160px */
+  --spacing-28: 12rem; /* 192px */
+  --spacing-32: 14rem; /* 224px */
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Breakpoint canonical — 768px (Tailwind md, iPad portrait, fold devices)
+     ════════════════════════════════════════════════════════════════════════ */
+  --breakpoint-mobile: 768px;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Icon sizes — canonical (xs=12 / sm=16 / md=20 / lg=24 / xl=32)
+     ════════════════════════════════════════════════════════════════════════ */
+  --icon-xs: 12px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     APCA Silver thresholds — constantes documentadas (não vars CSS, validação
+     é build-time em scripts/validate-palettes.ts):
+       body:     Lc ≥ 75
+       large:    Lc ≥ 60
+       non-text: Lc ≥ 45
+     ════════════════════════════════════════════════════════════════════════ */
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   @theme inline — mapeia tokens shadcn pras nossas vars (radix-nova preset).
-   Componentes shadcn passam a usar `bg-primary`, `text-card-foreground`, etc,
-   herdando automaticamente os valores que vêm do banco via /api/theme.css.
+   @theme inline — registra tokens shadcn-canonical no Tailwind v4
+   ════════════════════════════════════════════════════════════════════════════
+   Mapping `--color-X: var(--X)` permite Tailwind v4 reconhecer classes utility
+   (`bg-background`, `text-foreground`, `border-border`, etc) mesmo que os
+   VALORES de `--background`, `--foreground`, etc venham runtime via
+   <style precedence="theme"> (lib/design/build-theme-css.ts).
+
+   Cobre as 32 cores canonical (TweakCN-vocab ADR-0044) + radius derivation
+   Tailwind v4 (1 token --radius → sm/md/lg/xl/2xl/3xl/4xl).
    ════════════════════════════════════════════════════════════════════════════ */
 
 @theme inline {
-  --font-heading: var(--font-sans);
-
+  /* 32 cores canonical (shadcn-canonical) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -129,16 +167,15 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -148,6 +185,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Radius derivation — 1 token --radius → escala completa via calc (Tailwind v4) */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -158,82 +196,126 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   shadcn vars OKLCH semantic mapping
-   Override de tenant chega via /api/theme.css (set --color-primary, --brand-hue,
-   --radius, --font-brand, etc) e shadcn renderiza automático com nova
-   cor/shape/fonte. ZERO componente precisa ser editado individualmente.
+   Base layer — body defaults
+   ════════════════════════════════════════════════════════════════════════════
+   Per-tenant tokens (`--background`, `--foreground`, `--radius`, etc) vêm via
+   <style precedence="theme"> emitido por buildThemeCSS() em layout.tsx. Aqui
+   só aplicamos defaults estruturais que não dependem de tenant.
    ════════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
-  :root {
-    --background: var(--color-surface-1);
-    --foreground: oklch(0.95 0.01 var(--brand-hue));
-
-    --card: var(--color-surface-2);
-    --card-foreground: var(--foreground);
-
-    --popover: var(--color-surface-3);
-    --popover-foreground: var(--foreground);
-
-    --primary: var(--color-primary);
-    --primary-foreground: var(--color-surface-1);
-
-    --secondary: var(--color-surface-3);
-    --secondary-foreground: var(--foreground);
-
-    --muted: var(--color-surface-2);
-    --muted-foreground: oklch(0.7 0.01 var(--brand-hue));
-
-    --accent: var(--color-surface-3);
-    --accent-foreground: var(--foreground);
-
-    --destructive: var(--color-destructive);
-    --destructive-foreground: var(--color-surface-1);
-
-    --border: oklch(0.3 0.02 var(--brand-hue));
-    --input: var(--border);
-    --ring: var(--color-primary);
-
-    --chart-1: var(--color-chart-1);
-    --chart-2: var(--color-chart-2);
-    --chart-3: var(--color-chart-3);
-    --chart-4: var(--color-chart-4);
-    --chart-5: var(--color-chart-5);
-
-    --sidebar: var(--color-surface-1);
-    --sidebar-foreground: var(--foreground);
-    --sidebar-primary: var(--color-primary);
-    --sidebar-primary-foreground: var(--color-surface-1);
-    --sidebar-accent: var(--color-surface-3);
-    --sidebar-accent-foreground: var(--foreground);
-    --sidebar-border: var(--border);
-    --sidebar-ring: var(--ring);
-  }
-
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
+    font-family: var(--font-sans);
   }
 
-  html {
-    @apply font-sans;
+  /* Inputs sempre 16px — anti auto-zoom iOS Safari (research/15 mobile). */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
 
-/* ─── Utilities ─────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Absorções TweakCN-ref (Apache-2.0, commit 9adabcf9). Ver NOTICE.md.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* color-scheme universal — adapted from tweakcn-ref/app/globals.css:80-83. */
+* {
+  color-scheme: light dark;
+}
+
+/* View transition wave — anima troca de tema com ripple no click.
+   Caller seta --x/--y antes de document.startViewTransition().
+   Adapted from tweakcn-ref/app/globals.css:99-132. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+  animation: reveal 0.4s ease-in-out forwards;
+}
+
+@keyframes reveal {
+  from {
+    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+    opacity: 0.7;
+  }
+  to {
+    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+    opacity: 1;
+  }
+}
+
+/* AI chat utilities — mention pills + inline code.
+   Adapted from tweakcn-ref/app/globals.css:135-141. Usado em Fase 6. */
+.mention {
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  border-radius: var(--radius-md);
+  padding: 0 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.code-inline {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  padding: 0.125rem 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Gradient text animation — usado em hero/marketing.
+   Adapted from tweakcn-ref/app/globals.css:143-154. */
+@keyframes text {
+  from {
+    background-position: 0% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+.animate-text {
+  animation: text 3s linear infinite;
+}
+
+/* ─── Utilities universais ─────────────────────────────────────────────── */
 
 @utility tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── Inputs sempre 16px (anti auto-zoom iOS — pesquisa 15) ──────────────── */
+/* Scrollbar utilities — adapted from tweakcn-ref/app/globals.css:156-171. */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 
-input,
-textarea,
-select {
-  font-size: 16px;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+@utility scrollbar-gutter-both {
+  scrollbar-gutter: stable both-edges;
 }

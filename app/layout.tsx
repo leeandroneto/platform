@@ -1,6 +1,9 @@
-// app/layout.tsx — shell mínimo pós-pivot ADR-0044 (TweakCN canonical).
-// Filosofia surgical delete: layout fica MÍNIMO até Fase 4 reintroduzir
-// theming runtime via <style precedence="theme"> + buildThemeCSS().
+// app/layout.tsx — shell pós-pivot ADR-0044 (TweakCN canonical) Fase 1.
+// Theming runtime via <style precedence="theme"> + buildThemeCSS() (React 19
+// auto-hoist pro <head> — sem FOUC porque SSR já gerou).
+//
+// Fase 1 (atual): sempre emite DEFAULT_THEME. Fase 4 substituirá por snapshot
+// do tenant via getRouteByHost (tenant_theme_versions.snapshot Zod-validado).
 //
 // O que SAIU:
 //   - <MotionProvider> (componente deletado, re-add JIT quando feature precisar)
@@ -24,6 +27,8 @@ import { getLocale, getMessages } from 'next-intl/server'
 
 import { Toaster } from 'sonner'
 
+import { buildThemeCSS } from '@/lib/design/build-theme-css'
+import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { EntitlementProvider } from '@/lib/entitlements/EntitlementProvider'
 import { getEntitlementSnapshot } from '@/lib/entitlements/server'
 import { getRouteByHost } from '@/lib/route/getRouteByHost'
@@ -127,8 +132,17 @@ function buildSplashHrefs(
   }))
 }
 
-// ─── Dynamic shell: lê host + faz lookup brand/tenant. Theme CSS reintroduzido
-// em Fase 4 via <style precedence="theme"> + buildThemeCSS() (ADR-0044). ──
+// ─── ThemeStyle: emite <style precedence="theme"> com tokens canonical ───
+// Fase 1: sempre DEFAULT_THEME (foundation reset, sem snapshot tenant ainda).
+// Fase 4: trocar por `tenant_theme_versions.snapshot` via getRouteByHost.
+// React 19 hoist o <style> automaticamente pro <head> via `precedence` attr.
+async function ThemeStyle() {
+  const css = buildThemeCSS(DEFAULT_THEME)
+  return <style precedence="theme" dangerouslySetInnerHTML={{ __html: css }} />
+}
+
+// ─── Dynamic shell: lê host + faz lookup brand/tenant. Theme CSS via <style
+// precedence="theme"> + buildThemeCSS() (ADR-0044). ───────────────────────
 async function DynamicShell({ children }: { children: React.ReactNode }) {
   const h = await headers()
   const host = h.get('host')
@@ -181,6 +195,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={fontVars} suppressHydrationWarning>
       <body>
+        {/* Theme tokens canonical (ADR-0044) — Suspense isolado pra não
+            bloquear children. React 19 hoist <style precedence="theme"> pro <head>. */}
+        <Suspense fallback={null}>
+          <ThemeStyle />
+        </Suspense>
         <Suspense fallback={children}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>
