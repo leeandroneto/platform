@@ -2005,6 +2005,95 @@ export type Database = {
           },
         ]
       }
+      tenant_theme_versions: {
+        Row: {
+          ai_model_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          prompt_text: string | null
+          snapshot: Json
+          theme_id: string
+          version_number: number
+        }
+        Insert: {
+          ai_model_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          prompt_text?: string | null
+          snapshot: Json
+          theme_id: string
+          version_number: number
+        }
+        Update: {
+          ai_model_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          prompt_text?: string | null
+          snapshot?: Json
+          theme_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'tenant_theme_versions_theme_id_fkey'
+            columns: ['theme_id']
+            isOneToOne: false
+            referencedRelation: 'tenant_themes'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      tenant_themes: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          id: string
+          name: string
+          parent_theme_id: string | null
+          source: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          name: string
+          parent_theme_id?: string | null
+          source: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          name?: string
+          parent_theme_id?: string | null
+          source?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'tenant_themes_parent_theme_id_fkey'
+            columns: ['parent_theme_id']
+            isOneToOne: false
+            referencedRelation: 'tenant_themes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'tenant_themes_tenant_id_fkey'
+            columns: ['tenant_id']
+            isOneToOne: false
+            referencedRelation: 'tenants'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       tenant_webhooks: {
         Row: {
           active: boolean
@@ -2060,6 +2149,7 @@ export type Database = {
       }
       tenants: {
         Row: {
+          active_theme_version_id: string | null
           brand_id: string
           created_at: string
           default_currency: string
@@ -2083,6 +2173,7 @@ export type Database = {
           vertical: string
         }
         Insert: {
+          active_theme_version_id?: string | null
           brand_id: string
           created_at?: string
           default_currency?: string
@@ -2106,6 +2197,7 @@ export type Database = {
           vertical: string
         }
         Update: {
+          active_theme_version_id?: string | null
           brand_id?: string
           created_at?: string
           default_currency?: string
@@ -2129,6 +2221,13 @@ export type Database = {
           vertical?: string
         }
         Relationships: [
+          {
+            foreignKeyName: 'tenants_active_theme_version_id_fkey'
+            columns: ['active_theme_version_id']
+            isOneToOne: false
+            referencedRelation: 'tenant_theme_versions'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'tenants_brand_id_fkey'
             columns: ['brand_id']

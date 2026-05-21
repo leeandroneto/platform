@@ -7,14 +7,15 @@
 
 ## Pivot ADR-0044 (TweakCN shadcn-canonical) — em execução
 
-| Fase | Tema                                                                          | Status |
-| ---- | ----------------------------------------------------------------------------- | ------ |
-| -1   | Clone TweakCN read-only (SSOT)                                                | ✅     |
-| 0    | Surgical delete `components/**`                                               | ✅     |
-| 1    | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical         | ✅     |
-| 1.5  | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21) | ✅     |
-| 2    | Estudo mobile/PWA + decisão extras opt-in                                     | ⏳     |
-| 3-8  | Theme storage, builder UI, presets, integration                               | ⏳     |
+| Fase  | Tema                                                                             | Status     |
+| ----- | -------------------------------------------------------------------------------- | ---------- |
+| -1    | Clone TweakCN read-only (SSOT)                                                   | ✅         |
+| 0     | Surgical delete `components/**`                                                  | ✅         |
+| 1     | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical            | ✅         |
+| 1.5   | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21)    | ✅         |
+| 2     | Estudo mobile/PWA + decisão extras opt-in (D2)                                   | ⏭️ próximo |
+| 4     | Migration 0025 theme storage + versioning + 4 actions + next-themes (2026-05-21) | ✅         |
+| 3,5-8 | Builder UI, presets, integration completa                                        | ⏳         |
 
 ---
 

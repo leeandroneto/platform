@@ -15,22 +15,33 @@ interface TenantIconData {
   primary_foreground_oklch: string
 }
 
-// Pós-pivot ADR-0044 + Fase 1.5: tenant_themes ainda não existem (Fase 4
-// entrega). Icon usa DEFAULT_THEME.light.{primary,primary-foreground} até lá.
+// Fase 4 ADR-0044: consume `active_theme_version.snapshot` quando disponível,
+// fallback DEFAULT_THEME.light.{primary, primary-foreground}.
 async function getTenantIconData(tenantId: string): Promise<TenantIconData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('tenants')
-    .select('name')
+    .select(
+      `
+      name,
+      active_theme_version:active_theme_version_id ( id, version_number, snapshot )
+    `,
+    )
     .eq('id', tenantId)
     .maybeSingle()
 
   if (error || !data) return null
 
+  const activeVersion = data.active_theme_version as unknown as {
+    snapshot: { light: { primary: string; 'primary-foreground': string } }
+  } | null
+  const snapshot = activeVersion?.snapshot
+
   return {
     tenant_name: data.name as string,
-    primary_oklch: DEFAULT_THEME.light.primary,
-    primary_foreground_oklch: DEFAULT_THEME.light['primary-foreground'],
+    primary_oklch: snapshot?.light?.primary ?? DEFAULT_THEME.light.primary,
+    primary_foreground_oklch:
+      snapshot?.light?.['primary-foreground'] ?? DEFAULT_THEME.light['primary-foreground'],
   }
 }
 

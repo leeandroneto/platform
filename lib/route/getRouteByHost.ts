@@ -45,13 +45,19 @@ export async function getRouteByHost(host: string): Promise<ResolvedRoute | null
   const admin = createAdminClient()
 
   // 1. Lookup em public.domains (tenant subdomain ou custom)
+  // Fase 4 ADR-0044: inclui join pra active_theme_version (snapshot Zod-validated)
+  // + theme_mode (input de next-themes ThemeProvider).
   const { data: domain } = await admin
     .from('domains')
     .select(
       `
       tenant_id, kind, is_primary, ssl_status,
       tenants:tenant_id (
-        id, slug, brand_id, name, vertical, theme_version,
+        id, slug, brand_id, name, vertical, theme_version, theme_mode,
+        active_theme_version_id,
+        active_theme_version:active_theme_version_id (
+          id, version_number, snapshot
+        ),
         brands:brand_id (
           id, name, host, logo_url, default_vertical, parent_label, theme_version
         )

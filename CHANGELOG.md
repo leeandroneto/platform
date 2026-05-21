@@ -10,6 +10,18 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Database (2026-05-21 — Pivot ADR-0044 Fase 4)
+
+- Migration `0025_theme_storage_versioning` — `ALTER tenants ADD active_theme_version_id` (FK nullable) · `CREATE tenant_themes` (catalogo per-tenant, `source` check IN preset/custom/ai-generated/imported-tweakcn, `parent_theme_id` self-FK pra fork Fase 5) · `CREATE tenant_theme_versions` (snapshot jsonb Hotmart-like, UNIQUE theme_id+version_number) · Triggers `prevent_theme_version_mutation` (G.1 imutável-on-insert) + `enforce_theme_version_cap` (G.2 cap 50) · RLS via `auth.jwt() ->> 'tenant_id'` em ambas tables (sem UPDATE/DELETE em versions). Migration `0025b_pin_theme_version_function_search_path` — pin `search_path` nas 2 funções (fecha advisor WARN).
+
+### Features (2026-05-21 — Pivot ADR-0044 Fase 4)
+
+- Server actions `app/admin/theme-studio/actions.ts` (+ `_helpers.ts`): `bootstrapTenantTheme` (lazy G.5), `saveThemeVersion` (Zod-validate + immutable insert), `listThemeVersions` (paginated 50, marca isActive), `restoreThemeVersion` (swap FK G.1, valida cross-tenant). 4 testes minimos vitest. `forkTheme` deferido pra Fase 5 (G.3).
+- `next-themes` wired up em `app/layout.tsx` via novo `app/_components/theme-provider-client.tsx` (client wrapper). `defaultTheme = tenant.theme_mode` (G.4 — 'auto' → 'system').
+- `app/layout.tsx` `<ThemeStyle>` consome `route.tenant?.active_theme_version?.snapshot ?? DEFAULT_THEME`. Brand-root e tenants sem bootstrap continuam DEFAULT_THEME.
+- `lib/route/getRouteByHost.ts` query enriquecida com nested join `active_theme_version:active_theme_version_id (id, version_number, snapshot)` + `theme_mode`. `lib/route/types.ts` interface `Tenant` ganhou as 3 colunas. `lib/contracts/database.ts` regenerado via MCP.
+- 3 PWA tenant routes (`manifest.webmanifest`, `icon/[size]`, `splash/[size]`) — select inclui `active_theme_version` + consome snapshot quando disponível, fallback DEFAULT_THEME. **Brand routes não mexidas** (brands não têm theme storage nesta fase).
+
 ### Database (2026-05-21 — Pivot ADR-0044 Fase 1.5)
 
 - Migration `0024_drop_design_system_orphans` — drop tenants.{archetype_id, previous_archetype_id, archetype_changed_at, palette_id, font_id}, brands.default_palette_id, functions default_palette_id()/default_font_id(), tables palettes/fonts/tenant_theme_presets (CASCADE). Pré-fix 6 PWA routes consumindo palette_id/default_palette_id via FK trocadas por DEFAULT_THEME constantes (lib/design/theme-defaults) até Fase 4 entregar tenant_themes/\_versions.

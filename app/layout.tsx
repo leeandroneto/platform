@@ -1,9 +1,10 @@
-// app/layout.tsx — shell pós-pivot ADR-0044 (TweakCN canonical) Fase 1.
+// app/layout.tsx — shell pós-pivot ADR-0044 (TweakCN canonical) Fase 4.
 // Theming runtime via <style precedence="theme"> + buildThemeCSS() (React 19
 // auto-hoist pro <head> — sem FOUC porque SSR já gerou).
 //
-// Fase 1 (atual): sempre emite DEFAULT_THEME. Fase 4 substituirá por snapshot
-// do tenant via getRouteByHost (tenant_theme_versions.snapshot Zod-validado).
+// Fase 4 (ADR-0044): consume `tenant.active_theme_version.snapshot` quando
+// disponível, fallback DEFAULT_THEME. next-themes wired pra theme_mode UX
+// preference (G.4 — 'auto' | 'light' | 'dark').
 //
 // O que SAIU:
 //   - <MotionProvider> (componente deletado, re-add JIT quando feature precisar)
@@ -28,11 +29,14 @@ import { getLocale, getMessages } from 'next-intl/server'
 import { Toaster } from 'sonner'
 
 import { buildThemeCSS } from '@/lib/design/build-theme-css'
+import type { Theme } from '@/lib/design/contract/theme'
 import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { EntitlementProvider } from '@/lib/entitlements/EntitlementProvider'
 import { getEntitlementSnapshot } from '@/lib/entitlements/server'
 import { getRouteByHost } from '@/lib/route/getRouteByHost'
 import { RouteProvider } from '@/lib/route/RouteProvider'
+
+import { ThemeProviderClient } from '@/app/_components/theme-provider-client'
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -133,16 +137,67 @@ function buildSplashHrefs(
 }
 
 // ─── ThemeStyle: emite <style precedence="theme"> com tokens canonical ───
-// Fase 1: sempre DEFAULT_THEME (foundation reset, sem snapshot tenant ainda).
-// Fase 4: trocar por `tenant_theme_versions.snapshot` via getRouteByHost.
+// Fase 4 (ADR-0044): consume `tenant.active_theme_version.snapshot` Zod-validado
+// (foi feito o parse em getRouteByHost). Fallback DEFAULT_THEME quando ausente
+// (brand-root, tenant sem theme bootstrap, ou erro de hidratação).
 // React 19 hoist o <style> automaticamente pro <head> via `precedence` attr.
-async function ThemeStyle() {
-  const css = buildThemeCSS(DEFAULT_THEME)
+function ThemeStyle({ snapshot }: { snapshot: Theme }) {
+  const css = buildThemeCSS(snapshot)
   return <style precedence="theme" dangerouslySetInnerHTML={{ __html: css }} />
 }
 
+type Route = NonNullable<Awaited<ReturnType<typeof getRouteByHost>>>
+
+// ─── RoutedShell: branch quando getRouteByHost retorna route (tenant ou brand-root) ──
+async function RoutedShell({
+  route,
+  snapshot,
+  defaultMode,
+  locale,
+  messages,
+  children,
+}: {
+  route: Route
+  snapshot: Theme
+  defaultMode: string
+  locale: string
+  messages: Awaited<ReturnType<typeof getMessages>>
+  children: React.ReactNode
+}) {
+  // Hidrata EntitlementProvider com snapshot do tenant (null se sem subscription)
+  // — ADR-0034 §4. Sem isso useEntitlement client retorna sempre 'no allowed'.
+  const entitlements = await getEntitlementSnapshot()
+  const manifestHref = buildManifestHref(route)
+  const appleTouchIconHref = buildAppleTouchIconHref(route)
+  const splashHrefs = buildSplashHrefs(route)
+
+  return (
+    <>
+      {/* Theme tokens canonical (ADR-0044 Fase 4) — React 19 hoist pro <head>. */}
+      <Suspense fallback={null}>
+        <ThemeStyle snapshot={snapshot} />
+      </Suspense>
+      {manifestHref && <link rel="manifest" href={manifestHref} />}
+      {appleTouchIconHref && <link rel="apple-touch-icon" href={appleTouchIconHref} />}
+      {splashHrefs?.map((s) => (
+        <link key={s.href} rel="apple-touch-startup-image" href={s.href} media={s.media} />
+      ))}
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <ThemeProviderClient defaultTheme={defaultMode}>
+          <RouteProvider brand={route.brand} tenant={route.tenant}>
+            <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
+              {children}
+              <Toaster richColors closeButton position="top-center" />
+            </EntitlementProvider>
+          </RouteProvider>
+        </ThemeProviderClient>
+      </NextIntlClientProvider>
+    </>
+  )
+}
+
 // ─── Dynamic shell: lê host + faz lookup brand/tenant. Theme CSS via <style
-// precedence="theme"> + buildThemeCSS() (ADR-0044). ───────────────────────
+// precedence="theme"> + buildThemeCSS() (ADR-0044 Fase 4). ─────────────────
 async function DynamicShell({ children }: { children: React.ReactNode }) {
   const h = await headers()
   const host = h.get('host')
@@ -153,37 +208,35 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
   const messages = await getMessages()
   const locale = await getLocale()
 
+  // Fase 4 ADR-0044: snapshot per-tenant via active_theme_version. Fallback
+  // DEFAULT_THEME quando brand-root, tenant sem bootstrap ou erro de hidratação.
+  const snapshot = route?.tenant?.active_theme_version?.snapshot ?? DEFAULT_THEME
+  // theme_mode UX preference (G.4): 'auto' (system) | 'light' | 'dark'.
+  const defaultMode = route?.tenant?.theme_mode ?? 'auto'
+
   if (!route) {
     return (
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        {children}
-      </NextIntlClientProvider>
+      <>
+        <Suspense fallback={null}>
+          <ThemeStyle snapshot={snapshot} />
+        </Suspense>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProviderClient defaultTheme={defaultMode}>{children}</ThemeProviderClient>
+        </NextIntlClientProvider>
+      </>
     )
   }
 
-  // Hidrata EntitlementProvider com snapshot do tenant (null se sem subscription)
-  // — ADR-0034 §4. Sem isso useEntitlement client retorna sempre 'no allowed'.
-  const entitlements = await getEntitlementSnapshot()
-  const manifestHref = buildManifestHref(route)
-  const appleTouchIconHref = buildAppleTouchIconHref(route)
-  const splashHrefs = buildSplashHrefs(route)
-
   return (
-    <>
-      {manifestHref && <link rel="manifest" href={manifestHref} />}
-      {appleTouchIconHref && <link rel="apple-touch-icon" href={appleTouchIconHref} />}
-      {splashHrefs?.map((s) => (
-        <link key={s.href} rel="apple-touch-startup-image" href={s.href} media={s.media} />
-      ))}
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <RouteProvider brand={route.brand} tenant={route.tenant}>
-          <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
-            {children}
-            <Toaster richColors closeButton position="top-center" />
-          </EntitlementProvider>
-        </RouteProvider>
-      </NextIntlClientProvider>
-    </>
+    <RoutedShell
+      route={route}
+      snapshot={snapshot}
+      defaultMode={defaultMode}
+      locale={locale}
+      messages={messages}
+    >
+      {children}
+    </RoutedShell>
   )
 }
 
@@ -195,11 +248,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={fontVars} suppressHydrationWarning>
       <body>
-        {/* Theme tokens canonical (ADR-0044) — Suspense isolado pra não
-            bloquear children. React 19 hoist <style precedence="theme"> pro <head>. */}
-        <Suspense fallback={null}>
-          <ThemeStyle />
-        </Suspense>
         <Suspense fallback={children}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>

@@ -18,8 +18,25 @@ interface TenantManifestData {
   default_vertical: string
 }
 
-// Pós-pivot ADR-0044 + Fase 1.5: tenant_themes ainda não existem (Fase 4
-// entrega). Manifest usa DEFAULT_THEME.{light.primary, dark.background} até lá.
+interface ManifestSnapshotColors {
+  primary_oklch: string
+  surface_dark_oklch: string
+}
+
+function extractManifestColors(activeVersion: unknown): ManifestSnapshotColors {
+  const snapshot = (
+    activeVersion as {
+      snapshot?: { light?: { primary?: string }; dark?: { background?: string } }
+    } | null
+  )?.snapshot
+  return {
+    primary_oklch: snapshot?.light?.primary ?? DEFAULT_THEME.light.primary,
+    surface_dark_oklch: snapshot?.dark?.background ?? DEFAULT_THEME.dark.background,
+  }
+}
+
+// Fase 4 ADR-0044: consume `active_theme_version.snapshot` quando disponível,
+// fallback DEFAULT_THEME (tenant sem bootstrap ou erro de hidratação).
 async function getTenantManifestData(tenantId: string): Promise<TenantManifestData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
@@ -29,6 +46,7 @@ async function getTenantManifestData(tenantId: string): Promise<TenantManifestDa
       id,
       name,
       theme_version,
+      active_theme_version:active_theme_version_id ( id, version_number, snapshot ),
       brand:brand_id ( default_vertical )
     `,
     )
@@ -38,13 +56,14 @@ async function getTenantManifestData(tenantId: string): Promise<TenantManifestDa
   if (error || !data) return null
 
   const brand = data.brand as unknown as { default_vertical: string }
+  const colors = extractManifestColors(data.active_theme_version)
 
   return {
     tenant_name: data.name as string,
     tenant_id: data.id as string,
     theme_version: (data.theme_version as number) ?? 1,
-    primary_oklch: DEFAULT_THEME.light.primary,
-    surface_dark_oklch: DEFAULT_THEME.dark.background,
+    primary_oklch: colors.primary_oklch,
+    surface_dark_oklch: colors.surface_dark_oklch,
     default_vertical: brand?.default_vertical ?? 'fitness',
   }
 }

@@ -22,14 +22,15 @@ markmap:
 - Fase -1: Clone TweakCN em `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)
 - Fase 0: Surgical delete invented layer (9.580 LOC archetypes + 67 roles + 5 ESLint rules)
 - Fase 1: Foundation reset (theme.ts Zod 117 LOC + build-theme-css.ts + globals.css universal-only + ThemeStyle async em layout)
+- Fase 1.5 (2026-05-21): DB cleanup migration 0024 + pré-fix 6 PWA routes
+- **Fase 4 (2026-05-21)**: Theme storage + versionamento — migration 0025 (`tenant_themes` + `tenant_theme_versions` + triggers G.1/G.2 + RLS) + 4 server actions (bootstrap/save/list/restore) + next-themes wireup G.4 + 3 PWA tenant routes consomem snapshot
 - Princípios 8-10 cravados (extract+adapt, versionamento extensão, audit-per-phase)
 
 ### ⏭️ Próximo
 
-- Fase 1.5: DB cleanup `0024_drop_design_system_orphans` (drop tenants.{archetype_id, palette_id, font_id, ...} + drop palettes/fonts/tenant_theme_presets)
-- Fase 2: Estudo mobile/PWA extension (decide D2)
-- Fase 4: Theme storage + versionamento (S4.0 audit tweakcn-ref/db/schema.ts primeiro)
-- Fase 5: Builder UI clone TweakCN (S5.0 audit components/editor/\*\* primeiro)
+- **Fase 2** (decide D2): Estudo mobile/PWA extension — extras opt-in (`--touch-min`, `--mobile-nav-height`, `--frosted-*`)
+- Fase 5: Builder UI clone TweakCN (S5.0 audit components/editor/\*\* primeiro) + `forkTheme` action (G.3 deferred)
+- Fase 3, 6-8: Presets, AI generation, registry, integration final
 
 ## 10 Princípios não-negociáveis (ADR-0044 + plan §0)
 

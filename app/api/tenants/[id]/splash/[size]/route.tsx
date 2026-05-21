@@ -24,23 +24,32 @@ interface TenantSplashData {
   surface_dark_oklch: string
 }
 
-// Pós-pivot ADR-0044 + Fase 1.5: tenant_themes / tenant_theme_versions ainda
-// não existem (Fase 4 entrega). Até lá, splash usa DEFAULT_THEME canonical
-// (TweakCN-vocab). Fase 4 troca por snapshot do active_theme_version.
+// Fase 4 ADR-0044: consume `active_theme_version.snapshot` quando disponível,
+// fallback DEFAULT_THEME.{light.primary, dark.background}.
 async function getTenantSplashData(tenantId: string): Promise<TenantSplashData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('tenants')
-    .select('name')
+    .select(
+      `
+      name,
+      active_theme_version:active_theme_version_id ( id, version_number, snapshot )
+    `,
+    )
     .eq('id', tenantId)
     .maybeSingle()
 
   if (error || !data) return null
 
+  const activeVersion = data.active_theme_version as unknown as {
+    snapshot: { light: { primary: string }; dark: { background: string } }
+  } | null
+  const snapshot = activeVersion?.snapshot
+
   return {
     tenant_name: data.name as string,
-    primary_oklch: DEFAULT_THEME.light.primary,
-    surface_dark_oklch: DEFAULT_THEME.dark.background,
+    primary_oklch: snapshot?.light?.primary ?? DEFAULT_THEME.light.primary,
+    surface_dark_oklch: snapshot?.dark?.background ?? DEFAULT_THEME.dark.background,
   }
 }
 
