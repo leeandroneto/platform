@@ -21,24 +21,25 @@
 
 ## PLANO-MESTRE-DIA-0 (em execução)
 
-| Etapa | Tema                                                                           | Status         |
-| ----- | ------------------------------------------------------------------------------ | -------------- |
-| 1-5   | CLAUDE.md + rules + Etapa 5 i18n setup canônico                                | ✅             |
-| 6     | APCA Silver validator                                                          | ✅             |
-| 7     | 3 wrappers obrigatórios (AppForm, AppToast, AppEntitlementGate)                | ✅             |
-| 8     | 3 typography (Heading, Text, Muted)                                            | ✅             |
-| 9     | `<Logo>` wordmark dinâmico                                                     | ✅             |
-| 10    | PWA per-tenant (manifest + icons + splash + theme-color + safe-area + Serwist) | ✅             |
-| 10A   | Serwist Turbopack (ADR-0014 atualizado)                                        | ✅             |
-| 10B   | Apple Touch Icon + splash 3 sizes                                              | ✅             |
-| 11    | Bundle budgets `.size-limit.json`                                              | ✅             |
-| 12    | Storybook 10 supersede Ladle (ADR-0038)                                        | ✅             |
-| 13    | Makerkit RPCs entitlements (ADR-0039)                                          | ✅             |
-| 14    | Cleanup geral docs + ressalvas                                                 | 🟡 em execução |
-| 15    | Blueprints 19/20 novos (wrapper-strategy + i18n-strategy)                      | ⏳             |
-| 16    | Validação completa                                                             | ⏳             |
-| 17    | Teste memória JIT                                                              | ⏳             |
-| 18    | Commit local                                                                   | ⏳             |
+| Etapa | Tema                                                                             | Status         |
+| ----- | -------------------------------------------------------------------------------- | -------------- |
+| 1-5   | CLAUDE.md + rules + Etapa 5 i18n setup canônico                                  | ✅             |
+| i18n  | next-intl wireup completo (request.ts + plugin + messages + layout + i18n:audit) | ✅ 2026-05-21  |
+| 6     | APCA Silver validator                                                            | ✅             |
+| 7     | 3 wrappers obrigatórios (AppForm, AppToast, AppEntitlementGate)                  | ✅             |
+| 8     | 3 typography (Heading, Text, Muted)                                              | ✅             |
+| 9     | `<Logo>` wordmark dinâmico                                                       | ✅             |
+| 10    | PWA per-tenant (manifest + icons + splash + theme-color + safe-area + Serwist)   | ✅             |
+| 10A   | Serwist Turbopack (ADR-0014 atualizado)                                          | ✅             |
+| 10B   | Apple Touch Icon + splash 3 sizes                                                | ✅             |
+| 11    | Bundle budgets `.size-limit.json`                                                | ✅             |
+| 12    | Storybook 10 supersede Ladle (ADR-0038)                                          | ✅             |
+| 13    | Makerkit RPCs entitlements (ADR-0039)                                            | ✅             |
+| 14    | Cleanup geral docs + ressalvas                                                   | 🟡 em execução |
+| 15    | Blueprints 19/20 novos (wrapper-strategy + i18n-strategy)                        | ⏳             |
+| 16    | Validação completa                                                               | ⏳             |
+| 17    | Teste memória JIT                                                                | ⏳             |
+| 18    | Commit local                                                                     | ⏳             |
 
 ---
 

@@ -10,6 +10,11 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Features (2026-05-21 — i18n wireup completo)
+
+- `i18n`: next-intl 4.12.0 instalado e agora wired up — `i18n/request.ts` (locale `pt-BR` fixo ADR-0040 §G decisão 13) + `next.config.ts` plugin `createNextIntlPlugin` + `messages/pt-BR/common.json` (namespaces `actions/errors/validation/feedback/entitlements`) + `app/layout.tsx` wrap `NextIntlClientProvider` preservando `ThemeProviderClient` (next-themes Fase 4). ESLint rules `react/jsx-no-literals` + `i18next/no-literal-string` agora funcionam corretamente (pesquisa-39 follow-up).
+- `Scripts`: `pnpm i18n:audit` adicionado — ESLint `app/**` + `lib/**` com `--max-warnings 0`.
+
 ### Database (2026-05-21 — Pivot ADR-0044 Fase 4)
 
 - Migration `0025_theme_storage_versioning` — `ALTER tenants ADD active_theme_version_id` (FK nullable) · `CREATE tenant_themes` (catalogo per-tenant, `source` check IN preset/custom/ai-generated/imported-tweakcn, `parent_theme_id` self-FK pra fork Fase 5) · `CREATE tenant_theme_versions` (snapshot jsonb Hotmart-like, UNIQUE theme_id+version_number) · Triggers `prevent_theme_version_mutation` (G.1 imutável-on-insert) + `enforce_theme_version_cap` (G.2 cap 50) · RLS via `auth.jwt() ->> 'tenant_id'` em ambas tables (sem UPDATE/DELETE em versions). Migration `0025b_pin_theme_version_function_search_path` — pin `search_path` nas 2 funções (fecha advisor WARN).

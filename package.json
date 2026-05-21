@@ -16,6 +16,7 @@
     "knip": "knip --exclude binaries",
     "vocab:audit": "bash scripts/vocab-audit.sh",
     "token:audit": "bash scripts/token-audit.sh",
+    "i18n:audit": "eslint \"app/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" --max-warnings 0",
     "audit:disables": "bash scripts/grep-disables.sh",
     "adr:index": "tsx scripts/adr-index.ts",
     "docs:validate": "tsx scripts/docs-validate.ts",

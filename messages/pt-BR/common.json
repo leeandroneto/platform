@@ -6,6 +6,7 @@
     "close": "Fechar",
     "delete": "Excluir",
     "edit": "Editar",
+    "create": "Criar",
     "back": "Voltar",
     "next": "Próximo",
     "submit": "Enviar"
@@ -21,7 +22,9 @@
   },
   "validation": {
     "required": "Campo obrigatório",
-    "invalid_email": "Email inválido",
+    "invalid_email": "E-mail inválido",
+    "invalid_url": "URL inválida",
+    "validation_failed": "Verifique os dados informados.",
     "min_length": "Mínimo {min} caracteres",
     "max_length": "Máximo {max} caracteres"
   },
