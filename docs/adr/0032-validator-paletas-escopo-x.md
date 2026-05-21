@@ -3,6 +3,20 @@
 Date: 2026-05-17
 Status: accepted
 
+**Atualizado 2026-05-21 após ADR-0044 (pivot TweakCN-way).** Decisões sobre
+escopo do validator APCA (primary ≠ texto; testar cenários reais
+body+filled-block) continuam válidas. Mudanças:
+
+- Threshold promovido de Bronze → **Silver** (Lc ≥75 body, ≥60 large, ≥45
+  non-text) em ADR-0040 §H. APCA Silver é o gate canônico.
+- Validator agora opera em 28 shadcn-canonical (não mais 13 paletas seed).
+  Pairs testados: background/foreground, card/card-foreground,
+  primary/primary-foreground, secondary/secondary-foreground, muted/muted-foreground,
+  accent/accent-foreground, destructive/destructive-foreground, popover/popover-foreground,
+  border/background (non-text), input/background (non-text), ring/background (non-text),
+  chart-N/background (non-text).
+- Helper `pickReadableForeground()` mantido em `lib/design/contrast.ts`.
+
 ## Context
 
 `scripts/validate-palettes.ts` versão dia 0 testava:

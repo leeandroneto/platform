@@ -1,7 +1,8 @@
 # Claude — contexto do projeto
 
 > Carregado no início de toda sessão. **Mantenha curto e atualizado.**
-> Última atualização: 2026-05-18 (ADR-0038 Storybook + ADR-0039 Makerkit RPCs — fechamento dia 0)
+> Última atualização: 2026-05-21 (Fase B organização pós-reset · pivot
+> TweakCN ADR-0044 supersedes ADR-0043)
 
 ---
 
@@ -12,7 +13,7 @@ diferentes verticais (fitness, yoga, idiomas) criam, vendem e operam
 programas e desafios online com suporte de IA.
 
 **Arquitetura:** 1 código + 1 deploy + N marcas filhas via hostname
-(ADR-0024). Brand resolvida em runtime via `platform.brands` lookup,
+(ADR-0024). Brand resolvida em runtime via `public.brands` lookup,
 não env. Adicionar marca filha = INSERT + DNS, zero refactor.
 
 **Marca filha dia 1:** `desafit.app` (fitness).
@@ -25,27 +26,28 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 
 ## Onde fica cada coisa
 
-| Info                              | Arquivo canônico                                                                        |
-| --------------------------------- | --------------------------------------------------------------------------------------- |
-| Regras code carregadas por path   | `.claude/rules/*.md` (17 rules)                                                         |
-| Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                          |
-| Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                    |
-| Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                |
-| Plano ativo                       | `docs/plans/PLANO-DIA-1-AGENCY-FUNNEL.md`                                               |
-| Plano anterior (referência)       | `docs/plans/PLANO-MESTRE-DIA-0.md` (dia 0)                                              |
-| Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms, 24 pages, 25 reports, 26 design vibes — dispatching) |
-| Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                  |
-| Log cronológico de mudanças       | `CHANGELOG.md`                                                                          |
-| Status corrente do projeto        | `docs/_status.md`                                                                       |
-| Histórico arquivado               | `docs/_archive/` (referência JIT)                                                       |
+| Info                              | Arquivo canônico                                                                                   |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Regras code carregadas por path   | `.claude/rules/*.md` (19 rules)                                                                    |
+| Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                     |
+| Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                               |
+| Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                           |
+| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (Fase -1 ✅ clone TweakCN · Fase 0 surgical delete · Fase 1-8)       |
+| Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após pivot Fase 4 theme storage)                             |
+| TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                              |
+| Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms · 24 pages · 25 reports · 28 tweakcn-eval · 29-31 estudos pivot) |
+| Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                             |
+| Log cronológico de mudanças       | `CHANGELOG.md`                                                                                     |
+| Status corrente do projeto        | `docs/_status.md`                                                                                  |
+| Histórico arquivado               | `docs/_archive/` (referência JIT)                                                                  |
+| Migrations docs                   | `docs/migrations/NNNN_*.md` (espelha MCP apply)                                                    |
 
-`.claude/rules/*.md` (carregamento por path glob):
+`.claude/rules/*.md` (carregamento por path glob — 19 rules):
 
 - `naming` · `abstractions` · `layers` · `data-layer` · `domain-logic` · `server-actions` · `features` · `jwt-claims` · `components`
 - **i18n** · **contrast** · **shadcn-zone** · **design-tokens** · **brand** · **entitlements** (ADR-0040 §L — cada um tem "Condição de revisitar")
 - **tenant-content** (hierarquia 4 níveis copy/landing — decisão dia 0: template+slots, não block builder)
-- **forms-engine** (Plano Dia 1 — Form Engine + Page Engine, vocab, catálogo blocks, IA pipeline, versionamento Hotmart-like)
-- **design-references** (71 DESIGN.md em `docs/references/design-systems/` — APENAS mood/hierarquia/density, NUNCA tokens literais)
+- **forms-engine** (Form Engine + Page Engine, vocab, catálogo blocks, IA pipeline, versionamento Hotmart-like)
 - **docs-writing** (gatilho: ao criar/atualizar doc; mapa de "qual tipo de info vai em qual arquivo")
 
 Conflito entre docs: ADR > Blueprint > Plano ativo > Memória > Session reflection.
@@ -64,7 +66,7 @@ next-intl 4 · pnpm 10 · Geist · Vitest · Playwright · Storybook 10
 
 ## Schema único (ADR-0033 — superseded ADR-0025)
 
-- `public.*` — tudo do produto (37 tabelas dia 0). RLS é a fronteira de segurança, não schema
+- `public.*` — tudo do produto. RLS é a fronteira de segurança, não schema
 - `auth.*`, `storage.*`, `realtime.*` — Supabase managed (não tocar)
 
 Em data layer: `client.from('programs')`. Sem `.schema()` qualifier.
@@ -78,22 +80,21 @@ NUNCA hardcoded `desafit`/`yoga.app`/`ingles.app` no código. Brand vem do hostn
 
 ```ts
 // proxy.ts (Next 16)
-import { getBrandByHost } from '@/lib/brand/getBrandByHost'
-const brand = await getBrandByHost(req.headers.get('host'))
-// brand: { id, name, host, primary_color_oklch, logo_url, default_vertical }
+import { getRouteByHost } from '@/lib/route/getRouteByHost'
+const route = await getRouteByHost(req.headers.get('host'))
+// route: { brand, tenant?, palette?, font? }
 ```
 
 Em componentes RSC + Client:
 
 ```tsx
-import { useBrand } from '@/lib/route/RouteProvider'
+import { useBrand, useTenantOptional } from '@/lib/route/RouteProvider'
 const brand = useBrand()
 return <h1>{brand.name}</h1> // ou <Logo /> wordmark dinâmico
 ```
 
 Verticalização via `public.tenants.vertical` + `component.kind` polimórfico
-
-- JSONB internal keys. Mesmo schema serve todas marcas filhas.
+JSONB internal keys. Mesmo schema serve todas marcas filhas.
 
 ---
 
@@ -112,7 +113,7 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 ## Regras críticas (toda sessão)
 
 - **JWT claims:** RLS usa `auth.jwt() ->> 'tenant_id'` (nunca recriar helper)
-- **Migrations:** via `mcp__supabase__apply_migration`. Nunca .sql manual
+- **Migrations:** via `mcp__plugin_supabase_supabase__apply_migration`. Nunca .sql manual
 - **Erros:** `lib/data/` e `lib/domain/` lançam · server actions retornam `{ok}`
 - **Env:** `import { env } from '@/lib/env'` (exceto `NEXT_PUBLIC_*` em client)
 - **Componentes:** <300 linhas, RSC default, nunca `createClient()` direto
@@ -124,7 +125,19 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **APCA Silver:** body Lc ≥75, large ≥60, non-text ≥45. Gate em `prebuild` script. Ver `.claude/rules/contrast.md`
 - **Entitlements server:** `requireEntitlement(feature)` + `requireQuota(key)` + `incrementQuotaUsage(key, delta)` chamam RPCs (ADR-0039). API client (`useEntitlement`, `useQuota`) + `AppEntitlementGate` inalterados. Ver `.claude/rules/entitlements.md`
 - **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx`. MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
-- **Blueprints novos:** `19-wrapper-strategy.md` (consolida ADR-0040 §E + §F) + `20-i18n-strategy.md` (consolida ADR-0040 §G) — Etapa 15 do plano
+- **Engines (ADR-0041):** 2 motores separados — Form Engine (linear `steps[]+blocks[]+logic[]`) + Page Engine (árvore recursiva). Polimórficos via `forms.kind`/`pages.kind`. Reuso interno/externo via `scope` flag (tenant/internal/platform) + RLS condicional. Report = `pages.kind='report'` opcional (não regra). Catálogo dos engines: `docs/blueprint/21-engine-catalog.md`
+- **Design system (ADR-0044 pivot · supersedes ADR-0043):**
+  shadcn-canonical **41 tokens TweakCN-vocab** como interface pública obrigatória
+  (28 cores + 3 fontes + 1 radius + 6 shadow primitives + spacing + letter-spacing).
+  Color format OKLCH-primary (HEX fallback JIT). Universal (mobile primitives,
+  z-index, motion, spacing Carbon, APCA thresholds, breakpoint 768px) vive em
+  `globals.css`; per-tenant (cores, fontes, radius, shadow) via
+  `<style precedence="theme">` runtime. APCA Silver dual-gate mantido.
+  TweakCN clone read-only em `C:\Users\leean\Desktop\tweakcn-ref\` como SSOT
+  pra adaptação direta. **Adaptamos AO shadcn, não criamos vocabulário paralelo.**
+  Extras opt-in só após estudo prévio + ADR.
+- **Fase 1/2/3 (vocabulário oficial — supersedes H1/H2/H3):** Fase 1 = agência opera · Fase 2 = self-service profissional · Fase 3 = Pacote A cliente final. Não confundir com roadmap M0→M3 (sprints temporais)
+- **Blueprints novos:** `19-wrapper-strategy.md` (ADR-0040 §E+§F) · `20-i18n-strategy.md` (ADR-0040 §G) · `21-engine-catalog.md` (ADR-0041)
 
 ---
 
@@ -146,7 +159,7 @@ Antes de PR: rodar os 6 acima.
 ## Abstrações disponíveis (use antes de criar)
 
 `useServerAction(action)` · `CopyButton`/`useCopy` · `ok()`/`fail()` ·
-`renderEmail(el)` · `useBrand()` · `getBrandByHost()` · `<Logo>` wordmark ·
+`renderEmail(el)` · `useBrand()` · `getRouteByHost()` · `<Logo>` wordmark ·
 `useAppToast()` · `<AppForm>` · `<AppEntitlementGate>` · `<Heading>`/`<Text>`/`<Muted>`.
 Lista completa: `.claude/rules/abstractions.md`.
 

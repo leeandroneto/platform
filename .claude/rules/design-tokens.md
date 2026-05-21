@@ -1,95 +1,200 @@
 ---
-name: Design tokens — usos canônicos OKLCH
-description: --color-*, --radius-*, --font-* vêm do banco runtime. Onde usar, onde NÃO usar.
+name: Design tokens — shadcn-canonical 41 TweakCN-vocab (ADR-0044)
+description: Adaptamos AO shadcn, não criamos vocabulário paralelo. 28 cores + 3 fontes + 1 radius + 6 shadow primitives. Universal vs per-tenant distinguir SEMPRE.
 paths:
   - 'app/**/*.{ts,tsx,css}'
   - 'components/**/*.{ts,tsx}'
   - 'features/**/*.{ts,tsx}'
+  - 'lib/design/**/*.{ts,css}'
 ---
 
 ## Princípio
 
-CSS vars vêm do banco runtime via `/api/{tenants,brands}/[id]/theme.css?v=N`. shadcn primitives herdam automático — ZERO componente editado individualmente (`app/globals.css:140-141`).
+**shadcn-canonical 41 tokens (TweakCN-vocab) é a interface pública obrigatória**
+(ADR-0044). Adaptamos AO shadcn — não criamos vocabulário paralelo. Extras
+opt-in só após estudo prévio + ADR.
 
-## Tabela canônica (replica blueprint 05 §3)
+Per-tenant tokens vêm via `<style precedence="theme">` runtime hoisted React
+19 (gerado por `lib/design/build-theme-css.ts` consultando `tenant_themes` no
+DB). Universal tokens vivem em `app/globals.css` fora do tema.
 
-| Token                                      | Onde usar                                                        | Onde NÃO usar                   | APCA                         |
-| ------------------------------------------ | ---------------------------------------------------------------- | ------------------------------- | ---------------------------- |
-| `--color-primary`                          | bg de action (`<Button>`, ring focus, badge fill, progress fill) | body text, ícones no corpo      | Lc ≥45 vs surface (non-text) |
-| `--color-primary-foreground`               | text/ícone dentro de `<Button variant=default>`                  | bg                              | Lc ≥75 vs primary            |
-| `--color-foreground`                       | body text (parágrafos, labels, headings)                         | bg                              | Lc ≥75 vs surface-1          |
-| `--color-muted-foreground`                 | text secundário, captions, helpers                               | body principal                  | Lc ≥60 large                 |
-| `--color-background` (=surface-1)          | bg página `<body>`                                               | bg cards                        | base body                    |
-| `--color-card` (=surface-2)                | bg cards, sections, containers elevados                          | bg página                       | —                            |
-| `--color-popover` (=surface-3)             | bg dropdowns, popovers, tooltips                                 | cards inline                    | —                            |
-| `--color-muted` (=surface-4)               | bg skeleton, disabled, ghost hover                               | text bg                         | —                            |
-| `--color-border`                           | borders 1px de cards/inputs/separators                           | preencher área (use surface-\*) | —                            |
-| `--color-input`                            | bg `<input>`, `<textarea>`, `<select>`                           | bg container externo            | —                            |
-| `--color-chart-1..5`                       | barras/linhas em `<Chart>` (Recharts)                            | UI fora de chart                | Lc ≥45 vs surface            |
-| `--color-info/success/warning/destructive` | bg toast/alert/badge semântico + `*-foreground` pro text         | tema marca (use primary)        | Lc ≥75 fg/bg                 |
-| `--radius` (+sm/md/lg/xl)                  | border-radius em cards, buttons, inputs, badges, dialogs         | tipografia ou spacing           | Tailwind `rounded-*` lê      |
-| `--font-sans/mono/brand`                   | `<body>` default, code blocks, headings hero                     | inline override                 | next/font em layout          |
-| `--shape-*`                                | tokens custom de shape (radius por tipo de componente)           | hardcoded `rounded-2xl`         | configurável por tenant      |
-| `--elevation-flat`                         | cards inline em listings (sem shadow, só border)                 | flutuação acima de conteúdo     | — (filosofia Linear-leaning) |
-| `--elevation-raised`                       | cards destacados, dropdowns, popover discretos                   | dialog/modal (use overlay)      | —                            |
-| `--elevation-overlay`                      | dialog, sheet, drawer, popover acima de conteúdo                 | hover sutil (use raised)        | —                            |
+shadcn primitives (`components/ui/*`) herdam automático — ZERO componente
+editado individualmente.
 
-## Como funciona o theming automático
+---
 
-1. `proxy.ts` resolve `host → brand+tenant`
-2. `app/layout.tsx` injeta `<link rel="stylesheet" href="/api/tenants/{id}/theme.css?v=N">`
-3. `app/api/tenants/[id]/theme.css/route.ts` busca paleta/fonte/shape do banco → emite CSS
-4. `@theme inline` em `globals.css` mapeia `--color-*` → vars shadcn (`--primary`, `--card`, etc)
-5. `<Button>` shadcn puro renderiza com cor do tenant — sem prop, sem wrapper
+## Os 41 tokens canonical (TweakCN-vocab)
 
-**Conclusão:** não passar cor via prop. Tenant theming já funciona automático.
+### Cores per-tenant (28) — light + dark separados
 
-## Anti-patterns (ESLint enforce)
+| Token (+ `*-foreground` pair quando aplicável)                                                | Onde usar                                      | APCA              |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----------------- |
+| `--background` / `--foreground`                                                               | body página + text padrão                      | Lc ≥75 (body)     |
+| `--card` / `--card-foreground`                                                                | bg cards, sections                             | Lc ≥75            |
+| `--popover` / `--popover-foreground`                                                          | bg dropdowns, popovers, tooltips               | Lc ≥75            |
+| `--primary` / `--primary-foreground`                                                          | bg action (`<Button>`, ring focus, badge fill) | Lc ≥75 fg vs bg   |
+| `--secondary` / `--secondary-foreground`                                                      | bg action secundária, badge secundário         | Lc ≥75            |
+| `--muted` / `--muted-foreground`                                                              | bg skeleton/disabled, text secundário          | Lc ≥60 large      |
+| `--accent` / `--accent-foreground`                                                            | bg hover/highlight, accent surfaces            | Lc ≥75            |
+| `--destructive` / `--destructive-foreground`                                                  | bg destructive action, error                   | Lc ≥75            |
+| `--border`                                                                                    | borders 1px de cards/inputs/separators         | Lc ≥45 (non-text) |
+| `--input`                                                                                     | border de `<input>`, `<textarea>`, `<select>`  | Lc ≥45            |
+| `--ring`                                                                                      | focus ring                                     | Lc ≥45            |
+| `--chart-1` ... `--chart-5`                                                                   | séries em `<Chart>` (Recharts)                 | Lc ≥45 vs surface |
+| `--sidebar` / `--sidebar-foreground` / `--sidebar-primary` / `--sidebar-primary-foreground` / | sidebar shadcn block                           | Lc ≥75 fg         |
+| `--sidebar-accent` / `--sidebar-accent-foreground` / `--sidebar-border` / `--sidebar-ring`    | sidebar shadcn block                           | Lc ≥45 non-text   |
 
-| Anti-pattern                                | Por que                                     | Substituto                                       |
-| ------------------------------------------- | ------------------------------------------- | ------------------------------------------------ |
-| `text-xl`, `text-2xl` em código             | `design-tokens/no-tailwind-bypass` bloqueia | `<Heading level={3}>` ou `<Text variant="lead">` |
-| `rounded-md`, `rounded-2xl`                 | Idem                                        | `var(--radius)` via Tailwind `rounded`           |
-| `uppercase` className                       | Idem                                        | `<Eyebrow>` (JIT) ou `<Badge>`                   |
-| `[#hex]` arbitrary Tailwind                 | Idem                                        | `var(--color-*)` token                           |
-| `[rgba(...)]` arbitrary                     | Idem                                        | `var(--color-*)` token                           |
-| `#hex` literal em .ts/.tsx                  | Hook `block-token-bypass.sh` bloqueia       | CSS var                                          |
-| `style={{ color: 'var(--accent)' }}` em JSX | Regra 17 (blueprint 13) bloqueia            | className token shadcn                           |
+### Fontes per-tenant (3)
+
+| Token          | Uso                                    |
+| -------------- | -------------------------------------- |
+| `--font-sans`  | body default (parágrafos, labels)      |
+| `--font-serif` | headings hero opcional (per-tenant)    |
+| `--font-mono`  | code blocks, dados tabulares numéricos |
+
+**Sem 5 slots (display/body/mono/accent/eyebrow) — banido ADR-0044.**
+
+### Radius per-tenant (1) — Tailwind v4 deriva o resto
+
+| Token      | Uso                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| `--radius` | Base radius. Tailwind v4 deriva `--radius-sm/md/lg/xl/2xl/3xl/4xl` algoritmicamente via `@theme` |
+
+### Shadow primitives per-tenant (6) — 8 níveis derivados
+
+`--shadow-color` · `--shadow-opacity` · `--shadow-blur` · `--shadow-spread` ·
+`--shadow-offset-x` · `--shadow-offset-y`
+
+Algoritmo `getShadowMap()` (replicado de `tweakcn-ref/utils/shadows.ts`) deriva
+8 níveis: `--shadow-2xs` · `--shadow-xs` · `--shadow-sm` · `--shadow-md` ·
+`--shadow-lg` · `--shadow-xl` · `--shadow-2xl` · `--shadow` (base alias).
+
+### Spacing + letter-spacing per-tenant (2)
+
+| Token              | Uso                                                             |
+| ------------------ | --------------------------------------------------------------- |
+| `--spacing`        | Tailwind v4 base spacing (per-tenant override; default 0.25rem) |
+| `--letter-spacing` | Global per-tenant tightening/loosening                          |
+
+---
+
+## Universal (vivem em `app/globals.css`)
+
+Não dependem de tenant — iOS HIG / Material 3 / WCAG padrões.
+
+| Categoria             | Tokens                                                                                                                                                                                                                           |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mobile primitives** | `--touch-min` (44px), `--inset-safe-{top,bottom,left,right}` (env safe-area), `--mobile-full-height` (100dvh), `--mobile-nav-height`, `--fab-size` (56px), `--sticky-cta-height`, `--mini-player-height`, `--press-scale` (0.97) |
+| **Frosted glass**     | `--frosted-blur`, `--frosted-saturate`, `--frosted-opacity`                                                                                                                                                                      |
+| **Z-index**           | `--z-content`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`                                                                                                                               |
+| **Motion**            | `--duration-{instant,fast,normal,slow}`, `--ease-out`, easings canonical (Material 3 / Polaris)                                                                                                                                  |
+| **Spacing scale**     | `--spacing-0` ... `--spacing-32` (Carbon 8-base — numérica, ortogonal ao `--spacing` per-tenant)                                                                                                                                 |
+| **Breakpoint**        | `--breakpoint-mobile` (768px canonical)                                                                                                                                                                                          |
+| **APCA thresholds**   | body 75 · large 60 · non-text 45                                                                                                                                                                                                 |
+
+**Spacing dual-scale:** `--spacing` (per-tenant, Tailwind v4 base) e
+`--spacing-0..32` (universal Carbon) coexistem sem conflito.
+
+---
+
+## Color format — OKLCH-primary
+
+- DB armazena OKLCH string literal: `"oklch(0.55 0.2 270)"`.
+- `buildThemeCSS()` emite OKLCH literal.
+- APCA opera em OKLCH nativo via `apca-w3` + `culori` (`lib/design/contrast.ts`).
+- HEX só fallback JIT: PWA manifest `theme-color`, email HTML, OG image SVG.
+  Converter via `oklchToHex()` quando necessário.
+
+---
+
+## Como funciona o theming runtime
+
+1. `proxy.ts` resolve `host → brand+tenant` (ADR-0024).
+2. `getRouteByHost()` carrega `tenant_themes.active_theme_version_id →
+tenant_theme_versions.snapshot` (Zod `Theme`).
+3. `app/layout.tsx` chama `buildThemeCSS(snapshot)` dentro de `<Suspense>` e
+   emite `<style precedence="theme">` (React 19 hoist pro `<head>`).
+4. Cache via `cacheTag('theme:<tenantId>:<version>')`.
+5. shadcn primitives consomem `--background` / `--card` / etc. diretamente.
+
+**Conclusão:** não passar cor via prop. Theming já funciona automático.
+
+---
+
+## Anti-patterns (ESLint enforce — ADR-0044 §12 + naming.md)
+
+| Anti-pattern                                               | Por que                                                | Substituto                              |
+| ---------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------- | ----- | ------ |
+| `var(--role-*)` em código                                  | Vocab banido ADR-0044 (67 roles invented mortos)       | `var(--<canonical>)` ou Tailwind alias  |
+| `--shape-*` (ADR-0028 superseded)                          | Deprecado ADR-0044 §5                                  | `var(--radius)` + Tailwind `rounded-*`  |
+| `--elevation-flat/raised/overlay` (ADR-0042 superseded)    | Deprecado ADR-0044 §3                                  | 8 níveis shadow algorítmicos derivados  |
+| `--font-display/--font-accent/--font-eyebrow` (5 slots)    | Banido ADR-0044                                        | `--font-sans/--font-serif/--font-mono`  |
+| Native aliases archetype-specific (`--apple-label-*`, etc) | Banido ADR-0044 (archetype morto)                      | Token canonical + extension JIT via ADR |
+| Voice tokens per archetype                                 | Banido ADR-0044                                        | —                                       |
+| `text-xl`, `rounded-2xl` literal em código                 | `design-tokens/no-tailwind-bypass`                     | `<Heading level={3}>` / `var(--radius)` |
+| `[#hex]` arbitrary Tailwind                                | Idem                                                   | `var(--<canonical>)` token              |
+| `#hex` / `rgba(...)` literal em .ts/.tsx                   | Hook `block-token-bypass.sh`                           | CSS var                                 |
+| `style={{ color: 'var(--primary)' }}` em JSX               | Regra 17 (blueprint 13)                                | className shadcn (`text-primary`)       |
+| `font-family:` literal / `font-[Inter]` arbitrary          | ESLint `no-raw-fontfamily`                             | `var(--font-sans                        | serif | mono)` |
+| `100vh` em mobile-aware                                    | ESLint `no-vh-in-mobile-aware`                         | `100dvh` / `var(--mobile-full-height)`  |
+| Inventar `--color-info/--color-success/--color-warning`    | ADR-0044 §6 — só 28 canonical (inclui `--destructive`) | `--destructive` ou chart-N opt-in       |
+
+---
 
 ## Exceções aceitas (allowlist)
 
-- `app/globals.css @theme` — declaração dos tokens
-- `next/og` ImageResponse — `#hex` em SVG inline (build-time)
+- `app/globals.css @theme` — declaração tokens universais
+- `lib/design/build-theme-css.ts` — emit tokens per-tenant em OKLCH literal
+- `next/og` ImageResponse — `#hex` em SVG inline (build-time fallback)
 - `blurhash` — hex hash de placeholder
+- `lib/design/contrast.ts` — `oklchToHex()` fallback HEX JIT
 
-## Quando criar token novo
+---
 
-Gatilho: precisa de cor semântica que nenhum dos existentes cobre.
+## Quando criar extension opt-in
+
+**Não criamos tokens novos.** Os 41 canonical são fixos (shadcn-canonical
+TweakCN-vocab). Extension opt-in é coisa diferente: tokens fora do canonical
+que cobrem necessidade que TweakCN não modela (ex: `--mini-player-height` pra
+PWA aluno, `--touch-min` iOS HIG, `--frosted-blur` Apple-style).
+
+Gatilho: necessidade real fora dos 41, repetida em 3+ tenants OU fundamento
+em padrão proven (iOS HIG, Material 3, WCAG).
 
 Passo:
 
-1. Adicionar em `app/globals.css @theme` (`--color-novotoken: oklch(...)`)
-2. Mapear em `@theme inline` se shadcn precisar (`--novotoken: var(--color-novotoken)`)
-3. Adicionar à tabela canônica acima
-4. Validar APCA Silver vs surface relevantes
-5. Documentar em ADR se for usado em 3+ componentes
+1. Documentar em ADR (study-first ADR-0044 princípio §1)
+2. Decidir escopo: **universal** (`globals.css`, mesma pra todos tenants) ou
+   **per-tenant extension** (`tenant_theme_versions.snapshot.extensions` JSONB)
+3. Validar APCA Silver vs surfaces relevantes (se for cor/border/ring)
+4. Adicionar fallback chain: `var(--mini-player-height, 64px)`
+5. Atualizar este doc + naming.md (lista vocab banido — confirmar não-conflito)
+
+---
 
 ## Condição de revisitar
 
-| Gatilho                                                                                      | Ação                                                                                                                                                                                                                                     |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Token semantic novo necessário** (ex: `--color-paywall`, `--color-streak`)                 | Adicionar em globals.css @theme + @theme inline + validar APCA Silver                                                                                                                                                                    |
-| **shadcn upstream adiciona variant que precisa de novo token**                               | Adicionar token + atualizar mapping `@theme inline`                                                                                                                                                                                      |
-| **Tenant pede cor custom fora das 13 paletas seed**                                          | Criar paleta clone via `palettes.source_palette_id` (ADR-0029 template→instance) + validar APCA antes de persistir                                                                                                                       |
-| **APCA quebra em paleta tenant**                                                             | `ensureAccessible()` ajusta automático OU rejeita salvamento                                                                                                                                                                             |
-| **globals.css cobre 100% tokens semantic + vendor classes (cmdk/vaul/embla/tw-animate-css)** | Promover `better-tailwindcss/no-unknown-classes` de `warn` pra `error` em `eslint.config.mjs` (citar `// ADR-0040 §B.2` no diff). Mede progresso: rodar `pnpm lint` e contar warnings dessa regra — quando chegar a 0, é seguro promover |
+| Gatilho                                                                              | Ação                                                                                                           |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| **shadcn upstream adiciona token canonical novo**                                    | Adicionar à tabela 28-cores acima + atualizar Zod `ThemeColorsSchema` em `lib/design/contract/theme.ts`        |
+| **Tenant pede cor custom fora do preset**                                            | Builder UI (`/admin/theme-studio`) gera novo `tenant_theme_versions` snapshot via flow validado APCA dual-gate |
+| **APCA quebra em preset tenant**                                                     | `ensureAccessible()` ajusta automático OU bloqueia salvamento                                                  |
+| **Extra opt-in repetido em 3+ tenants** (ex: `--mini-player-height` virou universal) | Promover pra universal em `app/globals.css` + ADR documenta migração                                           |
+| **TweakCN upstream adiciona primitive shadow novo**                                  | Re-validar `lib/design/build-theme-css.ts` algoritmo `getShadowMap()` contra `tweakcn-ref/utils/shadows.ts`    |
+
+---
 
 ## Referências
 
-- ADR-0040 §H
-- ADR-0028 (pools customização movidos pro banco)
-- ADR-0029 (template→instance pattern unificado)
-- `docs/blueprint/05-design-system.md §3` — tabela tokens completa
-- `app/globals.css` — definição @theme + @theme inline
-- `app/api/{tenants,brands}/[id]/theme.css/route.ts` — geração runtime
+- **ADR-0044** — pivot TweakCN-way (autoritativa)
+- ADR-0033 — schema único `public.*`
+- ADR-0040 §H — APCA Silver thresholds
+- `docs/plans/pivot-tweakcn.md` — plano executável Fase -1..8
+- `docs/research/29-token-partition-universal-vs-tenant.md` (S1.1)
+- `docs/research/30-color-format-culori-integration.md` (S1.2)
+- `docs/research/31-zod-schema-shadcn-canonical.md` (S1.3)
+- `C:\Users\leean\Desktop\tweakcn-ref\` — clone read-only (Apache-2.0)
+- `app/globals.css` — universal tokens
+- `lib/design/build-theme-css.ts` — emit per-tenant CSS
 - `.claude/rules/contrast.md` — APCA Silver
+- `.claude/rules/naming.md` — vocab banido

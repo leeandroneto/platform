@@ -4,6 +4,19 @@ Date: 2026-05-17
 Status: superseded by 0029 (paletas: clone pattern em vez de `custom_primary_oklch`) + schema `platform.*` consolidado em `public.*` via ADR-0033
 Supersedes: 0027 (parcial — schema de tenant ajustado)
 
+**Atualizado 2026-05-21 após ADR-0044 (pivot TweakCN-way).** Decisões sobre
+pools no banco continuam válidas. Mudanças:
+
+- Tabela `shape_presets` deprecada (ADR-0044 §5) — substituída por `--radius`
+  único per-tenant em `tenant_theme_versions.snapshot.common.radius`.
+- Tabela `palettes` continua reservada, mas o modelo principal de
+  customização passa a ser `tenant_themes` + `tenant_theme_versions`
+  (Fase 4 do `docs/plans/pivot-tweakcn.md`). Preset registry virá em
+  `lib/design/presets/<slug>.ts`.
+- Migration target: importar presets TweakCN via `pnpm dlx shadcn add
+https://tweakcn.com/r/themes/<id>` ou pipeline `scripts/import-tweakcn-presets.ts`
+  (Fase 5 do plano).
+
 ## Why superseded
 
 Esquema deste ADR colocou `platform.tenants.custom_primary_oklch text null` como hack pra prof customizar paleta. Não escala (prof quer customizar secondary, surfaces, extras → vira N colunas custom). ADR-0029 unifica TUDO no pattern template→instance: prof customizar paleta = CLONE em `platform.palettes` com `source_palette_id` + `created_by_tenant_id`. Princípios do 0028 (pools no banco, seed das 13/7/3 oficiais, brand-restricted via brand_id) permanecem.

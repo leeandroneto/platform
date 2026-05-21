@@ -21,26 +21,41 @@ paths:
 | Documentação interna                                               | **PT-BR livre**                                             |
 | Brand identity                                                     | **via env (`NEXT_PUBLIC_BRAND_*`), nunca hardcoded**        |
 
-## Palavras proibidas (16 termos — ESLint enforce)
+## Princípio shadcn-canonical (ADR-0044)
 
-| Banido                             | Use                               |
-| ---------------------------------- | --------------------------------- |
-| `student`                          | `client`                          |
-| `trainer`                          | `professional`                    |
-| `intake`                           | `lead-capture` (kind do form)     |
-| `wizard`                           | `setup`                           |
-| `prospect`                         | `lead`                            |
-| `diagnostic`, `diagnostico`        | `assessment`                      |
-| `customization`                    | `branding` / `theme`              |
-| `workspace`                        | `tenant`                          |
-| `framer-motion`                    | `motion/react`                    |
-| `aluno` em folder/identifier       | `client` (URL via rewrite ok)     |
-| `reflexao`, `pilares`, `ato_*`     | `reflection`, `pillars`, `act_*`  |
-| `proximo_passo`                    | `next_step`                       |
-| `prof-*` (abreviado)               | `professional-*` completo         |
-| `legacy-*`, `_legacy/`             | não existe                        |
-| `onboarding.bio`, `onboarding-bio` | nada — não citar (legado pausado) |
-| `desafit` hardcoded                | `env.NEXT_PUBLIC_BRAND_NAME`      |
+**Adaptamos AO shadcn, não criamos vocabulário paralelo.** shadcn-canonical
+**41 tokens (TweakCN-vocab)** é a interface pública obrigatória do design
+system. Extras opt-in só após estudo prévio + ADR. Ver `.claude/rules/design-tokens.md`.
+
+## Palavras proibidas (ESLint enforce)
+
+| Banido                                                  | Use                                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `student`                                               | `client`                                                                   |
+| `trainer`                                               | `professional`                                                             |
+| `intake`                                                | `lead-capture` (kind do form)                                              |
+| `wizard`                                                | `setup`                                                                    |
+| `prospect`                                              | `lead`                                                                     |
+| `diagnostic`, `diagnostico`                             | `assessment`                                                               |
+| `customization`                                         | `branding` / `theme`                                                       |
+| `workspace`                                             | `tenant`                                                                   |
+| `framer-motion`                                         | `motion/react`                                                             |
+| `aluno` em folder/identifier                            | `client` (URL via rewrite ok)                                              |
+| `reflexao`, `pilares`, `ato_*`                          | `reflection`, `pillars`, `act_*`                                           |
+| `proximo_passo`                                         | `next_step`                                                                |
+| `prof-*` (abreviado)                                    | `professional-*` completo                                                  |
+| `legacy-*`, `_legacy/`                                  | não existe                                                                 |
+| `onboarding.bio`, `onboarding-bio`                      | nada — não citar (legado pausado)                                          |
+| `desafit` hardcoded                                     | `env.NEXT_PUBLIC_BRAND_NAME`                                               |
+| **Design system — ADR-0044 (vocab pivot)**              |                                                                            |
+| `archetype` (como bundle estrutural)                    | tokens shadcn-canonical (legacy `tenants.archetype_id text` só até Fase 4) |
+| `--role-*` (qualquer dos 67 invented)                   | tokens shadcn-canonical (`--background`, `--card`, etc)                    |
+| `5 slots tipografia` (display/body/mono/accent/eyebrow) | 3 fontes canonical (`--font-sans/serif/mono`)                              |
+| `voice tokens` per archetype                            | — (sem substituto, conceito morto)                                         |
+| `native aliases archetype-specific`                     | extension opt-in via ADR + fallback chain                                  |
+| `--shape-*` (ADR-0028 superseded)                       | `--radius` + Tailwind utilities                                            |
+| `--elevation-flat/raised/overlay` (ADR-0042 superseded) | 8 níveis shadow algorítmicos derivados                                     |
+| `mechanic-swap`, `tinted-brand`, `frosted-opt-in`, etc  | — (7 estratégias canônicas mortas)                                         |
 
 ## Vocabulário canônico de motores (Form Engine + Page Engine — Plano Dia 1)
 

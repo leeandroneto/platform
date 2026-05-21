@@ -3,6 +3,19 @@
 Date: 2026-05-18
 Status: accepted (substitui ADR-0031 §1 + §7; complementa ADR-0036, ADR-0037)
 
+**Atualizado 2026-05-21 após ADR-0044 (pivot TweakCN-way).** Decisões sobre
+§A shadcn-zone quarentenada + §E 3 wrappers obrigatórios (`<AppForm>`,
+`useAppToast`, `<AppEntitlementGate>`) + §F 3 typography primitives
+(`<Heading>`/`<Text>`/`<Muted>`) + §G i18n strategy + §H APCA Silver
+dual-gate (75/60/45) + §L 6 rules path-loaded JIT continuam **integralmente
+válidas**.
+
+Decisões sobre design system (§§ relacionadas a tokens canon, archetype
+strategy, 28 roles invented D-43, 5 font slots, voice tokens) foram
+**superseded por ADR-0044 §11**. Vocabulário oficial pós-pivot:
+shadcn-canonical 41 tokens TweakCN-vocab (ver `.claude/rules/design-tokens.md`).
+Pointer canônico pra design system: ADR-0044 + `docs/plans/pivot-tweakcn.md`.
+
 ## Context
 
 Dia 0 do `platform/` (multi-tenant white-label B2B) tem 3 gaps que vão estourar na cara em ~5h de feature 1:

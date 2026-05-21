@@ -3,6 +3,18 @@
 Date: 2026-05-17
 Status: superseded by 0028 (schema parcial — princípio "3 eixos dia 1" mantido) + schema `platform.*` consolidado em `public.*` via ADR-0033
 
+**Atualizado 2026-05-21 após ADR-0044 (pivot TweakCN-way).** Princípio "tenant
+customiza 3 eixos (cor/tipografia/shape)" continua válido. Mudanças:
+
+- Eixo 3 "shape" muda de pool `--shape-*` (3 presets) para `--radius` único
+  per-tenant + Tailwind v4 deriva `sm/md/lg/xl/2xl/3xl/4xl` algoritmicamente.
+- Eixo 2 "tipografia" passa a 3 fontes (`--font-sans/serif/mono`); 5 slots
+  invented (display/body/mono/accent/eyebrow) banidos.
+- Eixo 1 "cor" passa a 28 shadcn-canonical OKLCH (não mais 13 paletas + chart
+  derivadas separadas).
+- Vocab `customization` continua banido (`.claude/rules/naming.md`) — usar
+  `branding` / `theme`.
+
 ## Why superseded
 
 Schema original colocava pools (13 paletas + 7 fontes + 3 shapes) hardcoded em
