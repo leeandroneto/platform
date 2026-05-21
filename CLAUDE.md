@@ -35,6 +35,7 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 | Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (Fase -1 ✅ clone TweakCN · Fase 0 surgical delete · Fase 1-8)       |
 | Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após pivot Fase 4 theme storage)                             |
 | TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                              |
+| Concept map (continuidade)        | `docs/design-system/20-concept-map.md` (markmap pós-pivot — ler em sessão nova antes de code)      |
 | Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms · 24 pages · 25 reports · 28 tweakcn-eval · 29-31 estudos pivot) |
 | Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                             |
 | Log cronológico de mudanças       | `CHANGELOG.md`                                                                                     |
