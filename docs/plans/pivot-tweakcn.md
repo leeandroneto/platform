@@ -2,7 +2,7 @@
 
 > **Tipo:** plano ativo (substitui `docs/plans/design-system.md` — que vai pra `docs/_archive/plans/`)
 > **Início:** 2026-05-21
-> **Última atualização:** 2026-05-21 (estratégia execução refinada — surgical delete + TweakCN clone)
+> **Última atualização:** 2026-05-21 (princípios 8-10 cravados — extract+adapt, versionamento, audit-per-phase)
 > **Estimativa total:** 120-160h (~3-4 semanas full-time, 6-8 semanas part-time)
 > **Status:** Fase -1 (TweakCN clone) ✅ → Fase 0 (surgical delete) → Fase 1 estudos prévios validados
 > **Pré-leitura obrigatória:**
@@ -21,7 +21,7 @@
 
 Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC em `lib/design/archetypes/`, 67 invented `--role-*` tokens, 5 ESLint custom rules e um Zod contract de 19+ sub-schemas **sem nunca renderizar um único archetype em runtime real**. A primeira tentativa de showcase end-to-end (2026-05-21) destapou 9 bugs cascateados, 6 dos quais foram workarounds em vez de fixes definitivos.
 
-**Os 7 princípios que regem este plano:**
+**Os 10 princípios que regem este plano:**
 
 1. **TweakCN clone como SSOT antes de qualquer implementação.** Repo
    real read-only em `C:\Users\leean\Desktop\tweakcn-ref\` (Apache-2.0).
@@ -36,6 +36,33 @@ Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC 
    stubs temporários. Surgical delete no working tree + 1 commit grande
    (Option C de `docs/_sessions/2026-05-21-reversion-analysis.md`). Git
    history preserva trabalho pra revert JIT — sem dead code circulando.
+8. **Extrair lógica + adaptar — NUNCA copy literal cego.** TweakCN é
+   single-tenant SaaS sem white-label, sem multi-brand, sem PWA, sem
+   safe-area, sem `getRouteByHost`. Nosso código adapta a LÓGICA dele
+   (algoritmo `getShadowMap()`, schema 32-cores, OKLCH-primary, editor
+   UX, `<style precedence="theme">` hoist) pro nosso cenário:
+   multi-tenant via `tenants.id` + RLS, white-label via `brands` lookup
+   - `useBrand()`, PWA via manifest/icon dinâmico por tenant, safe-area
+     iOS via `--inset-safe-*` universal. Linha "adaptado de
+     tweakcn-ref/..." em cada arquivo originário.
+9. **Versionamento como extensão obrigatória — TweakCN não tem, nós
+   precisamos.** Profissional precisa **salvar variações** que gostou
+   pra reaproveitar depois (clone preset → tweaks → salva como "Variant
+   v2" → volta JIT). TweakCN só tem 1 theme ativo + community gallery
+   (sem versionamento por usuário). Estendemos com `tenant_themes` +
+   `tenant_theme_versions` (snapshot JSONB imutável, Hotmart-like
+   pattern de `*_versions`). Fase 4 entrega versionamento e atende: (a)
+   safety net pra revert visual, (b) builder UI "salva variante"
+   workflow, (c) cache invalidation via `cacheTag('theme:<id>:<v>')`,
+   (d) preview vs publish (active vs draft version).
+10. **Cada fase = audit dedicado TweakCN ANTES de implementar.**
+    Especialmente Fases 4-7 (theme storage, builder UI, AI generation,
+    v0 integration) onde TweakCN tem código adoptable. Pre-study abre
+    com `☐ Audit tweakcn-ref/<paths>` listando arquivos exatos a
+    inspecionar, comparar com nosso estado, decidir o que extrair vs
+    adaptar vs descartar. Fases 1.5, 2, 3, 8 (DB cleanup, mobile/PWA,
+    wrappers JIT, showcase) NÃO precisam audit — TweakCN não tem
+    código equivalente.
 
 **Vocabulário banido neste plano** (legado a sepultar):
 
@@ -862,9 +889,24 @@ surgical delete. Esta etapa vira "re-add JIT" via `git show <commit>:<path>` qua
 
 **Goal:** schema DB completo pra theme storage. Migration aplicada. Server actions saveTheme/listVersions/restoreVersion. Tabelas `tenant_themes`, `tenant_theme_versions`, `tenant_blocks`, `tenant_pages` desde dia 0 (arch, decisão D3) — features JIT atrás de gates.
 
-**Estimativa:** 16-22h (8h estudos + 8-14h execução)
+**Estimativa:** 18-25h (10h estudos incluindo audit + 8-14h execução)
 
 ### Pre-fase: estudos prévios
+
+#### Estudo S4.0 — Audit TweakCN `db/schema.ts` (princípio §10)
+
+**Pergunta:** como TweakCN modela `theme` no DB? O que extrair vs adaptar vs descartar pro nosso multi-tenant + versionamento?
+
+**Como:**
+
+1. Ler `C:\Users\leean\Desktop\tweakcn-ref\db\schema.ts` — extrair lista colunas de `theme` (Drizzle + Neon)
+2. Ler `tweakcn-ref/db/schema/community-themes.ts` (se existir) — pattern community share
+3. Ler `tweakcn-ref/actions/themes.ts` — server actions equivalentes (saveTheme, deleteTheme, etc)
+4. Mapear: o que cabe em `tenant_themes` (catálogo) vs `tenant_theme_versions` (snapshot imutável Hotmart-like)
+5. **Diferenças cravadas a aplicar (princípio §8):** nosso é Supabase Postgres + RLS por `tenant_id`, TweakCN é Drizzle+Neon single-user; nosso tem `*_versions` table separada (princípio §9 — profissional salva variações), TweakCN só tem 1 row mutável por theme; nosso usa `jsonb` snapshot, TweakCN tem colunas flat
+6. **Versionamento que TweakCN NÃO tem** (princípio §9): listar workflow "clone variant → tweak → save as v2 → restore v1 quando quiser". Não existe upstream — extensão nossa obrigatória
+
+**Output:** seção em `docs/research/33-theme-versioning-pattern.md` com tabela "TweakCN field → nosso field, EXTRACT/ADAPT/SKIP".
 
 #### Estudo S4.1 — Pattern `form_versions` / `page_versions` aplicável a theme?
 
@@ -976,9 +1018,24 @@ RLS strategy: `tenant_themes` + `tenant_theme_versions` consultam `auth.jwt() ->
 
 **Goal:** admin tem `/admin/theme-studio` funcional. Layout 2 painéis (controles + preview), 4 tabs (Colors/Typography/Other/Generate AI-stub), HSL adjustments, color picker stack, contrast checker APCA, code panel multi-formato.
 
-**Estimativa:** 32-42h (4h estudos + 28-38h execução)
+**Estimativa:** 36-48h (6h estudos incluindo audit + 30-42h execução)
 
 ### Pre-fase: estudos prévios
+
+#### Estudo S5.0 — Audit TweakCN `components/editor/**` (princípio §10)
+
+**Pergunta:** quais arquivos existem em `tweakcn-ref/components/editor/` e como se relacionam? Dependency graph mínimo pra port em ordem segura.
+
+**Como:**
+
+1. `Glob tweakcn-ref/components/editor/**/*.tsx` — listar todos
+2. Pra cada arquivo top-level, identificar imports internos (`@/components/editor/X`) — montar dependency graph
+3. Identificar bloqueadores: Zustand stores, `@tanstack/react-query` providers, better-auth hooks (substituir por RHF + RSC + Supabase Auth)
+4. Marcar arquivos com `useTransition` candidate vs `useState` simples
+5. **Adaptações cravadas (princípio §8):** Zustand store global → RHF form local (já é nossa convenção); URL `?theme=X` state → server action save direto em `tenant_theme_versions`; community gallery `/themes/[id]` → `/admin/theme-studio/library` per-tenant; "fork theme" → "clone variant" (princípio §9)
+6. **Versionamento UI** (princípio §9): definir onde no UI mora "Salvar como variante" + "Histórico de variantes" + "Restaurar v1" — TweakCN não tem isso, precisamos desenhar do zero usando pattern Hotmart-like form/page versions
+
+**Output:** seção topo de `docs/research/34-tweakcn-files-triage.md` com dependency graph + lista de bloqueadores + UX delta versionamento.
 
 #### Estudo S5.1 — Arquivos TweakCN copia literal vs adapta vs ignora
 
@@ -1114,9 +1171,24 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 **Goal:** profissional descreve "vibe" → IA gera ThemeSchema → preview live → save. Image-to-theme upload. Tudo via Gemini através de Vercel AI Gateway.
 
-**Estimativa:** 12-16h (4h estudos + 8-12h execução)
+**Estimativa:** 14-19h (5h estudos incluindo audit + 9-14h execução)
 
 ### Pre-fase: estudos prévios
+
+#### Estudo S6.0 — Audit TweakCN `lib/ai/**` + `app/api/generate-theme/route.ts` (princípio §10)
+
+**Pergunta:** TweakCN chama Gemini direto (`@google/generative-ai`). Como adaptar pra Vercel AI Gateway sem perder a lógica de prompt + validação Zod + retry on schema fail?
+
+**Como:**
+
+1. Ler `tweakcn-ref/lib/ai/prompts.ts` (system prompt completo)
+2. Ler `tweakcn-ref/app/api/generate-theme/route.ts` (endpoint completo — body parse, error handling, structured output config)
+3. Ler `tweakcn-ref/lib/ai/schema.ts` (Zod schema usado em structured output)
+4. **Adaptações cravadas (princípio §8):** trocar `@google/generative-ai` direto → AI Gateway `"google/gemini-2.5-flash"` via AI SDK v6; manter prompt + Zod schema; adicionar tenant_id na request pro RLS quota tracking; adicionar APCA Silver validation pós-output (rejeitar e re-prompt se falhar)
+5. **Versionamento da geração** (princípio §9): cada output IA salvo como `tenant_theme_versions` nova row com `source='ai-generated'` + `prompt_text` + `model` metadata pro audit/restore JIT
+6. Documentar que TweakCN também tem image-to-theme via Gemini multimodal — vale port no mesmo endpoint
+
+**Output:** seção em `docs/research/35-ai-gateway-setup.md` com tabela "TweakCN piece → adaptação nossa".
 
 #### Estudo S6.1 — AI Gateway Vercel status + custos
 
@@ -1179,9 +1251,23 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 **Goal:** schema DB pra `tenant_pages`/`tenant_blocks` desde já (D3). Feature v0.dev (geração de páginas/components via v0 SDK aplicando theme do tenant) atrás de entitlement flag — ativa quando 3+ tenants pedirem.
 
-**Estimativa:** 14-18h (6h estudos + 8-12h execução do schema + skeleton)
+**Estimativa:** 15-19h (6.5h estudos incluindo audit + 8-12h execução do schema + skeleton)
 
 ### Pre-fase: estudos prévios
+
+#### Estudo S7.0 — Audit TweakCN `app/r/themes/[id]/route.ts` + `utils/registry/**` (princípio §10)
+
+**Pergunta:** TweakCN expõe endpoint `/r/themes/[id]` que v0/shadcn consomem. Como ele formata o payload? Reusar pra nosso `tenant_themes` endpoint?
+
+**Como:**
+
+1. Ler `tweakcn-ref/app/r/themes/[id]/route.ts` (endpoint v0/shadcn registry)
+2. Ler `tweakcn-ref/utils/registry/v0.ts` + `utils/registry/shadcn.ts` (formatters payload)
+3. Mapear o payload format que v0 espera receber
+4. **Adaptações cravadas (princípio §8):** nosso endpoint vira `/api/r/themes/[tenant]/[version]` com RLS check no `tenant_id`; payload mesmo format (compatibilidade ecosystem); cache via `cacheTag('theme:<tenantId>:<version>')`
+5. **Versionamento exposed via URL** (princípio §9): permitir `/api/r/themes/<tenant>/v1` vs `/api/r/themes/<tenant>/active` — profissional pode linkar versão específica ou sempre a ativa
+
+**Output:** seção em `docs/research/36-v0-integration.md` com payload contract + URL scheme decisão.
 
 #### Estudo S7.1 — v0.dev API/SDK
 
