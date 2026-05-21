@@ -295,8 +295,11 @@ Não precisa decidir agora. Quando chegar Fase 7 do pivot (v0 integration), revi
   - ADR-0041 (Page Engine) ✅ já é fundação registry
   - Pivot Fase 7 (v0) ⏳ vai precisar dessa decisão
   - Pivot Fase 6 (AI gen theme) é orthogonal — não toca aqui
-- **Action items:** nenhum imediato. Re-visitar ao chegar Fase 7 do pivot.
-- **Promovido pra:** nada ainda. Quando virar decisão cravada, criar ADR-0045 (ou similar) "Registry strategy".
+- **Action items (atualizado 2026-05-21):**
+  - ✅ Plano `docs/plans/pivot-tweakcn.md` Fase 7 atualizado com estudo S7.5 dedicado a registry strategy + ADR-0045 a criar
+  - ✅ Princípio cross-cutting cravado no plano: desde primeiro componente, blocos documentam-se em formato registry-ready (kind, propsSchema, examples, when_to_use, anti_patterns)
+  - ⏳ Ao chegar Fase 7: executar S7.5 + cravar ADR-0045
+- **Promovido pra:** plano pivot Fase 7 (referência cravada). Decisão final vira ADR-0045 quando S7.5 executar.
 
 ---
 

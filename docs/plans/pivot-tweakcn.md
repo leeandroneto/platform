@@ -1275,11 +1275,13 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 ---
 
-## 8. Fase 7 — v0.dev como feature (arch dia 0 + feature JIT atrás de flag)
+## 8. Fase 7 — v0.dev como feature + decisão registry strategy (arch dia 0 + feature JIT atrás de flag)
 
-**Goal:** schema DB pra `tenant_pages`/`tenant_blocks` desde já (D3). Feature v0.dev (geração de páginas/components via v0 SDK aplicando theme do tenant) atrás de entitlement flag — ativa quando 3+ tenants pedirem.
+**Goal:** schema DB pra `tenant_pages`/`tenant_blocks` desde já (D3). Feature v0.dev (geração de páginas/components via v0 SDK aplicando theme do tenant) atrás de entitlement flag — ativa quando 3+ tenants pedirem. **Cravar nesta fase a decisão registry strategy** (registry restrito vs v0-livre vs templates) — ver session `docs/_sessions/2026-05-21-ai-stack-registry-novel-reflection.md` §3-§5 + ADR-0045 a ser criada aqui.
 
-**Estimativa:** 15-19h (6.5h estudos incluindo audit + 8-12h execução do schema + skeleton)
+**Estimativa:** 15-19h (6.5h estudos incluindo audit + 8-12h execução do schema + skeleton) + 2-3h pra ADR-0045 registry strategy
+
+> **Princípio cross-cutting cravado:** desde o **primeiro componente / block** criado em qualquer fase (Fase 5 builder UI, Fase 6 AI generation, futura Fase 7), documentar em formato **registry-ready** — `{ kind, propsSchema, version, description, examples, when_to_use, anti_patterns }` (mesmo formato `BlockKnowledgeCards` do `funil-agencia.md` §3.6 item 29-30). Quando 3+ blocos existem com esse shape, consolidar em `public.block_kinds_catalog` table (Fase 7 ou JIT). Isso evita refactor cego depois — quando registry table existir, blocos já estarão em formato adoptable. Ancora: memória `feedback_mil_passos_a_frente.md` ("Catalog+Registry+Spec; nada hardcoded") + Page Engine ADR-0041 (spec JSONB tree-recursive já é registry embrionário).
 
 ### Pre-fase: estudos prévios
 
@@ -1349,6 +1351,37 @@ CREATE TABLE public.tenant_pages (
 
 **Hipótese (alinhado ADR-0041 publishing-pattern):** geração = draft em memória. Save explícito → version 1. Edit → version 2 atomic. Reusar pattern `*_versions` do engine catalog.
 
+#### Estudo S7.5 — Registry strategy decisão (gera ADR-0045)
+
+**Pergunta:** dado que Page Engine (ADR-0041) já é registry embrionário (spec JSONB recursivo Zod-validated), qual o paradigma cravado pra geração de UI por IA?
+
+**Opções (referenciar session `2026-05-21-ai-stack-registry-novel-reflection.md` §3-§4):**
+
+- **(a) v0-livre puro** — IA emite TSX/JSX arbitrário, persistido como string. Caos em multi-tenant, sem normalização, theming difícil. Bom MVP, ruim escala.
+- **(b) Templates rígidos** — usuário escolhe template fixo, edita slots. Modelo Webflow/Kajabi. IA tem pouco espaço pra atuar.
+- **(c) Registry restrito (catalog finito)** — IA compõe spec `{type, props, children}` escolhendo de `block_kinds_catalog`. v0 pode ser ideation tool (sugere block kind novo pra curadoria), mas output canônico é sempre spec.
+- **(d) Híbrido 3-stage** (sugerido pela session §4): MVP templates+IA-livre → Controle captura padrões em blocos oficiais → Registry real consolidado. Migration orgânica.
+
+**Como:**
+
+1. Ler session `2026-05-21-ai-stack-registry-novel-reflection.md` integral
+2. Confronta com estado atual: Page Engine (ADR-0041) + Form Engine + `tenant_blocks`/`tenant_pages` (S7.2) já criam fundação tipo (c)
+3. Decidir: (c) registry restrito desde dia 0 com `block_kinds_catalog` table + AI composer emite spec OU (d) híbrido pragmático
+4. **Decisão sub-questões:**
+   - `block_kinds_catalog` table dia 0 (vazia ok) ou JIT quando 3+ blocos?
+   - v0 SDK: gera TSX raw → adapter extrai spec? Ou v0 só ideação?
+   - AI composer arch: Claude tool calling vs structured output Zod-validated?
+   - Vertical-specific blocks: extend catalog ou `kind` polimórfico que já existe?
+5. Registrar como **ADR-0045 — Registry strategy** (Michael Nygard format)
+
+**Output:**
+
+- `docs/research/40-registry-strategy.md` (~800 palavras com matriz comparativa)
+- `docs/adr/0045-registry-strategy.md` (decisão cravada)
+- Possível migration `0026_block_kinds_catalog.sql` se decisão for (c) ou (d) cravando table dia 0
+
+**Hipótese recomendada (não cravada, pra refinar no estudo):** opção (c) registry restrito com `block_kinds_catalog` table criada vazia dia 0 — alinhada com `feedback_mil_passos_a_frente.md` e princípio cross-cutting acima. Migração orgânica: blocos criados em Fase 5/6/7 já populam o catalog conforme nascem. v0 SDK = ideation tool que sugere novos kinds via PR humano-revisado, não geração direta de TSX em produção.
+
 ### Execução pós-estudos
 
 #### 8.1 — Migration `0025_tenant_pages_blocks.sql` via MCP
@@ -1369,11 +1402,14 @@ CREATE TABLE public.tenant_pages (
 
 ### Checklist verificação Fase 7
 
-- [ ] Estudos S7.1, S7.2, S7.3, S7.4 outputs documentados
+- [ ] Estudos S7.1, S7.2, S7.3, S7.4, **S7.5 (registry strategy)** outputs documentados
+- [ ] **ADR-0045 — Registry strategy cravado** (decisão a/b/c/d + sub-questões respondidas)
 - [ ] Migration `0025_tenant_pages_blocks` aplicada
+- [ ] **(condicional ADR-0045)** Migration `0026_block_kinds_catalog` aplicada se decisão = (c) ou (d) dia 0
 - [ ] Entitlement flag `v0_generation` em DB
 - [ ] Endpoint skeleton respond 501 com flag off
 - [ ] Endpoint respond 200 com flag on (stub)
+- [ ] **Auditoria blocos pré-existentes** (Fase 5/6 criaram quais? estão em formato registry-ready conforme princípio cross-cutting?) — se não, refactor JIT antes de seguir
 - [ ] `pnpm typecheck` ✅
 - [ ] `pnpm build` ✅
 - [ ] Smoke test: GET `/api/admin/theme-studio/v0-generate` → 501 quando flag off
@@ -1607,6 +1643,8 @@ Análise completa em `docs/_sessions/2026-05-21-reversion-analysis.md`.
 | `docs/research/36-tweakcn-files-triage.md`                 | CREATE             | S5.1 | Triage arquivos copy (agora validados contra clone)                            |
 | `docs/research/37-ai-gateway-setup.md`                     | CREATE             | S6.1 | AI Gateway config                                                              |
 | `docs/research/38-v0-integration.md`                       | CREATE             | S7.1 | v0.dev API                                                                     |
+| `docs/research/40-registry-strategy.md`                    | CREATE             | S7.5 | Registry restrito vs v0-livre vs templates (matriz comparativa)                |
+| `docs/adr/0045-registry-strategy.md`                       | CREATE             | S7.5 | Decisão cravada ADR-0045 (Michael Nygard format)                               |
 | `docs/research/39-presets-selection.md`                    | CREATE             | S8.1 | 5-7 presets                                                                    |
 | `docs/blueprint/22-theme-extension-contract.md`            | CREATE             | 3.2  | Extension opt-in pattern                                                       |
 | `messages/pt-BR/voice/` (10 archetype JSONs)               | **DELETE INTEIRO** | 1.3  | Voice tokens nunca consumidos                                                  |
@@ -1696,7 +1734,208 @@ Análise completa em `docs/_sessions/2026-05-21-reversion-analysis.md`.
 
 ---
 
-## 15. Apêndice — refs externas
+## 15. Governance & Documentação obrigatória (cross-fase, vale pra TODO componente novo)
+
+> **Princípio:** consistência de longo prazo não vem de "boa vontade" — vem de **checklist obrigatório** que todo componente passa antes de merge. Não importa se o projeto tem 5 ou 500 componentes; cada um nasce com o mesmo padrão.
+>
+> **Quando aplica:** TODO componente novo criado em qualquer fase (5 builder UI, 6 AI gen, 7 v0/registry, 8 presets) **ou JIT** (re-add `<Logo>`, `<AppImage>`, wrapper novo demandado por feature). Vale também pra blocos do registry (S7.5) — mesma disciplina, formato `BlockKnowledgeCards`.
+>
+> **Quem garante:** humano no PR + rule path-loaded `.claude/rules/design-system-component.md` (a criar na Fase 5) que aponta este checklist + lint custom opcional.
+
+### 15.1 — Checklist de aprovação por componente
+
+Cada componente novo só faz merge se TODOS os blocos abaixo estiverem cravados. Componente sem 1 item = PR bloqueado.
+
+#### A. Identidade do componente
+
+- [ ] **Nome canônico** snake-case nenhum dos vocab banidos (ver `.claude/rules/naming.md`)
+- [ ] **Categoria:** `primitive` (Button, Input — vem do shadcn) / `semantic` (HeroSection, PricingCards) / `smart` (TransformationFunnel com lógica+IA)
+- [ ] **Localização correta:**
+  - `components/ui/*` (zona quarentenada shadcn — só `npx shadcn add`)
+  - `components/app-*.tsx` (wrappers compostos com valor agregado, ADR-0040 §E)
+  - `components/sections/*.tsx` (blocos de página, padrão registry)
+- [ ] **Versão:** semver no header do arquivo (`v1.0.0`) — bump major em breaking change
+
+#### B. Contrato técnico (Zod obrigatório)
+
+- [ ] **Props schema Zod** definido em `lib/contracts/components/<name>.ts` — fonte única (não TS interface manual)
+- [ ] **Variants** declarados como union literal (`variant: 'primary' | 'secondary' | 'ghost'`)
+- [ ] **Slots/children:** quais tipos de filhos aceita, quais NÃO (ex: `<Card>` não aceita `<Card>` aninhado)
+- [ ] **Defaults explícitos** no schema (sem mágica)
+- [ ] **TypeScript inferido do Zod** (`type Props = z.infer<typeof PropsSchema>`) — nunca duplicar manual
+
+#### C. Encaixe multi-tenant (CRÍTICO — fail aqui = quebra customização)
+
+- [ ] **Tokens consumidos** listados explicitamente — devem ser **shadcn-canonical apenas** (`bg-card`, `text-foreground`, `var(--primary)`, etc). NUNCA hex/oklch hardcoded
+- [ ] **Áreas customizáveis pelo tenant** mapeadas:
+  - Cor primária → `--primary` (tenant define em `tenant_themes.snapshot`)
+  - Cor de fundo → `--background` / `--card`
+  - Fonte → `--font-sans` / `--font-serif`
+  - Radius → `--radius`
+- [ ] **Áreas imutáveis (universais)** mapeadas:
+  - Touch-min 44px, safe-area, z-index, motion durations — vêm do `globals.css`
+  - Componente NÃO pode override esses
+- [ ] **Reação a tema light/dark:** declarar que funciona em ambos (Storybook story testa)
+- [ ] **APCA Silver pass garantido:** body Lc ≥75, large ≥60, non-text ≥45 — testado em script `pnpm contrast:check`
+- [ ] **Brand-agnostic:** zero uso de `'desafit'` / `'yoga.app'` / `'ingles.app'` hardcoded. Sempre via `useBrand()` ou env `NEXT_PUBLIC_BRAND_*`
+
+#### D. Acessibilidade (não-negociável)
+
+- [ ] **ARIA roles/labels** corretos (Button = `<button>`, não `<div onClick>`)
+- [ ] **Keyboard navigation:** Tab, Enter, Esc, setas conforme aplicável
+- [ ] **Focus visible** com `:focus-visible` ring
+- [ ] **Screen reader:** texto alternativo em ícones, `aria-label` em controles sem label visível
+- [ ] **Touch target ≥44px** em mobile (rule `no-vh-in-mobile-aware` + visual check)
+- [ ] **Sem dependência de cor isolada** pra comunicar estado (ex: erro = vermelho + ícone + texto, não só vermelho)
+
+#### E. i18n
+
+- [ ] **Strings do chrome via `t('namespace.key')`** (botões, labels, errors genéricos) — `messages/<locale>/<ns>.json`
+- [ ] **Conteúdo do tenant inline no spec** (perguntas de form, copy de landing — JSONB, NÃO `t()`)
+- [ ] **Plurais** via ICU MessageFormat se aplicável
+- [ ] **RTL ready** (sem `margin-left` literal — usar `me-*`/`ms-*` Tailwind logical properties)
+
+#### F. Performance
+
+- [ ] **RSC por default** (Server Component) — só vira Client Component (`'use client'`) com justificativa documentada no header (state, browser API, event handler que não pode subir)
+- [ ] **Bundle impact medido** (`pnpm size` antes/depois) — se >5KB adicional, justificar
+- [ ] **Lazy loading** quando aplicável (imports dinâmicos pra modais, dialogs heavy)
+- [ ] **Streaming-friendly** (sem bloqueios síncronos no render)
+
+#### G. Storybook story obrigatória
+
+- [ ] Arquivo `<name>.stories.tsx` co-localizado
+- [ ] **Default story** com props mínimos
+- [ ] **Todas as variants** (primary/secondary/ghost/etc)
+- [ ] **Todos os estados** (hover, focus, disabled, loading, error)
+- [ ] **Mobile + desktop viewport** (`parameters.viewport`)
+- [ ] **Multi-preset matrix** (Fase 8 wire-up): renderiza nos 5-7 presets — visual confirma que tematização funciona
+
+#### H. Testes
+
+- [ ] **Unit test** (`<name>.test.tsx`) cobrindo props, variants, comportamento básico — Vitest
+- [ ] **Visual regression** (Playwright snapshot) — opcional Fase 5, obrigatório Fase 8 em diante
+- [ ] **APCA contrast test** — script roda em CI
+- [ ] **Coverage mínimo 70%** lines + branches no componente
+
+#### I. Documentação co-localizada
+
+- [ ] **Header do arquivo** com: nome, versão, categoria, propósito (1 linha), exemplos rápidos
+- [ ] **Comentário Zod schema** explicando cada prop não-óbvia
+- [ ] **MDX doc** ao lado da story (`<name>.mdx`) com:
+  - When to use
+  - When NOT to use (anti-patterns)
+  - Related components
+  - Migration guide (se substitui outro)
+
+#### J. Registry-ready (princípio cross-cutting Fase 7)
+
+- [ ] **Knowledge card** estruturado: `{ kind, propsSchema, version, description, examples, when_to_use, anti_patterns, related }` — embedded no Zod schema ou MDX
+- [ ] Pronto pra entrar em `block_kinds_catalog` quando ADR-0045 cravar
+
+### 15.2 — Estudos de contrato dedicados (quando)
+
+Componente novo dispara **estudo dedicado** (sessão em `docs/_sessions/YYYY-MM-DD-component-<name>.md`) quando QUALQUER critério abaixo é verdade:
+
+- É **smart block** (lógica + IA + estado + automação) — ex: `TransformationFunnel`, `OnboardingWizard`
+- Introduz **token novo** (não shadcn-canonical) — ex: `--mini-player-height` (Spotify-like preset)
+- Quebra padrão existente — ex: aceita slot que outros componentes proíbem
+- Tem 3+ variants estruturalmente diferentes (não só cor) — ex: Card pode ser horizontal/vertical/grid
+- Acopla a feature flag / entitlement — ex: gated atrás de `theme_studio` ou `v0_generation`
+
+Estudo dedicado contém: motivação, alternativas consideradas, decisão cravada, contratos Zod, exemplos de uso, anti-patterns. Pode promover pra ADR se for one-way door.
+
+### 15.3 — Rules path-loaded (governance via .claude/rules)
+
+A serem criadas/atualizadas conforme fases avançam:
+
+| Rule                                       | Quando criar | Path-loaded em                                  | Conteúdo                                                                               |
+| ------------------------------------------ | ------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `.claude/rules/design-system-component.md` | Fase 5       | `components/app-*.tsx`, `components/sections/*` | Aponta pro checklist §15.1 + condição de revisitar quando crescer                      |
+| `.claude/rules/components.md` (existe)     | Fase 3       | `components/**`                                 | UPDATE pra consumir shadcn-canonical + linkar §15.1                                    |
+| `.claude/rules/registry-blocks.md`         | Fase 7       | `lib/contracts/blocks/*`, `components/blocks/*` | Formato block knowledge card + relação com `block_kinds_catalog`                       |
+| `.claude/rules/storybook-stories.md`       | Fase 5       | `**/*.stories.tsx`                              | Stories obrigatórias: default + variants + states + viewports + multi-preset matrix    |
+| `.claude/rules/component-tokens.md`        | Fase 1 ✅    | `components/**`                                 | Já existe parcialmente em `design-tokens.md` — refinar Fase 5 com tabela token-consumo |
+
+Cada rule tem seção **"Condição de revisitar"** (padrão ADR-0040 §L): sob qual gatilho a rule precisa ser atualizada (ex: "quando 10+ componentes consumirem token novo → considerar promover de extras opt-in pra canonical").
+
+### 15.4 — CI gates (automação que falha PR)
+
+Não dá pra confiar só em humano revisor — CI bloqueia merge se:
+
+- [ ] **Zod schema ausente** em componente novo (lint custom)
+- [ ] **Story Storybook ausente** (script `find` em PR)
+- [ ] **Test ausente** ou coverage <70% (Vitest report)
+- [ ] **APCA fail** em qualquer combo light/dark do componente (script `pnpm contrast:check`)
+- [ ] **`var(--role-*)` ou hex hardcoded** em componente (rule `no-raw-tokens`)
+- [ ] **`100vh` em mobile-aware path** (rule `no-vh-in-mobile-aware`)
+- [ ] **Brand hardcoded** (`'desafit'`/`'yoga.app'`/`'ingles.app'` em código) — rule `brand`
+- [ ] **Vocab banido** (`pnpm vocab:audit`)
+- [ ] **Token violations** (`pnpm token:audit`)
+- [ ] **i18n keys faltando** (`pnpm i18n:audit`)
+- [ ] **Bundle size regression** >10% (`pnpm size` com budget)
+
+### 15.5 — Onboarding de componente do shadcn registry / v0 / TweakCN
+
+Componente vindo de fora (`npx shadcn add dashboard-01`, paste de v0, copy de TweakCN) NÃO escapa do checklist. Workflow obrigatório:
+
+1. Instalar em `components/ui/*` (shadcn) ou em folder vendor isolada (`components/vendor/<source>/`)
+2. **Auditoria imediata** contra §15.1:
+   - Consome shadcn-canonical? (esperado: sim, pq é o ecossistema canonical)
+   - APCA pass? (rodar `pnpm contrast:check` no componente isolado)
+   - Acessibilidade ok? (review manual + lint axe se aplicável)
+3. Se OK: criar wrapper `components/app-<name>.tsx` SÓ se tiver valor agregado (passthrough proibido, ADR-0040)
+4. Wrapper passa pelo checklist §15.1 inteiro
+5. Doc co-localizada cita origem + license + commit hash
+
+### 15.6 — Refactor de componente legado (migration path)
+
+Componente antigo (pré-pivot ou recém-criado sem disciplina) precisa entrar no padrão **antes do PR que adiciona feature nova depender dele**. Workflow:
+
+1. Identifica gaps via checklist §15.1
+2. Cria sessão `docs/_sessions/YYYY-MM-DD-refactor-<component>.md` com lista de gaps
+3. PR refactor SEPARADO do PR feature (não mistura)
+4. Refactor PR: addiciona Zod schema, story, test, doc — sem mudar comportamento
+5. Feature PR depois: usa componente já compliant
+
+### 15.7 — Métricas de saúde do design system (medir trimestralmente)
+
+| Métrica                                              | Target           | Como medir                                               |
+| ---------------------------------------------------- | ---------------- | -------------------------------------------------------- |
+| % componentes com Zod schema                         | 100%             | grep `z.object` em `lib/contracts/components/`           |
+| % componentes com Storybook story                    | 100%             | `find components -name "*.tsx" -not -name "*.stories.*"` |
+| % componentes com test (coverage ≥70%)               | 100%             | Vitest report                                            |
+| % stories que rendem em 5+ presets sem regressão     | 100%             | Playwright matrix                                        |
+| Tokens consumidos fora de shadcn-canonical (sem ADR) | 0                | `pnpm token:audit`                                       |
+| APCA fails em qualquer componente                    | 0                | `pnpm contrast:check`                                    |
+| Componentes flagged "smart" sem estudo dedicado      | 0                | grep `category: 'smart'` vs sessions `*-component-*.md`  |
+| Time-to-add novo bloco oficial                       | <2h (skeleton)   | manual stopwatch                                         |
+| Time-to-onboard shadcn block from registry           | <30min (incl QA) | manual                                                   |
+
+### 15.8 — Quando essa governance entra em vigor
+
+- **Fase 5 (Builder UI):** primeiros componentes do theme-studio JÁ nascem sob §15.1
+- **Fase 6 (AI gen):** chat UI + endpoints sob §15.1
+- **Fase 7 (v0/registry):** ADR-0045 cravando + rule `registry-blocks.md` criada
+- **Fase 8 (presets+showcase):** Playwright matrix multi-preset wire-up + métricas §15.7 começam a ser coletadas
+
+Componentes pré-existentes (Fase 1-3, sobreviventes do surgical delete) passam por refactor §15.6 conforme features novas dependerem deles — não num batch upfront (JIT-friendly).
+
+### 15.9 — Por que isso parece "burocracia" mas não é
+
+Cada item do checklist §15.1 existe por **incidente passado ou risco conhecido**:
+
+- Zod schema obrigatório → fase anterior teve sub-schemas TS sem source-of-truth, virou bagunça (ADR-0044 contexto)
+- Multi-tenant fit explícito → archetype-bound wrappers quebraram quando tenant mudou (incident pivot)
+- Storybook obrigatório → componentes sem story renderizam só "em produção" e bugs aparecem tarde
+- APCA test → contraste é one-way door (legal compliance em alguns países)
+- Knowledge card registry-ready → evita refactor cego em Fase 7 (princípio cross-cutting já cravado)
+
+Se algum item parecer overhead, perguntar: **"que bug futuro esse item previne?"** Se a resposta for "nenhum claro" → discutir remoção em ADR. Não remover por gut feeling.
+
+---
+
+## 16. Apêndice — refs externas
 
 - **TweakCN clone read-only (SSOT):** `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, branch `main`, Apache-2.0)
 - **TweakCN repo upstream:** [github.com/jnsahaj/tweakcn](https://github.com/jnsahaj/tweakcn) (Apache-2.0, ~9.9k stars)
