@@ -891,6 +891,34 @@ surgical delete. Esta etapa vira "re-add JIT" via `git show <commit>:<path>` qua
 
 **Estimativa:** 18-25h (10h estudos incluindo audit + 8-14h execução)
 
+### Nota integrar `next-themes` 0.4.6 (já instalado, dead dependency)
+
+**Estado 2026-05-21:** `package.json` tem `"next-themes": "^0.4.6"` mas grep confirma **zero usos** em `**/*.{ts,tsx}` — instalado mas nunca wired up (provavelmente herança da era invented).
+
+**Decisão pra Fase 4:** wire-up oficial junto com layout integration (5.3).
+
+**O que next-themes resolve (que ia ser código manual nosso):**
+
+- Toggle light/dark/system no cliente (sem reload)
+- Persist escolha em localStorage
+- Script anti-FOUC no `<head>` (adiciona/remove `.dark` em `<html>` antes do React hidratar)
+- Detect `prefers-color-scheme: dark`
+
+**Como se encaixa nas camadas:**
+
+| Camada                                  | Quem resolve                                                         |
+| --------------------------------------- | -------------------------------------------------------------------- |
+| Quais cores o tenant tem (32 OKLCH × 2) | `tenant_themes` + `tenant_theme_versions` (Fase 4)                   |
+| CSS hoisted pro browser                 | `buildThemeCSS(snapshot)` + `<style precedence="theme">` (Fase 1 ✅) |
+| Modo ativo agora (light/dark/auto)      | **`next-themes`** (Fase 4 wire-up)                                   |
+| Default mode do tenant                  | `tenants.theme_mode` (já existe — confirmado G.4)                    |
+
+**Tasks Fase 4 que mudam:**
+
+- 5.3 (layout integration) inclui `<ThemeProvider>` de `next-themes` com `defaultTheme={tenant.theme_mode}` e `enableSystem`, attribute `class` (compat shadcn-canonical `.dark` variant)
+- Verificar se `app/layout.tsx` precisa wrappear `<html suppressHydrationWarning>` (requisito next-themes)
+- Toggle button JIT (Fase 5 builder UI tem dark/light preview switch — pode reusar `useTheme()` do next-themes)
+
 ### Pre-fase: estudos prévios
 
 #### Estudo S4.0 — Audit TweakCN `db/schema.ts` (princípio §10)
