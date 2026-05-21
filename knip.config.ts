@@ -20,10 +20,9 @@ const config: KnipConfig = {
     'scripts/**/*.ts',
     // Tests (vitest + playwright + smoke)
     'tests/**/*.{ts,tsx}',
-    // shadcn primitives — zona quarentenada (ADR-0040 §A). Voltam como entry pra
-    // Knip walkear deps internas (cmdk, radix, vaul, etc) e não flagar como órfãs.
-    // Customização vai em components/app-*.tsx (3 wrappers dia 0 + JIT).
-    'components/ui/**/*.tsx',
+    // components/** deletado pós-pivot ADR-0044 (surgical delete). Re-add JIT via
+    // `npx shadcn add` quando feature pedir. Deps dormentes (vaul, cmdk, etc) ficam
+    // em ignoreDependencies abaixo até reinstalação.
     'lib/supabase/{client,server,admin}.ts',
     'lib/route/getRouteByHost.ts',
     'lib/design/seeds/**/*.ts',
@@ -37,20 +36,12 @@ const config: KnipConfig = {
     'lib/contracts/result.ts',
     // ActionResult alias canônico Server Action (Etapa 3) — consumer em todo actions.ts futuro.
     'lib/contracts/action.ts',
-    // Palettes public API (Etapa 3) — consumer: /api/{tenants,brands}/[id]/theme.css route + admin UI futura.
+    // Palettes public API (Etapa 3) — consumer: validate-palettes script + Fase 4 theme storage.
     'lib/design/palettes.ts',
-    // APCA Silver helpers (Etapa 6) — consumer: validate-palettes script + theme.css route + tenant theme save action JIT.
+    // APCA Silver helpers — consumer: validate-palettes script + Fase 4 buildThemeCSS + tenant theme save action JIT.
     'lib/design/contrast.ts',
-    // 3 wrappers compostos obrigatorios dia 0 (Etapa 7 / ADR-0040 §E) — consumers: features JIT.
-    'components/app-form.tsx',
-    'components/app-toast.tsx',
-    'components/app-entitlement-gate.tsx',
-    // 3 typography primitives dia 0 (Etapa 8 / ADR-0040 §F) — consumers: toda feature com texto.
-    'components/ui/heading.tsx',
-    'components/ui/text.tsx',
-    'components/ui/muted.tsx',
-    // <Logo> wordmark dia 0 (Etapa 9 / constitucional 00-PROJETO §9) — consumer: header/footer/splash JIT.
-    'components/ui/logo.tsx',
+    // Wrappers/typography/Logo deletados pós-pivot ADR-0044. Re-add JIT em Fase 1-3
+    // do pivot quando feature consumer real existir.
     // Service Worker Serwist (Etapa 10A / ADR-0014) — carregado por @serwist/next em build, knip nao detecta.
     'app/sw.ts',
     'lib/route/RouteProvider.tsx',
@@ -74,8 +65,6 @@ const config: KnipConfig = {
     'lib/contracts/money.ts',
     // Stub que lança AppError.internal('JIT') — sem consumer real até admin UI trocar paleta live.
     'lib/design/tokens.ts',
-    // Block shadcn vendor — sem consumer ainda mas mantido (zona quarentenada ADR-0040 §A).
-    'components/version-switcher.tsx',
     // features/_template — scaffold reference (ADR-0034). NÃO é feature ativa.
     // Existe pra ser copiado quando adicionar feature real. Knip flagaria como
     // unused files (sem consumer em app/) — mas é proposital.

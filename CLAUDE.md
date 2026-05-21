@@ -123,8 +123,8 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **shadcn primitives:** zona quarentenada, Edit bloqueado em `components/ui/*`. Canal único: `npx shadcn add` via Bash. Wrapper composto em `components/app-*.tsx` SÓ com valor agregado (passthrough proibido). Ver `.claude/rules/shadcn-zone.md`
 - **i18n:** `t('chave')` desde primeira string. Estrutura `messages/<locale>/<namespace>.json`. AppError aceita `string | { key, fallback }`. Ver `.claude/rules/i18n.md`
 - **APCA Silver:** body Lc ≥75, large ≥60, non-text ≥45. Gate em `prebuild` script. Ver `.claude/rules/contrast.md`
-- **Entitlements server:** `requireEntitlement(feature)` + `requireQuota(key)` + `incrementQuotaUsage(key, delta)` chamam RPCs (ADR-0039). API client (`useEntitlement`, `useQuota`) + `AppEntitlementGate` inalterados. Ver `.claude/rules/entitlements.md`
-- **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx`. MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
+- **Entitlements server:** `requireEntitlement(feature)` + `requireQuota(key)` + `incrementQuotaUsage(key, delta)` chamam RPCs (ADR-0039). API client (`useEntitlement`, `useQuota`) inalterada. `AppEntitlementGate` wrapper foi deletado no pivot ADR-0044 (re-add JIT). Ver `.claude/rules/entitlements.md`
+- **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx` (sem stories no working tree atual pós-pivot ADR-0044; reinstalação JIT). MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
 - **Engines (ADR-0041):** 2 motores separados — Form Engine (linear `steps[]+blocks[]+logic[]`) + Page Engine (árvore recursiva). Polimórficos via `forms.kind`/`pages.kind`. Reuso interno/externo via `scope` flag (tenant/internal/platform) + RLS condicional. Report = `pages.kind='report'` opcional (não regra). Catálogo dos engines: `docs/blueprint/21-engine-catalog.md`
 - **Design system (ADR-0044 pivot · supersedes ADR-0043):**
   shadcn-canonical **41 tokens TweakCN-vocab** como interface pública obrigatória
@@ -158,9 +158,11 @@ Antes de PR: rodar os 6 acima.
 
 ## Abstrações disponíveis (use antes de criar)
 
-`useServerAction(action)` · `CopyButton`/`useCopy` · `ok()`/`fail()` ·
-`renderEmail(el)` · `useBrand()` · `getRouteByHost()` · `<Logo>` wordmark ·
-`useAppToast()` · `<AppForm>` · `<AppEntitlementGate>` · `<Heading>`/`<Text>`/`<Muted>`.
-Lista completa: `.claude/rules/abstractions.md`.
+Pós-pivot ADR-0044 (surgical delete `components/**`): só sobreviveram
+abstrações de `lib/`. Wrappers + typography + Logo voltam JIT em Fase 1-3
+quando feature consumer real existir.
+
+`useServerAction(action)` · `ok()`/`fail()` · `renderEmail(el)` ·
+`useBrand()` · `getRouteByHost()`. Lista completa: `.claude/rules/abstractions.md`.
 
 Criar abstração nova: 3+ usos + ADR (pesquisa 04).

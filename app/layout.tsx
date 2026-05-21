@@ -1,3 +1,18 @@
+// app/layout.tsx — shell mínimo pós-pivot ADR-0044 (TweakCN canonical).
+// Filosofia surgical delete: layout fica MÍNIMO até Fase 4 reintroduzir
+// theming runtime via <style precedence="theme"> + buildThemeCSS().
+//
+// O que SAIU:
+//   - <MotionProvider> (componente deletado, re-add JIT quando feature precisar)
+//   - <link rel="stylesheet" href="/api/.../theme.css"> (modelo OLD palettes+fonts+shape_presets)
+//   - buildThemeHref() helper (referenciava route deletada)
+//
+// O que FICOU:
+//   - NextIntlClientProvider, RouteProvider, EntitlementProvider
+//   - Toaster sonner (não depende de components/)
+//   - manifest.webmanifest + apple-touch-icon + splash (PWA infra)
+//   - Geist fonts (next/font padrão Next 16)
+
 import './globals.css'
 
 import { Suspense } from 'react'
@@ -13,8 +28,6 @@ import { EntitlementProvider } from '@/lib/entitlements/EntitlementProvider'
 import { getEntitlementSnapshot } from '@/lib/entitlements/server'
 import { getRouteByHost } from '@/lib/route/getRouteByHost'
 import { RouteProvider } from '@/lib/route/RouteProvider'
-
-import { MotionProvider } from '@/components/motion-provider'
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -60,16 +73,6 @@ export const viewport: Viewport = {
   ],
 }
 
-// Resolve href do theme CSS pro tenant/brand atual.
-function buildThemeHref(route: Awaited<ReturnType<typeof getRouteByHost>>): string | null {
-  if (!route) return null
-  const tenant = route.tenant
-  const id = tenant?.id ?? route.brand.id
-  const version = tenant?.theme_version ?? route.brand.theme_version ?? 1
-  const path = tenant ? 'tenants' : 'brands'
-  return `/api/${path}/${id}/theme.css?v=${version}`
-}
-
 // Resolve href do manifest.webmanifest pro tenant/brand atual (Etapa 10 PWA).
 function buildManifestHref(route: Awaited<ReturnType<typeof getRouteByHost>>): string | null {
   if (!route) return null
@@ -92,22 +95,17 @@ function buildAppleTouchIconHref(route: Awaited<ReturnType<typeof getRouteByHost
 }
 
 // iOS splash screens 3 sizes (Etapa 10B) — cobertura ~80% devices ativos 2026.
-// Outros 3 sizes JIT quando tenant reclamar. apple-touch-startup-image requer
-// media query exato por device (width × height × DPR).
 const SPLASH_ENTRIES: readonly { size: string; media: string }[] = [
-  // iPhone 17/16/15 Pro Max — 430x932 logical, 3x DPR
   {
     size: '1290x2796',
     media:
       '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
-  // iPhone 17/16/15 Pro/standard — 393x852 logical, 3x DPR
   {
     size: '1179x2556',
     media:
       '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
-  // iPad Pro generico — 1024x1366 logical, 2x DPR
   {
     size: '2048x2732',
     media:
@@ -129,10 +127,8 @@ function buildSplashHrefs(
   }))
 }
 
-// ─── Dynamic shell: lê host + faz lookup brand/tenant + emite theme CSS ──
-// Encapsulado em Suspense pra Next 16 cacheComponents — body shell static,
-// dynamic content streamed (PPR-style). Theme `<link>` hoisted pra <head>
-// via precedence prop do React.
+// ─── Dynamic shell: lê host + faz lookup brand/tenant. Theme CSS reintroduzido
+// em Fase 4 via <style precedence="theme"> + buildThemeCSS() (ADR-0044). ──
 async function DynamicShell({ children }: { children: React.ReactNode }) {
   const h = await headers()
   const host = h.get('host')
@@ -154,28 +150,24 @@ async function DynamicShell({ children }: { children: React.ReactNode }) {
   // Hidrata EntitlementProvider com snapshot do tenant (null se sem subscription)
   // — ADR-0034 §4. Sem isso useEntitlement client retorna sempre 'no allowed'.
   const entitlements = await getEntitlementSnapshot()
-  const themeHref = buildThemeHref(route)
   const manifestHref = buildManifestHref(route)
   const appleTouchIconHref = buildAppleTouchIconHref(route)
   const splashHrefs = buildSplashHrefs(route)
 
   return (
     <>
-      {themeHref && <link rel="stylesheet" href={themeHref} precedence="default" />}
       {manifestHref && <link rel="manifest" href={manifestHref} />}
       {appleTouchIconHref && <link rel="apple-touch-icon" href={appleTouchIconHref} />}
       {splashHrefs?.map((s) => (
         <link key={s.href} rel="apple-touch-startup-image" href={s.href} media={s.media} />
       ))}
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <MotionProvider>
-          <RouteProvider brand={route.brand} tenant={route.tenant}>
-            <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
-              {children}
-              <Toaster richColors closeButton position="top-center" />
-            </EntitlementProvider>
-          </RouteProvider>
-        </MotionProvider>
+        <RouteProvider brand={route.brand} tenant={route.tenant}>
+          <EntitlementProvider features={entitlements.features} plan={entitlements.plan}>
+            {children}
+            <Toaster richColors closeButton position="top-center" />
+          </EntitlementProvider>
+        </RouteProvider>
       </NextIntlClientProvider>
     </>
   )

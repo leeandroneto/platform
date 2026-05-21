@@ -676,11 +676,10 @@ const eslintConfig = defineConfig([
     files: ['messages/**/*.json'],
     rules: { 'react/jsx-no-literals': 'off' },
   },
-  // ─── ADR-0040 §A — Zona quarentenada components/ui/** (Pesquisa 18 Q1) ───
-  // Lista NARROWEST POSSIBLE: desliga só regras de estilo (vendor surface
-  // shadcn viola por design). Mantém regras de BUG ativas mesmo em vendor.
-  // Hook component-research-gate.sh bloqueia Edit direto — canal único: Bash npx shadcn add.
-  // Wrapper customização vai em components/app-*.tsx (3 obrigatórios + JIT).
+  // ─── ADR-0044 — components/** deletado pós-pivot TweakCN (surgical delete).
+  // Override mantido pra reinstalação JIT via `npx shadcn add` (zona quarentenada
+  // ADR-0040 §A). Sem alvo no working tree atual, mas ESLint ignora overrides com
+  // `files` que não casa nenhum arquivo — non-issue.
   {
     files: [
       'components/ui/**/*.{ts,tsx}',

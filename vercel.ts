@@ -8,14 +8,9 @@ export const config: VercelConfig = {
   installCommand: 'pnpm install --frozen-lockfile',
 
   // ─── Headers ──────────────────────────────────────────────────────────
-  // Cache imutável para tema dinâmico por tenant (D-G59) e assets versionados.
+  // Cache imutável para assets versionados. theme.css route deletada com ADR-0044
+  // (pivot TweakCN — runtime CSS via <style precedence="theme"> em Fase 4).
   headers: [
-    routes.cacheControl('/api/tenants/(.*)/theme.css', {
-      public: true,
-      maxAge: '1 day',
-      sMaxAge: '1 day',
-      staleWhileRevalidate: '1 week',
-    }),
     routes.cacheControl('/_next/static/(.*)', {
       public: true,
       maxAge: '1 year',

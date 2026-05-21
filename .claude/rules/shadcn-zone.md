@@ -1,6 +1,6 @@
 ---
 name: Zona quarentenada shadcn + wrapper pattern com valor agregado
-description: components/ui/* é vendor surface intocável. 3 wrappers OBRIGATÓRIOS dia 0, demais JIT. Passthrough proibido.
+description: components/** deletado pós-pivot ADR-0044. Reinstalação JIT via npx shadcn add. Wrappers JIT só com valor agregado. Passthrough proibido.
 paths:
   - 'components/ui/**/*.{ts,tsx}'
   - 'components/app-*.tsx'
@@ -9,7 +9,11 @@ paths:
 
 ## Princípio
 
-`components/ui/*` é **vendor surface intocável**. Toda Edit via Bash `npx shadcn add`. Wrapper SÓ quando agrega valor real — passthrough proibido (Vercel Academy: "doubles design system size").
+`components/**` foi DELETADO em surgical delete pós-pivot ADR-0044 (TweakCN
+canonical). Reinstalação JIT via `npx shadcn add <slug>` quando feature pedir
+primitive específico — single source vendor shadcn-canonical. Wrapper composto
+em `components/app-*.tsx` SÓ quando agregar valor real — passthrough proibido
+(Vercel Academy: "doubles design system size").
 
 ## Zona quarentenada (`components/ui/**`)
 
@@ -43,15 +47,16 @@ paths:
 
 **Proibido:** passthrough (só re-exportar primitive sem agregar). Vercel Academy bate: "effectively doubles the component design system size and makes the ownership concept redundant".
 
-## 3 wrappers OBRIGATÓRIOS dia 0 (ADR-0040 §E)
+## Wrappers obrigatórios dia 0 — REMOVIDOS pelo pivot ADR-0044
 
-| Wrapper              | Encapsula                                                                                    | Por que dia 0                                                                           |
-| -------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `AppForm`            | RHF + Zod resolver + AppError i18n + submit handler tipado                                   | ~30 linhas de boilerplate por form. Feature 1 (login + signup + capture-form) usa todos |
-| `AppToast`           | sonner + `useAppToast()` com helpers `success(i18nKey)`, `error(i18nKey)`, `info`, `warning` | Centraliza tradução, evita N callsites com `t()`                                        |
-| `AppEntitlementGate` | `useEntitlement()` + paywall modal + upgrade CTA                                             | White-label B2B SEMPRE precisa de plan gating UI                                        |
+Os 3 wrappers `AppForm`, `AppToast`, `AppEntitlementGate` foram **DELETADOS**
+em 2026-05-21 junto com `components/**` inteiro (surgical delete pivot
+TweakCN). Re-add JIT em Fase 1-3 do pivot quando feature consumer real existir
+com valor agregado provado (RHF+Zod boilerplate, sonner+i18n,
+paywall+entitlement). Spec original em ADR-0040 §E é referência pra
+reconstrução.
 
-## 42+ wrappers JIT (NÃO criar preventivo)
+## Wrappers JIT (NÃO criar preventivo)
 
 Lista canônica do que entra JIT (regra de 3 + valor agregado):
 

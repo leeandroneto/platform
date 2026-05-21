@@ -59,15 +59,13 @@ const { allowed, plan, upgradeUrl } = useEntitlement('ai_assessments')
 const { used, limit, nearLimit } = useQuota('programs_per_month')
 ```
 
-**Wrapper preferido (dia 0):** `AppEntitlementGate` (ADR-0040 §E)
+**Wrapper `AppEntitlementGate` — REMOVIDO pelo pivot ADR-0044**
 
-```tsx
-<AppEntitlementGate feature="ai_assessments">
-  {/* renderiza se allowed */}
-  <AssessmentEditor />
-</AppEntitlementGate>
-// Se not allowed: paywall modal + upgrade CTA traduzido automático
-```
+Wrapper composto foi deletado em 2026-05-21 junto com `components/**`
+(surgical delete). Re-add JIT na Fase 1-3 do pivot quando feature paga real
+existir + valor agregado provado (paywall modal + upgrade CTA i18n). Até lá,
+use `useEntitlement('feature')` direto + render condicional inline. Spec
+original em ADR-0040 §E é referência pra reconstrução.
 
 ## Plan-gates por feature (ESLint enforce)
 

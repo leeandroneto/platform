@@ -9,13 +9,16 @@ paths:
 
 ## Abstrações disponíveis (use antes de criar do zero)
 
+> Pós-pivot ADR-0044: `components/**` deletado em surgical delete. Abstrações
+> em `components/` voltam JIT em Fase 1-3 quando feature consumer real existir.
+> Sobreviveram só `lib/`.
+
 | Abstração                  | Onde                           | Pra que                                                    |
 | -------------------------- | ------------------------------ | ---------------------------------------------------------- |
 | `Result<T, AppError>`      | `lib/contracts/result.ts`      | Server action return type discriminated union              |
 | `ok(data)` / `fail(error)` | `lib/contracts/result.ts`      | Helper construtores                                        |
 | `AppError`                 | `lib/contracts/errors.ts`      | Tagged variants pra erro tipado                            |
 | `useServerAction(action)`  | `lib/hooks/useServerAction.ts` | useTransition + tratamento de erro                         |
-| `CopyButton` / `useCopy`   | `components/ui/CopyButton.tsx` | Clipboard com feedback                                     |
 | `withErrorHandler()`       | `lib/api/error.ts`             | Wrapper API route helpers                                  |
 | `renderEmail(el)`          | `lib/email/render.ts`          | Renderiza React Email → `{ html, text }`                   |
 | `Money`                    | `lib/contracts/money.ts`       | Value object `(amount_minor int + currency)` — multi-moeda |
