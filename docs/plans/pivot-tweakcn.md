@@ -522,6 +522,128 @@ Sem invented roles. Apenas shadcn canonical names: `--background`, `--foreground
 
 ---
 
+## 2.5. Fase 1.5 — DB schema alignment (cleanup pós-Fase 1)
+
+**Goal:** alinhar schema DB com o que Fase 1 removeu do código. Fase 1 removeu
+vocab invented do globals.css (`--shape-*`, `--brand-hue`, `--color-surface-1..5`,
+`--color-info/success/warning`, `--elevation-flat/raised/overlay`, etc) — agora
+nenhum código consome `tenants.archetype_id` / `palette_id` / `font_id` /
+`previous_archetype_id` / `archetype_changed_at` nem as tabelas `palettes` /
+`fonts` / `tenant_theme_presets`. Essa fase **drops cirurgicamente** os
+órfãos. Fase 4 depois cria o modelo novo limpo do zero.
+
+**Estimativa:** 2-3h (sem estudos prévios — auditoria já feita)
+
+**Princípio:** drop **apenas** o que está confirmado órfão. Não criar nada
+novo (Fase 4 faz isso). Não tocar `theme_mode` ou `theme_version` (continuam
+úteis pós-pivot).
+
+### Pre-fase: confirmação de órfãos
+
+Validar via grep:
+
+```bash
+# Confirmar zero consumers no código:
+grep -rn "archetype_id\|palette_id\|font_id\|previous_archetype_id" app lib --include="*.ts" --include="*.tsx"
+grep -rn "from 'palettes'\|from 'fonts'\|tenant_theme_presets\|.from('palettes'\|.from('fonts'" app lib
+```
+
+Esperado: zero matches (ou apenas migrations docs antigas — não bloqueia).
+
+**Bloqueia:** execução do drop.
+
+### Execução — migration 0024
+
+Via `mcp__plugin_supabase_supabase__apply_migration`:
+
+```sql
+-- 0024_drop_design_system_orphans.sql
+-- Pós-Fase 1 do pivot ADR-0044: zero código consome esses objetos.
+-- Antes desta migration: tenants.archetype_id / palette_id / font_id /
+-- previous_archetype_id / archetype_changed_at dormentes; tables palettes /
+-- fonts / tenant_theme_presets sem consumers.
+
+-- 1. Drop FK constraints + columns de tenants (defaults eram via functions
+--    default_palette_id() e default_font_id() — drop em seguida)
+ALTER TABLE public.tenants
+  DROP COLUMN IF EXISTS archetype_id,
+  DROP COLUMN IF EXISTS previous_archetype_id,
+  DROP COLUMN IF EXISTS archetype_changed_at,
+  DROP COLUMN IF EXISTS palette_id,
+  DROP COLUMN IF EXISTS font_id;
+
+-- 2. Drop functions que setavam defaults dessas columns
+DROP FUNCTION IF EXISTS public.default_palette_id();
+DROP FUNCTION IF EXISTS public.default_font_id();
+
+-- 3. Drop tabelas obsoletas (vocab morto / FKs já cascadeados)
+DROP TABLE IF EXISTS public.tenant_theme_presets CASCADE;
+DROP TABLE IF EXISTS public.palettes CASCADE;
+DROP TABLE IF EXISTS public.fonts CASCADE;
+
+-- 4. Confirmação:
+-- tenants agora tem: id, brand_id, slug, name, vertical, logo_url, theme_mode,
+-- theme_version, default_locale, default_currency, default_tz, pixels,
+-- vapid_public_key, owner_user_id, lifecycle_state, suspended_*, deletion_*,
+-- created_at, updated_at, deleted_at.
+-- Fase 4 vai ADD active_theme_version_id + criar tenant_themes/_versions.
+```
+
+**Validação imediata:**
+
+```sql
+SELECT column_name FROM information_schema.columns
+WHERE table_schema='public' AND table_name='tenants'
+ORDER BY ordinal_position;
+
+SELECT table_name FROM information_schema.tables
+WHERE table_schema='public' AND table_name IN ('palettes','fonts','tenant_theme_presets');
+-- Esperado: zero rows
+```
+
+### Pós-execução — validação aplicação
+
+```bash
+pnpm typecheck         # 0 erros (zero código consumia)
+pnpm lint --max-warnings 0
+pnpm build             # verde
+pnpm dev               # / rendera com DEFAULT_THEME (Fase 1 já wired)
+```
+
+Atualizar `docs/migrations/0024_drop_design_system_orphans.md` documentando
+contexto + colunas/tabelas droppadas + razão (ADR-0044 + Fase 1 output).
+
+Atualizar `lib/contracts/database.ts` se houver types gerados (via
+`mcp__plugin_supabase_supabase__generate_typescript_types` — regenerar).
+
+Atualizar `docs/_status.md` + `CHANGELOG.md`.
+
+### Checklist verificação Fase 1.5
+
+- [ ] grep confirma zero consumers das columns/tables droppadas
+- [ ] Migration `0024_drop_design_system_orphans` aplicada via MCP
+- [ ] `SELECT` post-migration confirma tenants tem apenas columns esperadas
+- [ ] `SELECT` post-migration confirma palettes/fonts/tenant_theme_presets gone
+- [ ] `pnpm typecheck` ✅
+- [ ] `pnpm lint --max-warnings 0` ✅
+- [ ] `pnpm vocab:audit && pnpm token:audit` ✅
+- [ ] `pnpm build` ✅
+- [ ] `pnpm dev` + visita `/` sem 500 (DEFAULT_THEME aplicado)
+- [ ] Types regenerated via MCP (se aplicável)
+- [ ] `docs/migrations/0024_*.md` criado
+- [ ] `docs/_status.md` + `CHANGELOG.md` atualizados
+- [ ] Commit `chore(db): fase 1.5 drop design system orphans (adr-0044)`
+
+### O que NÃO faz (escopo deferido pra Fase 4)
+
+- ❌ Não cria `tenant_themes` (Fase 4)
+- ❌ Não cria `tenant_theme_versions` (Fase 4)
+- ❌ Não adiciona `tenants.active_theme_version_id` (Fase 4)
+- ❌ Não importa presets TweakCN como seed (Fase 4-8)
+- ❌ Não toca em entitlement tables, plans, subscriptions (escopo zero)
+
+---
+
 ## 3. Fase 2 — Estudo mobile/PWA + decisão extras opt-in (decide D2)
 
 **Goal:** decidir o que sobrevive como **extension opt-in sobre shadcn-canonical** vs o que vira universal vs o que joga fora. Output: lista cravada de extras + locais corretos.
