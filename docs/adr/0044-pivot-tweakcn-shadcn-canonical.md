@@ -28,8 +28,8 @@ o engine inteiro nunca foi exercitado em produção.
 Em paralelo, descobriu-se que **[TweakCN](https://tweakcn.com)
 (`jnsahaj/tweakcn`, Apache-2.0, ~9.9k stars)** já implementa em produção
 exatamente o builder visual de tema shadcn/ui que falta aqui — usando
-**shadcn-canonical 41 tokens flat** (28 cores + 3 fontes + radius + 6
-shadow primitives + spacing + letter-spacing). Esse vocabulário tem
+**shadcn-canonical ~45 keys flat** (32 cores + 3 fontes + radius + 6
+shadow primitives + shadow-color + letter-spacing + spacing). Esse vocabulário tem
 compatibilidade nativa com v0.dev, shadcn blocks, Kibo, Origin UI, MCP
 `shadcn@canary registry:mcp` — o ecossistema inteiro fala essa língua.
 Nosso modelo `--role-*` invented é hipótese sem evidência; o deles é
@@ -38,7 +38,7 @@ proven em produção.
 **Estudos prévios concluídos antes desta ADR (com caveat de inferência):**
 
 - S1.1 (`docs/research/29-token-partition-universal-vs-tenant.md`) —
-  particionamento 41 tokens canonical em universal vs per-tenant
+  particionamento ~45 keys canonical em universal vs per-tenant
 - S1.2 (`docs/research/30-color-format-culori-integration.md`) — OKLCH
   primary no DB + APCA nativo
 - S1.3 (`docs/research/31-zod-schema-shadcn-canonical.md`) — schema Zod
@@ -54,17 +54,18 @@ arquivos reais: `config/theme.ts`, `types/theme.ts`, `utils/shadows.ts`,
 
 ## Decision
 
-### 1. shadcn-canonical 41 tokens TweakCN-vocab como interface pública obrigatória
+### 1. shadcn-canonical ~45 keys TweakCN-vocab como interface pública obrigatória
 
 Trade-off **proven > teoricamente elegante**: ecossistema (v0.dev,
-shadcn blocks, Kibo, Origin, MCP) reconhece imediatamente. 28 cores + 3
-fontes + radius + 6 shadow primitives + spacing + letter-spacing.
+shadcn blocks, Kibo, Origin, MCP) reconhece imediatamente. 32 cores + 3
+fontes + radius + 6 shadow primitives + shadow-color + letter-spacing + spacing.
+(Validado Fase -1 contra `tweakcn-ref/types/theme.ts` commit 9adabcf9.)
 
 ### 2. Partição universal vs per-tenant (S1.1)
 
 - **Per-tenant** (vivem em `<style precedence="theme">` runtime, snapshot
-  em DB): 28 cores + 3 fontes + radius + 6 shadow primitives +
-  letter-spacing
+  em DB): 32 cores + 3 fontes + radius + 6 shadow primitives +
+  shadow-color (por-modo) + letter-spacing + spacing-opt
 - **Universal** (vivem em `app/globals.css`): mobile primitives
   (`--touch-min`, `--inset-safe-*`, `--mobile-full-height` 100dvh,
   `--mobile-nav-height`, `--fab-size`, frosted glass primitives),
@@ -94,7 +95,7 @@ que consumam migram pra `--radius` + utilities Tailwind.
 ### 6. Semantic colors não-canonical — OUT
 
 `--color-info`/`--color-success`/`--color-warning` (extras invented além
-do shadcn-canonical) NÃO entram. Apenas 28 tokens canonical (incluindo
+do shadcn-canonical) NÃO entram. Apenas 32 tokens canonical de cor (incluindo
 `--destructive`/`--destructive-foreground`).
 
 ### 7. Native aliases archetype-specific — OUT
@@ -111,11 +112,13 @@ emite OKLCH literal. APCA opera em OKLCH nativo. HEX só fallback JIT
 
 ### 9. Schema Zod monolítico (S1.3)
 
-`ThemeColorsSchema` (28 cores) + `ThemeCommonSchema` (fonts/radius/
-shadows/spacing/letter-spacing) + `ThemeSchema` root
+`ThemeColorsSchema` (32 cores) + `ThemeCommonSchema` (fonts/radius/
+shadows/letter-spacing/spacing-opt) + `ThemeSchema` root
 (`{light, dark, common}`) + `ThemePartialSchema` pro builder UI.
-~78 LOC vs 600+ LOC anteriores. Vai pra `lib/design/contract/theme.ts`
-em Fase 1.
+~111 LOC monolítico (validado contra `tweakcn-ref/types/theme.ts`).
+TweakCN NÃO promove `common` pra schema — nossa estrutura é refinamento
+próprio multi-tenant (força invariante via tipo). Vai pra
+`lib/design/contract/theme.ts` em Fase 1.
 
 ### 10. Multi-tenant runtime — mantido
 
@@ -256,7 +259,7 @@ roles invented, Layer 1.5 roles, 7 estratégias canônicas
 (mechanic-swap/tinted-brand/frosted-opt-in/…), voice tokens per
 archetype.
 
-**Vocabulário oficial:** shadcn-canonical 41 tokens (TweakCN-vocab).
+**Vocabulário oficial:** shadcn-canonical ~45 keys (TweakCN-vocab — validado Fase -1).
 Extras opt-in decididos após estudo prévio.
 
 ## Referências

@@ -127,8 +127,8 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx` (sem stories no working tree atual pós-pivot ADR-0044; reinstalação JIT). MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
 - **Engines (ADR-0041):** 2 motores separados — Form Engine (linear `steps[]+blocks[]+logic[]`) + Page Engine (árvore recursiva). Polimórficos via `forms.kind`/`pages.kind`. Reuso interno/externo via `scope` flag (tenant/internal/platform) + RLS condicional. Report = `pages.kind='report'` opcional (não regra). Catálogo dos engines: `docs/blueprint/21-engine-catalog.md`
 - **Design system (ADR-0044 pivot · supersedes ADR-0043):**
-  shadcn-canonical **41 tokens TweakCN-vocab** como interface pública obrigatória
-  (28 cores + 3 fontes + 1 radius + 6 shadow primitives + spacing + letter-spacing).
+  shadcn-canonical **~45 keys TweakCN-vocab** como interface pública obrigatória
+  (32 cores + 3 fontes + 1 radius + 6 shadow primitives + shadow-color + letter-spacing + spacing-opt).
   Color format OKLCH-primary (HEX fallback JIT). Universal (mobile primitives,
   z-index, motion, spacing Carbon, APCA thresholds, breakpoint 768px) vive em
   `globals.css`; per-tenant (cores, fontes, radius, shadow) via

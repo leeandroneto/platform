@@ -29,7 +29,7 @@ Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC 
    inferência via WebFetch dos estudos S1.1/S1.2/S1.3.
 2. **Study-first em CADA fase.** Decisão arquitetural só após estudo prévio com dados. Sem cravar martelo "do gut". Cada fase abre com checklist `☐ Estudo prévio Sx.y — decide [X]` que precisa estar 100% antes da execução.
 3. **Universal imutável vs per-tenant personalizável — distinguir SEMPRE.** Mobile chrome (`--touch-min`, `--inset-safe-*`, breakpoint 768px), z-index, motion durations canonical, spacing Carbon 8-base, APCA Silver thresholds são **universais** — vivem em `globals.css` fora do tema. Cores, fontes, radius, shadow são **per-tenant** — vivem no DB.
-4. **shadcn-canonical é a interface pública.** Os 41 tokens TweakCN-vocab (28 cores + 3 fontes + radius + 6 shadow primitives + spacing + letter-spacing) são a superfície que o ecossistema (v0.dev, shadcn blocks, Kibo, Origin, MCP `shadcn@canary registry:mcp`) reconhece. Extras opt-in (frosted-mobile, native aliases archetype-specific) só após estudo prévio comprovar valor.
+4. **shadcn-canonical é a interface pública.** Os ~45 keys TweakCN-vocab (32 cores + 3 fontes + radius + 6 shadow primitives + shadow-color + letter-spacing + spacing-opt) são a superfície que o ecossistema (v0.dev, shadcn blocks, Kibo, Origin, MCP `shadcn@canary registry:mcp`) reconhece. Extras opt-in (frosted-mobile, native aliases archetype-specific) só após estudo prévio comprovar valor.
 5. **Build verde a cada commit.** Sequência projetada pra manter `pnpm build && pnpm typecheck && pnpm lint --max-warnings 0` verde no fim de cada commit. Quebras intencionais (ex: Fase 0 surgical delete) são consertadas no mesmo commit antes do push.
 6. **Visual check a cada etapa, não a cada fase.** Cada item executável termina com `pnpm dev` + verificação manual de rota afetada antes de marcar done. Nada de "vou testar visualmente no final".
 7. **Delete > move-to-legacy.** Sem `..\platform-legacy\` folder. Sem
@@ -47,7 +47,7 @@ Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC 
 - `7 estratégias canônicas` (mechanic-swap/tinted-brand/frosted-opt-in/etc — TweakCN não fala isso)
 - `voice tokens per archetype`
 
-**Vocabulário oficial:** shadcn-canonical 41 tokens (TweakCN-vocab). Extras decididos após estudo prévio.
+**Vocabulário oficial:** shadcn-canonical ~45 keys (TweakCN-vocab). Extras decididos após estudo prévio.
 
 ---
 
@@ -75,7 +75,7 @@ Arquivos chave (todos lidos em 2026-05-21, confirmados):
 
 | Arquivo                      | Conteúdo confirmado                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config/theme.ts`            | `COMMON_STYLES[]` + `defaultLightThemeStyles` + `defaultDarkThemeStyles` (41 tokens flat, OKLCH)                                                                                                                                                                                                                                                                                           |
+| `config/theme.ts`            | `COMMON_STYLES[]` + `defaultLightThemeStyles` + `defaultDarkThemeStyles` (~45 keys flat, OKLCH)                                                                                                                                                                                                                                                                                            |
 | `types/theme.ts`             | `themeStylePropsSchema` Zod monolítico ~78 LOC + `ThemeStylesWithoutSpacing` variant + `Theme` Drizzle infer                                                                                                                                                                                                                                                                               |
 | `utils/shadows.ts`           | `getShadowMap()` algoritmo 6→8 níveis (`2xs/xs/sm/md/lg/xl/2xl` + base shadow alias)                                                                                                                                                                                                                                                                                                       |
 | `utils/color-converter.ts`   | `colorFormatter()` via culori (hsl/rgb/oklch/hex) + `formatHsl()` Tailwind v3/v4 split                                                                                                                                                                                                                                                                                                     |
@@ -221,7 +221,7 @@ pnpm build         # verde
 
 **Adicionados:**
 
-- Bullet "**Design system (ADR-0044 pivot, supersedes ADR-0043):** shadcn-canonical 41 tokens TweakCN-vocab como interface pública. Multi-tenant runtime mantido via `getRouteByHost` + `<style precedence="theme">`. APCA Silver mantido. Mobile primitives universais. Presets construídos copiando tokens literais (5-7 dia 1). TweakCN clone read-only em `C:\Users\leean\Desktop\tweakcn-ref\` como SSOT pra adaptação direta."
+- Bullet "**Design system (ADR-0044 pivot, supersedes ADR-0043):** shadcn-canonical ~45 keys TweakCN-vocab como interface pública. Multi-tenant runtime mantido via `getRouteByHost` + `<style precedence="theme">`. APCA Silver mantido. Mobile primitives universais. Presets construídos copiando tokens literais (5-7 dia 1). TweakCN clone read-only em `C:\Users\leean\Desktop\tweakcn-ref\` como SSOT pra adaptação direta."
 - Linha "Plano ativo (agora) `docs/plans/pivot-tweakcn.md` (Fase -1 ✅ + Fase 0-8)" na tabela
 - Linha "TweakCN clone (SSOT) `C:\Users\leean\Desktop\tweakcn-ref\`" na tabela
 
@@ -313,7 +313,7 @@ chore(design-system): pivot TweakCN/shadcn-canonical (ADR-0044 supersedes 0043)
 
 ## 2. Fase 1 — Foundation reset (Estudos S1.\* + execução)
 
-**Goal:** trocar `app/globals.css` por shadcn-canonical 41 tokens + contract Zod novo + build-theme-css emitindo canonical. Após esta fase, qualquer tenant existente carrega CSS canonical (visualmente o site fica "shadcn default + tenant primary").
+**Goal:** trocar `app/globals.css` por shadcn-canonical ~45 keys + contract Zod novo + build-theme-css emitindo canonical. Após esta fase, qualquer tenant existente carrega CSS canonical (visualmente o site fica "shadcn default + tenant primary").
 
 **Estimativa:** 12-16h (4-6h estudos + 8-10h execução)
 
@@ -326,18 +326,18 @@ chore(design-system): pivot TweakCN/shadcn-canonical (ADR-0044 supersedes 0043)
 > (commit `9adabcf9`). Caveat já anotado no topo de cada research doc.
 > Algumas conclusões podem precisar refinar.
 
-#### Estudo S1.1 — Particionar 41 tokens em universal vs per-tenant
+#### Estudo S1.1 — Particionar ~45 keys em universal vs per-tenant
 
-**Pergunta:** dos 41 tokens TweakCN-vocab, quais ficam em `globals.css` (universal, fora do tema) vs quais entram em `<style precedence="theme">` (per-tenant, runtime injection)?
+**Pergunta:** dos ~45 keys TweakCN-vocab, quais ficam em `globals.css` (universal, fora do tema) vs quais entram em `<style precedence="theme">` (per-tenant, runtime injection)?
 
 **Como:**
 
-1. Listar os 41 tokens com classificação tentativa
+1. Listar os ~45 keys com classificação tentativa
 2. Confrontar com TweakCN (eles colocam TUDO per-tenant — sem split)
 3. Decidir: nós podemos ser mais granulares (ex: `--radius` é geralmente universal por archetype-feel; cores são definitivamente per-tenant)
 4. Output: tabela `token → escopo`
 
-**Hipótese a confirmar:** 28 cores + 3 fontes + 1 radius + 6 shadow primitives + spacing + letter-spacing TODOS per-tenant. Universais ficam só: motion durations/easings, z-index, breakpoint, spacing scale numérica Carbon, mobile primitives (touch-min/safe-area/dvh/frosted), APCA thresholds.
+**Hipótese a confirmar:** 32 cores + 3 fontes + 1 radius + 6 shadow primitives + shadow-color + letter-spacing + spacing-opt TODOS per-tenant. Universais ficam só: motion durations/easings, z-index, breakpoint, spacing scale numérica Carbon, mobile primitives (touch-min/safe-area/dvh/frosted), APCA thresholds.
 
 **Output:** `docs/research/29-token-partition-universal-vs-tenant.md` (~600 palavras).
 
@@ -356,7 +356,7 @@ chore(design-system): pivot TweakCN/shadcn-canonical (ADR-0044 supersedes 0043)
 
 #### Estudo S1.3 — Schema Zod shadcn-canonical mínimo
 
-**Pergunta:** qual é o schema Zod mais simples que cobre os 41 tokens shadcn-canonical?
+**Pergunta:** qual é o schema Zod mais simples que cobre os ~45 keys shadcn-canonical?
 
 **Como:**
 
@@ -462,8 +462,8 @@ chore(design-system): pivot TweakCN/shadcn-canonical (ADR-0044 supersedes 0043)
 
 **Faz:** função puro `buildThemeCSS(theme: Theme): string` que recebe schema validado e emite CSS string com:
 
-- `:root { /* light tokens */ }` — 41 tokens em OKLCH + fontes + radius + shadows + spacing + letter-spacing
-- `:root.dark, .dark { /* dark tokens */ }` — overrides apenas das 28 cores (common compartilhado)
+- `:root { /* light tokens */ }` — ~45 keys em OKLCH + fontes + radius + shadows + spacing + letter-spacing
+- `:root.dark, .dark { /* dark tokens */ }` — overrides apenas das 32 cores (common compartilhado)
 
 Sem invented roles. Apenas shadcn canonical names: `--background`, `--foreground`, `--card`, `--card-foreground`, etc.
 
@@ -1006,7 +1006,7 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 #### Estudo S6.2 — Adapt system prompt TweakCN
 
-**Pergunta:** `lib/ai/prompts.ts` do TweakCN (~80 LOC) fala de 41 tokens flat. Nosso prompt fala da mesma coisa (sem archetype/roles) — copy literal + small adapt?
+**Pergunta:** `lib/ai/prompts.ts` do TweakCN (~80 LOC) fala de ~45 keys flat. Nosso prompt fala da mesma coisa (sem archetype/roles) — copy literal + small adapt?
 
 **Como:** lê prompt TweakCN integral + adapta:
 
@@ -1225,7 +1225,7 @@ Para cada preset (estimativa 4-6h):
 
 **Faz:** documento ~1500 palavras refletindo realidade pós-pivot:
 
-- Stack: shadcn-canonical 41 tokens + TweakCN-inspired builder
+- Stack: shadcn-canonical ~45 keys + TweakCN-inspired builder
 - Multi-tenant runtime via `getRouteByHost` + `<style precedence="theme">`
 - Versionamento via `tenant_themes` + `tenant_theme_versions` (pattern engine catalog)
 - APCA Silver dual-gate

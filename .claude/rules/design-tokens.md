@@ -1,6 +1,6 @@
 ---
 name: Design tokens — shadcn-canonical 41 TweakCN-vocab (ADR-0044)
-description: Adaptamos AO shadcn, não criamos vocabulário paralelo. 28 cores + 3 fontes + 1 radius + 6 shadow primitives. Universal vs per-tenant distinguir SEMPRE.
+description: Adaptamos AO shadcn, não criamos vocabulário paralelo. 32 cores + 3 fontes + 1 radius + 6 shadow primitives + shadow-color + letter-spacing + spacing-opt. Universal vs per-tenant distinguir SEMPRE.
 paths:
   - 'app/**/*.{ts,tsx,css}'
   - 'components/**/*.{ts,tsx}'
@@ -10,7 +10,7 @@ paths:
 
 ## Princípio
 
-**shadcn-canonical 41 tokens (TweakCN-vocab) é a interface pública obrigatória**
+**shadcn-canonical ~45 keys (TweakCN-vocab) é a interface pública obrigatória**
 (ADR-0044). Adaptamos AO shadcn — não criamos vocabulário paralelo. Extras
 opt-in só após estudo prévio + ADR.
 
@@ -23,7 +23,7 @@ editado individualmente.
 
 ---
 
-## Os 41 tokens canonical (TweakCN-vocab)
+## As ~45 keys canonical (TweakCN-vocab — validado contra `tweakcn-ref/types/theme.ts`)
 
 ### Cores per-tenant (28) — light + dark separados
 
@@ -153,7 +153,7 @@ tenant_theme_versions.snapshot` (Zod `Theme`).
 
 ## Quando criar extension opt-in
 
-**Não criamos tokens novos.** Os 41 canonical são fixos (shadcn-canonical
+**Não criamos tokens novos.** As ~45 keys canonical são fixas (shadcn-canonical
 TweakCN-vocab). Extension opt-in é coisa diferente: tokens fora do canonical
 que cobrem necessidade que TweakCN não modela (ex: `--mini-player-height` pra
 PWA aluno, `--touch-min` iOS HIG, `--frosted-blur` Apple-style).
