@@ -10,6 +10,10 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Database (2026-05-21 — Pivot ADR-0044 Fase 1.5)
+
+- Migration `0024_drop_design_system_orphans` — drop tenants.{archetype_id, previous_archetype_id, archetype_changed_at, palette_id, font_id}, brands.default_palette_id, functions default_palette_id()/default_font_id(), tables palettes/fonts/tenant_theme_presets (CASCADE). Pré-fix 6 PWA routes consumindo palette_id/default_palette_id via FK trocadas por DEFAULT_THEME constantes (lib/design/theme-defaults) até Fase 4 entregar tenant_themes/\_versions.
+
 ### Added (2026-05-19 — Infra externa Fase 1 + design rethink)
 
 - Migration `0015_forms_align_research_23` — rename `capture_forms`→`forms`, `capture_submissions`→`form_submissions`, `assessments`→`form_reports` (zero consumers no código, grep confirmou). +25 colunas (kind enum 8 valores, vertical, status, logic_rules jsonb, bot_score, ip_address_hashed, idempotency_key, share_token, content_md, blob_url, etc). Nova tabela `form_versions` espelhando `page_versions` (snapshot Hotmart-like). Vocab canônico pesquisa 23 §18 aplicado no banco.

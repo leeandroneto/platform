@@ -4,6 +4,7 @@
 import { ImageResponse } from 'next/og'
 
 import { oklchToHex } from '@/lib/design/contrast'
+import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 interface BrandIconData {
@@ -12,30 +13,18 @@ interface BrandIconData {
   primary_foreground_oklch: string
 }
 
+// Pós-pivot ADR-0044 + Fase 1.5: brands.default_palette_id removida; até Fase 4
+// entregar tenant_themes/_versions, icon usa DEFAULT_THEME canonical.
 async function getBrandIconData(brandId: string): Promise<BrandIconData | null> {
   const admin = createAdminClient()
-  const { data, error } = await admin
-    .from('brands')
-    .select(
-      `
-      name,
-      palette:default_palette_id ( primary_oklch, surfaces_dark )
-    `,
-    )
-    .eq('id', brandId)
-    .maybeSingle()
+  const { data, error } = await admin.from('brands').select('name').eq('id', brandId).maybeSingle()
 
   if (error || !data) return null
 
-  const palette = data.palette as unknown as {
-    primary_oklch: string
-    surfaces_dark: string[]
-  }
-
   return {
     brand_name: data.name as string,
-    primary_oklch: palette.primary_oklch,
-    primary_foreground_oklch: 'oklch(0.98 0.01 275)',
+    primary_oklch: DEFAULT_THEME.light.primary,
+    primary_foreground_oklch: DEFAULT_THEME.light['primary-foreground'],
   }
 }
 

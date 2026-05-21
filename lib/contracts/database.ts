@@ -251,7 +251,6 @@ export type Database = {
       brands: {
         Row: {
           created_at: string
-          default_palette_id: string
           default_vertical: string
           deleted_at: string | null
           host: string
@@ -264,7 +263,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          default_palette_id: string
           default_vertical: string
           deleted_at?: string | null
           host: string
@@ -277,7 +275,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          default_palette_id?: string
           default_vertical?: string
           deleted_at?: string | null
           host?: string
@@ -289,13 +286,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: 'brands_default_palette_id_fkey'
-            columns: ['default_palette_id']
-            isOneToOne: false
-            referencedRelation: 'palettes'
-            referencedColumns: ['id']
-          },
           {
             foreignKeyName: 'brands_default_vertical_fkey'
             columns: ['default_vertical']
@@ -671,65 +661,6 @@ export type Database = {
             columns: ['tenant_id']
             isOneToOne: false
             referencedRelation: 'tenants'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      fonts: {
-        Row: {
-          brand_id: string | null
-          created_at: string
-          deleted_at: string | null
-          display_name: string
-          family_name: string
-          id: string
-          is_active: boolean
-          is_official: boolean
-          provider: string
-          slug: string
-          sort_order: number
-          subsets: string[]
-          updated_at: string
-          weights: number[]
-        }
-        Insert: {
-          brand_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          display_name: string
-          family_name: string
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          provider: string
-          slug: string
-          sort_order?: number
-          subsets?: string[]
-          updated_at?: string
-          weights: number[]
-        }
-        Update: {
-          brand_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          display_name?: string
-          family_name?: string
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          provider?: string
-          slug?: string
-          sort_order?: number
-          subsets?: string[]
-          updated_at?: string
-          weights?: number[]
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'fonts_brand_fk'
-            columns: ['brand_id']
-            isOneToOne: false
-            referencedRelation: 'brands'
             referencedColumns: ['id']
           },
         ]
@@ -1488,100 +1419,6 @@ export type Database = {
           },
         ]
       }
-      palettes: {
-        Row: {
-          brand_id: string | null
-          created_at: string
-          created_by_tenant_id: string | null
-          deleted_at: string | null
-          description: string | null
-          display_name: string
-          extras_oklch: string[]
-          hue: number
-          id: string
-          is_active: boolean
-          is_official: boolean
-          primary_light_oklch: string | null
-          primary_oklch: string
-          secondary_oklch: string
-          slug: string | null
-          sort_order: number
-          source_palette_id: string | null
-          surfaces_dark: string[]
-          surfaces_light: string[]
-          tertiary_oklch: string
-          updated_at: string
-        }
-        Insert: {
-          brand_id?: string | null
-          created_at?: string
-          created_by_tenant_id?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          display_name: string
-          extras_oklch: string[]
-          hue: number
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          primary_light_oklch?: string | null
-          primary_oklch: string
-          secondary_oklch: string
-          slug?: string | null
-          sort_order?: number
-          source_palette_id?: string | null
-          surfaces_dark: string[]
-          surfaces_light: string[]
-          tertiary_oklch: string
-          updated_at?: string
-        }
-        Update: {
-          brand_id?: string | null
-          created_at?: string
-          created_by_tenant_id?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          display_name?: string
-          extras_oklch?: string[]
-          hue?: number
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          primary_light_oklch?: string | null
-          primary_oklch?: string
-          secondary_oklch?: string
-          slug?: string | null
-          sort_order?: number
-          source_palette_id?: string | null
-          surfaces_dark?: string[]
-          surfaces_light?: string[]
-          tertiary_oklch?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'palettes_brand_fk'
-            columns: ['brand_id']
-            isOneToOne: false
-            referencedRelation: 'brands'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'palettes_source_palette_id_fkey'
-            columns: ['source_palette_id']
-            isOneToOne: false
-            referencedRelation: 'palettes'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'palettes_tenant_fk'
-            columns: ['created_by_tenant_id']
-            isOneToOne: false
-            referencedRelation: 'tenants'
-            referencedColumns: ['id']
-          },
-        ]
-      }
       payments: {
         Row: {
           amount_minor: number
@@ -2010,71 +1847,6 @@ export type Database = {
           },
         ]
       }
-      shape_presets: {
-        Row: {
-          brand_id: string | null
-          created_at: string
-          deleted_at: string | null
-          description: string | null
-          display_name: string
-          id: string
-          is_active: boolean
-          is_official: boolean
-          radius_base: string
-          radius_lg: string
-          radius_md: string
-          radius_sm: string
-          radius_xl: string
-          slug: string
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          brand_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          description?: string | null
-          display_name: string
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          radius_base: string
-          radius_lg: string
-          radius_md: string
-          radius_sm: string
-          radius_xl: string
-          slug: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          brand_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          description?: string | null
-          display_name?: string
-          id?: string
-          is_active?: boolean
-          is_official?: boolean
-          radius_base?: string
-          radius_lg?: string
-          radius_md?: string
-          radius_sm?: string
-          radius_xl?: string
-          slug?: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'shape_presets_brand_fk'
-            columns: ['brand_id']
-            isOneToOne: false
-            referencedRelation: 'brands'
-            referencedColumns: ['id']
-          },
-        ]
-      }
       slug_blocklist: {
         Row: {
           reason: string | null
@@ -2295,18 +2067,16 @@ export type Database = {
           default_tz: string
           deleted_at: string | null
           deletion_scheduled_at: string | null
-          font_id: string
           id: string
           lifecycle_state: string
           logo_url: string | null
           name: string
           owner_user_id: string | null
-          palette_id: string
           pixels: Json
-          shape_preset_id: string
           slug: string
           suspended_at: string | null
           suspended_reason: string | null
+          theme_mode: string
           theme_version: number
           updated_at: string
           vapid_public_key: string | null
@@ -2320,18 +2090,16 @@ export type Database = {
           default_tz?: string
           deleted_at?: string | null
           deletion_scheduled_at?: string | null
-          font_id?: string
           id?: string
           lifecycle_state?: string
           logo_url?: string | null
           name: string
           owner_user_id?: string | null
-          palette_id?: string
           pixels?: Json
-          shape_preset_id?: string
           slug: string
           suspended_at?: string | null
           suspended_reason?: string | null
+          theme_mode?: string
           theme_version?: number
           updated_at?: string
           vapid_public_key?: string | null
@@ -2345,18 +2113,16 @@ export type Database = {
           default_tz?: string
           deleted_at?: string | null
           deletion_scheduled_at?: string | null
-          font_id?: string
           id?: string
           lifecycle_state?: string
           logo_url?: string | null
           name?: string
           owner_user_id?: string | null
-          palette_id?: string
           pixels?: Json
-          shape_preset_id?: string
           slug?: string
           suspended_at?: string | null
           suspended_reason?: string | null
+          theme_mode?: string
           theme_version?: number
           updated_at?: string
           vapid_public_key?: string | null
@@ -2376,27 +2142,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'currencies'
             referencedColumns: ['code']
-          },
-          {
-            foreignKeyName: 'tenants_font_id_fkey'
-            columns: ['font_id']
-            isOneToOne: false
-            referencedRelation: 'fonts'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'tenants_palette_id_fkey'
-            columns: ['palette_id']
-            isOneToOne: false
-            referencedRelation: 'palettes'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'tenants_shape_preset_id_fkey'
-            columns: ['shape_preset_id']
-            isOneToOne: false
-            referencedRelation: 'shape_presets'
-            referencedColumns: ['id']
           },
           {
             foreignKeyName: 'tenants_vertical_fkey'
@@ -2520,9 +2265,6 @@ export type Database = {
       current_tenant_id: { Args: never; Returns: string }
       current_user_role: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
-      default_font_id: { Args: never; Returns: string }
-      default_palette_id: { Args: never; Returns: string }
-      default_shape_preset_id: { Args: never; Returns: string }
       get_entitlement: {
         Args: { p_feature: string; p_tenant_id: string }
         Returns: {

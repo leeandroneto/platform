@@ -4,6 +4,7 @@
 import { NextResponse } from 'next/server'
 
 import { oklchToHex } from '@/lib/design/contrast'
+import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 interface BrandManifestData {
@@ -15,35 +16,24 @@ interface BrandManifestData {
   default_vertical: string
 }
 
+// Pós-pivot ADR-0044 + Fase 1.5: brands.default_palette_id removida; até Fase 4
+// entregar tenant_themes/_versions, manifest usa DEFAULT_THEME canonical.
 async function getBrandManifestData(brandId: string): Promise<BrandManifestData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('brands')
-    .select(
-      `
-      id,
-      name,
-      theme_version,
-      default_vertical,
-      palette:default_palette_id ( primary_oklch, surfaces_dark )
-    `,
-    )
+    .select('id, name, theme_version, default_vertical')
     .eq('id', brandId)
     .maybeSingle()
 
   if (error || !data) return null
 
-  const palette = data.palette as unknown as {
-    primary_oklch: string
-    surfaces_dark: string[]
-  }
-
   return {
     brand_id: data.id as string,
     brand_name: data.name as string,
     theme_version: (data.theme_version as number) ?? 1,
-    primary_oklch: palette.primary_oklch,
-    surface_dark_oklch: palette.surfaces_dark[0] ?? 'oklch(0.13 0.01 275)',
+    primary_oklch: DEFAULT_THEME.light.primary,
+    surface_dark_oklch: DEFAULT_THEME.dark.background,
     default_vertical: (data.default_vertical as string) ?? 'fitness',
   }
 }

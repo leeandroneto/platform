@@ -53,7 +53,7 @@ export async function getRouteByHost(host: string): Promise<ResolvedRoute | null
       tenants:tenant_id (
         id, slug, brand_id, name, vertical, theme_version,
         brands:brand_id (
-          id, name, host, default_palette_id, logo_url, default_vertical, parent_label, theme_version
+          id, name, host, logo_url, default_vertical, parent_label, theme_version
         )
       )
     `,
@@ -75,9 +75,7 @@ export async function getRouteByHost(host: string): Promise<ResolvedRoute | null
   // 2. Lookup em public.brands (brand-root, landing institucional)
   const { data: brand } = await admin
     .from('brands')
-    .select(
-      'id, name, host, default_palette_id, logo_url, default_vertical, parent_label, theme_version',
-    )
+    .select('id, name, host, logo_url, default_vertical, parent_label, theme_version')
     .eq('host', h)
     .maybeSingle()
 

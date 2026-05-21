@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server'
 
 import { oklchToHex } from '@/lib/design/contrast'
+import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 interface TenantManifestData {
@@ -17,6 +18,8 @@ interface TenantManifestData {
   default_vertical: string
 }
 
+// Pós-pivot ADR-0044 + Fase 1.5: tenant_themes ainda não existem (Fase 4
+// entrega). Manifest usa DEFAULT_THEME.{light.primary, dark.background} até lá.
 async function getTenantManifestData(tenantId: string): Promise<TenantManifestData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
@@ -26,8 +29,7 @@ async function getTenantManifestData(tenantId: string): Promise<TenantManifestDa
       id,
       name,
       theme_version,
-      brand:brand_id ( default_vertical ),
-      palette:palette_id ( primary_oklch, surfaces_dark )
+      brand:brand_id ( default_vertical )
     `,
     )
     .eq('id', tenantId)
@@ -35,19 +37,15 @@ async function getTenantManifestData(tenantId: string): Promise<TenantManifestDa
 
   if (error || !data) return null
 
-  const palette = data.palette as unknown as {
-    primary_oklch: string
-    surfaces_dark: string[]
-  }
   const brand = data.brand as unknown as { default_vertical: string }
 
   return {
     tenant_name: data.name as string,
     tenant_id: data.id as string,
     theme_version: (data.theme_version as number) ?? 1,
-    primary_oklch: palette.primary_oklch,
-    surface_dark_oklch: palette.surfaces_dark[0] ?? 'oklch(0.13 0.01 275)',
-    default_vertical: brand.default_vertical ?? 'fitness',
+    primary_oklch: DEFAULT_THEME.light.primary,
+    surface_dark_oklch: DEFAULT_THEME.dark.background,
+    default_vertical: brand?.default_vertical ?? 'fitness',
   }
 }
 

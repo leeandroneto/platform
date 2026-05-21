@@ -9,6 +9,7 @@
 import { ImageResponse } from 'next/og'
 
 import { oklchToHex } from '@/lib/design/contrast'
+import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 const ALLOWED_SIZES: Record<string, { width: number; height: number }> = {
@@ -23,30 +24,23 @@ interface TenantSplashData {
   surface_dark_oklch: string
 }
 
+// Pós-pivot ADR-0044 + Fase 1.5: tenant_themes / tenant_theme_versions ainda
+// não existem (Fase 4 entrega). Até lá, splash usa DEFAULT_THEME canonical
+// (TweakCN-vocab). Fase 4 troca por snapshot do active_theme_version.
 async function getTenantSplashData(tenantId: string): Promise<TenantSplashData | null> {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('tenants')
-    .select(
-      `
-      name,
-      palette:palette_id ( primary_oklch, surfaces_dark )
-    `,
-    )
+    .select('name')
     .eq('id', tenantId)
     .maybeSingle()
 
   if (error || !data) return null
 
-  const palette = data.palette as unknown as {
-    primary_oklch: string
-    surfaces_dark: string[]
-  }
-
   return {
     tenant_name: data.name as string,
-    primary_oklch: palette.primary_oklch,
-    surface_dark_oklch: palette.surfaces_dark[0] ?? 'oklch(0.13 0.01 275)',
+    primary_oklch: DEFAULT_THEME.light.primary,
+    surface_dark_oklch: DEFAULT_THEME.dark.background,
   }
 }
 

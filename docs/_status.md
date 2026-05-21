@@ -1,7 +1,20 @@
 # Status — `platform`
 
-> Regenerado manualmente 2026-05-18 pós PLANO-MESTRE-DIA-0 Etapa 14.
+> Atualizado manualmente 2026-05-21 — Fase 1.5 pivot ADR-0044 done.
 > NOTA: `pnpm docs:status` SOBRESCREVE este arquivo. Migrar info de Phase A + Plano dia 0 pra generator quando consolidar.
+
+---
+
+## Pivot ADR-0044 (TweakCN shadcn-canonical) — em execução
+
+| Fase | Tema                                                                          | Status |
+| ---- | ----------------------------------------------------------------------------- | ------ |
+| -1   | Clone TweakCN read-only (SSOT)                                                | ✅     |
+| 0    | Surgical delete `components/**`                                               | ✅     |
+| 1    | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical         | ✅     |
+| 1.5  | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21) | ✅     |
+| 2    | Estudo mobile/PWA + decisão extras opt-in                                     | ⏳     |
+| 3-8  | Theme storage, builder UI, presets, integration                               | ⏳     |
 
 ---
 
