@@ -1,17 +1,32 @@
 # 31 — Schema Zod shadcn-canonical mínimo
 
-> **⚠️ CAVEAT (2026-05-21):** este estudo foi feito ANTES de clonar o repo
-> TweakCN local. As decisões aqui são **inferência** via WebFetch +
-> research-28. Após clone em `C:\Users\leean\Desktop\tweakcn-ref\` (commit
-> `9adabcf9`, branch `main`), **validar contra arquivos reais** antes de
-> Fase 1 começar. Schema TweakCN canônico está em `types/theme.ts` (já
-> lido — `themeStylePropsSchema` flat 41 keys, monolítico ~78 LOC).
-> Conclusões podem precisar refinar.
+> **✅ VALIDADO 2026-05-21** contra `tweakcn-ref/types/theme.ts` (commit
+> `9adabcf9`, branch `main`, Apache-2.0). Schema canonical confirmado:
+> `themeStylePropsSchema` flat **45 keys** (não 41 como inferimos) +
+> `themeStylesSchema = z.object({ light, dark })` ~80 LOC.
 >
 > **Tipo:** research (estudo prévio S1.3 do plano `docs/plans/pivot-tweakcn.md`).
 > **Bloqueante de:** Fase 1 §2.1 (reescrita de `lib/design/contract/`).
-> **Pré-leitura:** `docs/research/28-tweakcn-evaluation.md` §3 (modelo de domínio TweakCN, 41 tokens flat).
-> **Data:** 2026-05-21.
+> **Pré-leitura:** `docs/research/28-tweakcn-evaluation.md` §3 (modelo de domínio TweakCN, 45 tokens flat).
+> **Data:** 2026-05-21 (validação contra clone).
+
+---
+
+## 0. Achados-chave da validação contra clone
+
+| Hipótese pré-validação                        | Realidade no clone                                                                                                                                                                                                                                       | Status                                                                                                                                                      |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `themeStylePropsSchema` flat 41 keys, ~78 LOC | `tweakcn-ref/types/theme.ts:5-68` — **45 keys** (32 colors + 3 fonts + radius + 6 shadow primitives + letter-spacing + spacing(opt)). Arquivo total **111 LOC** incluindo `ThemeStyles`/`ThemePreset`/`Theme` Drizzle infer                              | Schema bate; count corrigido (45 keys)                                                                                                                      |
+| Estrutura `{ light, dark }`                   | `themeStylesSchema = z.object({ light: themeStylePropsSchema, dark: themeStylePropsSchema })` (`:70-73`)                                                                                                                                                 | Confirmado                                                                                                                                                  |
+| TweakCN usa Zod                               | `import { z } from "zod"` (`:3`) + `z.object`/`z.string`/`.describe`/`.optional`/`.omit`                                                                                                                                                                 | Confirmado                                                                                                                                                  |
+| `spacing` opcional                            | `spacing: z.string().optional()` (`:67`)                                                                                                                                                                                                                 | Confirmado                                                                                                                                                  |
+| Variant `WithoutSpacing` via `.omit`          | `themeStylePropsSchemaWithoutSpacing = themeStylePropsSchema.omit({ spacing: true })` (`:78-80`) + `themeStylesSchemaWithoutSpacing` (`:82-85`)                                                                                                          | Adendo — TweakCN expõe variant explícita. Nossa `ThemePartialSchema` cobre caso                                                                             |
+| TweakCN promove `common` pra schema?          | **Não.** Schema é **flat puro**: `light` e `dark` declaram TODAS as 45 keys, inclusive `font-sans`/`radius`/`shadow-*`/`letter-spacing`/`spacing` (que são iguais em ambos). `COMMON_STYLES` é só array runtime em `config/theme.ts:5-17` usado em merge | **Diverge.** Nossa proposta `ThemeCommonSchema` extraído é refinamento próprio — força invariante no nível de tipo, vs TweakCN que assume convenção runtime |
+| `ThemePreset` tipo                            | `:100-108` — `{ source?: "SAVED"\|"BUILT_IN"; createdAt?: string; label?: string; styles: { light: Partial<ThemeStyleProps>, dark: Partial<ThemeStyleProps> } }`                                                                                         | Confirmado — útil pra builder UI overrides incrementais                                                                                                     |
+| Drizzle schema (DB shape)                     | `db/schema.ts:63-72` — `theme.styles json("styles").$type<ThemeStyles>()` single JSONB. Sem split common/light/dark                                                                                                                                      | TweakCN persiste 1 JSONB. Nossa proposta `{ light, dark, common }` é refinamento                                                                            |
+| Describe() por token                          | Confirmado em 24/45 keys — chart-N/sidebar-extras/shadow-primitives ficam sem describe                                                                                                                                                                   | Adendo — não 100% mas vasta maioria                                                                                                                         |
+
+**Conclusão:** schema TweakCN confirma o design — flat, kebab-case literal, `{ light, dark }` separado, Zod 4. Única divergência intencional na nossa proposta é **promover `common` pra schema separado** (extraindo as 12 keys que TweakCN dedupa por convenção em `COMMON_STYLES` runtime). Trade-off: força invariante no tipo (não pode "esquecer" de manter shadow-blur idêntico em light↔dark), custo ~10 LOC extras. **Mantemos a decisão.**
 
 ---
 

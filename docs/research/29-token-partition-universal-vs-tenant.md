@@ -1,14 +1,29 @@
 # 29 — Particionamento 41 tokens shadcn-canonical: universal vs per-tenant
 
-> **⚠️ CAVEAT (2026-05-21):** este estudo foi feito ANTES de clonar o repo
-> TweakCN local. As decisões aqui são **inferência** via WebFetch +
-> research-28. Após clone em `C:\Users\leean\Desktop\tweakcn-ref\` (commit
-> `9adabcf9`, branch `main`), **validar contra arquivos reais** antes de
-> Fase 1 começar. Algumas conclusões podem precisar refinar.
+> **✅ VALIDADO 2026-05-21** contra clone local `C:\Users\leean\Desktop\tweakcn-ref\`
+> (commit `9adabcf9`, branch `main`, Apache-2.0). Evidências citam arquivo + linhas
+> reais do clone, não mais WebFetch.
 >
 > **Tipo:** estudo prévio S1.1 do plano de pivot. Bloqueante pra Fase 1 (Foundation reset).
-> **Status confiança:** **medium-high** — 41 tokens TweakCN confirmados via leitura direta de `types/theme.ts` + `config/theme.ts` (research-28 §3). Partição proposta extrapola de TweakCN single-tenant pra nosso multi-tenant — não há precedente direto.
-> **Última atualização:** 2026-05-21.
+> **Status confiança:** **alta (validada)** — 44 keys do `themeStylePropsSchema`
+> confirmadas em `tweakcn-ref/types/theme.ts:5-68`. Partição proposta extrapola de
+> TweakCN single-tenant pra nosso multi-tenant — refinamento próprio (TweakCN não
+> faz partition, vive tudo per-tenant em DB JSONB).
+> **Última atualização:** 2026-05-21 (validação contra clone).
+
+---
+
+## 0. Achados-chave da validação contra clone
+
+| Hipótese pré-validação              | Realidade no clone                                                                                                                                                                                                                                                                  | Status                                                                                              |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 41 tokens                           | **45 keys** no `themeStylePropsSchema` (`types/theme.ts:5-68`) — 32 colors + 3 fonts + radius + 6 shadow primitives + letter-spacing + spacing (opt)                                                                                                                                | Ajustar (já tinha caveat em §2.7)                                                                   |
+| `COMMON_STYLES` shared light↔dark   | `config/theme.ts:5-17` lista **11 keys**: `font-sans`, `font-serif`, `font-mono`, `radius`, `shadow-opacity`, `shadow-blur`, `shadow-spread`, `shadow-offset-x`, `shadow-offset-y`, `letter-spacing`, `spacing`                                                                     | Confirmado — **`shadow-color` NÃO está em COMMON_STYLES** (declarado por-modo)                      |
+| Spacing per-tenant em TweakCN       | `defaultLightThemeStyles.spacing = "0.25rem"` (`config/theme.ts:74`) + `defaultDarkThemeStyles.spacing = "0.25rem"` (linha 119) — both modes declare it (mas COMMON_STYLES já cobre)                                                                                                | Confirmado — **mas nossa decisão UNIVERSAL diverge intencionalmente** (Tailwind v4 base ≠ branding) |
+| TweakCN tem mobile/z-index/motion?  | `tweakcn-ref/app/globals.css` (172 LOC) tem **só** `@theme inline` color mapping + 4 radius derivatives `calc()` + 8 shadow aliases + 6 tracking calc + view-transition + scrollbar utilities. **Zero** mobile primitives, z-index, motion durations, touch-min, safe-area, frosted | Confirmado — TweakCN single-tenant não tem partition universal/per-tenant; tudo theme JSONB         |
+| TweakCN faz partition multi-tenant? | DB schema (`tweakcn-ref/db/schema.ts:63-72`): `theme.styles json $type<ThemeStyles>` single field — sem split. RLS irrelevante (single-user)                                                                                                                                        | **Não.** Partition é refinamento nosso multi-tenant — sem precedente upstream                       |
+
+**Conclusão:** TweakCN single-user grava as 45 keys flat em 1 JSONB; não distingue universal vs per-tenant porque não precisa. Nossa partição é decisão de arquitetura própria pra multi-tenant — mobile chrome, motion, z-index, focus, frosted glass e icon sizes não pertencem a branding e portanto vivem em `globals.css` universal. **Nossa hipótese de partition se mantém — apenas o framing precisa reconhecer que estamos extrapolando, não replicando.**
 
 ---
 

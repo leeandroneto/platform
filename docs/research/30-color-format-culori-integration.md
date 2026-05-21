@@ -1,16 +1,30 @@
 # 30 — Color format strategy: OKLCH-primary + culori conversion
 
-> **⚠️ CAVEAT (2026-05-21):** este estudo foi feito ANTES de clonar o repo
-> TweakCN local. As decisões aqui são **inferência** via WebFetch +
-> research-28. Após clone em `C:\Users\leean\Desktop\tweakcn-ref\` (commit
-> `9adabcf9`, branch `main`), **validar contra arquivos reais** antes de
-> Fase 1 começar. Especificamente confirmar `utils/color-converter.ts`
-> (já lido — usa culori + suporta hsl/rgb/oklch/hex). Conclusões podem
-> precisar refinar.
+> **✅ VALIDADO 2026-05-21** contra `tweakcn-ref/utils/color-converter.ts`
+> (commit `9adabcf9`, branch `main`, Apache-2.0). Esqueleto que tínhamos
+> transcrito via WebFetch confere **byte-a-byte** com a fonte local — ver
+> §3 abaixo (mesmas 48 LOC, mesma API, mesmas branches `hsl/rgb/oklch/hex`).
 >
 > Estudo prévio S1.2 do plano de pivot (`docs/plans/pivot-tweakcn.md` §2 → "Estudo S1.2"). Bloqueante pra Fase 1 (reescrita de `lib/design/contract/` + `build-theme-css.ts`).
 >
-> Data: 2026-05-21 · Status: cravado · Confidence: alta
+> Data: 2026-05-21 · Status: validado · Confidence: alta
+
+---
+
+## 0. Achados-chave da validação contra clone
+
+| Hipótese pré-validação                  | Realidade no clone                                                                                                                                | Status                                                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| TweakCN usa culori                      | `tweakcn-ref/package.json` linha: `"culori": "^4.0.1"` + `"@types/culori": "^2.1.1"`. Nosso projeto: `culori@^4.0.2` (mesma major)                | Confirmado — compat zero                                                                                    |
+| `color-converter.ts` esqueleto idêntico | `tweakcn-ref/utils/color-converter.ts` (48 LOC) — `formatNumber`, `formatHsl`, `colorFormatter(value, format, tailwindVersion?)`, `convertToHSL`  | **Bate exatamente** com bloco transcrito em §3 (commit `9adabcf9`)                                          |
+| Defaults armazenados em OKLCH           | `config/theme.ts:29-75` (light) + `:78-120` (dark) — todas 32 cores são `oklch(...)`. Sidebar/chart inclusive                                     | Confirmado                                                                                                  |
+| Builder UI aceita HEX/HSL/OKLCH/RGB     | `components/editor/color-picker.tsx:107-114` — native `<input type="color">` (HEX-only por spec W3C) + `:119-126` text input **livre** (string)   | **Parcialmente diferente** — native picker é HEX-only; texto livre aceita qualquer formato culori-parseable |
+| Presets em formato                      | `utils/theme-presets.ts:8-44` (modern-minimal) — armazenados em **HEX** (`#3b82f6`, `#ffffff`). 25 presets total                                  | **Mixed**: defaults OKLCH, presets HEX                                                                      |
+| Registry export em qual formato         | `public/r/registry.json` (linha 31-94) — emite em **OKLCH** com `shadow-color` em **HSL** (`hsl(0 0% 0%)`) — mixed por design                     | Documentar — TweakCN normaliza pra OKLCH no emit                                                            |
+| ColorFormat type                        | `tweakcn-ref/types/index.ts:54`: `export type ColorFormat = "hex" \| "rgb" \| "hsl" \| "oklch";`                                                  | Confirmado — string union igual à nossa proposta                                                            |
+| Color popover só Tailwind palette       | `components/editor/color-selector-popover.tsx:18` importa `TAILWIND_PALETTE` + `:21` `formatHex, parse` de culori. Popover é só swatches Tailwind | Adendo — UX inclui Tailwind palette como sugestão                                                           |
+
+**Conclusão:** decisões S1.2 estão **todas validadas**. Único refinamento — color picker TweakCN é native `<input type="color">` (HEX limitado pela spec do browser), e a aceitação multi-formato (HEX/HSL/OKLCH/RGB) acontece no campo **text input** ao lado (`color-picker.tsx:119-126`) parseado por `culori.parse()`. Nossa decisão "UI aceita 4 formatos" continua válida — viabilizada por text input + culori, não pelo native picker.
 
 ---
 

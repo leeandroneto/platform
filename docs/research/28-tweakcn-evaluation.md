@@ -1,6 +1,13 @@
 # 28 — TweakCN evaluation (vs nosso engine multi-tenant)
 
 > Pesquisa profunda. Fontes: GitHub repo `jnsahaj/tweakcn` (Apache-2.0, ~9.9k stars, 631 forks, criado 2025-03-13, último push 2026-05-19), `tweakcn.com`, code de `db/schema.ts`, `types/theme.ts`, `config/theme.ts`, `lib/ai/prompts.ts`, `lib/ai/providers.ts`, `app/api/generate-theme/route.ts`, `app/r/themes/[id]/route.ts`, `components/editor/*`. Última atualização: 2026-05-21.
+>
+> **✅ Re-validado 2026-05-21** contra clone local
+> `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`). Counts corrigidos:
+> **25 presets** em `utils/theme-presets.ts` (não 23 — falta `t3-chat` + `doom-64`);
+> **36 itens** em `public/r/registry.json` (21 do theme-presets + 15 upstream
+> shadcn-canon). Schema canonical é **45 keys** flat (não 41). Detalhes nas
+> validações pareadas `docs/research/{29,30,31}-*.md`.
 
 ---
 
@@ -51,7 +58,7 @@ Editor em `/editor/theme` (acesso público; login só pra salvar). Layout: paine
 
 **Preview:** componentes shadcn live (`components/editor/theme-preview/`) — Cards, Forms, Tables, Dashboard mockup, Music player, etc.
 
-**Preset gallery:** 23 presets built-in em `utils/theme-presets.ts` (modern-minimal, violet-bloom, mocha-mousse, amethyst-haze, kodama-grove, cosmic-night, quantum-rose, bold-tech, elegant-luxury, amber-minimal, neo-brutalism, solar-dusk, pastel-dreams, clean-slate, ocean-breeze, retro-arcade, midnight-bloom, northern-lights, vintage-paper, sunset-horizon, starry-night, soft-pop, sage-garden). Comunidade pública via `community_theme` table com tags + likes (`db/schema.ts`).
+**Preset gallery:** **25 presets built-in** em `utils/theme-presets.ts` (verificado contra clone `9adabcf9`: modern-minimal, violet-bloom, t3-chat, mocha-mousse, amethyst-haze, doom-64, kodama-grove, cosmic-night, quantum-rose, bold-tech, elegant-luxury, amber-minimal, neo-brutalism, solar-dusk, pastel-dreams, clean-slate, ocean-breeze, retro-arcade, midnight-bloom, northern-lights, vintage-paper, sunset-horizon, starry-night, soft-pop, sage-garden). Adicionalmente, `public/r/registry.json` expõe **36 itens** distintos: 21 do `theme-presets.ts` (não inclui `violet-bloom`, `amethyst-haze`, `soft-pop`, `sage-garden`) + 15 upstream shadcn-canon presets (`twitter`, `bubblegum`, `catppuccin`, `graphite`, `perpetuity`, `tangerine`, `nature`, `supabase`, `claymorphism`, `cyberpunk`, `caffeine`, `candyland`, `claude`, `vercel`, `mono`). Diferença é normal — `theme-presets.ts` é catálogo da UI interna do editor; `registry.json` é o que está publicado pra consumo externo via `shadcn@canary registry:mcp`. Comunidade pública via `community_theme` table com tags + likes (`db/schema.ts`).
 
 **Cloud save:** requer login (Google/GitHub). Theme persiste em `theme` table; `community_theme` torna público. **Sem versionamento** (não há `theme_version` table; UPDATE direto).
 
