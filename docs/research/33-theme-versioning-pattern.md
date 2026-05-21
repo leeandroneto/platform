@@ -388,14 +388,14 @@ Recomendações cravadas mas user precisa confirmar antes de migration.
 **Recomendação:** cap em 50 (decisão D.2.b).
 **Alternativa:** sem limite, GC manual via job nightly que mantém última 10.
 **Trade-off:** cap protege contra abuse acidental; sem limite respeita autonomia. 50 é razoável (1 version/semana = 1 ano de tweaks).
-**Pergunta pro user:** cap 50 ok? Ou prefere 100/sem limite?
+**✅ Decisão (user 2026-05-21):** Opção A — cap 50. CHECK constraint no INSERT. Mensagem de erro clara quando bate teto. UI de "delete antigas" volta JIT em Fase 5.
 
 ### G.3 — Fork via UI: feature dia 0 da Fase 4 OU JIT?
 
 **Recomendação:** schema preparado (FK `parent_theme_id`), feature **JIT em Fase 5** (builder UI). Dia 0 da Fase 4 não expõe "Fork" button — só "Save", "Restore", "Set as active".
 **Alternativa:** já implementar fork no server action + UI mínimo.
 **Trade-off:** schema upfront garante migração futura barata; UI JIT evita inflar Fase 4. Fase 5 audit S5.0 + studio implementation já cobre.
-**Pergunta pro user:** ok schema dia 0 + UI JIT Fase 5?
+**✅ Decisão (user 2026-05-21):** Opção A — schema dia 0 (FK `parent_theme_id` self-reference) + fork button JIT Fase 5 (junto com builder UI completo). Server action `forkTheme()` também adia pra Fase 5.
 
 ### G.4 — `theme_mode` em `tenants` (auto/light/dark): manter como está?
 
@@ -403,7 +403,9 @@ Recomendações cravadas mas user precisa confirmar antes de migration.
 **Recomendação:** manter como está. É preferência runtime do tenant (dictar qual mode mostrar por padrão pro usuário final) — ortogonal ao snapshot que já contém light+dark. App lê `theme_mode` e aplica `<html class="dark">` ou não.
 **Alternativa:** mover pra dentro do snapshot (theme inteiro tem default mode).
 **Trade-off:** manter ortogonal é mais flexível (mesmo theme + tenant escolhe mode). Mover dentro do snapshot acopla.
-**Pergunta pro user:** manter `tenants.theme_mode` separado?
+**✅ Decisão (user 2026-05-21):** Opção A — manter `tenants.theme_mode` separado. Vira input do `<ThemeProvider defaultTheme={tenant.theme_mode}>` (next-themes) em Fase 4.5.3.
+
+**Nota sobre divergência TweakCN (princípio §8 extract+adapt):** TweakCN NÃO tem column equivalente em `db/schema.ts` (verificado read 2026-05-21). Theme `styles` JSON guarda light+dark, mode escolhido vive em Zustand `useEditorStore().themeState.currentMode` client-side com default `"light"` hardcoded em `app/layout.tsx`. Razão: TweakCN é editor single-user — mode = preferência da pessoa que edita. **Nosso modelo é diferente:** dois decisores distintos — profissional (tenant owner) define **default pros end-users dele** (vai em `tenants.theme_mode` DB), end-user (aluno) **override próprio** (vai em localStorage via next-themes). Two-layer hierarchy server→client que TweakCN não precisa porque é single-user.
 
 ### G.5 — Seed migration: criar tenant_themes pro tenant `showcase` existente?
 
@@ -411,7 +413,7 @@ Recomendações cravadas mas user precisa confirmar antes de migration.
 **Recomendação:** **NÃO seed no migration**. Deixar lazy bootstrap fazer no primeiro studio open. Migration 0025 puramente DDL.
 **Alternativa:** seed inline no INSERT statement.
 **Trade-off:** seed garante "showcase tem theme custom desde dia 1" pro QA; lazy bootstrap é coerente com new tenant flow.
-**Pergunta pro user:** lazy bootstrap (zero seed) OR forçar seed via migration?
+**✅ Decisão (user 2026-05-21):** Opção A — lazy bootstrap puro. **Premissa do agente estava errada:** tenant `showcase` NÃO existe no DB (verificado via MCP `execute_sql` 2026-05-21 — `tenants` tem 0 linhas; `brands` tem 1 linha `desafit.app` apenas). Não há nada pra seedar. Migration 0025 fica DDL puro. Primeira tenant criada no futuro vai passar pelo fluxo normal `bootstrapTenantTheme()`.
 
 ---
 
