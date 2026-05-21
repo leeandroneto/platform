@@ -32,7 +32,7 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 | Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                     |
 | Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                               |
 | Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                           |
-| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (Fase -1 ✅ clone TweakCN · Fase 0 surgical delete · Fase 1-8)       |
+| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (Fase -1/0/1/1.5/4 ✅ · §STATUS ATUAL no topo · §17 open questions)  |
 | Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após pivot Fase 4 theme storage)                             |
 | TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                              |
 | Concept map (continuidade)        | `docs/design-system/20-concept-map.md` (markmap pós-pivot — ler em sessão nova antes de code)      |

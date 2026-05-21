@@ -17,6 +17,51 @@
 
 ---
 
+## STATUS ATUAL (auto-discovery pra sessão nova)
+
+> Esta seção é mantida atualizada a CADA fase. Sessão nova lendo o plano deve conseguir saber onde estamos sem precisar git log / conversa anterior.
+
+### Fases concluídas ✅
+
+| Fase               | Data       | Commit    | O que entregou                                                                          |
+| ------------------ | ---------- | --------- | --------------------------------------------------------------------------------------- |
+| -1 Clone TweakCN   | 2026-05-21 | `f7deae8` | clone read-only em `tweakcn-ref/` validado                                              |
+| 0 Surgical delete  | 2026-05-21 | `e552f9e` | 9580 LOC archetypes + 67 roles + 5 ESLint rules removidos                               |
+| 1 Foundation reset | 2026-05-21 | `d20a199` | theme.ts Zod + build-theme-css.ts + globals.css universal-only                          |
+| 1.5 DB cleanup     | 2026-05-21 | `73cc283` | migration 0024 + pre-fix 6 PWA routes                                                   |
+| 4 Theme storage    | 2026-05-21 | `f632fde` | migration 0025 + 4 server actions + next-themes wireup + 3 PWA routes consomem snapshot |
+
+### Decisões cravadas (não re-discutir)
+
+- **ADR-0044** — pivot TweakCN/shadcn-canonical
+- **G.1-G.5** (research-33): lock imutável-on-insert, cap 50, fork JIT, theme_mode separado, lazy bootstrap
+- **Princípios 1-10** (§0) — incluindo §8 extract+adapt, §9 versionamento, §10 audit-per-phase
+- **Princípio cross-cutting §11** (§0 item 11) — paralelismo + batches temáticos
+
+### Decisões pendentes (decidir em batches temáticos antes de executar)
+
+| Batch                  | Source                               | Items                                                                        | Bloqueia               |
+| ---------------------- | ------------------------------------ | ---------------------------------------------------------------------------- | ---------------------- |
+| **Theming**            | research-37 F.1-F.5 + research-39 Q9 | descartar/manter tokens mobile/PWA, paths exception jsx-no-literals          | Execução Fase 2        |
+| **AI/Registry**        | research-38 H.1-H.11                 | v0 demoted, catalog JIT, Novel adopt, AI orchestration híbrida, smart blocks | ADR-0045 + Fase 7      |
+| **ESLint/Conventions** | research-39 Q1-Q3 + Q5-Q8 + Q10      | bump limites, loose tailwind bypass, plan-gates WARN, novas regras           | ESLint config refactor |
+
+Detalhamento completo em §17 Open questions ativas.
+
+### Próxima execução
+
+**Bloqueado em:** decisões em batch (acima). Caminho de menor fricção:
+
+1. (paralelo) dispatch background agents: research-40 (shadcn registry deep-dive), research-41 (batch audit S5+S6+S7), i18n wireup
+2. (main thread) resolver 3 batches temáticos com recomendações cravadas nos research docs
+3. (unblocked) executar Fase 2 (0.5-1h pós F.1-F.5), Fase 5 (pós research-40/41), Fase 6 (pós research-41 + H.4/H.5/H.6), Fase 7 (pós ADR-0045)
+
+### Background workstreams (se ativos)
+
+- (preencher quando dispatch acontecer — atualmente: nenhum)
+
+---
+
 ## 0. Princípios não-negociáveis
 
 Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC em `lib/design/archetypes/`, 67 invented `--role-*` tokens, 5 ESLint custom rules e um Zod contract de 19+ sub-schemas **sem nunca renderizar um único archetype em runtime real**. A primeira tentativa de showcase end-to-end (2026-05-21) destapou 9 bugs cascateados, 6 dos quais foram workarounds em vez de fixes definitivos.
@@ -63,6 +108,7 @@ Este plano nasce do reconhecimento de que a fase anterior implementou 9.580 LOC 
     adaptar vs descartar. Fases 1.5, 2, 3, 8 (DB cleanup, mobile/PWA,
     wrappers JIT, showcase) NÃO precisam audit — TweakCN não tem
     código equivalente.
+11. **Aceleração via paralelismo + batches.** Estudos read-only são despachados via **Agent Opus background simultâneo** (até 3 em paralelo) — main thread fica pra estratégia + decisões. Decisões pendentes são resolvidas em **batches temáticos** (theming / AI / governance), não 1-a-1, quando relacionadas. Pré-fase study-first NÃO bloqueia execução de fases NÃO-relacionadas (Fase 4 não esperou Fase 5 ter estudo S5.0). Memória `feedback_dispatch_phases_to_opus.md` formaliza.
 
 **Vocabulário banido neste plano** (legado a sepultar):
 
@@ -1048,13 +1094,15 @@ RLS strategy: `tenant_themes` + `tenant_theme_versions` consultam `auth.jwt() ->
 
 **Estimativa:** 36-48h (6h estudos incluindo audit + 30-42h execução)
 
+> **NOTA — consolidação audits TweakCN:** os audits S5.0/S6.0/S7.0 (Fases 5/6/7) leem o mesmo clone `tweakcn-ref/` em batch coordenado. Consolidados em **`research-41-audit-tweakcn-fases-5-6-7.md`** (a ser despachado JIT antes de Fase 5 OU em background). Esta seção S5.0 antiga vira "seção 5 do research-41". Conteúdo original abaixo preservado pra referência da pergunta+adaptações cravadas — atualizar quando research-41 entregar.
+
 ### Pre-fase: estudos prévios
 
-#### Estudo S5.0 — Audit TweakCN `components/editor/**` (princípio §10)
+#### Estudo S5.0 — Audit TweakCN `components/editor/**` (consolidado em research-41 §5)
 
 **Pergunta:** quais arquivos existem em `tweakcn-ref/components/editor/` e como se relacionam? Dependency graph mínimo pra port em ordem segura.
 
-**Como:**
+**Como (referência — execução em research-41):**
 
 1. `Glob tweakcn-ref/components/editor/**/*.tsx` — listar todos
 2. Pra cada arquivo top-level, identificar imports internos (`@/components/editor/X`) — montar dependency graph
@@ -1063,7 +1111,7 @@ RLS strategy: `tenant_themes` + `tenant_theme_versions` consultam `auth.jwt() ->
 5. **Adaptações cravadas (princípio §8):** Zustand store global → RHF form local (já é nossa convenção); URL `?theme=X` state → server action save direto em `tenant_theme_versions`; community gallery `/themes/[id]` → `/admin/theme-studio/library` per-tenant; "fork theme" → "clone variant" (princípio §9)
 6. **Versionamento UI** (princípio §9): definir onde no UI mora "Salvar como variante" + "Histórico de variantes" + "Restaurar v1" — TweakCN não tem isso, precisamos desenhar do zero usando pattern Hotmart-like form/page versions
 
-**Output:** seção topo de `docs/research/34-tweakcn-files-triage.md` com dependency graph + lista de bloqueadores + UX delta versionamento.
+**Output:** seção 5 de `docs/research/41-audit-tweakcn-fases-5-6-7.md` (consolidado) — dependency graph + lista de bloqueadores + UX delta versionamento. Migra anotações pra `docs/research/34-tweakcn-files-triage.md` quando S5.1 executar.
 
 #### Estudo S5.1 — Arquivos TweakCN copia literal vs adapta vs ignora
 
@@ -1143,6 +1191,17 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 ### Execução pós-estudos
 
+#### 5.0 — Re-install Storybook 10 (precondição §15.1 G)
+
+Storybook foi deletado em Fase 0 surgical delete. Antes do PRIMEIRO componente sob §15.1 governance:
+
+1. `pnpm dlx storybook@latest init --type nextjs-vite` (ADR-0038 supersede Ladle)
+2. `.storybook/main.ts` + `.storybook/preview.ts` config
+3. MCP endpoint `localhost:6006/mcp` em `.mcp.json` (já cravado em CLAUDE.md mas server deletado)
+4. Smoke story `components/ui/button.stories.tsx` confirma boot
+
+Estimativa: 1-2h. Bloqueia §15.1 G stories obrigatórias.
+
 #### 6.1 — Setup `app/admin/theme-studio/` route + shell
 
 **Faz:**
@@ -1203,11 +1262,13 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 ### Pre-fase: estudos prévios
 
-#### Estudo S6.0 — Audit TweakCN `lib/ai/**` + `app/api/generate-theme/route.ts` (princípio §10)
+> **NOTA — consolidação audit:** S6.0 é seção 6 do batch único `research-41-audit-tweakcn-fases-5-6-7.md` (consolidado S5.0+S6.0+S7.0). Conteúdo original abaixo preservado pra referência.
+
+#### Estudo S6.0 — Audit TweakCN `lib/ai/**` + `app/api/generate-theme/route.ts` (consolidado em research-41 §6)
 
 **Pergunta:** TweakCN chama Gemini direto (`@google/generative-ai`). Como adaptar pra Vercel AI Gateway sem perder a lógica de prompt + validação Zod + retry on schema fail?
 
-**Como:**
+**Como (referência — execução em research-41):**
 
 1. Ler `tweakcn-ref/lib/ai/prompts.ts` (system prompt completo)
 2. Ler `tweakcn-ref/app/api/generate-theme/route.ts` (endpoint completo — body parse, error handling, structured output config)
@@ -1216,7 +1277,7 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 5. **Versionamento da geração** (princípio §9): cada output IA salvo como `tenant_theme_versions` nova row com `source='ai-generated'` + `prompt_text` + `model` metadata pro audit/restore JIT
 6. Documentar que TweakCN também tem image-to-theme via Gemini multimodal — vale port no mesmo endpoint
 
-**Output:** seção em `docs/research/35-ai-gateway-setup.md` com tabela "TweakCN piece → adaptação nossa".
+**Output:** seção 6 de `docs/research/41-audit-tweakcn-fases-5-6-7.md` + tabela "TweakCN piece → adaptação nossa" migra pra `docs/research/35-ai-gateway-setup.md` quando S6.1 executar.
 
 #### Estudo S6.1 — AI Gateway Vercel status + custos
 
@@ -1285,11 +1346,13 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 
 ### Pre-fase: estudos prévios
 
-#### Estudo S7.0 — Audit TweakCN `app/r/themes/[id]/route.ts` + `utils/registry/**` (princípio §10)
+> **NOTA — consolidação audit:** S7.0 é seção 7 do batch único `research-41-audit-tweakcn-fases-5-6-7.md` (consolidado S5.0+S6.0+S7.0). Conteúdo original abaixo preservado pra referência.
+
+#### Estudo S7.0 — Audit TweakCN `app/r/themes/[id]/route.ts` + `utils/registry/**` (consolidado em research-41 §7)
 
 **Pergunta:** TweakCN expõe endpoint `/r/themes/[id]` que v0/shadcn consomem. Como ele formata o payload? Reusar pra nosso `tenant_themes` endpoint?
 
-**Como:**
+**Como (referência — execução em research-41):**
 
 1. Ler `tweakcn-ref/app/r/themes/[id]/route.ts` (endpoint v0/shadcn registry)
 2. Ler `tweakcn-ref/utils/registry/v0.ts` + `utils/registry/shadcn.ts` (formatters payload)
@@ -1297,7 +1360,21 @@ Original LICENSE preserved at vendor/tweakcn/LICENSE
 4. **Adaptações cravadas (princípio §8):** nosso endpoint vira `/api/r/themes/[tenant]/[version]` com RLS check no `tenant_id`; payload mesmo format (compatibilidade ecosystem); cache via `cacheTag('theme:<tenantId>:<version>')`
 5. **Versionamento exposed via URL** (princípio §9): permitir `/api/r/themes/<tenant>/v1` vs `/api/r/themes/<tenant>/active` — profissional pode linkar versão específica ou sempre a ativa
 
-**Output:** seção em `docs/research/36-v0-integration.md` com payload contract + URL scheme decisão.
+**Output:** seção 7 de `docs/research/41-audit-tweakcn-fases-5-6-7.md` + payload contract + URL scheme decisão migra pra `docs/research/36-v0-integration.md` quando S7.1 executar.
+
+#### Estudo S7.0b — Shadcn registry deep-dive (research-40)
+
+**Pergunta:** além de `registry-item.json` (já mapeado em research-38 superficialmente), o que mais o ecossistema shadcn registry oferece pra nossa arquitetura registry?
+
+**Como:**
+
+- MCP `shadcn@canary registry:mcp` — server pra IA consumir registries
+- Private registries — namespace conventions (`@desafit/blocks`)
+- Registry composition — blocks que importam de outros
+- Auth flow per-tenant
+- MCP tools `mcp__shadcn__*` já disponíveis — explorar
+
+**Output:** `docs/research/40-shadcn-registry-deep-dive.md` (~1500-2500 palavras). Alimenta ADR-0045 + governance §15 (Knowledge Card format) + cross-link em Fase 5 (pode informar §15.1 J formato registry-ready).
 
 #### Estudo S7.1 — v0.dev API/SDK
 
@@ -1416,9 +1493,45 @@ CREATE TABLE public.tenant_pages (
 
 ---
 
-## 9. Fase 8 — Presets + showcase + validação visual real (Estudos S8.\* + execução)
+## 9. Fase 8 — Validation Suite Contínua (NÃO bloqueia outras fases)
 
-**Goal:** 5-7 presets shadcn-canonical copiando tokens literais de DESIGN.md proven. Showcase reduzido (~400 LOC) valida visualmente todos. Build verde. Pivot concluído.
+**Antes (descartado):** "última fase" que cyclava 5-7 presets e validava visual.
+
+**Agora:** **trabalho contínuo** que começa em Fase 5 (1º componente pronto) e cresce até registry maduro:
+
+### Workstreams Fase 8
+
+**8.1 — Playwright matrix wire-up** — começa quando Fase 5 entrega 1º componente sob §15.1
+
+- Config `playwright.config.ts` + snapshot baseline
+- Multi-preset (5-7 presets seed importados de TweakCN)
+- Roda em CI a cada PR — não merge se snapshot diff > tolerância
+
+**8.2 — Presets seed** — importar 5-7 themes oficiais TweakCN como `tenant_themes` source='imported-tweakcn'
+
+- Via `pnpm dlx shadcn add https://tweakcn.com/r/themes/<id>` ou JSON paste
+- Cada preset valida APCA dual-gate antes de seed
+- Sequencial: 1 preset/PR, não batch
+
+**8.3 — Visual showcase route** `/admin/showcase` (gated entitlement) — ferramenta interna pra QA
+
+- Renderiza componentes em grid × presets × modes
+- Acompanha Fase 5+6+7 incremental — não é "feature do produto"
+
+**8.4 — Métricas saúde §15.7** — começam a coletar quando 10+ componentes existem
+
+- Trimestral inicialmente, frequência aumenta com escala
+
+### Ordem operacional
+
+- Fase 5 entrega 1º componente → 8.1 começa
+- Fase 5 + Fase 6 maduras → 8.2 1º preset
+- Fase 7 ADR-0045 + 8.3 showcase route
+- 10+ componentes → 8.4 dashboard métricas (pode virar feature interna em Fase 9 hipotética)
+
+### Conteúdo original Fase 8 (preservado pra referência — workstreams acima reorganizam)
+
+**Goal histórico:** 5-7 presets shadcn-canonical copiando tokens literais de DESIGN.md proven. Showcase reduzido (~400 LOC) valida visualmente todos. Build verde. Pivot concluído.
 
 **Estimativa:** 30-40h (4h estudos + 26-36h execução)
 
@@ -1830,7 +1943,12 @@ Cada componente novo só faz merge se TODOS os blocos abaixo estiverem cravados.
 
 #### J. Registry-ready (princípio cross-cutting Fase 7)
 
-- [ ] **Knowledge card** estruturado: `{ kind, propsSchema, version, description, examples, when_to_use, anti_patterns, related }` — embedded no Zod schema ou MDX
+- [ ] **Knowledge card unified format** (cross-source canonical):
+  - Embedded JSDoc `@registry-meta` em arquivo `.tsx` (research-38 interim — adopt agora)
+  - OR MDX co-localizada (`<name>.mdx` em §15.1 I)
+  - Schema: `{ kind, propsSchema, version, description, examples, when_to_use, anti_patterns, related, vertical? }`
+  - Mesmo formato que `funil-agencia.md §3.6 BlockKnowledgeCards` (unificar — deduplicar a referência lá quando Fase 7 ADR-0045 cravar)
+  - Build script `lib/generated/block-catalog.json` agrega knowledge cards → `block_kinds_catalog` table JIT (Fase 7+)
 - [ ] Pronto pra entrar em `block_kinds_catalog` quando ADR-0045 cravar
 
 ### 15.2 — Estudos de contrato dedicados (quando)
@@ -1859,21 +1977,34 @@ A serem criadas/atualizadas conforme fases avançam:
 
 Cada rule tem seção **"Condição de revisitar"** (padrão ADR-0040 §L): sob qual gatilho a rule precisa ser atualizada (ex: "quando 10+ componentes consumirem token novo → considerar promover de extras opt-in pra canonical").
 
-### 15.4 — CI gates (automação que falha PR)
+### 15.4 — CI gates (automação que falha PR) — faseamento
 
-Não dá pra confiar só em humano revisor — CI bloqueia merge se:
+Não dá pra confiar só em humano revisor — CI bloqueia merge se. **Mas ativação é faseada** pra evitar CI fail loops bloqueando PRs legítimos enquanto a base ainda não tem volume.
 
-- [ ] **Zod schema ausente** em componente novo (lint custom)
-- [ ] **Story Storybook ausente** (script `find` em PR)
-- [ ] **Test ausente** ou coverage <70% (Vitest report)
-- [ ] **APCA fail** em qualquer combo light/dark do componente (script `pnpm contrast:check`)
-- [ ] **`var(--role-*)` ou hex hardcoded** em componente (rule `no-raw-tokens`)
-- [ ] **`100vh` em mobile-aware path** (rule `no-vh-in-mobile-aware`)
-- [ ] **Brand hardcoded** (`'desafit'`/`'yoga.app'`/`'ingles.app'` em código) — rule `brand`
-- [ ] **Vocab banido** (`pnpm vocab:audit`)
-- [ ] **Token violations** (`pnpm token:audit`)
-- [ ] **i18n keys faltando** (`pnpm i18n:audit`)
-- [ ] **Bundle size regression** >10% (`pnpm size` com budget)
+**Dia 0 (Fase 5 wire-up):**
+
+- [ ] Zod schema ausente em componente novo (lint custom — JIT na 1ª violação)
+- [ ] Vocab banido (`pnpm vocab:audit`)
+- [ ] Token violations (`pnpm token:audit`)
+- [ ] Bundle size regression >10% (`pnpm size`)
+
+**JIT após 5+ componentes existirem:**
+
+- [ ] Story Storybook ausente (script find)
+- [ ] Test ausente ou coverage <70% (validar config Vitest atual primeiro — ajustar threshold se irrealista)
+
+**JIT após Fase 6 ou 1º preset finalizado:**
+
+- [ ] APCA fail em qualquer combo light/dark (script `pnpm contrast:check`)
+- [ ] Brand hardcoded (rule `brand`)
+- [ ] i18n keys faltando (requer i18n wireup primeiro — research-39 pendente)
+
+**Catálogo completo (referência, contemplados acima):**
+
+- `var(--role-*)` ou hex hardcoded em componente (rule `no-raw-tokens`)
+- `100vh` em mobile-aware path (rule `no-vh-in-mobile-aware`)
+
+Anti-padrão: ativar tudo dia 0 → CI fail loops bloqueiam PRs legítimos. Adicionar gate só quando 3+ violações reais já foram detectadas em dev ou quando ADR cravou pré-requisito.
 
 ### 15.5 — Onboarding de componente do shadcn registry / v0 / TweakCN
 
@@ -1935,6 +2066,50 @@ Se algum item parecer overhead, perguntar: **"que bug futuro esse item previne?"
 
 ---
 
+## 17. Open questions ativas (resolver em batches temáticos)
+
+> Cada research doc finaliza com open questions cravadas. Resolver em batches no main thread (atomicidade temática) e cravar resposta no research correspondente + atualizar este index. Memória `feedback_decision_process.md` orienta: 1 decisão + recomendação por vez dentro do batch, próxima automática.
+
+### Batch Theming (research-37 F.\* + research-39 Q9)
+
+- [ ] F.1 — `--sticky-cta-height` e `--mini-player-height` provisórios ou deletar? **REC: manter provisório**
+- [ ] F.2 — `--frosted-opacity-strong/light` descarte definitivo? **REC: SIM (Tailwind cobre)**
+- [ ] F.3 — `--press-opacity` e `--disabled-opacity` descarte? **REC: SIM (Tailwind)**
+- [ ] F.4 — Opção C extensions (universal + fallback) dia 0 vs Opção A (schema extensions)? **REC: C agora, migrar JIT regra-de-3**
+- [ ] F.5 — APCA gate em extensions automático ou opt-in? **REC: opt-in via flag**
+- [ ] Q9 — Paths exception jsx-no-literals JIT ou pré-cravar agora? **REC: pré-cravar (i18n.md já documentou)**
+
+### Batch AI/Registry (research-38 H.\*)
+
+- [ ] H.1 — v0 OUT vs DEMOTED? **REC: DEMOTED (ideation dev-only)**
+- [ ] H.2 — `block_kinds_catalog` dia 0 ou JIT? **REC: JIT (JSDoc @registry-meta interim)**
+- [ ] H.3 — Novel adopt agora (cravar stack) ou esperar 3+ features? **REC: cravar agora + install JIT**
+- [ ] H.4 — AI orchestration: structured vs tool calling vs híbrido? **REC: HÍBRIDO**
+- [ ] H.5 — Model policy (Sonnet orq / Haiku router / Gemini theme / GPT-5-mini Novel?) **REC: confirmar tabela proposta**
+- [ ] H.6 — Vertical strategy A/B/C? **REC: A+B híbrido (column + variant_hint)**
+- [ ] H.7 — Smart blocks storage: composição declarada vs tabela separada? **REC: composição**
+- [ ] H.8 — L2 page blocks: 7 MVP vs 30 catalog? **REC: 7 MVP**
+- [ ] H.9 bonus — Tiptap collab?
+- [ ] H.10 bonus — Novel + theme override PoC?
+- [ ] H.11 bonus — Mídia em Novel?
+
+### Batch ESLint/Conventions (research-39 Q.\*)
+
+- [ ] Q1 — Bump max-lines 300→400, complexity 12→16? **REC: SIM**
+- [ ] Q2 — Loose `text-*`/`rounded-*` tailwind bypass até wrappers voltarem? **REC: SIM temporário**
+- [ ] Q3 — `plan-gates-required` ERROR→WARN? **REC: SIM até Fase 1 negócio**
+- [ ] Q5 — Origin/Magic copy-paste enforce? **REC: regra JIT**
+- [ ] Q6 — Block builder timing? **REC: Fase 7**
+- [ ] Q7 — Registry catalog timing? **REC: JIT (igual H.2)**
+- [ ] Q8 — CSS var inline style permitido? **REC: SIM controlado**
+- [ ] Q10 — Sheriff boundaries timing? **REC: JIT depois de 20+ files em features/**
+
+### Decididas (mover pra topo do plano §STATUS ATUAL ao resolver)
+
+Conforme batches forem resolvidos, mover bullets pra seção "Decisões cravadas" no STATUS ATUAL + cravar resposta no research correspondente.
+
+---
+
 ## 16. Apêndice — refs externas
 
 - **TweakCN clone read-only (SSOT):** `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, branch `main`, Apache-2.0)
@@ -1956,8 +2131,22 @@ ADRs e blueprints internos relacionados:
 - ADR-0041 — engine catalog 2 motores
 - ADR-0043 — design system architecture consolidated **(superseded por ADR-0044)**
 - ADR-0044 — pivot TweakCN/shadcn-canonical (criado Fase 0.1)
+- ADR-0045 — registry strategy **(planejado — cravado em S7.5 / Fase 7)**
 - Blueprint 21 — engine catalog
 - Blueprint 22 — theme extension contract (criado Fase 3.2)
+
+Research docs do pivot (citados ao longo do plano):
+
+- research-28 — TweakCN evaluation (anatomia)
+- research-29 — token partition universal vs tenant (caveat de inferência)
+- research-30 — color format culori integration (caveat de inferência)
+- research-31 — Zod schema shadcn-canonical (caveat de inferência)
+- research-33 — theme versioning pattern (G.1-G.5 decididas)
+- research-37 — mobile/PWA extras opt-in (F.1-F.5 open — §17 batch Theming)
+- research-38 — registry + Novel AI integration (H.1-H.11 open — §17 batch AI/Registry)
+- research-39 — ESLint conventions multi-tenant stack (Q1-Q10 open — §17 batch ESLint)
+- research-40 — shadcn registry deep-dive **(a despachar — S7.0b)**
+- research-41 — audit TweakCN Fases 5+6+7 consolidado **(a despachar — substitui S5.0/S6.0/S7.0 standalone)**
 
 ---
 

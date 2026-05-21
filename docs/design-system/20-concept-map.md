@@ -28,9 +28,11 @@ markmap:
 
 ### ⏭️ Próximo
 
-- **Fase 2** (decide D2): Estudo mobile/PWA extension — extras opt-in (`--touch-min`, `--mobile-nav-height`, `--frosted-*`)
-- Fase 5: Builder UI clone TweakCN (S5.0 audit components/editor/\*\* primeiro) + `forkTheme` action (G.3 deferred)
-- Fase 3, 6-8: Presets, AI generation, registry, integration final
+- **Fase 2** (decide D2): Estudo mobile/PWA extension — extras opt-in (`--touch-min`, `--mobile-nav-height`, `--frosted-*`) — bloqueado em §17 batch Theming
+- Fase 5: Builder UI clone TweakCN (S5.0 consolidado em research-41 audit) + `forkTheme` action (G.3 deferred) + Storybook 10 re-install (5.0)
+- Fase 3, 6-8: Presets, AI generation, registry (ADR-0045 / batch AI), Validation Suite Contínua (8.1-8.4)
+
+> **Detalhe operacional:** ver `docs/plans/pivot-tweakcn.md` §STATUS ATUAL (topo) + §17 Open questions ativas (batches Theming/AI/Registry/ESLint).
 
 ## 10 Princípios não-negociáveis (ADR-0044 + plan §0)
 
