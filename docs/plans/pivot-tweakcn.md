@@ -60,9 +60,9 @@ Detalhamento completo em §17 Open questions ativas.
 
 Dispatch 2026-05-21 (3 agents Sonnet paralelos — background):
 
-- **research-40 shadcn registry deep-dive** ⏳ — MCP `shadcn@canary registry:mcp`, private registries, namespace, composition, auth flow. Output: `docs/research/40-shadcn-registry-deep-dive.md`
-- **research-41 batch audit TweakCN Fases 5+6+7** ⏳ — consolidação S5.0/S6.0/S7.0 com dependency graph + EXTRACT/ADAPT/SKIP/DEFER decisões. Output: `docs/research/41-audit-tweakcn-fases-5-6-7.md`
-- **i18n wireup execução** ⏳ — `i18n/request.ts` + next.config plugin + `messages/pt-BR/common.json` + layout wrap NextIntlClientProvider + audit script. Self-contained low risk.
+- **research-40 shadcn registry deep-dive** ✅ — MCP tools, private registry hosting, namespaces `@platform`/`@desafit`, composition L1→L2→L3 via `registryDependencies`, auth Bearer/query, per-tenant analysis. 8 decisões G.1-G.8 cravadas. Output: `docs/research/40-shadcn-registry-deep-dive.md`
+- **research-41 batch audit TweakCN Fases 5+6+7** ✅ — 514 LOC / 55 arquivos auditados. Esforço revisado: Fase 5 = 34h, Fase 6 = 25h (+6h vs teto), Fase 7 = 12h (-2.5h vs piso). Total 71h (dentro range 65-79h plano). 5 bloqueadores críticos identificados (Zustand→RHF history risk, gemini-3-flash availability, APCA UX, `registry:style` vs `:theme`, ADR-0045 antes migration). Sequencing: extrair `shadows.ts`+`color-converter.ts`+`registry-gen.ts` dia 0 Fase 5 → Fase 5 sem 1-2 → Fase 6+7 paralelo a partir sem 3. TipTap DEFER (MVP textarea). Output: `docs/research/41-audit-tweakcn-fases-5-6-7.md`
+- **i18n wireup execução** ✅ commit `91fdbe0` — wireup já estava feito em Fase 4; gap real era `pnpm i18n:audit` script + 3 keys faltantes em common.json + rule i18n.md header desatualizado. Resolvido.
 
 (Atualizar pra ✅ + commit hash quando cada agent reportar conclusão.)
 
