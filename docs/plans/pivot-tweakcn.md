@@ -2,9 +2,9 @@
 
 > **Tipo:** plano ativo (substitui `docs/plans/design-system.md` — que vai pra `docs/_archive/plans/`)
 > **Início:** 2026-05-21
-> **Última atualização:** 2026-05-21 (princípios 8-10 cravados — extract+adapt, versionamento, audit-per-phase)
+> **Última atualização:** 2026-05-22 (ordem dogfooding-first cravada via ADR-0046 — plano "em finalização", próximo plano `docs/plans/theme-builder.md`)
 > **Estimativa total:** 120-160h (~3-4 semanas full-time, 6-8 semanas part-time)
-> **Status:** Fase -1 (TweakCN clone) ✅ → Fase 0 (surgical delete) → Fase 1 estudos prévios validados
+> **Status:** 🟡 **em finalização** — Fase -1/0/1/1.5/2/4 ✅. Próximo plano `docs/plans/theme-builder.md` (Fase 5 detalhe técnico permanece neste arquivo §6).
 > **Pré-leitura obrigatória:**
 >
 > - `docs/_sessions/2026-05-21-auditoria-pivot-tweakcn.md` (auditoria HIGH-confidence)
@@ -20,6 +20,8 @@
 ## STATUS ATUAL (auto-discovery pra sessão nova)
 
 > Esta seção é mantida atualizada a CADA fase. Sessão nova lendo o plano deve conseguir saber onde estamos sem precisar git log / conversa anterior.
+>
+> **Status macro 2026-05-22:** plano em **finalização**. Próximo plano: `docs/plans/theme-builder.md` (theme builder Fase 5 — detalhe técnico permanece neste arquivo §6). Ordem de execução cravada via **ADR-0046** (dogfooding-first). Itens DEFERRED em `docs/_deferred/post-funil-agencia.md`.
 
 ### Fases concluídas ✅
 
@@ -59,15 +61,23 @@ Detalhamento completo + status em §17 Open questions ativas.
 
 ### Próxima execução
 
-Caminho cravado pós ADR-0045 accepted:
+Caminho cravado **pós ADR-0046 accepted (2026-05-22 — dogfooding-first execution order)**:
 
-1. (paralelo background, 8h wall-time) 3 gaps Fase 6/7 readiness:
-   - GAP-1 rate limit AI per-tenant (Upstash ratelimit)
-   - GAP-3 domain catalog skeleton
-   - GAP-4 block schema versioning path (addendum ADR-0041)
-2. Fase 5 dia 0 — install 20 essential primitives (§6.0) + smoke story button (~30min install + 1h smoke) + AI catalog discoverability setup (§6.0.5 placeholder)
-3. Fase 5 execução Builder UI (28-34h após dia 0)
-4. Fase 6 + Fase 7 paralelo após Fase 5 sem 1-2 (sequencing research-41)
+1. (atomic agora) Atualização docs/decisões nova ordem (este commit) ✅
+2. (próxima sessão) Finalizar pivot-tweakcn + iniciar plano `docs/plans/theme-builder.md`
+3. **Theme builder** (~34h, Fase 5 detalhe técnico permanece aqui em §6 do pivot) — copy literal TweakCN editor + adapt multi-tenant, admin-only inicial, sem AI generation, sem v0 integration
+4. **Funil agência retoma** (`docs/plans/funil-agencia.md`): form captação → report IA agência → página vendas agência → AI builders pages/forms
+5. **Restante do projeto** (manual primeiro, sistematização depois — Pacote A/B/C surgem naturalmente nos planos)
+
+**Itens DEFERRED** (não bloqueiam execução atual — ver `docs/_deferred/post-funil-agencia.md`):
+
+- AI generation theme (era Fase 6 do pivot)
+- v0 integration (era Fase 7 do pivot)
+- AI patterns copy TweakCN (createDocumentHandler factory, tool layer, resumable-stream)
+- 3 gaps Fase 6/7 readiness (GAP-1 rate limit AI per-tenant, GAP-3 domain catalog skeleton, GAP-4 block schema versioning)
+- Tiptap collab, Novel mídia, Novel theme override PoC
+- Pacote A/B/C details
+- `registry-blocks.md` rule + `block-catalog.json` build script
 
 ### Background workstreams (se ativos)
 
@@ -2131,6 +2141,8 @@ Se algum item parecer overhead, perguntar: **"que bug futuro esse item previne?"
 
 ## 17. Open questions ativas (resolver em batches temáticos)
 
+> **NOTA 2026-05-22:** ordem de execução cravada via **ADR-0046** (dogfooding-first execution order). Open questions abaixo permanecem válidas mas a ordem de resolução agora é regida pelo meta-princípio: cada feature nasce como primeira instância de infra generalizada (não hardcoded), manual primeiro → sistematização depois. Itens não-bloqueantes desta execução foram movidos pra `docs/_deferred/post-funil-agencia.md`.
+>
 > Cada research doc finaliza com open questions cravadas. Resolver em batches no main thread (atomicidade temática) e cravar resposta no research correspondente + atualizar este index. Memória `feedback_decision_process.md` orienta: 1 decisão + recomendação por vez dentro do batch, próxima automática.
 
 ### Batch Theming (research-37 F.\* + research-39 Q9)
@@ -2203,9 +2215,16 @@ ADRs e blueprints internos relacionados:
 - ADR-0041 — engine catalog 2 motores
 - ADR-0043 — design system architecture consolidated **(superseded por ADR-0044)**
 - ADR-0044 — pivot TweakCN/shadcn-canonical (criado Fase 0.1)
-- ADR-0045 — registry strategy **(planejado — cravado em S7.5 / Fase 7)**
+- ADR-0045 — registry strategy (accepted 2026-05-21)
+- **ADR-0046** — dogfooding-first execution order (accepted 2026-05-22) — meta-princípio amplo aplicável a TODAS features futuras; cravou ordem desta sessão: theme builder → funil agência → AI builders → restante
 - Blueprint 21 — engine catalog
 - Blueprint 22 — theme extension contract (criado Fase 3.2)
+
+Planos relacionados:
+
+- **`docs/plans/theme-builder.md`** (próximo plano após este finalizar) — Fase 5 detalhe técnico permanece aqui em §6
+- **`docs/plans/funil-agencia.md`** (retoma após theme-builder)
+- **`docs/_deferred/post-funil-agencia.md`** (itens adiados — revisitar JIT quando gatilho disparar)
 
 Research docs do pivot (citados ao longo do plano):
 

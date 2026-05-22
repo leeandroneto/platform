@@ -34,6 +34,30 @@ markmap:
 
 > **Detalhe operacional:** ver `docs/plans/pivot-tweakcn.md` §STATUS ATUAL (topo) + §17 Open questions ativas (batches Theming/AI/Registry/ESLint).
 
+## Status atualizado 2026-05-22 — nova ordem dogfooding-first
+
+**ADR-0046 accepted (2026-05-22)** — meta-princípio amplo: cada feature
+nasce como primeira instância de infra generalizada (não hardcoded);
+manual primeiro → sistematização depois.
+
+### Ordem cravada (instância concreta da ADR-0046)
+
+1. **Theme builder** (~34h) — plano executor: `docs/plans/theme-builder.md`
+   (Fase 5 detalhe técnico permanece em `docs/plans/pivot-tweakcn.md` §6)
+2. Form captação agência (bare-bones Forms Engine, primeira instância dogfooding)
+3. Report IA do form agência (research-25 ready-to-consume — 30+ decisões cravadas)
+4. Página vendas agência (bare-bones Pages Engine, primeira instância dogfooding)
+5. AI builders (pages + forms engines) — construir enquanto funil capta leads
+6. Restante: manual primeiro → sistematização depois
+
+### Cross-links 2026-05-22
+
+- Plano novo: **`docs/plans/theme-builder.md`** (próximo plano após pivot-tweakcn finalizar)
+- Pasta nova: **`docs/_deferred/post-funil-agencia.md`** (itens adiados — AI gen theme, v0 integration, AI patterns copy TweakCN, block_kinds_catalog table, 3 GAPs research-43, Tiptap collab, Novel mídia, registry-blocks rule, build-block-catalog script, Pacote A/B/C details)
+- ADR meta: **`docs/adr/0046-dogfooding-first-execution-order.md`**
+
+---
+
 ## Status atualizado pós research-44/45 + ADR-0045 accepted (2026-05-21)
 
 **Research-44 (real players, 20 players auditados)** validou composição:

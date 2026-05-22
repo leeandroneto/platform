@@ -1,9 +1,24 @@
 # Plano Funil Agência (Form Engine + Page Engine)
 
-> **Status:** ⏸️ **PAUSADO** até `docs/plans/design-system.md` fechar Passo 8 (2026-05-20)
+> **Status:** ⏸️ **PAUSADO** até finalização sequencial de 2 planos antecessores.
 > **Owner:** Leandro · **Data inicial:** 2026-05-19
-> **Bloqueado por:** transformação design system em curso. Construir páginas sem fundação cravada = refactor garantido depois.
-> **Retoma quando:** Passo 8 (audit + migração dos 53 shadcn primitives pra roles) do plano design system fechar.
+> **Bloqueado por (atualizado 2026-05-22 — ADR-0046 dogfooding-first):**
+>
+> 1. `docs/plans/pivot-tweakcn.md` finalizar (em finalização, próximo passo: cravar finalização)
+> 2. `docs/plans/theme-builder.md` finalizar (~34h — copy literal TweakCN editor + adapt multi-tenant, admin-only inicial)
+>
+> **Retoma quando:** theme builder finalizar. Sequência cravada nesta retomada segue **ordem ADR-0046** (passo 2-5 da ordem dogfooding-first):
+>
+> - (2) form de captação agência (bare-bones Forms Engine, primeira instância dogfooding)
+> - (3) report IA do form agência (primeiro form com IA report)
+> - (4) página de vendas agência (bare-bones Pages Engine, primeira instância dogfooding)
+> - (5) AI builders (pages + forms engines) — construir enquanto funil agência capta leads
+>
+> **Research-25 ready-to-consume (cravado 2026-05-22):**
+> `docs/research/25-ai-reports-architecture.md` tem **30+ decisões cravadas** pro report IA da agência (passo 3 da ordem). Quando funil agência retomar, item 3 usa research-25 direto — **pre-resolved dependency** economiza ~10h de estudo. Highlights: Sonnet 4.6 default + Haiku 4.5 fallback, AI SDK v6 `generateText({ output: Output.object({ schema }) })`, ReportContent shape modular discriminated union, disclaimers determinísticos (não pelo LLM, LGPD+CFM/CFN), Vercel Workflow pipeline, budget $0.02/submission com caching agressivo prefix, Resend rate limit 5 req/s, BotID Basic free.
+>
+> **Princípio meta que rege este plano:** **dogfooding-first (ADR-0046)** — cada feature do funil agência nasce como primeira instância de infra generalizada (não hardcoded). Manual primeiro → sistematização depois.
+>
 > Sucessor de `PLANO-MESTRE-DIA-0.md`. Constrói Feature 1 (funil agência) sobre
 > infra self-service desde o primeiro commit, com 5 decisões fechadas pós-pesquisa 23.
 >

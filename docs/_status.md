@@ -1,11 +1,13 @@
 # Status — `platform`
 
-> Atualizado manualmente 2026-05-21 — Fase 1.5 pivot ADR-0044 done.
+> Atualizado manualmente 2026-05-22 — ADR-0046 dogfooding-first accepted.
 > NOTA: `pnpm docs:status` SOBRESCREVE este arquivo. Migrar info de Phase A + Plano dia 0 pra generator quando consolidar.
 
 ---
 
-## Pivot ADR-0044 (TweakCN shadcn-canonical) — em execução
+## Pivot ADR-0044 (TweakCN shadcn-canonical) — em finalização
+
+**Status macro 2026-05-22:** plano em **finalização**. Próximo plano: `docs/plans/theme-builder.md` (~34h, Fase 5 detalhe técnico permanece em `docs/plans/pivot-tweakcn.md` §6). Ordem de execução cravada via **ADR-0046** (dogfooding-first). Pasta nova `docs/_deferred/` criada com itens adiados (revisitar JIT).
 
 | Fase     | Tema                                                                                                             | Status |
 | -------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
@@ -26,18 +28,22 @@
 - **research-44 real players integration patterns** ✅ (2026-05-21) — 20 players auditados (10 course/community + 11 AI-native). Validou ADR-0045 sem mudanças estruturais. Output: `docs/research/44-real-players-integration-patterns.md`.
 - **research-45 component strategy best practices** ✅ (2026-05-21) — arsenal 20 primitives upfront + folder `blocks/` (substitui `sections/`) + AI catalog discoverability JSDoc → `lib/generated/block-catalog.json`. Output: `docs/research/45-component-strategy-best-practices.md`.
 
-### Decisões pendentes consolidadas
+### Decisões cravadas
 
+- **ADR-0046 accepted** (2026-05-22) — meta-princípio dogfooding-first execution order. Amplo, aplicável a TODAS features futuras: cada feature nasce como primeira instância de infra generalizada (não hardcoded), manual primeiro → sistematização depois. Ordem cravada desta sessão: theme builder → form agência → report IA → página agência → AI builders → restante.
 - **ADR-0045 accepted** (2026-05-21) — 17 decisões cravadas + validadas via research-44/45 (Registry Strategy + AI Orchestration + Novel). Veredito: draft → accepted sem mudanças estruturais. D.8 refinement opcional (createDocumentHandler factory pattern de ai-chatbot).
 - **Batch AI/Registry** (H.1-H.11 + G.1-G.8 + 4 research-41) ✅ resolvido via ADR-0045 accepted.
-- **Gaps execução Fase 6/7 readiness** (3 gaps research-43): GAP-1 rate limit AI per-tenant, GAP-3 domain catalog skeleton, GAP-4 block schema versioning path — paralelo background 8h wall-time.
+- **Gaps execução Fase 6/7 readiness** (3 gaps research-43): GAP-1 rate limit AI per-tenant, GAP-3 domain catalog skeleton, GAP-4 block schema versioning path — DEFERRED em `docs/_deferred/post-funil-agencia.md` (não bloqueiam Fase 5/theme builder; revisitar antes do item 5 AI builders).
 
-### Próxima execução cravada
+### Próxima execução cravada (pós ADR-0046 dogfooding-first — 2026-05-22)
 
-1. (paralelo background, 8h) 3 gaps Fase 6/7 readiness
-2. Fase 5 dia 0 — install 20 essential primitives + smoke story + AI catalog setup placeholder
-3. Fase 5 execução Builder UI (28-34h)
-4. Fase 6 + Fase 7 paralelo após Fase 5 sem 1-2
+1. (atomic 2026-05-22) Atualização docs/decisões nova ordem ✅
+2. Próxima sessão: finalizar pivot-tweakcn + iniciar `docs/plans/theme-builder.md`
+3. Theme builder (~34h, Fase 5 detalhe técnico em `docs/plans/pivot-tweakcn.md` §6)
+4. Funil agência retoma (form captação → report IA → página vendas → AI builders)
+5. Restante: manual primeiro, sistematização depois
+
+**Itens DEFERRED** (não bloqueiam — `docs/_deferred/post-funil-agencia.md`): AI generation theme, v0 integration, AI patterns copy TweakCN, 3 gaps research-43, Tiptap collab, Novel mídia, Pacote A/B/C, registry-blocks rule, build-block-catalog script.
 
 ---
 

@@ -10,6 +10,16 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Docs (2026-05-22 — nova ordem dogfooding-first cravada)
+
+- ADR-0046 (`docs/adr/0046-dogfooding-first-execution-order.md`) — accepted — princípio meta amplo aplicável a TODAS features futuras: cada feature nasce como primeira instância de infra generalizada (não hardcoded), manual primeiro → sistematização depois. Cravou ordem desta sessão: theme builder → form agência → report IA → página agência → AI builders → restante. Validado via research-44 (20 players reais) + research-45 (component strategy).
+- Plano `docs/plans/theme-builder.md` NOVO criado — próximo plano após pivot-tweakcn finalizar. Escopo: copy literal Fase 5 TweakCN + adapt multi-tenant + admin-only inicial. ~34h. NÃO inclui AI generation nem v0 integration (deferred).
+- Pasta `docs/_deferred/` NOVA criada + `docs/_deferred/post-funil-agencia.md` NOVO — registro de decisões "fazer depois": AI generation theme, v0 integration, AI patterns copy TweakCN, block_kinds_catalog table promotion, 3 GAPs research-43 (rate limit AI/domain catalog/schema versioning), Pacote A/B/C details, Tiptap collab, Novel mídia/theme PoC, rule registry-blocks, build-block-catalog.ts script.
+- Plano `docs/plans/funil-agencia.md` header atualizado — condição de desbloqueio corrigida ("aguardando Passo 8 do plano design-system" → "aguardando theme-builder finalizar"). Adicionada nota research-25 ready-to-consume (30+ decisões IA reports pré-resolvidas).
+- Plano `docs/plans/pivot-tweakcn.md` marcado "em finalização" — próximo plano `theme-builder.md`. §STATUS ATUAL + §17 + §16 Apêndice atualizados com cross-link ADR-0046 + `docs/_deferred/`.
+- `CLAUDE.md` ganhou: linha "Decisões adiadas" na tabela Onde fica, plano ativo dual-state (pivot finalizando → theme builder próximo), bullet Regras críticas dogfooding-first ADR-0046.
+- `docs/design-system/20-concept-map.md` + `docs/_status.md` sincronizados.
+
 ### Docs (2026-05-21 — research-44/45 + ADR-0045 accepted + plan consolidation)
 
 - **research-44 real players integration patterns** (`docs/research/44-real-players-integration-patterns.md`) — auditoria de 20 players (10 course/community + 11 AI-native). GoHighLevel valida modelo white-label agency multi-tenant em escala bilhão hits/dia. Tiptap em produção massiva (LinkedIn, GitLab, Anthropic, Substack, NYT). shadcn registry production validado via MakerKit + Supastarter. AI orchestration híbrida confirmada pelo state-of-the-art (Lovable hydration, Replit Agent 3 multi-agent, Vercel Artifacts). Stack canônica course platforms = subdomain + custom domain + tenant_id (ADR-0024). 80% cobertura via precedents proven; 20% novel mas com base sólida. D.8 refinement: ai-chatbot Artifacts é pattern primo (polymorphic kind dispatch + Suggestion text diff), não espelhado — inspira `createDocumentHandler<T>()` factory pattern + tool layer pra Fase 6/7.

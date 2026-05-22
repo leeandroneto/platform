@@ -1,8 +1,8 @@
 # Claude — contexto do projeto
 
 > Carregado no início de toda sessão. **Mantenha curto e atualizado.**
-> Última atualização: 2026-05-21 (Fase B organização pós-reset · pivot
-> TweakCN ADR-0044 supersedes ADR-0043)
+> Última atualização: 2026-05-22 (ADR-0046 dogfooding-first execution order
+> accepted · plano ativo dual-state: pivot-tweakcn em finalização → theme-builder próximo)
 
 ---
 
@@ -32,8 +32,9 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 | Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                     |
 | Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                               |
 | Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                           |
-| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (Fase -1/0/1/1.5/4 ✅ · §STATUS ATUAL no topo · §17 open questions)  |
-| Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após pivot Fase 4 theme storage)                             |
+| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (🟡 em finalização) → `docs/plans/theme-builder.md` (próximo, ~34h)  |
+| Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após theme-builder; ADR-0046 ordem cravada)                  |
+| Decisões adiadas (não-bloqueante) | `docs/_deferred/{topic}.md` (revisitar quando gatilho disparar — anti-padrão: deixar morrer)       |
 | TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                              |
 | Concept map (continuidade)        | `docs/design-system/20-concept-map.md` (markmap pós-pivot — ler em sessão nova antes de code)      |
 | Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms · 24 pages · 25 reports · 28 tweakcn-eval · 29-31 estudos pivot) |
@@ -127,6 +128,7 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **Entitlements server:** `requireEntitlement(feature)` + `requireQuota(key)` + `incrementQuotaUsage(key, delta)` chamam RPCs (ADR-0039). API client (`useEntitlement`, `useQuota`) inalterada. `AppEntitlementGate` wrapper foi deletado no pivot ADR-0044 (re-add JIT). Ver `.claude/rules/entitlements.md`
 - **Storybook 10:** `.storybook/main.ts` + stories co-localizadas `components/**/*.stories.tsx` (sem stories no working tree atual pós-pivot ADR-0044; reinstalação JIT). MCP endpoint `localhost:6006/mcp` em `.mcp.json`. Ver ADR-0038
 - **Engines (ADR-0041):** 2 motores separados — Form Engine (linear `steps[]+blocks[]+logic[]`) + Page Engine (árvore recursiva). Polimórficos via `forms.kind`/`pages.kind`. Reuso interno/externo via `scope` flag (tenant/internal/platform) + RLS condicional. Report = `pages.kind='report'` opcional (não regra). Catálogo dos engines: `docs/blueprint/21-engine-catalog.md`
+- **Dogfooding-first (ADR-0046):** cada feature nasce como **primeira instância de infra generalizada** (não hardcoded). Manual primeiro → sistematização depois. Agência = nosso primeiro tenant — usar nossas próprias ferramentas pra construir o funil agência valida em runtime real. Ordem cravada: (1) theme builder ~34h → (2) form captação agência → (3) report IA agência (research-25 ready) → (4) página vendas agência → (5) AI builders → (6) restante. Itens DEFERRED desta execução em `docs/_deferred/post-funil-agencia.md` (revisitar JIT quando gatilho disparar)
 - **Registry (ADR-0045 accepted):** v0 DEMOTED · Novel ADOPT NOW (install JIT) · `block_kinds_catalog` JIT (3 consumers gate) · 3 namespaces `@shadcn`/`@platform`/`@desafit` · composition L1↘npm/L2↘L1/L3↘L2 · invariante `pages.kind === registry-item.name === components/blocks/{kind}.tsx` · folder `components/blocks/*` (substitui `sections/`) · AI orchestration HÍBRIDO (`generateObject` Zod + tool calling). Validado via research-44 (20 players reais) + research-45 (component strategy). Ver ADR-0045 + `docs/architecture/01-master-system-map.md`
 - **Component arsenal (research-45):** 20 essential primitives upfront dia 0 Fase 5 (`button input label form card dialog select textarea badge separator skeleton tabs dropdown-menu tooltip popover scroll-area sheet sonner switch command`). Bundle impact zero (Next.js 16 tree-shaking). 3 JIT exceptions (chart/calendar/carousel — deps pesadas). Folder L1 `components/ui/*` (quarentenada) · L1.5 `components/app-*.tsx` · L2/L3 `components/blocks/*` (RSC + `@registry-meta` JSDoc) · `components/vendor/*` (Origin/Kibo JIT) · `features/*/components/`
 - **Design system (ADR-0044 pivot · supersedes ADR-0043):**
