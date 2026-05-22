@@ -541,9 +541,9 @@ opcional (já refletido acima). ADR promove status draft → accepted sem ajuste
 
 4. **Contador concreto para promoção JSDoc → `block_kinds_catalog` table** —
    "3 consumers simultâneos" definido na Decisão 3, mas o threshold de "quando
-   Builder UI e Dev tool exporter estão prontos" precisa de milestone formal
-   no `docs/plans/pivot-tweakcn.md`. Cravar como gate de Fase 7 ou início
-   de Fase 8.
+   Builder UI e Dev tool exporter estão prontos" precisa de milestone formal.
+   Cravar como gate JIT quando item 5 da ordem ADR-0046 (AI builders) iniciar.
+   Ver `docs/_deferred/v0-registry-integration-detail.md` pra detalhe técnico.
 
 ---
 
@@ -561,7 +561,7 @@ opcional (já refletido acima). ADR promove status draft → accepted sem ajuste
 - ADR-0044 — Pivot TweakCN-way + shadcn-canonical (referência de formato)
 - ADR-0039 — Entitlements RPCs (`requireEntitlement`, `requireQuota`)
 - ADR-0024 — Multi-brand via hostname (contexto multi-tenant)
-- `docs/plans/pivot-tweakcn.md` § 17 Open questions ativas
+- `docs/_archive/plans/2026-05-pivot-tweakcn.md` § 17 Open questions ativas (plano arquivado — referência histórica)
 - `C:\Users\leean\Desktop\tweakcn-ref\app\r\themes\[id]\route.ts` — SSOT
   `registry:style` pattern confirmado (commit `9adabcf9`)
 - `C:\Users\leean\Desktop\tweakcn-ref\utils\registry\themes.ts` — geração

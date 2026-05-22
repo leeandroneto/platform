@@ -1,8 +1,7 @@
 # Claude — contexto do projeto
 
 > Carregado no início de toda sessão. **Mantenha curto e atualizado.**
-> Última atualização: 2026-05-22 (ADR-0046 dogfooding-first execution order
-> accepted · plano ativo dual-state: pivot-tweakcn em finalização → theme-builder próximo)
+> Última atualização: 2026-05-22 (pivot-tweakcn arquivado · theme-builder único ativo · 3 detail files deferred portados)
 
 ---
 
@@ -26,23 +25,24 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 
 ## Onde fica cada coisa
 
-| Info                              | Arquivo canônico                                                                                   |
-| --------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Regras code carregadas por path   | `.claude/rules/*.md` (19 rules)                                                                    |
-| Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                     |
-| Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                               |
-| Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                           |
-| Plano ativo (agora)               | `docs/plans/pivot-tweakcn.md` (🟡 em finalização) → `docs/plans/theme-builder.md` (próximo, ~34h)  |
-| Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após theme-builder; ADR-0046 ordem cravada)                  |
-| Decisões adiadas (não-bloqueante) | `docs/_deferred/{topic}.md` (revisitar quando gatilho disparar — anti-padrão: deixar morrer)       |
-| TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                              |
-| Concept map (continuidade)        | `docs/design-system/20-concept-map.md` (markmap pós-pivot — ler em sessão nova antes de code)      |
-| Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms · 24 pages · 25 reports · 28 tweakcn-eval · 29-31 estudos pivot) |
-| Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                             |
-| Log cronológico de mudanças       | `CHANGELOG.md`                                                                                     |
-| Status corrente do projeto        | `docs/_status.md`                                                                                  |
-| Histórico arquivado               | `docs/_archive/` (referência JIT)                                                                  |
-| Migrations docs                   | `docs/migrations/NNNN_*.md` (espelha MCP apply)                                                    |
+| Info                              | Arquivo canônico                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Regras code carregadas por path   | `.claude/rules/*.md` (19 rules)                                                                                          |
+| Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                                           |
+| Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                                                     |
+| Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                                                 |
+| Plano ativo (agora)               | `docs/plans/theme-builder.md` (~34h, detail completo portado 2026-05-22)                                                 |
+| Plano pausado                     | `docs/plans/funil-agencia.md` (retoma após theme-builder; ADR-0046 ordem cravada)                                        |
+| Decisões adiadas (não-bloqueante) | `docs/_deferred/{topic}.md` (revisitar quando gatilho disparar — anti-padrão: deixar morrer)                             |
+| TweakCN clone read-only (SSOT)    | `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0)                                                    |
+| Concept map (continuidade)        | `docs/design-system/20-concept-map.md` (markmap pós-pivot — ler em sessão nova antes de code)                            |
+| Pesquisas autoritativas           | `docs/research/NN-*.md` (23 forms · 24 pages · 25 reports · 28 tweakcn-eval · 29-31 estudos pivot)                       |
+| Reflexões em curso (não-decidido) | `docs/_sessions/YYYY-MM-DD-{topic}.md`                                                                                   |
+| Log cronológico de mudanças       | `CHANGELOG.md`                                                                                                           |
+| Status corrente do projeto        | `docs/_status.md`                                                                                                        |
+| Histórico arquivado               | `docs/_archive/{plans,...}/` — pivot-tweakcn movido aqui 2026-05-22 (referência JIT)                                     |
+| Detalhes diferidos detalhados     | `docs/_deferred/{topic}-detail.md` (ai-theme-generation, v0-registry, validation-suite — consultar antes de re-planejar) |
+| Migrations docs                   | `docs/migrations/NNNN_*.md` (espelha MCP apply)                                                                          |
 
 `.claude/rules/*.md` (carregamento por path glob — 19 rules):
 

@@ -34,7 +34,14 @@ markmap:
 
 > **Detalhe operacional:** ver `docs/plans/pivot-tweakcn.md` §STATUS ATUAL (topo) + §17 Open questions ativas (batches Theming/AI/Registry/ESLint).
 
-## Status atualizado 2026-05-22 — nova ordem dogfooding-first
+## Status atualizado 2026-05-22 — pivot arquivado + theme-builder único ativo
+
+### ✅ Pivot ADR-0044 ARQUIVADO 2026-05-22
+
+- Foundation work concluído. Pivot movido pra `docs/_archive/plans/2026-05-pivot-tweakcn.md`
+- Detalhe técnico Fase 5 portado pra `docs/plans/theme-builder.md`
+- Fases 6/7/8 viraram detail files em `docs/_deferred/{ai-theme-generation,v0-registry-integration,validation-suite}-detail.md`
+- ADR-0046 cravou ordem dogfooding-first (theme builder → form agência → report IA → página agência → AI builders → resto)
 
 **ADR-0046 accepted (2026-05-22)** — meta-princípio amplo: cada feature
 nasce como primeira instância de infra generalizada (não hardcoded);
@@ -43,7 +50,6 @@ manual primeiro → sistematização depois.
 ### Ordem cravada (instância concreta da ADR-0046)
 
 1. **Theme builder** (~34h) — plano executor: `docs/plans/theme-builder.md`
-   (Fase 5 detalhe técnico permanece em `docs/plans/pivot-tweakcn.md` §6)
 2. Form captação agência (bare-bones Forms Engine, primeira instância dogfooding)
 3. Report IA do form agência (research-25 ready-to-consume — 30+ decisões cravadas)
 4. Página vendas agência (bare-bones Pages Engine, primeira instância dogfooding)
@@ -52,8 +58,10 @@ manual primeiro → sistematização depois.
 
 ### Cross-links 2026-05-22
 
-- Plano novo: **`docs/plans/theme-builder.md`** (próximo plano após pivot-tweakcn finalizar)
-- Pasta nova: **`docs/_deferred/post-funil-agencia.md`** (itens adiados — AI gen theme, v0 integration, AI patterns copy TweakCN, block_kinds_catalog table, 3 GAPs research-43, Tiptap collab, Novel mídia, registry-blocks rule, build-block-catalog script, Pacote A/B/C details)
+- Plano ativo: **`docs/plans/theme-builder.md`** (standalone desde 2026-05-22)
+- Pivot arquivado: **`docs/_archive/plans/2026-05-pivot-tweakcn.md`** (referência histórica)
+- Detail files: **`docs/_deferred/ai-theme-generation-detail.md`** · **`docs/_deferred/v0-registry-integration-detail.md`** · **`docs/_deferred/validation-suite-detail.md`**
+- Pasta deferred: **`docs/_deferred/post-funil-agencia.md`** (itens adiados — AI gen theme, v0 integration, AI patterns copy TweakCN, block_kinds_catalog table, 3 GAPs research-43, Tiptap collab, Novel mídia, registry-blocks rule, build-block-catalog script, Pacote A/B/C details)
 - ADR meta: **`docs/adr/0046-dogfooding-first-execution-order.md`**
 
 ---
@@ -322,7 +330,8 @@ em ambos os modos com mesmos valores. UI garante sync via 1 picker (COMMON_STYLE
 ### Pra próxima sessão saber onde olhar
 
 - `docs/adr/0044-pivot-tweakcn-shadcn-canonical.md` — pivot autoritativa (supersedes 0043)
-- `docs/plans/pivot-tweakcn.md` — plano executável Fase -1 → 8
+- `docs/plans/theme-builder.md` — plano ativo (standalone desde 2026-05-22, detalhe técnico Fase 5 completo)
+- `docs/_archive/plans/2026-05-pivot-tweakcn.md` — pivot histórico (referência JIT, não driver de execução)
 - `docs/research/29-token-partition-universal-vs-tenant.md` — particionamento (S1.1)
 - `docs/research/30-color-format-culori-integration.md` — OKLCH primary (S1.2)
 - `docs/research/31-zod-schema-shadcn-canonical.md` — schema Zod (S1.3)
@@ -345,8 +354,8 @@ em ambos os modos com mesmos valores. UI garante sync via 1 picker (COMMON_STYLE
 ### Antes de qualquer code novo
 
 1. Ler `CLAUDE.md` (auto-load) + este arquivo
-2. Conferir status corrente em `docs/plans/pivot-tweakcn.md` (que fase está ativa)
-3. Se fase tem `Sx.0 Audit` pendente — fazer audit ANTES de implementar
+2. Conferir plano ativo em `docs/plans/theme-builder.md` (sub-fases 4.0-4.12)
+3. Se sub-fase tem `Sx.0 Audit` pendente — fazer audit ANTES de implementar
 4. Conferir `MEMORY.md` (auto-load) — feedback do user persiste
 
 ### Não re-decidir o que já está decidido

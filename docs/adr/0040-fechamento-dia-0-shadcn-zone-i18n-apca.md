@@ -14,7 +14,7 @@ Decisões sobre design system (§§ relacionadas a tokens canon, archetype
 strategy, 28 roles invented D-43, 5 font slots, voice tokens) foram
 **superseded por ADR-0044 §11**. Vocabulário oficial pós-pivot:
 shadcn-canonical 41 tokens TweakCN-vocab (ver `.claude/rules/design-tokens.md`).
-Pointer canônico pra design system: ADR-0044 + `docs/plans/pivot-tweakcn.md`.
+Pointer canônico pra design system: ADR-0044 + `docs/plans/theme-builder.md` (plano ativo). Pivot histórico em `docs/_archive/plans/2026-05-pivot-tweakcn.md`.
 
 ## Context
 

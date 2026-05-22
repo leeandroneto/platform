@@ -244,6 +244,18 @@ Decidir JIT.
 
 ---
 
+## Planos detail portados (2026-05-22 — pivot-tweakcn arquivado)
+
+Quando gatilho disparar, consultar:
+
+- `docs/_deferred/ai-theme-generation-detail.md` — Fase 6 antiga (~25h, model policy + APCA gate + quota tracking)
+- `docs/_deferred/v0-registry-integration-detail.md` — Fase 7 antiga (~12h, tenant_pages/blocks schema + registry endpoint + block_kinds_catalog gatilho 3 consumers)
+- `docs/_deferred/validation-suite-detail.md` — Fase 8 antiga (Playwright matrix + presets seed + showcase route + métricas saúde)
+
+Anti-padrão: não esquecer dessa lista. Revisitar a cada plano novo pra ver se gatilho disparou.
+
+---
+
 ## Revisão deste arquivo
 
 **Quando revisitar:** a cada plano novo abrir. Conferir se algum gatilho

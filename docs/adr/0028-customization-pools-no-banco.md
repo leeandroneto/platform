@@ -11,11 +11,11 @@ pools no banco continuam válidas. Mudanças:
   único per-tenant em `tenant_theme_versions.snapshot.common.radius`.
 - Tabela `palettes` continua reservada, mas o modelo principal de
   customização passa a ser `tenant_themes` + `tenant_theme_versions`
-  (Fase 4 do `docs/plans/pivot-tweakcn.md`). Preset registry virá em
+  (Fase 4 concluída — ver `docs/_archive/plans/2026-05-pivot-tweakcn.md`). Preset registry virá em
   `lib/design/presets/<slug>.ts`.
 - Migration target: importar presets TweakCN via `pnpm dlx shadcn add
 https://tweakcn.com/r/themes/<id>` ou pipeline `scripts/import-tweakcn-presets.ts`
-  (Fase 5 do plano).
+  (Fase 5 — detalhe técnico em `docs/plans/theme-builder.md`).
 
 ## Why superseded
 

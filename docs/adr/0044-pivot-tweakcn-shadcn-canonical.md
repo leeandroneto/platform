@@ -267,7 +267,9 @@ Extras opt-in decididos após estudo prévio.
 - Auditoria: `docs/_sessions/2026-05-21-auditoria-pivot-tweakcn.md`
 - Análise reversão: `docs/_sessions/2026-05-21-reversion-analysis.md`
   (recomenda Option C surgical delete)
-- Plano executável: `docs/plans/pivot-tweakcn.md` (Fase -1 + Fase 0-8)
+- Plano executável (arquivado): `docs/_archive/plans/2026-05-pivot-tweakcn.md` (Fase -1 + Fase 0-8 — referência histórica)
+- Plano ativo: `docs/plans/theme-builder.md` (Fase 5 detalhe técnico standalone)
+- Fases 6/7/8 detail files: `docs/_deferred/ai-theme-generation-detail.md` · `docs/_deferred/v0-registry-integration-detail.md` · `docs/_deferred/validation-suite-detail.md`
 - Anatomia TweakCN: `docs/research/28-tweakcn-evaluation.md`
 - Estudos prévios (caveat de inferência):
   `docs/research/29-token-partition-universal-vs-tenant.md`,

@@ -85,7 +85,7 @@ Ordem aplicada na sessão 2026-05-22 (esta ADR cravou):
 
 1. **Theme builder** (~34h) — Fase 5 do pivot-tweakcn, copy literal
    TweakCN + adapt multi-tenant, admin-only inicial. Detalhe técnico em
-   `docs/plans/pivot-tweakcn.md` §6. Plano executor:
+   `docs/plans/theme-builder.md` (portado do pivot arquivado 2026-05-22). Plano executor:
    `docs/plans/theme-builder.md`
 2. **Form de captação da agência** — primeira instância do Forms Engine
    bare-bones (dogfooding)

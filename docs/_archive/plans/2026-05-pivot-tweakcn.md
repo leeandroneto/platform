@@ -1,3 +1,21 @@
+# ARQUIVADO 2026-05-22 — pivot-tweakcn
+
+> **Status:** concluído como foundation plan. Detalhe técnico portado pra:
+>
+> - `docs/plans/theme-builder.md` (Fase 5 expandida — Builder UI ~34h)
+> - `docs/_deferred/ai-theme-generation-detail.md` (Fase 6 antiga — AI gen)
+> - `docs/_deferred/v0-registry-integration-detail.md` (Fase 7 antiga — v0/registry)
+> - `docs/_deferred/validation-suite-detail.md` (Fase 8 antiga — Playwright matrix)
+>
+> Este arquivo permanece como **referência histórica** das decisões + auditoria
+> da fase anterior. Não use como driver de execução — abra os arquivos acima.
+
+---
+
+[conteúdo original do pivot intacto abaixo]
+
+---
+
 # Plano: Pivot pra TweakCN-way + shadcn-canonical
 
 > **Tipo:** plano ativo (substitui `docs/plans/design-system.md` — que vai pra `docs/_archive/plans/`)

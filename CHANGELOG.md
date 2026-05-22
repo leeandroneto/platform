@@ -10,6 +10,18 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Docs (2026-05-22 — pivot-tweakcn arquivado + detail portado)
+
+- `docs/plans/theme-builder.md` expandido com detalhe técnico Fase 5 completo (sub-fases 4.0-4.12, sequência operacional dia 0+sem 1-4, bloqueadores antecipados research-41, checklist verificação detalhado). Standalone — não cross-link pro pivot.
+- `docs/_deferred/ai-theme-generation-detail.md` novo — Fase 6 antiga portada (~25h, model policy ADR-0045 D.6, APCA soft warn D.17, GAP-1 rate limit, cross-link research-25).
+- `docs/_deferred/v0-registry-integration-detail.md` novo — Fase 7 antiga portada (~12h, tenant_pages/blocks schema, registry endpoint, block_kinds_catalog gatilho 3 consumers).
+- `docs/_deferred/validation-suite-detail.md` novo — Fase 8 antiga portada (Playwright matrix, presets seed, showcase route, métricas saúde §15.7).
+- `docs/plans/pivot-tweakcn.md` movido pra `docs/_archive/plans/2026-05-pivot-tweakcn.md` + header arquivamento com cross-links pros 4 destinos.
+- `CLAUDE.md` tabela atualizada: plano ativo só `theme-builder.md` (sem dual-state), histórico arquivado, detalhes diferidos linhas adicionadas.
+- `docs/_deferred/post-funil-agencia.md` ganhou seção indexando os 3 detail files.
+- `_status.md` + `20-concept-map.md` sincronizados.
+- Cross-references ADR-0044/0045/0046 atualizadas pra novos paths.
+
 ### Docs (2026-05-22 — nova ordem dogfooding-first cravada)
 
 - ADR-0046 (`docs/adr/0046-dogfooding-first-execution-order.md`) — accepted — princípio meta amplo aplicável a TODAS features futuras: cada feature nasce como primeira instância de infra generalizada (não hardcoded), manual primeiro → sistematização depois. Cravou ordem desta sessão: theme builder → form agência → report IA → página agência → AI builders → restante. Validado via research-44 (20 players reais) + research-45 (component strategy).

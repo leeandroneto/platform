@@ -1,13 +1,22 @@
 # Status — `platform`
 
-> Atualizado manualmente 2026-05-22 — ADR-0046 dogfooding-first accepted.
+> Atualizado manualmente 2026-05-22 — pivot-tweakcn arquivado · theme-builder único plano ativo.
 > NOTA: `pnpm docs:status` SOBRESCREVE este arquivo. Migrar info de Phase A + Plano dia 0 pra generator quando consolidar.
 
 ---
 
-## Pivot ADR-0044 (TweakCN shadcn-canonical) — em finalização
+## Plano ativo: `docs/plans/theme-builder.md`
 
-**Status macro 2026-05-22:** plano em **finalização**. Próximo plano: `docs/plans/theme-builder.md` (~34h, Fase 5 detalhe técnico permanece em `docs/plans/pivot-tweakcn.md` §6). Ordem de execução cravada via **ADR-0046** (dogfooding-first). Pasta nova `docs/_deferred/` criada com itens adiados (revisitar JIT).
+Theme builder (~34h) — copy literal TweakCN editor + adapt multi-tenant, admin-only inicial.
+Detalhe técnico Fase 5 (sub-fases 4.0-4.12) portado integralmente do pivot arquivado.
+
+Ver `docs/plans/theme-builder.md` pra sequência operacional completa.
+
+---
+
+## Pivot ADR-0044 (TweakCN shadcn-canonical) — ✅ concluído (arquivado 2026-05-22)
+
+**Status macro 2026-05-22:** pivot **arquivado**. Plano movido pra `docs/_archive/plans/2026-05-pivot-tweakcn.md`. Detalhe técnico portado pra `docs/plans/theme-builder.md` (Fase 5) + 3 detail files em `docs/_deferred/`. Ordem de execução cravada via **ADR-0046** (dogfooding-first).
 
 | Fase     | Tema                                                                                                             | Status |
 | -------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
@@ -38,8 +47,8 @@
 ### Próxima execução cravada (pós ADR-0046 dogfooding-first — 2026-05-22)
 
 1. (atomic 2026-05-22) Atualização docs/decisões nova ordem ✅
-2. Próxima sessão: finalizar pivot-tweakcn + iniciar `docs/plans/theme-builder.md`
-3. Theme builder (~34h, Fase 5 detalhe técnico em `docs/plans/pivot-tweakcn.md` §6)
+2. (atomic 2026-05-22) pivot-tweakcn arquivado + detail portado pra theme-builder + \_deferred ✅
+3. **Próxima sessão nova:** executar `docs/plans/theme-builder.md` (~34h, sub-fases 4.0-4.12)
 4. Funil agência retoma (form captação → report IA → página vendas → AI builders)
 5. Restante: manual primeiro, sistematização depois
 
