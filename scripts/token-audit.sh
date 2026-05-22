@@ -22,6 +22,8 @@ HITS=$(
   | grep -v 'app/opengraph-image\.tsx' \
   | grep -v 'next/og' \
   | grep -v 'components/ui/chart\.tsx' \
+  | grep -v 'lib/design/presets/' \
+  | grep -v 'lib/design/tailwind-colors\.ts' \
   || true
 )
 
@@ -30,7 +32,7 @@ if [ -n "$HITS" ]; then
   echo "$HITS"
   echo ""
   echo "Use tokens semantic via 'var(--*)' ou className token shadcn."
-  echo "Allowlist: app/globals.css @theme, blurhash, ImageResponse (next/og)."
+  echo "Allowlist: app/globals.css @theme, blurhash, ImageResponse (next/og), lib/design/presets/* (TweakCN preset data, convertido JIT pra OKLCH), lib/design/tailwind-colors.ts (Tailwind palette map)."
   exit 1
 fi
 
