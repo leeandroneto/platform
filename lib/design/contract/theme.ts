@@ -116,3 +116,42 @@ export const ThemePartialSchema = z
   })
   .partial()
 export type ThemePartial = z.infer<typeof ThemePartialSchema>
+
+// ─── ThemeStylesWithoutSpacing: para AI SDK (não passa `spacing` ao modelo) ──
+// Adapted from tweakcn-ref/types/theme.ts (Apache-2.0). See NOTICE.md.
+export const ThemeStylePropsSchemaWithoutSpacing = ThemeStylePropsSchema.omit({ spacing: true })
+export type ThemeStylePropsWithoutSpacing = z.infer<typeof ThemeStylePropsSchemaWithoutSpacing>
+
+export const ThemeStylesSchemaWithoutSpacing = z.object({
+  light: ThemeStylePropsSchemaWithoutSpacing,
+  dark: ThemeStylePropsSchemaWithoutSpacing,
+})
+export type ThemeStylesWithoutSpacing = z.infer<typeof ThemeStylesSchemaWithoutSpacing>
+
+// ─── ThemePreset: preset built-in ou salvo pelo tenant ───────────────────────
+// Adapted from tweakcn-ref/types/theme.ts (Apache-2.0). See NOTICE.md.
+// ADAPT: `source` discrimina BUILT_IN (catalog canônico TweakCN 25 presets)
+// vs SAVED (tenant salvou customização). Multi-tenant: tenant_id vem do JWT.
+export type ThemePreset = {
+  source?: 'SAVED' | 'BUILT_IN'
+  createdAt?: string
+  label?: string
+  styles: {
+    light: Partial<ThemeStyleProps>
+    dark: Partial<ThemeStyleProps>
+  }
+}
+
+// ─── ThemeEditorPreviewProps / ThemeEditorControlsProps ───────────────────────
+// Adapted from tweakcn-ref/types/theme.ts (Apache-2.0). See NOTICE.md.
+// Interfaces para componentes do editor (Chunks 3-8 §4.7 — DEFER).
+export interface ThemeEditorPreviewProps {
+  styles: Theme
+  currentMode: 'light' | 'dark'
+}
+
+export interface ThemeEditorControlsProps {
+  styles: Theme
+  currentMode: 'light' | 'dark'
+  onChange: (styles: Theme) => void
+}
