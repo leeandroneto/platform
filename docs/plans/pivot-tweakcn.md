@@ -23,13 +23,14 @@
 
 ### Fases concluídas ✅
 
-| Fase               | Data       | Commit    | O que entregou                                                                          |
-| ------------------ | ---------- | --------- | --------------------------------------------------------------------------------------- |
-| -1 Clone TweakCN   | 2026-05-21 | `f7deae8` | clone read-only em `tweakcn-ref/` validado                                              |
-| 0 Surgical delete  | 2026-05-21 | `e552f9e` | 9580 LOC archetypes + 67 roles + 5 ESLint rules removidos                               |
-| 1 Foundation reset | 2026-05-21 | `d20a199` | theme.ts Zod + build-theme-css.ts + globals.css universal-only                          |
-| 1.5 DB cleanup     | 2026-05-21 | `73cc283` | migration 0024 + pre-fix 6 PWA routes                                                   |
-| 4 Theme storage    | 2026-05-21 | `f632fde` | migration 0025 + 4 server actions + next-themes wireup + 3 PWA routes consomem snapshot |
+| Fase               | Data       | Commit    | O que entregou                                                                                                                                                |
+| ------------------ | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -1 Clone TweakCN   | 2026-05-21 | `f7deae8` | clone read-only em `tweakcn-ref/` validado                                                                                                                    |
+| 0 Surgical delete  | 2026-05-21 | `e552f9e` | 9580 LOC archetypes + 67 roles + 5 ESLint rules removidos                                                                                                     |
+| 1 Foundation reset | 2026-05-21 | `d20a199` | theme.ts Zod + build-theme-css.ts + globals.css universal-only                                                                                                |
+| 1.5 DB cleanup     | 2026-05-21 | `73cc283` | migration 0024 + pre-fix 6 PWA routes                                                                                                                         |
+| 2 Extras opt-in    | 2026-05-21 | (cleanup) | Batch Theming F.1-F.5+Q9 cravado: 18 órfãos não voltam, 2 provisórios deletados, opção C extension contract, APCA regex+allowlist, ESLint exception renderers |
+| 4 Theme storage    | 2026-05-21 | `f632fde` | migration 0025 + 4 server actions + next-themes wireup + 3 PWA routes consomem snapshot                                                                       |
 
 ### Decisões cravadas (não re-discutir)
 

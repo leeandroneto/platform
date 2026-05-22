@@ -82,15 +82,15 @@ Algoritmo `getShadowMap()` (replicado de `tweakcn-ref/utils/shadows.ts`) deriva
 
 Não dependem de tenant — iOS HIG / Material 3 / WCAG padrões.
 
-| Categoria             | Tokens                                                                                                                                                                                                                           |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mobile primitives** | `--touch-min` (44px), `--inset-safe-{top,bottom,left,right}` (env safe-area), `--mobile-full-height` (100dvh), `--mobile-nav-height`, `--fab-size` (56px), `--sticky-cta-height`, `--mini-player-height`, `--press-scale` (0.97) |
-| **Frosted glass**     | `--frosted-blur`, `--frosted-saturate`, `--frosted-opacity`                                                                                                                                                                      |
-| **Z-index**           | `--z-content`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`                                                                                                                               |
-| **Motion**            | `--duration-{instant,fast,normal,slow}`, `--ease-out`, easings canonical (Material 3 / Polaris)                                                                                                                                  |
-| **Spacing scale**     | `--spacing-0` ... `--spacing-32` (Carbon 8-base — numérica, ortogonal ao `--spacing` per-tenant)                                                                                                                                 |
-| **Breakpoint**        | `--breakpoint-mobile` (768px canonical)                                                                                                                                                                                          |
-| **APCA thresholds**   | body 75 · large 60 · non-text 45                                                                                                                                                                                                 |
+| Categoria             | Tokens                                                                                                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mobile primitives** | `--touch-min` (44px), `--touch-comfortable` (48px), `--inset-safe-{top,bottom,left,right}` (env safe-area), `--mobile-full-height` (100dvh), `--mobile-nav-height` (56px), `--fab-size` (56px), `--press-scale` (0.97) |
+| **Frosted glass**     | `--frosted-blur`, `--frosted-saturate`, `--frosted-opacity`                                                                                                                                                            |
+| **Z-index**           | `--z-content`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`                                                                                                                     |
+| **Motion**            | `--duration-{instant,fast,normal,slow}`, `--ease-out`, easings canonical (Material 3 / Polaris)                                                                                                                        |
+| **Spacing scale**     | `--spacing-0` ... `--spacing-32` (Carbon 8-base — numérica, ortogonal ao `--spacing` per-tenant)                                                                                                                       |
+| **Breakpoint**        | `--breakpoint-mobile` (768px canonical)                                                                                                                                                                                |
+| **APCA thresholds**   | body 75 · large 60 · non-text 45                                                                                                                                                                                       |
 
 **Spacing dual-scale:** `--spacing` (per-tenant, Tailwind v4 base) e
 `--spacing-0..32` (universal Carbon) coexistem sem conflito.
@@ -155,8 +155,8 @@ tenant_theme_versions.snapshot` (Zod `Theme`).
 
 **Não criamos tokens novos.** As ~45 keys canonical são fixas (shadcn-canonical
 TweakCN-vocab). Extension opt-in é coisa diferente: tokens fora do canonical
-que cobrem necessidade que TweakCN não modela (ex: `--mini-player-height` pra
-PWA aluno, `--touch-min` iOS HIG, `--frosted-blur` Apple-style).
+que cobrem necessidade que TweakCN não modela (ex: `--touch-min` iOS HIG,
+`--frosted-blur` Apple-style — todos universais já em `globals.css`).
 
 Gatilho: necessidade real fora dos 41, repetida em 3+ tenants OU fundamento
 em padrão proven (iOS HIG, Material 3, WCAG).
@@ -167,20 +167,20 @@ Passo:
 2. Decidir escopo: **universal** (`globals.css`, mesma pra todos tenants) ou
    **per-tenant extension** (`tenant_theme_versions.snapshot.extensions` JSONB)
 3. Validar APCA Silver vs surfaces relevantes (se for cor/border/ring)
-4. Adicionar fallback chain: `var(--mini-player-height, 64px)`
+4. Adicionar fallback chain quando relevante: `var(--token-name, fallback-value)` (decisão F.4 research-37 — opt-in vira universal com fallback até regra-de-3 cumprir)
 5. Atualizar este doc + naming.md (lista vocab banido — confirmar não-conflito)
 
 ---
 
 ## Condição de revisitar
 
-| Gatilho                                                                              | Ação                                                                                                           |
-| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| **shadcn upstream adiciona token canonical novo**                                    | Adicionar à tabela 28-cores acima + atualizar Zod `ThemeColorsSchema` em `lib/design/contract/theme.ts`        |
-| **Tenant pede cor custom fora do preset**                                            | Builder UI (`/admin/theme-studio`) gera novo `tenant_theme_versions` snapshot via flow validado APCA dual-gate |
-| **APCA quebra em preset tenant**                                                     | `ensureAccessible()` ajusta automático OU bloqueia salvamento                                                  |
-| **Extra opt-in repetido em 3+ tenants** (ex: `--mini-player-height` virou universal) | Promover pra universal em `app/globals.css` + ADR documenta migração                                           |
-| **TweakCN upstream adiciona primitive shadow novo**                                  | Re-validar `lib/design/build-theme-css.ts` algoritmo `getShadowMap()` contra `tweakcn-ref/utils/shadows.ts`    |
+| Gatilho                                             | Ação                                                                                                                                                                                                                                |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **shadcn upstream adiciona token canonical novo**   | Adicionar à tabela 28-cores acima + atualizar Zod `ThemeColorsSchema` em `lib/design/contract/theme.ts`                                                                                                                             |
+| **Tenant pede cor custom fora do preset**           | Builder UI (`/admin/theme-studio`) gera novo `tenant_theme_versions` snapshot via flow validado APCA dual-gate                                                                                                                      |
+| **APCA quebra em preset tenant**                    | `ensureAccessible()` ajusta automático OU bloqueia salvamento                                                                                                                                                                       |
+| **Extra opt-in repetido em 3+ tenants**             | Promover pra universal em `app/globals.css` + ADR documenta migração. Quando regra-de-3 cumprir e tokens passarem a divergir POR tenant, abrir ADR-0046 + adicionar `ThemeSchema.common.extensions` JSONB (decisão F.4 research-37) |
+| **TweakCN upstream adiciona primitive shadow novo** | Re-validar `lib/design/build-theme-css.ts` algoritmo `getShadowMap()` contra `tweakcn-ref/utils/shadows.ts`                                                                                                                         |
 
 ---
 
