@@ -3,30 +3,30 @@
 // Schema canonical TweakCN-vocab. Validado contra `tweakcn-ref/types/theme.ts`
 // (commit `9adabcf9`, branch `main`).
 //
-// **45 keys total** distribuídas em 3 sub-schemas:
-//   - ThemeColorsSchema (33 keys per-mode): 32 cores + `shadow-color` (varia light↔dark)
-//   - ThemeCommonSchema (11 keys shared): 3 fontes + radius + 5 shadow primitives +
-//     letter-spacing + spacing-opt
-//   - ThemeSchema root: `{ light, dark, common }`
+// **45 keys flat** — mesmo formato TweakCN upstream:
+//   - 32 cores per-mode
+//   - shadow-color (per-mode)
+//   - 11 keys antes "common" — agora duplicadas em light + dark (TweakCN-way)
+//     (3 fontes + radius + 5 shadow primitives + letter-spacing + spacing-opt)
 //
-// Divergência intencional vs TweakCN upstream:
-//   TweakCN tem schema flat puro (light + dark cada com 45 keys, inclusive
-//   `font-sans`/`radius` que se assumem iguais por convenção runtime via
-//   `COMMON_STYLES` array em config/theme.ts). Aqui promovemos `common` pra
-//   schema separado — força invariante no nível de tipo (impossível "esquecer"
-//   de manter shadow-blur idêntico em light↔dark). Custo: ~10 LOC; benefício:
-//   bug class eliminada.
+// Alinhamento 2026-05-21: eliminado `ThemeCommonSchema` separado. Schema flat
+// puro `{ light: {45 keys}, dark: {45 keys} }` — proteção contra "esquecer
+// de manter light/dark sync" é responsabilidade da UI (1 picker só pra
+// fonte/radius), não do schema. TweakCN tem milhares de usuários sem reportar
+// essa bug class. `COMMON_STYLES` array em `tweakcn-ref/config/theme.ts`
+// documenta quais keys a UI trata como compartilhadas.
 //
 // `ThemePartialSchema` é variante pro builder UI (Fase 5+) — todos campos
 // opcionais durante edição incremental.
 
 import { z } from 'zod'
 
-// ─── ThemeColorsSchema: 33 keys per-mode (32 cores + shadow-color) ──────────
+// ─── ThemeStylePropsSchema: 45 keys flat per-mode ───────────────────────────
 //
-// Mantemos `.describe()` em chaves que TweakCN documenta (~25 keys) — útil
-// pra builder UI tooltip + introspection (z.infer + JSON Schema export).
-export const ThemeColorsSchema = z.object({
+// Mantemos `.describe()` nas chaves que TweakCN documenta upstream
+// (~20 keys — copiado literal de tweakcn-ref/types/theme.ts).
+export const ThemeStylePropsSchema = z.object({
+  // ── 32 cores ──────────────────────────────────────────────────────────────
   background: z.string().describe('The default background color, paired with `foreground`.'),
   foreground: z.string().describe('Paired with `background`.'),
   card: z.string().describe('The background color for cards, paired with `card-foreground`.'),
@@ -61,27 +61,30 @@ export const ThemeColorsSchema = z.object({
     .string()
     .describe('The background color for the sidebar, paired with `sidebar-foreground`.'),
   'sidebar-foreground': z.string().describe('Paired with `sidebar`.'),
-  'sidebar-primary': z.string(),
-  'sidebar-primary-foreground': z.string(),
-  'sidebar-accent': z.string(),
-  'sidebar-accent-foreground': z.string(),
+  'sidebar-primary': z
+    .string()
+    .describe('The primary color for sidebar elements, paired with `sidebar-primary-foreground`.'),
+  'sidebar-primary-foreground': z.string().describe('Paired with `sidebar-primary`.'),
+  'sidebar-accent': z
+    .string()
+    .describe('An accent color for the sidebar, paired with `sidebar-accent-foreground`.'),
+  'sidebar-accent-foreground': z.string().describe('Paired with `sidebar-accent`.'),
   'sidebar-border': z.string().describe('The color for borders within the sidebar.'),
   'sidebar-ring': z.string().describe('The color for focus rings within the sidebar.'),
-  // shadow-color per-mode (TweakCN tem em ambos light + dark) — sombras
-  // mudam tonalidade entre modos. Não vive em ThemeCommonSchema.
-  'shadow-color': z.string().describe('Shadow base color. Varies per light/dark mode.'),
-})
-export type ThemeColors = z.infer<typeof ThemeColorsSchema>
 
-// ─── ThemeCommonSchema: 11 keys shared light↔dark ───────────────────────────
-//
-// TweakCN dedupa estas 11 keys via array `COMMON_STYLES` runtime em
-// `config/theme.ts:5-17`. Nós promovemos pra schema separado (refinamento
-// próprio multi-tenant) — invariante força nível de tipo.
-export const ThemeCommonSchema = z.object({
-  'font-sans': z.string(),
-  'font-serif': z.string(),
-  'font-mono': z.string(),
+  // ── shadow-color (per-mode — sombras mudam tonalidade entre light e dark) ─
+  'shadow-color': z.string().describe('Shadow base color. Varies per light/dark mode.'),
+
+  // ── 11 keys antes "common" — duplicadas em light + dark (TweakCN-way) ────
+  // UI trata como shared via COMMON_STYLES array (tweakcn-ref/config/theme.ts:5-17).
+  // Proteção de sync = responsabilidade da UI (1 picker só), não do schema.
+  'font-sans': z
+    .string()
+    .describe(
+      'Primary UI font. May be serif, sans, monospace, or display depending on the theme vibe.',
+    ),
+  'font-serif': z.string().describe('The preferred serif font family.'),
+  'font-mono': z.string().describe('The preferred monospace font family. Used for code blocks.'),
   radius: z
     .string()
     .describe('The global border-radius for components. Use 0rem for sharp corners.'),
@@ -93,13 +96,12 @@ export const ThemeCommonSchema = z.object({
   'letter-spacing': z.string().describe('The global letter spacing for text.'),
   spacing: z.string().optional(),
 })
-export type ThemeCommon = z.infer<typeof ThemeCommonSchema>
+export type ThemeStyleProps = z.infer<typeof ThemeStylePropsSchema>
 
-// ─── ThemeSchema: root `{ light, dark, common }` ────────────────────────────
+// ─── ThemeSchema: root `{ light, dark }` flat — TweakCN upstream ────────────
 export const ThemeSchema = z.object({
-  light: ThemeColorsSchema,
-  dark: ThemeColorsSchema,
-  common: ThemeCommonSchema,
+  light: ThemeStylePropsSchema,
+  dark: ThemeStylePropsSchema,
 })
 export type Theme = z.infer<typeof ThemeSchema>
 
@@ -109,9 +111,8 @@ export type Theme = z.infer<typeof ThemeSchema>
 // durante edição: profissional toca em 2 cores via picker, salva como diff.
 export const ThemePartialSchema = z
   .object({
-    light: ThemeColorsSchema.partial(),
-    dark: ThemeColorsSchema.partial(),
-    common: ThemeCommonSchema.partial(),
+    light: ThemeStylePropsSchema.partial(),
+    dark: ThemeStylePropsSchema.partial(),
   })
   .partial()
 export type ThemePartial = z.infer<typeof ThemePartialSchema>

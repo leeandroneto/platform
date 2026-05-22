@@ -10,6 +10,16 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Refactor (2026-05-21 — Theme schema flat alinhado TweakCN)
+
+- `lib/design/contract/theme.ts`: `ThemeCommonSchema` removido, `ThemeColorsSchema` renomeado `ThemeStylePropsSchema` (45 keys flat). `ThemeSchema` vira `{ light, dark }` puro — sem `common`. `ThemePartialSchema` atualizado. Alinha 100% com `tweakcn-ref/types/theme.ts` upstream. Menos atrito pra importar presets TweakCN oficiais (Fase 6) e zero conversão pro shadcn registry (Fase 7).
+- `lib/design/theme-defaults.ts`: `DEFAULT_COMMON` eliminado. `DEFAULT_THEME` flat com 11 keys duplicadas em `DEFAULT_LIGHT_COLORS` e `DEFAULT_DARK_COLORS` (mesmos valores, TweakCN-way). `ThemeColors` type substituído por `ThemeStyleProps`.
+- `lib/design/build-theme-css.ts`: usa `theme.light` e `theme.dark` diretamente (sem merge com common). `generateShadowLevels()` recebe modo flat.
+- `lib/design/shadows.ts`: parâmetro `common: ThemeCommon` substituído por `styleProps: ShadowPrimitives` (interface local com as 5 shadow primitives). Server-side safe, sem quebra de API.
+- `lib/design/registry/generate-registry-item.ts`: simplificado — sem achatamento de common. `cssVars.theme` emite fontes + radius via `snapshot.light` (canonical pra COMMON_STYLES). Dark exclui explicitamente `spacing` e `letter-spacing` (padrão TweakCN registry).
+- DB `snapshot jsonb` inalterado — `tenant_theme_versions` tinha 0 rows, sem migration de dados.
+- Docs: `research-33`, `20-concept-map`, `0025 migration doc`, `_status` atualizados.
+
 ### Features (2026-05-21 — i18n wireup completo)
 
 - `i18n`: next-intl 4.12.0 instalado e agora wired up — `i18n/request.ts` (locale `pt-BR` fixo ADR-0040 §G decisão 13) + `next.config.ts` plugin `createNextIntlPlugin` + `messages/pt-BR/common.json` (namespaces `actions/errors/validation/feedback/entitlements`) + `app/layout.tsx` wrap `NextIntlClientProvider` preservando `ThemeProviderClient` (next-themes Fase 4). ESLint rules `react/jsx-no-literals` + `i18next/no-literal-string` agora funcionam corretamente (pesquisa-39 follow-up).

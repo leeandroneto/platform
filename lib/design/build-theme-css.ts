@@ -2,11 +2,17 @@
 // `<style precedence="theme">` (React 19 auto-hoist pro <head>).
 //
 // Fluxo:
-//   1. Para cada modo (light, dark): merge `theme.common` + `theme[mode]`
-//      e emite cada par `--key: value;`
+//   1. Para cada modo (light, dark): emite cada par `--key: value;` direto
+//      do ThemeStyleProps flat (45 keys cada modo).
 //   2. Deriva 8 níveis de shadow via `generateShadowLevels()` (lib/design/shadows.ts).
 //      Per-mode pois `shadow-color` varia entre light e dark.
 //   3. Wrap em `@layer base { :root { ... } .dark { ... } }`
+//
+// Alinhamento 2026-05-21: schema flat { light, dark } — eliminado merge com
+// `theme.common`. Cada modo já contém as 45 keys completas (TweakCN-way).
+// `theme.light` é a fonte canonical pras keys "shared" (font-*, radius,
+// shadow primitives, letter-spacing, spacing) no bloco :root — idêntico ao
+// que TweakCN faz (light keys pro :root, dark keys pro .dark).
 //
 // Per-tenant: Fase 4 injeta `tenant_theme_versions.snapshot` Zod-validado
 // aqui. Fase 1: layout.tsx chama com DEFAULT_THEME (foundation reset).
@@ -26,24 +32,14 @@ function emitVars(entries: Record<string, string | undefined>, indent: string): 
 
 // ─── buildThemeCSS: entry point ─────────────────────────────────────────────
 export function buildThemeCSS(theme: Theme): string {
-  // Common vars vivem fora dos seletores :root/.dark? Decisão: emitir em
-  // ambos (light em :root, repete em .dark) pra evitar specificity surprises
-  // e bater 1:1 com modelo TweakCN (cada modo declara TODAS as 45 keys flat).
-  const lightShadows = generateShadowLevels(theme.light['shadow-color'], theme.common)
-  const darkShadows = generateShadowLevels(theme.dark['shadow-color'], theme.common)
+  // Schema flat: cada modo já tem 45 keys completas (cores + shadow-color +
+  // font-* + radius + shadow primitives + letter-spacing + spacing).
+  // Derivar 8 níveis de shadow para cada modo (shadow-color é per-mode).
+  const lightShadows = generateShadowLevels(theme.light['shadow-color'], theme.light)
+  const darkShadows = generateShadowLevels(theme.dark['shadow-color'], theme.dark)
 
-  // Merge per-mode: cores + common (common é igual em light e dark)
-  const lightAll: Record<string, string | undefined> = {
-    ...(theme.light as Record<string, string>),
-    ...(theme.common as Record<string, string | undefined>),
-  }
-  const darkAll: Record<string, string | undefined> = {
-    ...(theme.dark as Record<string, string>),
-    ...(theme.common as Record<string, string | undefined>),
-  }
-
-  const lightVarsCss = emitVars(lightAll, '    ')
-  const darkVarsCss = emitVars(darkAll, '    ')
+  const lightVarsCss = emitVars(theme.light as Record<string, string | undefined>, '    ')
+  const darkVarsCss = emitVars(theme.dark as Record<string, string | undefined>, '    ')
   const lightShadowsCss = emitVars(lightShadows, '    ')
   const darkShadowsCss = emitVars(darkShadows, '    ')
 
@@ -60,7 +56,7 @@ ${darkShadowsCss}
 }
 
 // Re-exports pra callers que importam tipos direto daqui.
-export type { Theme, ThemeColors, ThemeCommon } from './contract/theme'
+export type { Theme, ThemeStyleProps } from './contract/theme'
 
 // Export interno pra testes JIT (Fase 5+ pode testar shadow algorithm
 // isolado contra fixtures TweakCN).

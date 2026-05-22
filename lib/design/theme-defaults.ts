@@ -1,20 +1,18 @@
 // Adapted from tweakcn-ref/config/theme.ts (Apache-2.0). See NOTICE.md.
 //
-// Defaults light + dark + common usados como theme inicial (Fase 1 SSR) e
-// fallback caso tenant snapshot esteja indisponível.
+// Defaults light + dark usados como theme inicial (Fase 1 SSR) e fallback
+// caso tenant snapshot esteja indisponível.
 //
 // Valores copy-literal de `tweakcn-ref/config/theme.ts:28-120` (commit
 // `9adabcf9`). NÃO ajustar arbitrário — esses são os neutros canonical
 // shadcn/ui v4 (zinc-leaning). Override por tenant vem em Fase 4 via
 // `tenant_theme_versions.snapshot`.
 //
-// Estrutura adaptada vs TweakCN:
-//   - TweakCN tem `defaultLightThemeStyles` flat com 45 keys (inclui
-//     `font-sans`/`radius`/`shadow-*` que viram common na nossa partição).
-//   - Aqui split em DEFAULT_LIGHT_COLORS (33 keys) + DEFAULT_DARK_COLORS (33
-//     keys) + DEFAULT_COMMON (11 keys) → DEFAULT_THEME monta `{light,dark,common}`.
+// Alinhamento 2026-05-21: eliminado DEFAULT_COMMON. Schema agora flat
+// { light: {45 keys}, dark: {45 keys} } — 11 keys "shared" duplicadas
+// em ambos os modos com mesmos valores (TweakCN-way).
 
-import type { Theme, ThemeColors, ThemeCommon } from './contract/theme'
+import type { Theme, ThemeStyleProps } from './contract/theme'
 
 // ─── Font stacks (TweakCN-vocab, ui-* stack defaults) ───────────────────────
 const DEFAULT_FONT_SANS =
@@ -25,8 +23,24 @@ const DEFAULT_FONT_SERIF = 'ui-serif, Georgia, Cambria, "Times New Roman", Times
 const DEFAULT_FONT_MONO =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
 
-// ─── 33 cores light (32 canonical + shadow-color) ───────────────────────────
-export const DEFAULT_LIGHT_COLORS: ThemeColors = {
+// ─── 11 keys shared (TweakCN COMMON_STYLES — duplicadas em light + dark) ────
+// Valores idênticos nos dois modos; UI garante sync via 1 picker.
+const SHARED_PROPS = {
+  'font-sans': DEFAULT_FONT_SANS,
+  'font-serif': DEFAULT_FONT_SERIF,
+  'font-mono': DEFAULT_FONT_MONO,
+  radius: '0.625rem',
+  'shadow-opacity': '0.1',
+  'shadow-blur': '3px',
+  'shadow-spread': '0px',
+  'shadow-offset-x': '0',
+  'shadow-offset-y': '1px',
+  'letter-spacing': '0em',
+  spacing: '0.25rem',
+} as const
+
+// ─── 45 keys light (32 cores + shadow-color + 11 shared) ────────────────────
+export const DEFAULT_LIGHT_COLORS: ThemeStyleProps = {
   background: 'oklch(1 0 0)',
   foreground: 'oklch(0.145 0 0)',
   card: 'oklch(1 0 0)',
@@ -60,10 +74,11 @@ export const DEFAULT_LIGHT_COLORS: ThemeColors = {
   'sidebar-border': 'oklch(0.922 0 0)',
   'sidebar-ring': 'oklch(0.708 0 0)',
   'shadow-color': 'oklch(0 0 0)',
+  ...SHARED_PROPS,
 }
 
-// ─── 33 cores dark ──────────────────────────────────────────────────────────
-export const DEFAULT_DARK_COLORS: ThemeColors = {
+// ─── 45 keys dark (32 cores + shadow-color + 11 shared) ─────────────────────
+export const DEFAULT_DARK_COLORS: ThemeStyleProps = {
   background: 'oklch(0.145 0 0)',
   foreground: 'oklch(0.985 0 0)',
   card: 'oklch(0.205 0 0)',
@@ -97,26 +112,11 @@ export const DEFAULT_DARK_COLORS: ThemeColors = {
   'sidebar-border': 'oklch(0.275 0 0)',
   'sidebar-ring': 'oklch(0.439 0 0)',
   'shadow-color': 'oklch(0 0 0)',
-}
-
-// ─── 11 commons (3 fontes + radius + 5 shadow primitives + letter-spacing + spacing) ─
-export const DEFAULT_COMMON: ThemeCommon = {
-  'font-sans': DEFAULT_FONT_SANS,
-  'font-serif': DEFAULT_FONT_SERIF,
-  'font-mono': DEFAULT_FONT_MONO,
-  radius: '0.625rem',
-  'shadow-opacity': '0.1',
-  'shadow-blur': '3px',
-  'shadow-spread': '0px',
-  'shadow-offset-x': '0',
-  'shadow-offset-y': '1px',
-  'letter-spacing': '0em',
-  spacing: '0.25rem',
+  ...SHARED_PROPS,
 }
 
 // ─── Theme root ─────────────────────────────────────────────────────────────
 export const DEFAULT_THEME: Theme = {
   light: DEFAULT_LIGHT_COLORS,
   dark: DEFAULT_DARK_COLORS,
-  common: DEFAULT_COMMON,
 }

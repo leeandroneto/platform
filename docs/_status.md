@@ -7,16 +7,17 @@
 
 ## Pivot ADR-0044 (TweakCN shadcn-canonical) — em execução
 
-| Fase    | Tema                                                                                         | Status     |
-| ------- | -------------------------------------------------------------------------------------------- | ---------- |
-| -1      | Clone TweakCN read-only (SSOT)                                                               | ✅         |
-| 0       | Surgical delete `components/**`                                                              | ✅         |
-| 1       | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical                        | ✅         |
-| 1.5     | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21)                | ✅         |
-| 2       | Estudo mobile/PWA + decisão extras opt-in (D2)                                               | ⏭️ próximo |
-| 4       | Migration 0025 theme storage + versioning + 4 actions + next-themes (2026-05-21)             | ✅         |
-| 5 dia 0 | Extract shadows/color/registry-gen + Storybook confirm (research-41 sequencing) (2026-05-21) | ✅         |
-| 3,5-8   | Builder UI, presets, integration completa                                                    | ⏳         |
+| Fase     | Tema                                                                                         | Status     |
+| -------- | -------------------------------------------------------------------------------------------- | ---------- |
+| -1       | Clone TweakCN read-only (SSOT)                                                               | ✅         |
+| 0        | Surgical delete `components/**`                                                              | ✅         |
+| 1        | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical                        | ✅         |
+| 1.5      | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21)                | ✅         |
+| 2        | Estudo mobile/PWA + decisão extras opt-in (D2)                                               | ⏭️ próximo |
+| 4        | Migration 0025 theme storage + versioning + 4 actions + next-themes (2026-05-21)             | ✅         |
+| 5 dia 0  | Extract shadows/color/registry-gen + Storybook confirm (research-41 sequencing) (2026-05-21) | ✅         |
+| refactor | Theme schema flat alinhado TweakCN upstream — elimina `ThemeCommonSchema` (2026-05-21)       | ✅         |
+| 3,5-8    | Builder UI, presets, integration completa                                                    | ⏳         |
 
 ---
 

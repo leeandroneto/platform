@@ -118,11 +118,16 @@ markmap:
 - `--shadow-spread` · `--shadow-offset-x` · `--shadow-offset-y`
 - Algoritmo `getShadowMap()` deriva: `--shadow-2xs/xs/sm/md/lg/xl/2xl` + `--shadow` alias
 
-#### Extras canonical (3)
+#### 11 keys "shared" (duplicadas em light + dark — TweakCN-way)
 
-- `--shadow-color` (por-modo, em ThemeColorsSchema)
-- `--letter-spacing` (global per-tenant)
-- `--spacing` (Tailwind v4 base override per-tenant)
+Antes viviam em `ThemeCommonSchema` separado. Pós-refactor 2026-05-21: duplicadas
+em ambos os modos com mesmos valores. UI garante sync via 1 picker (COMMON_STYLES).
+
+- `--font-sans` · `--font-serif` · `--font-mono`
+- `--radius`
+- `--shadow-opacity` · `--shadow-blur` · `--shadow-spread` · `--shadow-offset-x` · `--shadow-offset-y`
+- `--letter-spacing` (emitido como `tracking-normal` no shadcn registry)
+- `--spacing` (Tailwind v4 base override per-tenant — opcional)
 
 ### Universal — vivem em `app/globals.css`
 
@@ -249,7 +254,7 @@ markmap:
 - `docs/research/31-zod-schema-shadcn-canonical.md` — schema Zod (S1.3)
 - `.claude/rules/design-tokens.md` — regra path-loaded ~45 keys
 - `.claude/rules/naming.md` — vocab banido
-- `lib/design/contract/theme.ts` — Zod monolítico 117 LOC
+- `lib/design/contract/theme.ts` — Zod flat `ThemeStylePropsSchema` (45 keys) + `ThemeSchema` (pós-refactor 2026-05-21)
 - `lib/design/build-theme-css.ts` — emit CSS + shadow algorithm
 - `lib/design/color-format.ts` — culori adapter
 - `lib/design/theme-defaults.ts` — DEFAULT_THEME literal TweakCN

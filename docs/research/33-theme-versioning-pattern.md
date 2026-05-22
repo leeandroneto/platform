@@ -1,8 +1,36 @@
 # 33 — Theme versioning pattern (audit Fase 4 S4.0)
 
 > **Tipo:** Research (audit pré-execução) · **Fase:** 4 (theme storage)
-> **Status:** decisões cravadas pendentes aprovação user · **Data:** 2026-05-21
+> **Status:** decisões cravadas · **Data:** 2026-05-21
 > **Princípios:** ADR-0044 §8 (extract+adapt), §9 (versionamento extensão), §10 (audit-per-phase)
+
+## Atualização 2026-05-21: schema flat alinhado TweakCN
+
+Decisão user 2026-05-21: `ThemeSchema` agora é flat `{ light: {45 keys}, dark: {45 keys} }`,
+alinhado 100% com `tweakcn-ref/types/theme.ts` upstream. Eliminado `ThemeCommonSchema` separado.
+
+**Shape anterior (histórico):** `{ light: {33 keys}, dark: {33 keys}, common: {11 keys} }`.
+**Shape atual:** `{ light: {45 keys}, dark: {45 keys} }` — 11 keys "shared" duplicadas em
+ambos os modos com mesmos valores (fontes, radius, shadow primitives, letter-spacing, spacing).
+Proteção de sync = responsabilidade da UI (1 picker só), não do schema. `COMMON_STYLES` array
+em `tweakcn-ref/config/theme.ts:5-17` documenta quais keys a UI trata como compartilhadas.
+
+**DB column `snapshot jsonb` inalterada** — coluna não tem CHECK constraint de shape
+(validação é application-layer via Zod). `tenant_theme_versions` tinha 0 rows quando
+o refactor foi aplicado (verificado via MCP `execute_sql` 2026-05-21), portanto sem
+necessidade de migration de dados.
+
+**Arquivos alterados no refactor:**
+
+- `lib/design/contract/theme.ts` — `ThemeCommonSchema` removido, `ThemeColorsSchema` renomeado `ThemeStylePropsSchema` (45 keys)
+- `lib/design/theme-defaults.ts` — `DEFAULT_COMMON` eliminado, `DEFAULT_THEME` flat
+- `lib/design/build-theme-css.ts` — usa `theme.light` diretamente (sem merge com common)
+- `lib/design/shadows.ts` — parâmetro `ThemeCommon` → `ShadowPrimitives` (subset flat)
+- `lib/design/registry/generate-registry-item.ts` — sem achatamento de common (snapshot já flat)
+
+Conteúdo original abaixo mantido como referência histórica (rationale do schema de versioning).
+
+---
 
 Audit do TweakCN clone `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, Apache-2.0) + nosso DB pós-Fase 1.5 + proposta de schema Fase 4 com decisões cravadas pra revisão antes de aplicar migration.
 

@@ -1,16 +1,20 @@
 // adapted from tweakcn-ref/utils/shadows.ts (Apache-2.0). See NOTICE.md.
 //
-// `generateShadowLevels(shadowColor, common) → Record<string, string>`
+// `generateShadowLevels(shadowColor, styleProps) → Record<string, string>`
 //
 // Deriva 8 níveis de shadow a partir de 6 primitivas:
 //   shadow-color · shadow-opacity · shadow-blur · shadow-spread ·
 //   shadow-offset-x · shadow-offset-y
 //
 // Algoritmo idêntico ao TweakCN `getShadowMap()`, adaptado para:
-//   - Nossa assinatura `(shadowColor: string, common: ThemeCommon)` — sem
-//     dependência de `ThemeEditorState` / Zustand (server-side safe)
+//   - Nossa assinatura `(shadowColor: string, styleProps: ShadowPrimitives)` —
+//     sem dependência de `ThemeEditorState` / Zustand (server-side safe)
 //   - `colorFormatter` importado de `./color-format` (nossa versão culori)
 //   - `formatNumber` para precisão consistente na formatação opacity
+//
+// Alinhamento 2026-05-21: parâmetro `common: ThemeCommon` renomeado para
+// `styleProps: ShadowPrimitives` — reflete que o schema agora é flat
+// (não há mais ThemeCommon separado; shadow primitives vivem em ThemeStyleProps).
 //
 // Usado por:
 //   - `lib/design/build-theme-css.ts` — emite CSS vars per-tenant runtime
@@ -18,31 +22,39 @@
 //   - Fase 5 preview live (theme-studio builder)
 
 import { colorFormatter, formatNumber } from './color-format'
-import type { ThemeCommon } from './contract/theme'
+
+/** Subconjunto de ThemeStyleProps necessário para derivar shadow levels. */
+export interface ShadowPrimitives {
+  'shadow-opacity': string
+  'shadow-blur': string
+  'shadow-spread': string
+  'shadow-offset-x': string
+  'shadow-offset-y': string
+}
 
 /**
- * Gera 8 níveis de shadow CSS a partir das 6 primitivas do ThemeCommon.
+ * Gera 8 níveis de shadow CSS a partir das 6 primitivas do ThemeStyleProps.
  *
  * @param shadowColor - Valor `--shadow-color` do modo (light ou dark). Qualquer
  *   formato culori-parseable (OKLCH, HEX, HSL, RGB).
- * @param common - ThemeCommon com as 5 shadow primitives + restante do common.
+ * @param styleProps - Objeto com as 5 shadow primitives (subset de ThemeStyleProps).
  * @returns Record com as 8 keys: shadow-2xs, shadow-xs, shadow-sm, shadow,
  *   shadow-md, shadow-lg, shadow-xl, shadow-2xl.
  */
 export function generateShadowLevels(
   shadowColor: string,
-  common: ThemeCommon,
+  styleProps: ShadowPrimitives,
 ): Record<string, string> {
   // Converte shadow-color para HSL chunk "H S% L%" (sem parênteses externos)
   // — Tailwind v4 modern syntax: `hsl(H S% L% / opacity)`.
   const hslFormatted = colorFormatter(shadowColor, 'hsl')
   const hslChunk = hslFormatted.replace(/^hsl\(/, '').replace(/\)$/, '')
 
-  const offsetX = common['shadow-offset-x']
-  const offsetY = common['shadow-offset-y']
-  const blur = common['shadow-blur']
-  const spread = common['shadow-spread']
-  const opacity = parseFloat(common['shadow-opacity'])
+  const offsetX = styleProps['shadow-offset-x']
+  const offsetY = styleProps['shadow-offset-y']
+  const blur = styleProps['shadow-blur']
+  const spread = styleProps['shadow-spread']
+  const opacity = parseFloat(styleProps['shadow-opacity'])
 
   const color = (opacityMultiplier: number): string =>
     `hsl(${hslChunk} / ${formatNumber(opacity * opacityMultiplier)})`

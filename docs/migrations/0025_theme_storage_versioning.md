@@ -7,6 +7,14 @@
 > Acompanha 0025b (search_path pin nas 2 funções, fecha advisor WARN
 > `function_search_path_mutable`).
 
+> **Nota pós-refactor 2026-05-21:** a coluna `snapshot jsonb` em
+> `tenant_theme_versions` é inalterada (sem DDL novo). O _type_ TypeScript
+> do snapshot mudou: shape anterior `{ light, dark, common }` foi substituído
+> por flat `{ light: {45 keys}, dark: {45 keys} }` alinhado com TweakCN
+> upstream. Validação é application-layer (Zod `ThemeSchema`), não constraint
+> SQL — portanto nenhuma migration de dados foi necessária (`tenant_theme_versions`
+> tinha 0 rows quando o refactor foi aplicado, verificado via MCP `execute_sql`).
+
 ---
 
 ## Contexto

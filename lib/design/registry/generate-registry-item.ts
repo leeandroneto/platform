@@ -17,6 +17,11 @@
 // Cores: emitidas como OKLCH literal (ecosystem suporta OKLCH; sem conversão
 // runtime desnecessária). `colorFormatter` disponível se caller quiser HEX.
 //
+// Alinhamento 2026-05-21: schema flat { light, dark } — não precisa mais
+// "achatar common". Payload `cssVars.light` e `cssVars.dark` vêm direto do
+// snapshot. `cssVars.theme` ainda emite as 3 fontes + radius pra shadcn
+// registry compat (padrão TweakCN — vê tweakcn-ref/utils/registry/themes.ts).
+//
 // tracking-normal: renomeado de `letter-spacing` (alinha shadcn registry vocab).
 // spacing: só vai em `light` (não em `dark`) — mesmo pattern TweakCN.
 
@@ -62,13 +67,6 @@ export interface RegistryItemPayload {
   }
 }
 
-// ─── Helpers internos ────────────────────────────────────────────────────────
-
-/** Converte ThemeColors (33 keys) para Record<string, string> plano. */
-function colorsToRecord(colors: Theme['light']): Record<string, string> {
-  return { ...(colors as Record<string, string>) }
-}
-
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 /**
@@ -96,17 +94,15 @@ export function generateRegistryItem(args: {
 }): RegistryItemPayload {
   const { name, title, description, snapshot } = args
 
-  // Derivar 8 níveis de shadow para cada modo
-  const lightShadows = generateShadowLevels(snapshot.light['shadow-color'], snapshot.common)
-  const darkShadows = generateShadowLevels(snapshot.dark['shadow-color'], snapshot.common)
+  // Schema flat: light e dark já têm 45 keys cada — sem achatamento necessário.
+  // Derivar 8 níveis de shadow para cada modo (shadow-color é per-mode).
+  const lightShadows = generateShadowLevels(snapshot.light['shadow-color'], snapshot.light)
+  const darkShadows = generateShadowLevels(snapshot.dark['shadow-color'], snapshot.dark)
 
-  // Cores planas (OKLCH literal — sem conversão runtime)
-  const lightColors = colorsToRecord(snapshot.light)
-  const darkColors = colorsToRecord(snapshot.dark)
-
-  // tracking-normal = letter-spacing (renaming alinha shadcn registry vocab)
-  const trackingNormal = snapshot.common['letter-spacing'] ?? '0em'
-  const spacing = snapshot.common.spacing ?? '0.25rem'
+  // tracking-normal = letter-spacing (renaming alinha shadcn registry vocab).
+  // Usa light como fonte canonical (COMMON_STYLES — mesmo valor em dark).
+  const trackingNormal = snapshot.light['letter-spacing'] ?? '0em'
+  const spacing = snapshot.light.spacing ?? '0.25rem'
 
   return {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -120,11 +116,13 @@ export function generateRegistryItem(args: {
       },
     },
     cssVars: {
+      // cssVars.theme: fontes + radius + tracking scale derivado.
+      // Usa light como fonte canonical pra keys "shared" (COMMON_STYLES).
       theme: {
-        'font-sans': snapshot.common['font-sans'],
-        'font-serif': snapshot.common['font-serif'],
-        'font-mono': snapshot.common['font-mono'],
-        radius: snapshot.common.radius,
+        'font-sans': snapshot.light['font-sans'],
+        'font-serif': snapshot.light['font-serif'],
+        'font-mono': snapshot.light['font-mono'],
+        radius: snapshot.light.radius,
         // tracking scale derivado de tracking-normal (shadcn registry pattern)
         'tracking-tighter': 'calc(var(--tracking-normal) - 0.05em)',
         'tracking-tight': 'calc(var(--tracking-normal) - 0.025em)',
@@ -133,16 +131,21 @@ export function generateRegistryItem(args: {
         'tracking-widest': 'calc(var(--tracking-normal) + 0.1em)',
       },
       light: {
-        ...lightColors,
+        ...(snapshot.light as Record<string, string>),
         ...lightShadows,
         'tracking-normal': trackingNormal,
         spacing,
       },
-      dark: {
-        ...darkColors,
-        ...darkShadows,
-        // tracking-normal e spacing NÃO vão em dark (pattern TweakCN)
-      },
+      dark: (() => {
+        // tracking-normal e spacing NÃO vão em dark (pattern TweakCN).
+        // Com schema flat, dark contém spacing + letter-spacing — removemos
+        // explicitamente pra manter compat com shadcn registry
+        // (só cssVars.light carrega spacing + tracking-normal).
+        const { spacing: _spacing, 'letter-spacing': _letterSpacing, ...darkRest } = snapshot.dark
+        void _spacing
+        void _letterSpacing
+        return { ...darkRest, ...darkShadows }
+      })(),
     },
   }
 }
