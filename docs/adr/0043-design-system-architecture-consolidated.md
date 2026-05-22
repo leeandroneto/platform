@@ -1,7 +1,7 @@
 # 0043. Design system architecture consolidada
 
 Date: 2026-05-20
-Status: superseded by ADR-0044 (2026-05-21 — pivot TweakCN/shadcn-canonical)
+Status: superseded by 0044
 
 ## Context
 
