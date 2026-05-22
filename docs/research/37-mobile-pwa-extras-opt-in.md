@@ -451,6 +451,8 @@ Alternativa: adotar opção A agora "pra evitar migration depois".
 **Pergunta:** opção C dia 0 com promessa de migrar quando preciso, ou opção
 A pre-empted agora (custo +6 LOC + ADR-0046 já)?
 
+**✅ Decisão (user 2026-05-21):** Opção C — sem campo `extensions` no Zod schema hoje. Tokens opt-in viram universal em `globals.css` com fallback chain `var(--token, default)`. Schema 117 LOC permanece. Quando regra-de-3 cumprir (3+ presets variando MESMO token), abrir ADR-0046 + migrar pra Opção A.
+
 ### F.5 — APCA gate em extensions de cor (futuro)
 
 Quando opção A chegar, e se algum extension declarar `--brand-glow-color`
