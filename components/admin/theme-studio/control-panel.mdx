@@ -1,0 +1,65 @@
+{/* control-panel.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/ControlPanel/Docs" />
+
+# ControlPanel
+
+Painel de controle esquerdo do theme-studio. Organiza tabs (Colors, Typography, Other, AI) com scroll horizontal via `HorizontalScrollArea` + `TabsTriggerPill`. Consome `useThemeFormContext()` para leitura/escrita do snapshot de tema. AI tab é stub (Chunk 8).
+
+Adapted from TweakCN `components/editor/theme-control-panel.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Exclusivamente dentro do layout do theme-studio (`app/admin/theme-studio/`)
+- Como container de todas as ferramentas de edição de tema (cores, tipografia, spacing/radius/shadow)
+
+## When NOT to use
+
+- Standalone fora do `ThemeFormProvider` — `useThemeFormContext()` vai throw
+- Como panel genérico de configuração — muito acoplado ao modelo de tema
+- Para editar temas de cliente final sem gate de entitlement — o gate está na rota admin
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/control-panel.ts` (`ControlPanelProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `className` | `string?` | Classes adicionais no container |
+| `aiEnabled` | `boolean?` | Habilita tab AI (default `false` — stub) |
+
+## Related
+
+- `ColorsTabContent` — tab de cores (28 pickers)
+- `HslControls` — bulk HSL adjustments na tab Other
+- `FontPicker` / `ThemeFontSelect` — seleção de fontes na tab Typography
+- `ShadowControl` / `SliderWithInput` — radius/shadow/spacing na tab Other
+- `PresetSelect` — header do panel com seleção de preset
+- `PreviewPanel` — painel direito complementar
+
+## Anti-patterns
+
+- Renderizar sem `ThemeFormProvider` no tree
+- Adicionar AI tab com lógica real antes do Chunk 8 — usar stub
+- Passar `aiEnabled: true` sem implementação de backend — stub atual não faz IO
+- Embutir tabs fora do `HorizontalScrollArea` — scroll horizontal é obrigatório em mobile (768px breakpoint)
+
+## Multi-tenant fit
+
+Lê e escreve o snapshot do tenant via `useThemeFormContext()`. Zero hardcoded de tenant. O profissional opera sobre o snapshot do tenant ativo.
+
+## Acessibilidade
+
+- Tabs: `role="tablist"`, `role="tab"`, `aria-selected` (shadcn `Tabs` primitivo)
+- Scroll horizontal: `HorizontalScrollArea` com scroll nativo (não custom)
+- Keyboard: Tab entre tabs, setas esquerda/direita para navegar tabs, Tab para conteúdo
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Zustand store substituído por `useThemeFormContext()`. FontPicker e PresetSelect eram stubs em Chunk 3 — implementados em Chunks seguintes.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/theme-control-panel.tsx`.

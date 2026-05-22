@@ -1,0 +1,62 @@
+{/* hsl-controls.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+# HslControls
+
+Controles de ajuste HSL em bulk para o theme-studio. Sliders de hue shift, saturation e lightness com 15 presets de ajuste rápido (`HslPresetButton`). Aplica os ajustes sobre todas as cores do snapshot atual e emite o snapshot modificado.
+
+Adapted from TweakCN `components/editor/hsl-adjustment-controls.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Tab "Other" do `ControlPanel` no theme-studio — ajuste bulk de todas as cores do tema de uma vez
+- Quando o profissional quer harmonizar a paleta inteira antes de fine-tuning individual com `ColorPicker`
+
+## When NOT to use
+
+- Como picker de cor individual — use `ColorPicker`
+- Para ajuste de cor único (não bulk) — os sliders operam sobre todos os 28 tokens de uma vez
+- Standalone fora do `ThemeFormProvider` — `useThemeFormContext()` vai throw
+
+## Props canônicas
+
+Schema Zod SSOT em `lib/contracts/components/hsl-controls.ts` (HslControlsProps). O componente lê o snapshot via `useThemeFormContext()` e emite mudanças via callback.
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `themeStyle` | `ThemeStyleProps` | Snapshot atual do tema para calcular os ajustes |
+| `onUpdateStyles` | `(updates: Partial<ThemeStyleProps>) => void` | Callback com bulk updates do snapshot |
+
+## Related
+
+- `HslPresetButton` — buttons de ajuste rápido (15 presets de HSL)
+- `SliderWithInput` — slider base usado pelos 3 controles (hue/saturation/lightness)
+- `ControlSection` — wrapper de seção que agrupa os 3 sliders
+- `ColorPicker` — fine-tuning individual após ajuste bulk
+- `ColorsTabContent` — tab paralela com pickers individuais
+
+## Anti-patterns
+
+- Aplicar ajustes HSL sobre tokens `--chart-*` sem verificar APCA — chart colors podem violar contraste
+- Usar `adjustColorByHsl()` fora do `HslControls` sem entender o algoritmo culori — ver `tweakcn-ref/utils/color.ts` para lógica original
+- Elevar state de hue/saturation/lightness para o parent — são controles efêmeros, não persistidos até aplicar
+- Persistir o snapshot modificado sem passar pelo gate APCA do `ContrastChecker`
+
+## Multi-tenant fit
+
+Opera sobre o snapshot do tenant. O algoritmo `adjustColorByHsl()` (culori) é agnóstico de tenant — converte OKLCH → HSL → ajusta → converte de volta. Zero hardcoded.
+
+## Acessibilidade
+
+- Sliders: `<input type="range">` nativo com `aria-label` e `aria-valuemin/max/now` via `SliderWithInput`
+- Preset buttons: `aria-label` descrevendo o ajuste (namespace `theme-studio.hslControls`)
+- Keyboard: Tab entre sliders e presets, setas para ajustar valor do slider
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Zustand checkpoint substituído por `useThemeFormContext()` API.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/hsl-adjustment-controls.tsx`.

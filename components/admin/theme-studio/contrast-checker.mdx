@@ -1,0 +1,63 @@
+{/* contrast-checker.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/ContrastChecker/Docs" />
+
+# ContrastChecker
+
+Validador de contraste APCA Silver para o theme-studio. Exibe badges `pass`/`fail` para os thresholds body (Lc ≥75), large (Lc ≥60) e non-text (Lc ≥45) contra os pares de cor do tema atual. Permite toggle light/dark para validar ambos os modos.
+
+Adapted from TweakCN `components/editor/contrast-checker.tsx` (Apache-2.0, commit `9adabcf9`). Migrado de WCAG para APCA Silver (ADR-0040 §H).
+
+## When to use
+
+- Dentro do theme-studio para o profissional/admin validar acessibilidade de contraste do tema
+- Como referência visual dos thresholds APCA antes de salvar o tema
+
+## When NOT to use
+
+- Como gate de validação programática — usar `useContrastChecker()` hook diretamente (que este componente já consome)
+- Em flows de cliente final — é ferramenta de admin
+- Para validar uma cor isolada fora de pares canonical — opera sobre pares definidos no snapshot do tema
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/contrast-checker.ts` (`ContrastCheckerProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `themeStyle` | `ThemeStyleProps` | Snapshot atual do tema (light ou dark) |
+| `className` | `string?` | Classes adicionais no container |
+
+## Related
+
+- `useContrastChecker` — hook que computa os valores APCA (`lib/hooks/use-contrast-checker.ts`)
+- `ColorsTabContent` — parent que exibe o `ContrastChecker` no topo da tab Colors
+- `ColorPicker` — picker individual que alimenta os valores validados aqui
+
+## Anti-patterns
+
+- Substituir APCA por WCAG ratio — APCA é o gate obrigatório (ADR-0040 §H, `.claude/rules/contrast.md`)
+- Ocultar failures — todos os pares com `fail` devem ser visíveis ao profissional
+- Usar fora do contexto de validação de tema — acopla ao modelo `ThemeStyleProps`
+- Ignorar o modo dark — sempre validar light + dark antes de salvar
+
+## Multi-tenant fit
+
+Opera sobre o `themeStyle` do snapshot do tenant. Zero hardcoded de tenant. Os thresholds APCA são universais (não configuráveis per-tenant): body 75, large 60, non-text 45.
+
+## Acessibilidade
+
+- Badges `pass`/`fail`: não dependem apenas de cor — ícone `Check`/`AlertTriangle` + texto acompanham
+- Toggle light/dark: `aria-label` via `t()` com indicação do modo ativo
+- Tabela de resultados: `role="table"` com `aria-label` descritivo
+- Keyboard: Tab entre toggle e badges
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Migrado de WCAG contrast ratio para APCA Lc em relação ao TweakCN original.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/contrast-checker.tsx`.

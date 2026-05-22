@@ -921,10 +921,13 @@ const eslintConfig = defineConfig([
   //   technical identifiers, NOT UI copy — not translated.
   // react-hooks/exhaustive-deps: intentional dep omissions (sync-once effects from TweakCN).
   {
+    // ADR-0031 §12 — font-picker.tsx REMOVED from override (Fase 4 decompose → main <250 LOC +
+    // font-picker-data.ts + font-picker-item.tsx, all within 400 LOC global limit).
+    // Remaining 4 files: TweakCN-adapt complexo justifica override (code-panel 402 LOC,
+    // code-panel-dialog long, color-preview + components-showcase showcase complexity).
     files: [
       'components/admin/theme-studio/code-panel.tsx',
       'components/admin/theme-studio/code-panel-dialog.tsx',
-      'components/admin/theme-studio/font-picker.tsx',
       'components/admin/theme-studio/theme-preview/color-preview.tsx',
       'components/admin/theme-studio/theme-preview/components-showcase.tsx',
     ],
@@ -938,6 +941,32 @@ const eslintConfig = defineConfig([
       'react/jsx-no-literals': 'off',
       'i18next/no-literal-string': 'off',
       'react/no-unstable-nested-components': 'off',
+    },
+  },
+  // ─── ADR-0031 §12 pt.2 — font-picker.tsx narrow override (Fase 4 decompose) ──
+  // ADR-0031 §12 — max-lines REMOVED (312 LOC ≤ 400 global limit post-decompose).
+  // max-lines-per-function + react-hooks/exhaustive-deps remain: FontPicker function
+  // is inherently long (TweakCN pattern — infinite scroll + search state machine in
+  // one component), and exhaustive-deps omissions are intentional sync-once effects
+  // preserved from TweakCN original. react/jsx-no-literals + i18next: technical
+  // identifiers in JSX (font family strings are data, not UI copy).
+  {
+    files: ['components/admin/theme-studio/font-picker.tsx'],
+    rules: {
+      'max-lines-per-function': 'off', // ADR-0031 §12 — TweakCN pattern, inherently long
+      'react-hooks/exhaustive-deps': 'off', // ADR-0031 §12 — intentional sync-once effects
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
+    },
+  },
+  // ─── ADR-0031 §12 pt.3 — font-picker-item.tsx (TweakCN extract, jsx-no-literals) ─
+  // ADR-0031 §12 — FontItem renders font.family (data string from Google Fonts API),
+  // not UI copy — same rationale as other theme-studio files (technical identifiers).
+  {
+    files: ['components/admin/theme-studio/font-picker-item.tsx'],
+    rules: {
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
     },
   },
   // ─── ADR-0031 §11 — lib/hooks/use-font-search.ts (async fetch in useEffect) ─

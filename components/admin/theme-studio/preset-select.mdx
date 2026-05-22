@@ -1,0 +1,64 @@
+{/* preset-select.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/PresetSelect/Docs" />
+
+# PresetSelect
+
+Dropdown de seleção de preset de tema para o theme-studio. Popover com busca, ciclo por presets via teclado (Ctrl+ArrowLeft/Right) e aplicação do preset no snapshot do tema. Exibe apenas presets `BUILT_IN` (saved presets deferred Chunk 7).
+
+Adapted from TweakCN `components/editor/theme-preset-select.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Header do `ControlPanel` no theme-studio — ponto de entrada principal para escolher tema base
+- Quando o profissional quer partir de um preset antes de customizar
+
+## When NOT to use
+
+- Standalone fora do `ThemeFormProvider` — `useThemeFormContext()` vai throw
+- Para selecionar preset de outro modelo que não `ThemePreset` — acoplado ao schema `lib/design/presets/theme-presets.ts`
+- Para exibir presets salvos pelo usuário — deferred até Chunk 7
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/preset-select.ts` (`PresetSelectProps`)
+
+O componente lê/escreve o preset ativo via `useThemeFormContext()`. Props externas controlam display.
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `className` | `string?` | Classes adicionais no trigger button |
+
+## Related
+
+- `ControlPanel` — parent que embute `PresetSelect` no header
+- `PreviewPanel` — reage ao preset aplicado (lê o mesmo `ThemeFormContext`)
+- `CodePanel` — exibe o CSS do preset selecionado + customizações
+
+## Anti-patterns
+
+- Adicionar tab "Saved" de presets do usuário antes do Chunk 7 — server action e schema não existem ainda
+- Adicionar link `/community` ou `/settings/themes` — removidos em relação ao TweakCN original (não aplicável à plataforma)
+- Adicionar `ThemeToggle` inline — removido do TweakCN original (deferred Chunk 7)
+- Usar `PostHog` analytics para tracking de preset — removido (memory `feedback_frescura_filter`)
+
+## Multi-tenant fit
+
+Os presets `BUILT_IN` são universais (não per-tenant). Quando o profissional seleciona e salva, o snapshot vai para `tenant_theme_versions` vinculado ao tenant. Presets salvos per-user serão per-`professional_id` (Chunk 7).
+
+## Acessibilidade
+
+- Trigger button: `role="combobox"`, `aria-expanded`, `aria-label` via `t()`
+- Search input: `aria-label` via `t('presetSelect.search')` (namespace `theme-studio`)
+- Preset items: `role="option"`, `aria-selected` para preset ativo
+- Keyboard cycle: Ctrl+ArrowLeft/Right documentado via `aria-keyshortcuts`
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Zustand store substituído por `useThemeFormContext()`. PostHog, community link e ThemeToggle removidos.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/theme-preset-select.tsx`.

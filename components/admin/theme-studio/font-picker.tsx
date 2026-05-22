@@ -6,6 +6,7 @@
 //        useFontSearch → @/lib/hooks/use-font-search (native React, no react-query).
 //        Imports realigned to platform paths.
 //        i18n strings → namespace theme-studio.fontPicker via useTranslations.
+//        Fase 4 decompose: POPULAR_FONTS → font-picker-data.ts, FontItem → font-picker-item.tsx.
 // See NOTICE.md.
 'use client'
 
@@ -28,8 +29,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
-import { Check, ChevronDown, FunnelX, Loader2 } from 'lucide-react'
+import { ChevronDown, FunnelX, Loader2 } from 'lucide-react'
 
+import type { FontPickerProps } from '@/lib/contracts/components/font-picker'
 import type { FontInfo } from '@/lib/design/contract/fonts'
 import { loadGoogleFont } from '@/lib/design/fonts/google-fonts'
 import { buildFontFamily, getDefaultWeights, waitForFont } from '@/lib/design/fonts/index'
@@ -43,7 +45,6 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -57,307 +58,8 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-const POPULAR_FONTS: Record<string, FontInfo[]> = {
-  'sans-serif': [
-    {
-      family: 'Inter',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Roboto',
-      category: 'sans-serif',
-      variants: ['100', '300', '400', '500', '700', '900'],
-      variable: false,
-    },
-    {
-      family: 'Open Sans',
-      category: 'sans-serif',
-      variants: ['300', '400', '500', '600', '700', '800'],
-      variable: true,
-    },
-    {
-      family: 'Poppins',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: false,
-    },
-    {
-      family: 'Montserrat',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Lato',
-      category: 'sans-serif',
-      variants: ['100', '300', '400', '700', '900'],
-      variable: false,
-    },
-    {
-      family: 'Nunito',
-      category: 'sans-serif',
-      variants: ['200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Raleway',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'DM Sans',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Plus Jakarta Sans',
-      category: 'sans-serif',
-      variants: ['200', '300', '400', '500', '600', '700', '800'],
-      variable: true,
-    },
-    {
-      family: 'Geist',
-      category: 'sans-serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-  ],
-  serif: [
-    {
-      family: 'Playfair Display',
-      category: 'serif',
-      variants: ['400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Merriweather',
-      category: 'serif',
-      variants: ['300', '400', '700', '900'],
-      variable: false,
-    },
-    {
-      family: 'Lora',
-      category: 'serif',
-      variants: ['400', '500', '600', '700'],
-      variable: true,
-    },
-    {
-      family: 'PT Serif',
-      category: 'serif',
-      variants: ['400', '700'],
-      variable: false,
-    },
-    {
-      family: 'Noto Serif',
-      category: 'serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Source Serif 4',
-      category: 'serif',
-      variants: ['200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Libre Baskerville',
-      category: 'serif',
-      variants: ['400', '700'],
-      variable: false,
-    },
-    {
-      family: 'EB Garamond',
-      category: 'serif',
-      variants: ['400', '500', '600', '700', '800'],
-      variable: true,
-    },
-    {
-      family: 'Crimson Text',
-      category: 'serif',
-      variants: ['400', '600', '700'],
-      variable: false,
-    },
-    {
-      family: 'Bitter',
-      category: 'serif',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-  ],
-  monospace: [
-    {
-      family: 'JetBrains Mono',
-      category: 'monospace',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800'],
-      variable: true,
-    },
-    {
-      family: 'Fira Code',
-      category: 'monospace',
-      variants: ['300', '400', '500', '600', '700'],
-      variable: true,
-    },
-    {
-      family: 'Source Code Pro',
-      category: 'monospace',
-      variants: ['200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Roboto Mono',
-      category: 'monospace',
-      variants: ['100', '200', '300', '400', '500', '600', '700'],
-      variable: true,
-    },
-    {
-      family: 'IBM Plex Mono',
-      category: 'monospace',
-      variants: ['100', '200', '300', '400', '500', '600', '700'],
-      variable: false,
-    },
-    {
-      family: 'Space Mono',
-      category: 'monospace',
-      variants: ['400', '700'],
-      variable: false,
-    },
-    {
-      family: 'Ubuntu Mono',
-      category: 'monospace',
-      variants: ['400', '700'],
-      variable: false,
-    },
-    {
-      family: 'Inconsolata',
-      category: 'monospace',
-      variants: ['200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Geist Mono',
-      category: 'monospace',
-      variants: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-      variable: true,
-    },
-    {
-      family: 'Anonymous Pro',
-      category: 'monospace',
-      variants: ['400', '700'],
-      variable: false,
-    },
-    {
-      family: 'Red Hat Mono',
-      category: 'monospace',
-      variants: ['300', '400', '500', '600', '700'],
-      variable: true,
-    },
-  ],
-  display: [
-    { family: 'Bebas Neue', category: 'display', variants: ['400'], variable: false },
-    { family: 'Abril Fatface', category: 'display', variants: ['400'], variable: false },
-    { family: 'Righteous', category: 'display', variants: ['400'], variable: false },
-    {
-      family: 'Fredoka',
-      category: 'display',
-      variants: ['300', '400', '500', '600', '700'],
-      variable: true,
-    },
-    { family: 'Lobster', category: 'display', variants: ['400'], variable: false },
-    {
-      family: 'Comfortaa',
-      category: 'display',
-      variants: ['300', '400', '500', '600', '700'],
-      variable: true,
-    },
-    { family: 'Alfa Slab One', category: 'display', variants: ['400'], variable: false },
-    { family: 'Bungee', category: 'display', variants: ['400'], variable: false },
-    { family: 'Lilita One', category: 'display', variants: ['400'], variable: false },
-    { family: 'Permanent Marker', category: 'display', variants: ['400'], variable: false },
-  ],
-  handwriting: [
-    {
-      family: 'Dancing Script',
-      category: 'handwriting',
-      variants: ['400', '500', '600', '700'],
-      variable: true,
-    },
-    { family: 'Pacifico', category: 'handwriting', variants: ['400'], variable: false },
-    {
-      family: 'Caveat',
-      category: 'handwriting',
-      variants: ['400', '500', '600', '700'],
-      variable: true,
-    },
-    { family: 'Satisfy', category: 'handwriting', variants: ['400'], variable: false },
-    { family: 'Great Vibes', category: 'handwriting', variants: ['400'], variable: false },
-    { family: 'Sacramento', category: 'handwriting', variants: ['400'], variable: false },
-    {
-      family: 'Kalam',
-      category: 'handwriting',
-      variants: ['300', '400', '700'],
-      variable: false,
-    },
-    { family: 'Patrick Hand', category: 'handwriting', variants: ['400'], variable: false },
-    { family: 'Indie Flower', category: 'handwriting', variants: ['400'], variable: false },
-    {
-      family: 'Shadows Into Light',
-      category: 'handwriting',
-      variants: ['400'],
-      variable: false,
-    },
-  ],
-}
-
-// FontPickerProps: SSOT em lib/contracts/components/font-picker.ts (Zod + z.infer).
-import type { FontPickerProps } from '@/lib/contracts/components/font-picker'
-
-function FontItem({
-  font,
-  isSelected,
-  isLoading,
-  onSelect,
-  selectedRef,
-}: {
-  font: FontInfo
-  isSelected: boolean
-  isLoading: boolean
-  onSelect: (font: FontInfo) => void
-  selectedRef: React.Ref<HTMLDivElement> | null
-}) {
-  const t = useTranslations('theme-studio.fontPicker')
-  const fontFamily = buildFontFamily(font.family, font.category)
-
-  return (
-    <CommandItem
-      className="flex cursor-pointer items-center justify-between gap-2 p-2"
-      onSelect={() => onSelect(font)}
-      disabled={isLoading}
-      onMouseEnter={() => loadGoogleFont(font.family, ['400'])}
-      ref={selectedRef}
-    >
-      <div className="line-clamp-1 inline-flex w-full flex-1 flex-col justify-between">
-        <span className="inline-flex items-center gap-2 truncate" style={{ fontFamily }}>
-          {font.family}
-          {isLoading && <Loader2 className="size-3 animate-spin" />}
-        </span>
-        <div className="flex items-center gap-1 text-xs font-normal opacity-70">
-          <span>{font.category}</span>
-          {font.variable && (
-            <span className="inline-flex items-center gap-1">
-              <span>{'•'}</span>
-              <span>{t('variableLabel')}</span>
-            </span>
-          )}
-        </div>
-      </div>
-      {isSelected && <Check className="size-4 shrink-0 opacity-70" />}
-    </CommandItem>
-  )
-}
+import { POPULAR_FONTS } from './font-picker-data'
+import { FontItem } from './font-picker-item'
 
 export function FontPicker({ value, category, onSelect, placeholder, className }: FontPickerProps) {
   const t = useTranslations('theme-studio.fontPicker')
@@ -368,7 +70,6 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
   const [selectedCategory, setSelectedCategory] = useState<FilterFontCategory>(category ?? 'all')
   const [loadingFont, setLoadingFont] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-
   const selectedFontRef = useRef<HTMLDivElement>(null)
   const hasScrolledToSelectedFont = useRef(false)
 
@@ -393,10 +94,7 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
   useEffect(() => {
     if (open && fontQuery.data && !hasScrolledToSelectedFont.current) {
       requestAnimationFrame(() => {
-        selectedFontRef.current?.scrollIntoView({
-          block: 'center',
-          inline: 'nearest',
-        })
+        selectedFontRef.current?.scrollIntoView({ block: 'center', inline: 'nearest' })
       })
       hasScrolledToSelectedFont.current = true
     } else if (!open) {
@@ -404,17 +102,14 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
     }
   }, [open, fontQuery.data])
 
-  // Flatten all pages into a single array
   const allFonts = useMemo(() => {
     if (!fontQuery.data) return []
     return fontQuery.data.pages.flatMap((page) => page.fonts)
   }, [fontQuery.data])
 
-  // Popular fonts for the current category (only shown when not searching)
   const popularFonts = useMemo(() => {
     if (searchQuery) return []
     if (selectedCategory === 'all') {
-      // Show a mix from sans-serif, serif, monospace
       return [
         ...(POPULAR_FONTS['sans-serif'] ?? []).slice(0, 2),
         ...(POPULAR_FONTS['serif'] ?? []).slice(0, 1),
@@ -424,18 +119,15 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
     return POPULAR_FONTS[selectedCategory] ?? []
   }, [searchQuery, selectedCategory])
 
-  // Filter out popular fonts from the main list to avoid duplicates
   const remainingFonts = useMemo(() => {
     if (popularFonts.length === 0) return allFonts
     const popularFamilies = new Set(popularFonts.map((f) => f.family))
     return allFonts.filter((font) => !popularFamilies.has(font.family))
   }, [allFonts, popularFonts])
 
-  // Intersection Observer ref callback for infinite scroll
   const loadMoreRefCallback = useCallback(
     (node: HTMLDivElement | null) => {
       if (!node) return
-
       const observer = new IntersectionObserver(
         (entries) => {
           const entry = entries[0]
@@ -443,13 +135,8 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
             fontQuery.fetchNextPage()
           }
         },
-        {
-          root: scrollRef.current,
-          rootMargin: '100px',
-          threshold: 0,
-        },
+        { root: scrollRef.current, rootMargin: '100px', threshold: 0 },
       )
-
       observer.observe(node)
       return () => observer.unobserve(node)
     },
@@ -459,7 +146,6 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
   const handleFontSelect = useCallback(
     async (font: FontInfo) => {
       setLoadingFont(font.family)
-
       try {
         const weights = getDefaultWeights(font.variants)
         loadGoogleFont(font.family, weights)
@@ -467,25 +153,17 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
       } catch (error) {
         console.warn(`Failed to load font ${font.family}:`, error)
       }
-
       setLoadingFont(null)
       onSelect(font)
     },
     [onSelect],
   )
 
-  // Get current font info for display
   const currentFont = useMemo(() => {
     if (!value) return null
-
-    // First try to find the font in the search results
     const foundFont = allFonts.find((font: FontInfo) => font.family === value)
     if (foundFont) return foundFont
-
-    // If not found in search results, create a fallback FontInfo object
-    // This happens when a font is selected and then the search changes
     const extractedFontName = value.split(',')[0]?.trim().replace(/['"]/g, '') ?? value
-
     return {
       family: extractedFontName,
       category: category ?? 'sans-serif',
@@ -508,9 +186,7 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
             {currentFont ? (
               <span className="inline-flex items-center gap-2">
                 <span
-                  style={{
-                    fontFamily: buildFontFamily(currentFont.family, currentFont.category),
-                  }}
+                  style={{ fontFamily: buildFontFamily(currentFont.family, currentFont.category) }}
                 >
                   {currentFont.family}
                 </span>
@@ -533,7 +209,6 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
                 value={inputValue}
                 onValueChange={setInputValue}
               />
-
               {inputValue && (
                 <TooltipProvider>
                   <Tooltip>
@@ -619,10 +294,8 @@ export function FontPicker({ value, category, onSelect, placeholder, className }
                   ))}
                 </CommandGroup>
 
-                {/* Load more trigger element for infinite scroll */}
                 {fontQuery.hasNextPage && <div ref={loadMoreRefCallback} className="h-2 w-full" />}
 
-                {/* Loading indicator for infinite scroll */}
                 {fontQuery.isFetchingNextPage && (
                   <div className="flex items-center justify-center gap-2 p-2">
                     <Loader2 className="size-4 animate-spin" />

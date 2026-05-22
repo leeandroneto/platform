@@ -1,0 +1,76 @@
+{/* font-picker.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/FontPicker/Docs" />
+
+# FontPicker
+
+Picker de fontes Google para o theme-studio. Popover com infinite scroll, busca debounced (300ms), filtro por categoria (sans-serif, serif, monospace, display, handwriting) e preview live das fontes. Integra `useFontSearch` para busca via `/api/admin/theme-studio/google-fonts`.
+
+Adapted from TweakCN `components/editor/font-picker.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## Estrutura de arquivos (pós-decompose Fase 4)
+
+O componente foi decomposto em 3 arquivos para respeitar o limite de LOC:
+
+- `font-picker.tsx` — main component + UI shell (`FontPicker` + `FontItem`)
+- `font-picker-variants.tsx` — render de weight/style variants por fonte
+- `font-picker-data.ts` — constante `POPULAR_FONTS` (~60 fontes em 5 categorias)
+
+## When to use
+
+- Tab Typography do `ControlPanel` no theme-studio — profissional escolhe fonte para `--font-sans`, `--font-serif` ou `--font-mono`
+- Integrado com `ThemeFontSelect` que passa `value` e `onSelect`
+
+## When NOT to use
+
+- Como picker de fonte genérico fora do theme-studio — side effects de carregamento Google Fonts CDN e state de infinite scroll são acoplados
+- Para fontes locais/custom — só suporta Google Fonts
+- Em contexto sem acesso ao endpoint `/api/admin/theme-studio/google-fonts`
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/font-picker.ts` (`FontPickerProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `value` | `string?` | Family name da fonte selecionada (`"Inter"`) |
+| `category` | `FilterFontCategory?` | Categoria inicial do filtro (`'sans-serif'` default) |
+| `onSelect` | `(font: FontInfo) => void` | Callback quando fonte é selecionada e carregada |
+| `placeholder` | `string?` | Placeholder do trigger (default `t('search')`) |
+| `className` | `string?` | Classes adicionais no trigger button |
+
+## Related
+
+- `ThemeFontSelect` — wrapper que conecta `FontPicker` ao `useThemeFormContext()`
+- `ControlPanel` — parent (tab Typography)
+- `useFontSearch` — hook de busca (`lib/hooks/use-font-search.ts`) com infinite scroll
+- `font-picker-data.ts` — `POPULAR_FONTS` constant (fontes sugeridas sem busca)
+
+## Anti-patterns
+
+- Passar `value` com CSS font-family stack completo (`"Inter, sans-serif"`) — usar apenas family name (`"Inter"`)
+- Instanciar múltiplos `FontPicker` sem coordenar carregamento — cada instância carrega fontes independentemente
+- Usar `onSelect` síncrono esperando fonte já carregada — `onSelect` é chamado após `waitForFont()` (async)
+- Remover o grupo "Popular" — melhora UX sem busca (mostra fontes imediatamente)
+
+## Multi-tenant fit
+
+Brand-agnostic. Fontes carregadas via Google Fonts CDN são universais. O `FontInfo.family` resultante vai para `tenant_theme_versions.snapshot` como valor dos tokens `--font-sans/serif/mono`.
+
+## Acessibilidade
+
+- Trigger button: `role="combobox"`, `aria-label` implícito pela fonte selecionada ou placeholder
+- Search input: `aria-label` via `t('search')` (namespace `theme-studio.fontPicker`)
+- Clear search button: `aria-label` via `t('search')` (melhoria futura: chave dedicada)
+- FontItem: `role="option"` via `CommandItem`, `aria-selected` quando selecionada
+- Keyboard: Tab/Esc no Popover, setas em CommandList, Enter para selecionar
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Decomposto em Fase 4 (main + variants + data).
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/font-picker.tsx`.

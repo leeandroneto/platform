@@ -1,0 +1,64 @@
+{/* preview-panel.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/PreviewPanel/Docs" />
+
+# PreviewPanel
+
+Painel de preview direito do theme-studio. Tabs de preview (Cards, Dashboard, Mail, Pricing, Colors, Typography) com toggle fullscreen e inspector (stubs em Chunk 6). Tab ativa persistida via `nuqs` (query string `?tab=`).
+
+Adapted from TweakCN `components/editor/theme-preview-panel.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Exclusivamente dentro do layout do theme-studio como painel direito
+- Para o profissional visualizar o impacto visual das mudanças de tema em tempo real
+
+## When NOT to use
+
+- Standalone fora do `ThemeFormProvider` — `useThemeFormContext()` vai throw (mesmo que indiretamente via sub-components)
+- Como preview genérico de UI — acoplado ao modelo de tema e ao `ThemeFormContext`
+- Antes do Chunk 6 completar — sub-components de preview são stubs (placeholder visual)
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/preview-panel.ts` (`PreviewPanelProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `className` | `string?` | Classes adicionais no container |
+
+O painel lê o tema atual via `useThemeFormContext()`. Tab ativa via `useQueryState('tab', { defaultValue: 'cards' })` (nuqs).
+
+## Related
+
+- `ControlPanel` — painel complementar (esquerdo)
+- `HorizontalScrollArea` + `TabsTriggerPill` — scroll de tabs e pills de navegação
+- Sub-previews (stubs até Chunk 6): `ColorPreview`, `ComponentsShowcase`, etc. em `theme-preview/`
+
+## Anti-patterns
+
+- Adicionar `V0Logo` ou "Open in v0" link — removido (ADR-0045 D.1 v0 DEMOTED)
+- Adicionar `ShadcnBlocksLogo` — removido (branding externo não aplicável)
+- Implementar `useFullscreen` / `useThemeInspector` antes do Chunk 6 — stubs locais cobrem até lá
+- Persistir tab ativa via `useState` só (sem nuqs) — tab deve sobreviver a navegação na URL
+
+## Multi-tenant fit
+
+O preview reflete o snapshot do tenant ativo no `ThemeFormContext`. Os tokens CSS são aplicados via `<style precedence="theme">` no layout — o preview não injecta CSS diretamente.
+
+## Acessibilidade
+
+- Tabs: `role="tablist"`, `role="tab"`, `aria-selected` (shadcn `Tabs`)
+- Fullscreen toggle: `aria-label` via `t('previewPanel.fullscreen')` + ícone `Maximize`/`Minimize`
+- Inspector toggle: `aria-label` via `t('previewPanel.inspector')` + ícone `Eye`
+- Scroll horizontal: `HorizontalScrollArea` com scroll nativo e indicadores visuais
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Zustand substituído por `useState` local + `nuqs`. v0, ShadcnBlocks logos removidos.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/theme-preview-panel.tsx`.

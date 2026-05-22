@@ -1,0 +1,60 @@
+{/* code-panel.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Theme Studio/CodePanel/Docs" />
+
+# CodePanel
+
+Painel de código do theme-studio. Exibe o tema customizado em duas abas: CSS Tailwind v4 gerado por `buildThemeCSS()` e comando `npx shadcn add` do registry do tema. Permite copiar com um clique.
+
+Adapted from TweakCN `components/editor/code-panel.tsx` (Apache-2.0, commit `9adabcf9`). v0 tab removida (ADR-0045 D.1).
+
+## When to use
+
+- Dentro do theme-studio para o profissional/admin exportar o tema customizado
+- Integração com `useThemeFormContext()` para ler o snapshot atual do tema
+
+## When NOT to use
+
+- Standalone fora do `ThemeFormProvider` — `useThemeFormContext()` vai throw
+- Para exibir código genérico — usar `<pre>/<code>` plain (este componente é acoplado ao theme model)
+- Em modal separado sem contexto do tema — use `CodePanelDialog` wrapper
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/code-panel.ts` (`CodePanelProps`)
+
+O componente lê o tema diretamente de `useThemeFormContext()` — não recebe `theme` via props. Props externas controlam apenas display/layout.
+
+## Related
+
+- `CodePanelDialog` — wrapper modal para o `CodePanel` (botão "Copy Code" no header)
+- `ControlPanel` — parent que embute o botão que abre `CodePanelDialog`
+- `PresetSelect` — seleção de preset que alimenta o tema exibido aqui
+
+## Anti-patterns
+
+- Renderizar sem `ThemeFormProvider` no tree — state de tema não disponível
+- Adicionar tab v0 de volta — v0 foi DEMOTED em ADR-0045 D.1 (não reverter)
+- Usar `localStorage` diretamente para persistir tab ativa — o componente já gerencia via `useState` + `localStorage` internamente
+- Hardcoded URL de registry — usar `TENANT_THEME_ID_PLACEHOLDER` (substituído pelo server action em Chunk 7)
+
+## Multi-tenant fit
+
+O CSS gerado reflete o snapshot do tenant ativo no `useThemeFormContext()`. O registry command usa placeholder que será substituído pelo `tenant_id` real no endpoint `/api/admin/theme-studio/registry/[themeId]` (Chunk 7).
+
+## Acessibilidade
+
+- Copy button: `aria-label` via `t('codePanel.copy')` (namespace `theme-studio`)
+- Tab ativa: `aria-selected` + `role="tab"` (shadcn `Tabs` primitivo)
+- Código: `<pre>/<code>` semântico com `role="region"` e `aria-label`
+- Keyboard: Tab entre abas, Enter para copiar
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044. Tab v0 foi removida em relação ao TweakCN original.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/code-panel.tsx`.

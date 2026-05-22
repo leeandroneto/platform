@@ -1,0 +1,63 @@
+{/* colors-tab-content.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+# ColorsTabContent
+
+Tab de cores do control-panel do theme-studio. Renderiza todos os 28 `ColorPicker`s agrupados por categoria (base, interactive, feedback, sidebar) com search/filter e botão de reset por grupo. Sincroniza com `useThemeFormContext()` para leitura e escrita do snapshot de tema.
+
+Adapted from TweakCN `components/editor/colors-tab-content.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Exclusivamente dentro do `ControlPanel` na tab "Colors"
+- Quando o profissional/admin precisa ajustar cores individuais do tema
+
+## When NOT to use
+
+- Standalone fora do `ThemeFormProvider` — depende do contexto para leitura/escrita do tema
+- Como picker de cor genérico — muito acoplado ao modelo de 28 tokens canonical
+- Fora do contexto admin — sem gate de entitlement próprio
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/colors-tab-content.ts` (`ColorsTabContentProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `themeStyle` | `ThemeStyleProps` | Snapshot atual do tema (light ou dark) |
+| `onUpdateStyle` | `(key, value) => void` | Callback para atualizar token individual |
+| `onResetGroup` | `(group) => void` | Callback para resetar grupo de cores ao preset |
+
+## Related
+
+- `ColorPicker` — picker individual de cada token de cor
+- `ControlSection` — wrapper de seção com título e ações
+- `HslControls` — bulk adjustments (aparece em tab diferente)
+- `ContrastChecker` — valida pares de contraste
+
+## Anti-patterns
+
+- Renderizar sem `ThemeFormProvider` no tree — `useThemeFormContext()` vai throw
+- Passar `themeStyle` com tokens fora dos 28 canonical — schema Zod rejeita
+- Usar search/filter state fora do componente — state é interno (não elevado)
+- Sobrescrever tokens `--sidebar-*` sem validar APCA — sidebar tem pares separados
+
+## Multi-tenant fit
+
+Opera sobre o snapshot do tenant (`tenant_theme_versions.snapshot`). Zero hardcoded de tenant. Mudanças são acumuladas no `useThemeFormContext()` e persistidas via server action ao salvar.
+
+## Acessibilidade
+
+- Search input: `aria-label` via `t()` (namespace `theme-studio.colorsTabContent`)
+- Reset buttons: `aria-label` descrevendo o grupo que será resetado
+- Grupos de cores: `role="group"` com `aria-labelledby` para heading do grupo
+- ScrollArea com `tabindex` para foco via teclado
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/colors-tab-content.tsx`.

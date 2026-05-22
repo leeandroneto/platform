@@ -1,0 +1,66 @@
+{/* color-picker.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+# ColorPicker
+
+Componente do theme-studio admin para escolher cor individual da paleta (`background`, `primary`, `accent`, etc.) via OKLCH-primary com fallback HEX. Integra `ColorSelectorPopover` com debounce de 50ms e sincronização com `SectionContext` (highlight do sidebar).
+
+Adapted from TweakCN `components/editor/color-picker.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Editor admin (`/admin/theme-studio`) — profissional/admin escolhe cor canonical de uma das 28 keys per modo (light/dark)
+- Form preset customization — apply preset → tweak individual color
+- Integração com `useThemeFormContext()` (state centralizado no control-panel)
+
+## When NOT to use
+
+- Para carregar preset inteiro → use `PresetSelect`
+- Para ajustar HSL relativo à base → use `HslControls` (bulk HSL adjustments)
+- Para escolher fonte/radius/shadow → use componentes específicos (`ThemeFontSelect`, `SliderWithInput`, `ShadowControl`)
+- Fora do contexto de admin theme-studio — side effects de foco/highlight acoplados ao `SectionContext`
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/color-picker.ts` (`ColorPickerProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `colorKey` | `keyof ThemeStyleProps` | Token canonical shadcn (ex: `'primary'`, `'background'`) |
+| `value` | `string` | Valor OKLCH atual (`"oklch(0.55 0.2 270)"`) |
+| `onChange` | `(value: string) => void` | Callback quando cor muda (debounced 50ms) |
+| `label` | `string` | Label i18n via `t()` |
+
+## Related
+
+- `ColorSelectorPopover` — UI interna (Tailwind palette + hex input + OKLCH picker)
+- `HslControls` — HSL bulk adjustments aplicados sobre o snapshot completo
+- `ContrastChecker` — valida APCA Silver contra pares `foreground`/`background`
+- `ColorsTabContent` — orquestrador que renderiza todos os 28 ColorPickers
+
+## Anti-patterns
+
+- Passar string HEX literal em `value` — sempre OKLCH string canonical (`"oklch(...)"`)
+- Renderizar fora de `ThemeFormProvider` — perde state centralizado do tema
+- Hardcoded hex literal no caller — use `var(--canonical)` ou tokens shadcn
+- Usar como picker genérico de cor fora do theme-studio — acoplado ao `SectionContext`
+
+## Multi-tenant fit
+
+Brand-agnostic via tokens canonical. Tenant determina valor inicial via `tenant_theme_versions.snapshot`. Zero hardcoded de tenant. Modo light/dark determinado pelo snapshot atual (não pelo tema do sistema).
+
+## Acessibilidade
+
+- ARIA: `<button>` semântico com `aria-label` traduzido via `t()` (namespace `theme-studio.colorPicker`)
+- Keyboard: Tab/Enter/Esc cobertos pelo `Popover` shadcn
+- Focus visible ring shadcn padrão (`--ring` token)
+- Cor nunca é único indicador de estado — ícone + texto acompanham
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/color-picker.tsx`.

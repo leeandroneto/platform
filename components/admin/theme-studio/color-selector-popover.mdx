@@ -1,0 +1,61 @@
+{/* color-selector-popover.mdx */}
+
+import { Meta } from '@storybook/blocks'
+
+# ColorSelectorPopover
+
+UI base interna do `ColorPicker`. Popover com 3 tabs: paleta Tailwind (com busca), input HEX, e picker OKLCH nativo. Exibe preview de cor com badge de contraste APCA.
+
+Adapted from TweakCN `components/editor/color-selector-popover.tsx` (Apache-2.0, commit `9adabcf9`).
+
+## When to use
+
+- Internamente pelo `ColorPicker` — não usar diretamente em outros contextos
+- Quando precisa de popover de seleção de cor com paleta Tailwind integrada
+
+## When NOT to use
+
+- Como picker genérico de cor de marca fora do theme-studio — use `ColorPicker` que adiciona contexto do token canonical
+- Fora de contexto admin — UI não tem gate de entitlement próprio (o gate está em `ThemeStudioView`)
+- Para picker de cor em formulários de cliente final — usar input de cor padrão
+
+## Props canônicas
+
+Schema Zod SSOT: `lib/contracts/components/color-selector-popover.ts` (`ColorSelectorPopoverProps`)
+
+| Prop | Tipo | Descrição |
+|---|---|---|
+| `value` | `string` | Valor OKLCH ou HEX atual |
+| `onChange` | `(value: string) => void` | Callback quando cor é selecionada |
+| `children` | `React.ReactNode` | Trigger do popover (normalmente o swatch button) |
+
+## Related
+
+- `ColorPicker` — wrapper que fornece contexto de token canonical + debounce
+- `ContrastChecker` — validação APCA Silver dos valores escolhidos
+- `ColorsTabContent` — orquestrador de todos os pickers
+
+## Anti-patterns
+
+- Montar `ColorSelectorPopover` sem `ColorPicker` wrapper — perde integração com `SectionContext` e debounce
+- Passar HEX literal sem converter para OKLCH — `buildThemeCSS` espera OKLCH como formato primário
+- Usar SVG `TailwindCSS` icon inline em outros componentes — é interno deste arquivo (inlined de `tweakcn-ref/components/icons/tailwind-css.tsx`)
+
+## Multi-tenant fit
+
+Brand-agnostic. A paleta Tailwind exibida é a paleta universal (não per-tenant). O valor resultante é OKLCH que vai para o snapshot do tenant.
+
+## Acessibilidade
+
+- Keyboard: Tab entre tabs (Tailwind/HEX/OKLCH), Enter para selecionar cor
+- Search dentro da tab Tailwind: input com `aria-label` via `t()`
+- Popover fecha com Esc (comportamento padrão shadcn `Popover`)
+- Cor selecionada exibe `Check` ícone + `aria-selected`
+
+## Migration guide
+
+N/A — primeira versão pós-pivot ADR-0044.
+
+## License
+
+Adapted from TweakCN (`jnsahaj/tweakcn`, commit `9adabcf9`, Apache-2.0). Original em `tweakcn-ref/components/editor/color-selector-popover.tsx`. Ícone `TailwindCSS` inlined de `tweakcn-ref/components/icons/tailwind-css.tsx`.
