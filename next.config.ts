@@ -17,9 +17,18 @@ const baseConfig: NextConfig = {
   // cacheComponents: useCache + cacheLife/cacheTag + PPR (merged)
   cacheComponents: true,
 
+  allowedDevOrigins: ['*.loca.lt', '*.trycloudflare.com', '*.ngrok-free.app'],
+
   experimental: {
     // View Transitions API — shared element transitions zero-config
     viewTransition: true,
+    serverActions: {
+      bodySizeLimit: '25mb',
+    },
+    staleTimes: {
+      dynamic: 0,
+      static: 180,
+    },
   },
 
   // ─── Image optimization ─────────────────────────────────────────────────

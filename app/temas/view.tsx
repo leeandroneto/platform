@@ -117,13 +117,13 @@ export function ThemeStudioView({ initialTheme, onPersistChange }: ThemeStudioVi
       <div className="relative isolate flex flex-1 overflow-hidden">
         <div className="size-full">
           <ResizablePanelGroup orientation="horizontal" className="isolate">
-            <ResizablePanel defaultSize={30} minSize={20} maxSize={40} className="z-1">
+            <ResizablePanel defaultSize="30%" minSize="20%" maxSize="40%" className="z-1">
               <div className="relative isolate flex h-full flex-1 flex-col overflow-hidden">
                 <ControlPanel />
               </div>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={70}>
+            <ResizablePanel defaultSize="70%">
               <div className="flex h-full flex-col">
                 <div className="flex min-h-0 flex-1 flex-col">
                   {/* ActionBar deferred Chunk 7 */}

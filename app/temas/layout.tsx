@@ -32,7 +32,9 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 export default function TemasLayout({ children }: { children: ReactNode }) {
   return (
     <TooltipProvider>
-      <NuqsAdapter>{children}</NuqsAdapter>
+      <NuqsAdapter>
+        <div className="flex h-dvh flex-col overflow-hidden">{children}</div>
+      </NuqsAdapter>
     </TooltipProvider>
   )
 }

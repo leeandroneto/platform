@@ -52,12 +52,20 @@ markmap:
 - **Ação:** ✅ JÁ INSTALADO
 - **Por quê:** generateObject + streamText + tool calling + AI Gateway (multi-model fallback)
 
-#### Inngest
+#### Inngest + `@inngest/agent-kit`
 
 - **License:** Apache 2.0
 - **Stack:** TypeScript multi-platform
-- **Ação:** INSTALL JIT (quando AI Reports entrar)
-- **Por quê:** Durable workflows pra AI longa (5-30s) com retry/resumable — research-44 cravou
+- **Ação:** INSTALL JIT (quando AI Reports entrar — item 3 ADR-0046 — e AI Builders — item 5)
+- **Por quê:** Não só durable workflows pra AI longa (5-30s) com retry/resumable. `@inngest/agent-kit` fornece `createAgent` + `createNetwork` + `createState` + tool registration com Zod — orquestração multi-agent stateful proven. Pattern validado por nextjs-vibe (Code With Antonio) + research-44 (Lovable)
+
+#### nextjs-vibe (Code With Antonio)
+
+- **License:** ❌ sem license declarada (= all rights reserved default)
+- **Stack:** Next 15 + Inngest agent-kit + E2B + Clerk + Prisma
+- **Ação:** STUDY pattern (não COPY — license bloqueia)
+- **Por quê:** Implementação completa Lovable/v0 clone tutorial-grade. Patterns aplicáveis a AI Builders (item 5 ADR-0046): (1) **3-agent chain** `codeAgent` (max 15 iter, stateful) → `fragmentTitleAgent` → `responseAgent`; (2) **AgentState** `{summary, files}` persistido via `createState()` cross-iteration; (3) tools `terminal`/`createOrUpdateFiles`/`readFiles`; (4) router termina loop ao detectar `<task_summary>` marker (token-efficient); (5) sandbox Docker template pré-cooking shadcn. **Substituir cirurgicamente:** E2B (paid) → Vercel Sandbox (GA jan/2026, native) · Clerk → Supabase Auth · Prisma → Supabase + RLS
+- **Insights destilados:** `docs/_deferred/codewithantonio-insights/` (3 lições já capturadas — 06 AI Jobs, 08 Agent Tools, 19 Agent Memory). Ler INDEX.md ao iniciar item 5 ADR-0046
 
 #### Trigger.dev
 
@@ -893,6 +901,7 @@ markmap:
 - Payload CMS (MIT mas inspiração)
 - Lowdefy + Sanity + Strapi (modelos)
 - AutoGen, CrewAI (Python patterns)
+- nextjs-vibe (Code With Antonio — sem license, mas pattern 3-agent chain + agent-kit + sandbox)
 - Lovable, v0, Bolt, Cursor, Replit (closed AI builders)
 - Kajabi, Hotmart, Mighty, Circle, Skool, GoHighLevel (closed course platforms)
 - Vercel, Stripe, Linear, Notion, Figma (closed SaaS infra)
@@ -929,7 +938,7 @@ Report IA: Vercel Artifacts COPY + ADAPT + Mastra INSTALL + Inngest INSTALL JIT
   ↓
 Sales page: Puck COPY + ADAPT multi-tenant (+ Payload STUDY schema-driven)
   ↓
-AI Builders: Vercel Artifacts COPY + Mastra + OpenV0 prompts COPY — compor engines via tool calling
+AI Builders: Vercel Artifacts COPY + Mastra + OpenV0 prompts COPY + Inngest agent-kit INSTALL (3-agent chain pattern de nextjs-vibe STUDY) + Vercel Sandbox (runtime) — compor engines via tool calling
   ↓
 Email: Maily COPY + ADAPT (React Email já INSTALADO)
   ↓

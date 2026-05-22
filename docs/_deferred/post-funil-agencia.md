@@ -30,6 +30,12 @@ novo pra ver se algum gatilho disparou.
 
 ---
 
+## Recursos de consulta JIT (não-acionáveis sozinhos, mas pareados a itens deferred)
+
+- **`codewithantonio-insights/`** — insights destilados de 3 lições do workshop SaaS AI Website Builder (Lovable clone). Consumir ao iniciar item 5 ADR-0046 (AI Builders). Ver `INDEX.md` da pasta pro mapa completo + lições TIER 1/2/3 ainda pendentes de captura.
+
+---
+
 ## 1. AI generation de themes (era Fase 6 do pivot-tweakcn)
 
 **O que é:** IA gera theme via Gemini Flash + image-to-theme + chat UI

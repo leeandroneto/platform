@@ -958,6 +958,19 @@ const eslintConfig = defineConfig([
       'i18next/no-literal-string': 'off',
     },
   },
+  // ─── app/teste/** — sandbox tweakcn live-preview (vendor-style, throwaway) ──
+  // Página existe pra receber CSS vars push-ados via postMessage do tweakcn.com.
+  // Por design usa style={{ var(--token) }} inline (replica padrão do tweakcn
+  // playground). Não vai pra fluxo de tenant — equivalente a components/ui/** vendor.
+  {
+    files: ['app/teste/**/*.{ts,tsx}'],
+    rules: {
+      'css-var-in-style/no-css-var-in-style': 'off',
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
+      '@next/next/no-sync-scripts': 'off',
+    },
+  },
   // ─── ADR-0031 §11 — lib/hooks/use-font-search.ts (async fetch in useEffect) ─
   // Standard data-fetching pattern: useEffect triggers async function that calls
   // setState after await (not synchronously). Rule set-state-in-effect can't
