@@ -1,6 +1,11 @@
 // RESEARCH: tweakcn (Apache-2.0) — copied from utils/fonts/google-fonts.ts
 // See NOTICE.md.
 // ADAPT: import paths → @/lib/design/contract/fonts
+//
+// Audit Fase 1.5 (2026-05-22):
+//   - throw new Error template literal → AppError.from (i18n key/fallback)
+//   - console.log removido (server-only side-effect; observability via Sentry)
+//   - AppError.invalidInput aceita I18nMessage object (rule i18n.md)
 
 import { AppError } from '@/lib/contracts/errors'
 import type { FontInfo, GoogleFont, GoogleFontsAPIResponse } from '@/lib/design/contract/fonts'
@@ -9,12 +14,20 @@ export const GOOGLE_FONTS_API_URL = 'https://www.googleapis.com/webfonts/v1/webf
 
 export async function fetchGoogleFonts(googleFontsApiKey: string | undefined): Promise<FontInfo[]> {
   try {
-    // ADAPT: AppError.invalidInput instead of new Error (no-restricted-syntax rule)
-    if (!googleFontsApiKey) throw AppError.invalidInput('Google Fonts API key is required')
+    if (!googleFontsApiKey)
+      throw AppError.invalidInput({
+        key: 'fonts.google_api_key_missing',
+        fallback: 'Google Fonts API key is required',
+      })
 
     const response = await fetch(`${GOOGLE_FONTS_API_URL}?key=${googleFontsApiKey}`)
 
-    if (!response.ok) throw new Error(`Google Fonts API error: ${response.status}`)
+    if (!response.ok)
+      throw AppError.externalService({
+        key: 'fonts.google_api_error',
+        fallback: `Google Fonts API error: ${response.status}`,
+        metadata: { status: response.status },
+      })
 
     const data: GoogleFontsAPIResponse = await response.json()
 
@@ -28,11 +41,11 @@ export async function fetchGoogleFonts(googleFontsApiKey: string | undefined): P
       ),
     }))
 
-    console.log(`Fetched ${fonts.length} fonts from Google Fonts API`)
     return fonts
   } catch (error) {
-    console.error('Failed to fetch Google Fonts:', error)
-    throw error
+    // Rethrow as AppError. AppError.from() is idempotent — returns input
+    // unchanged if already an AppErrorImpl instance (see lib/contracts/errors.ts).
+    throw AppError.from(error)
   }
 }
 
