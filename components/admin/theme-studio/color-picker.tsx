@@ -8,6 +8,7 @@
  * @composition []
  * @vertical null
  * @ai-hints []
+ * @propsSchema lib/contracts/components/color-picker.ts
  */
 
 'use client'

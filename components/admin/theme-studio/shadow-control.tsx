@@ -25,24 +25,18 @@
  *   "when_to_use": ["theme-studio shadow section only"],
  *   "anti_patterns": ["general design forms outside theme-studio"],
  *   "related": ["theme-studio-slider-with-input", "theme-studio-color-picker"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/shadow-control.ts"
  * }
  */
 
 import React from 'react'
 
+// SSOT: lib/contracts/components/shadow-control.ts (Zod schema + z.infer).
+import type { ShadowControlProps } from '@/lib/contracts/components/shadow-control'
+
 import ColorPicker from './color-picker'
 import { SliderWithInput } from './slider-with-input'
-
-interface ShadowControlProps {
-  shadowColor: string
-  shadowOpacity: number
-  shadowBlur: number
-  shadowSpread: number
-  shadowOffsetX: number
-  shadowOffsetY: number
-  onChange: (key: string, value: string | number) => void
-}
 
 const ShadowControl: React.FC<ShadowControlProps> = ({
   shadowColor,

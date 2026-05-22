@@ -15,12 +15,16 @@
  *   "when_to_use": ["Typography tab of theme-studio when offering preset font list"],
  *   "anti_patterns": ["Do not use for Google Fonts dynamic search — use FontPicker instead"],
  *   "related": ["font-picker", "control-panel"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/theme-font-select.ts"
  * }
  */
 
 import React, { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
+
+// SSOT: lib/contracts/components/theme-font-select.ts (Zod schema + z.infer).
+import type { ThemeFontSelectProps } from '@/lib/contracts/components/theme-font-select'
 
 import {
   Select,
@@ -30,13 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-interface ThemeFontSelectProps {
-  fonts: Record<string, string>
-  defaultValue: string
-  currentFont: string | null
-  onFontChange: (font: string) => void
-}
 
 const ThemeFontSelect: React.FC<ThemeFontSelectProps> = ({
   fonts,

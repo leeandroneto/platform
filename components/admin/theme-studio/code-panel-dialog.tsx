@@ -17,13 +17,17 @@
  *   "when_to_use": ["abrir code-panel em overlay modal a partir de botão na action bar"],
  *   "anti_patterns": ["uso fora do ThemeFormProvider"],
  *   "related": ["theme-studio-code-panel"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/code-panel-dialog.ts"
  * }
  */
 
 'use client'
 
 import { useTranslations } from 'next-intl'
+
+// SSOT: lib/contracts/components/code-panel-dialog.ts (Zod schema + z.infer).
+import type { CodePanelDialogProps } from '@/lib/contracts/components/code-panel-dialog'
 
 import {
   Dialog,
@@ -34,13 +38,6 @@ import {
 } from '@/components/ui/dialog'
 
 import CodePanel from './code-panel'
-
-interface CodePanelDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  /** Opcional — quando passado, habilita registry command real no CodePanel */
-  themeId?: string
-}
 
 export function CodePanelDialog({ open, onOpenChange, themeId }: CodePanelDialogProps) {
   const t = useTranslations('theme-studio.codePanel')

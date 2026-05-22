@@ -8,6 +8,7 @@
  * @composition []
  * @vertical null
  * @ai-hints []
+ * @propsSchema lib/contracts/components/color-selector-popover.ts
  */
 
 'use client'
@@ -138,11 +139,8 @@ function useColorSelectorTab() {
 }
 
 // ── ColorSelectorPopover ─────────────────────────────────────────────────────
-
-type ColorSelectorPopoverProps = {
-  currentColor: string
-  onChange: (color: string) => void
-}
+// SSOT: lib/contracts/components/color-selector-popover.ts (Zod schema + z.infer).
+import type { ColorSelectorPopoverProps } from '@/lib/contracts/components/color-selector-popover'
 
 // ── Sub-helpers extracted to keep ColorSelectorPopover under 80 LOC ──────────
 

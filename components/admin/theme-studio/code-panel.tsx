@@ -24,7 +24,8 @@
  *   "when_to_use": ["dentro do theme studio para exportar código do tema customizado"],
  *   "anti_patterns": ["uso standalone fora do ThemeFormProvider", "v0 registry tab (DEMOTED ADR-0045)"],
  *   "related": ["theme-studio-code-panel-dialog"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/code-panel.ts"
  * }
  */
 
@@ -152,12 +153,9 @@ function PackageManagerHeader({
 }
 
 // ---------------------------------------------------------------------------
-// CodePanel
+// CodePanel — SSOT: lib/contracts/components/code-panel.ts (Zod schema + z.infer).
 // ---------------------------------------------------------------------------
-interface CodePanelProps {
-  /** Opcional — quando passado, substitui o stub de registry URL */
-  themeId?: string
-}
+import type { CodePanelProps } from '@/lib/contracts/components/code-panel'
 
 export default function CodePanel({ themeId }: CodePanelProps) {
   const t = useTranslations('theme-studio.codePanel')

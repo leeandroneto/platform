@@ -19,7 +19,8 @@
  *   "when_to_use": ["theme studio Colors tab"],
  *   "anti_patterns": ["generic color management outside theme studio"],
  *   "related": ["theme-studio-color-picker", "theme-studio-control-section"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/colors-tab-content.ts"
  * }
  */
 'use client'
@@ -172,11 +173,8 @@ const BASE_TO_SIDEBAR_MAP = Object.fromEntries(
 ) as Partial<Record<keyof ThemeStyleProps, keyof ThemeStyleProps>>
 
 // ─── Props ───────────────────────────────────────────────────────────────────
-interface ColorsTabContentProps {
-  currentStyles: ThemeStyleProps
-  updateStyle: <K extends keyof ThemeStyleProps>(key: K, value: ThemeStyleProps[K]) => void
-  updateStyles: (updates: Partial<ThemeStyleProps>) => void
-}
+// SSOT: lib/contracts/components/colors-tab-content.ts (Zod schema + z.infer).
+import type { ColorsTabContentProps } from '@/lib/contracts/components/colors-tab-content'
 
 // ─── Hook — sidebar sync logic (extracted for max-lines compliance) ───────────
 function useSidebarSync(

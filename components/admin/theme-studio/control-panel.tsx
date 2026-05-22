@@ -29,7 +29,8 @@
  *   "when_to_use": ["theme studio view — left panel"],
  *   "anti_patterns": ["standalone usage outside ThemeFormProvider tree"],
  *   "related": ["theme-studio-colors-tab-content", "theme-studio-hsl-controls", "theme-studio-shadow-control", "theme-studio-preview-panel"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/control-panel.ts"
  * }
  */
 'use client'
@@ -271,10 +272,8 @@ function OtherTab({
 }
 
 // ─── Props ───────────────────────────────────────────────────────────────────
-interface ControlPanelProps {
-  /** Enable AI tab (deferred Fase 6). Default false. */
-  aiEnabled?: boolean
-}
+// SSOT: lib/contracts/components/control-panel.ts (Zod schema + z.infer).
+import type { ControlPanelProps } from '@/lib/contracts/components/control-panel'
 
 // ─── Component ───────────────────────────────────────────────────────────────
 const ControlPanel = ({ aiEnabled: _aiEnabled = false }: ControlPanelProps) => {

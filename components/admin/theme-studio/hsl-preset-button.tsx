@@ -15,35 +15,20 @@
  *   "when_to_use": ["theme studio HSL preset palette row"],
  *   "anti_patterns": ["generic color pickers outside theme studio"],
  *   "related": ["theme-studio-control-section", "theme-studio-section-context"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/hsl-preset-button.ts"
  * }
  */
 'use client'
 
 import type React from 'react'
 
+// SSOT: lib/contracts/components/hsl-preset-button.ts (Zod schema + z.infer).
+import type { HslPresetButtonProps } from '@/lib/contracts/components/hsl-preset-button'
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-
-interface HslPresetButtonProps {
-  label: string
-  hueShift: number
-  saturationScale: number
-  lightnessScale: number
-  baseBg: string
-  basePrimary: string
-  baseSecondary?: string
-  onClick: () => void
-  selected: boolean
-  adjustColorByHsl: (
-    color: string,
-    hueShift: number,
-    saturationScale: number,
-    lightnessScale: number,
-  ) => string
-}
 
 export const HslPresetButton: React.FC<HslPresetButtonProps> = ({
   label,

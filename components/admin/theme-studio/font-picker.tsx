@@ -20,7 +20,8 @@
  *   "when_to_use": ["Typography tab of theme-studio control panel"],
  *   "anti_patterns": ["Do not use outside theme-studio — font loading side-effects couple to Google Fonts CDN"],
  *   "related": ["theme-font-select", "control-panel"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/font-picker.ts"
  * }
  */
 
@@ -311,13 +312,8 @@ const POPULAR_FONTS: Record<string, FontInfo[]> = {
   ],
 }
 
-interface FontPickerProps {
-  value?: string
-  category?: FilterFontCategory
-  onSelect: (font: FontInfo) => void
-  placeholder?: string
-  className?: string
-}
+// FontPickerProps: SSOT em lib/contracts/components/font-picker.ts (Zod + z.infer).
+import type { FontPickerProps } from '@/lib/contracts/components/font-picker'
 
 function FontItem({
   font,

@@ -24,7 +24,8 @@
  *   "when_to_use": ["theme studio control panel header — preset picker"],
  *   "anti_patterns": ["standalone usage outside ThemeFormProvider tree"],
  *   "related": ["theme-studio-control-panel", "theme-studio-preview-panel"],
- *   "vertical": null
+ *   "vertical": null,
+ *   "propsSchema": "lib/contracts/components/preset-select.ts"
  * }
  */
 'use client'
@@ -34,6 +35,10 @@ import { useTranslations } from 'next-intl'
 
 import { ArrowLeft, ArrowRight, Check, ChevronDown, Search, Shuffle } from 'lucide-react'
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+// ThemePresetSelectProps: SSOT lib/contracts/components/preset-select.ts
+// (Zod schema for own props + TS intersection com React.ComponentProps<typeof Button>).
+import type { ThemePresetSelectProps } from '@/lib/contracts/components/preset-select'
 import type { ThemePreset } from '@/lib/design/contract/theme'
 import { getPresetThemeStyles } from '@/lib/design/presets/theme-preset-helper'
 import { defaultPresets } from '@/lib/design/presets/theme-presets'
@@ -54,12 +59,6 @@ import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { useThemeFormContext } from '@/app/admin/theme-studio/_state/theme-form-provider'
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
-  withCycleThemes?: boolean
-}
 
 interface ColorBoxProps {
   color: string
