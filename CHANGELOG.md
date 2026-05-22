@@ -10,6 +10,13 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Docs (2026-05-22 — §15 governance portado + registry-blocks rule)
+
+- `.claude/rules/component-creation-governance.md` NOVO — porta §15.1 (checklist 10 categorias A-J), §15.5 (onboarding componente externo: shadcn/v0/TweakCN/Origin/Magic), §15.6 (refactor componente legado) do pivot arquivado. Path-loaded em `components/**`, `lib/contracts/page-blocks/**`, `lib/contracts/form-blocks/**`, `lib/contracts/components/**`. Enforcement automation (ESLint rule custom + CI gate) explicitamente DEFERRED via "Condição de revisitar" — gatilhos cravados (5+ componentes / 10+ componentes / primeira feature paga). User pediu não criar CI gates agora (trava desenvolvimento).
+- `.claude/rules/registry-blocks.md` NOVO — invariante ADR-0045 D.13 (`pages.kind === registry-item.name === components/blocks/{kind}.tsx`), JSDoc `@registry-meta` format canonical obrigatório, composition rules L1↘npm/L2↘L1/L3↘L2 (L3↘L3 proibido), 3 namespaces (`@shadcn`/`@platform`/`@desafit`), smart blocks composição declarada. Path-loaded em `lib/contracts/{page,form}-blocks/**`, `components/blocks/**`.
+- `docs/plans/theme-builder.md` ganhou §4.1.5 "Registry setup desde dia 0" — confirma MCP shadcn config, cada componente do editor TweakCN recebe JSDoc `@registry-meta` ao ser copiado, build script + ESLint rule custom DEFERRED com gatilhos cravados. Plus §2.6 cross-link pras 2 rules novas.
+- `CLAUDE.md` rules count 19 → 21, bullet "Component governance" em "Regras críticas (toda sessão)".
+
 ### Docs (2026-05-22 — pivot-tweakcn arquivado + detail portado)
 
 - `docs/plans/theme-builder.md` expandido com detalhe técnico Fase 5 completo (sub-fases 4.0-4.12, sequência operacional dia 0+sem 1-4, bloqueadores antecipados research-41, checklist verificação detalhado). Standalone — não cross-link pro pivot.

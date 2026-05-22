@@ -27,7 +27,7 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 
 | Info                              | Arquivo canônico                                                                                                         |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Regras code carregadas por path   | `.claude/rules/*.md` (19 rules)                                                                                          |
+| Regras code carregadas por path   | `.claude/rules/*.md` (21 rules)                                                                                          |
 | Constituição imutável             | `docs/blueprint/00-PROJETO.md`                                                                                           |
 | Decisões fechadas (ADRs)          | `docs/adr/NNNN-*.md`                                                                                                     |
 | Blueprints técnicos               | `docs/blueprint/NN-*.md`                                                                                                 |
@@ -44,13 +44,15 @@ Identidade completa, decisões, modelo: `docs/blueprint/00-PROJETO.md`.
 | Detalhes diferidos detalhados     | `docs/_deferred/{topic}-detail.md` (ai-theme-generation, v0-registry, validation-suite — consultar antes de re-planejar) |
 | Migrations docs                   | `docs/migrations/NNNN_*.md` (espelha MCP apply)                                                                          |
 
-`.claude/rules/*.md` (carregamento por path glob — 19 rules):
+`.claude/rules/*.md` (carregamento por path glob — 21 rules):
 
 - `naming` · `abstractions` · `layers` · `data-layer` · `domain-logic` · `server-actions` · `features` · `jwt-claims` · `components`
 - **i18n** · **contrast** · **shadcn-zone** · **design-tokens** · **brand** · **entitlements** (ADR-0040 §L — cada um tem "Condição de revisitar")
 - **tenant-content** (hierarquia 4 níveis copy/landing — decisão dia 0: template+slots, não block builder)
 - **forms-engine** (Form Engine + Page Engine, vocab, catálogo blocks, IA pipeline, versionamento Hotmart-like)
 - **docs-writing** (gatilho: ao criar/atualizar doc; mapa de "qual tipo de info vai em qual arquivo")
+- **component-creation-governance** (NEW 2026-05-22) — checklist A-J obrigatório por componente novo (porta §15 governance do pivot arquivado)
+- **registry-blocks** (NEW 2026-05-22) — invariante D.13 + JSDoc `@registry-meta` + composition rules L1↘npm/L2↘L1/L3↘L2 + 3 namespaces
 
 Conflito entre docs: ADR > Blueprint > Plano ativo > Memória > Session reflection.
 
@@ -131,6 +133,7 @@ Dependência desce, nunca sobe. Detalhes: `.claude/rules/layers.md`.
 - **Dogfooding-first (ADR-0046):** cada feature nasce como **primeira instância de infra generalizada** (não hardcoded). Manual primeiro → sistematização depois. Agência = nosso primeiro tenant — usar nossas próprias ferramentas pra construir o funil agência valida em runtime real. Ordem cravada: (1) theme builder ~34h → (2) form captação agência → (3) report IA agência (research-25 ready) → (4) página vendas agência → (5) AI builders → (6) restante. Itens DEFERRED desta execução em `docs/_deferred/post-funil-agencia.md` (revisitar JIT quando gatilho disparar)
 - **Registry (ADR-0045 accepted):** v0 DEMOTED · Novel ADOPT NOW (install JIT) · `block_kinds_catalog` JIT (3 consumers gate) · 3 namespaces `@shadcn`/`@platform`/`@desafit` · composition L1↘npm/L2↘L1/L3↘L2 · invariante `pages.kind === registry-item.name === components/blocks/{kind}.tsx` · folder `components/blocks/*` (substitui `sections/`) · AI orchestration HÍBRIDO (`generateObject` Zod + tool calling). Validado via research-44 (20 players reais) + research-45 (component strategy). Ver ADR-0045 + `docs/architecture/01-master-system-map.md`
 - **Component arsenal (research-45):** 20 essential primitives upfront dia 0 Fase 5 (`button input label form card dialog select textarea badge separator skeleton tabs dropdown-menu tooltip popover scroll-area sheet sonner switch command`). Bundle impact zero (Next.js 16 tree-shaking). 3 JIT exceptions (chart/calendar/carousel — deps pesadas). Folder L1 `components/ui/*` (quarentenada) · L1.5 `components/app-*.tsx` · L2/L3 `components/blocks/*` (RSC + `@registry-meta` JSDoc) · `components/vendor/*` (Origin/Kibo JIT) · `features/*/components/`
+- **Component governance:** TODO componente novo (`components/**`, `lib/contracts/page-blocks/**`, `lib/contracts/form-blocks/**`, `lib/contracts/components/**`) passa pelo checklist A-J (identidade / contrato Zod / multi-tenant fit / a11y / i18n / performance / storybook / testes / docs / registry-ready). Rule `component-creation-governance.md` carrega automático. Hook `component-research-gate.sh` (ADR-0036) bloqueia Write sem `// RESEARCH:` marker. Onboarding shadcn/vendor + refactor componente legado documentados na rule. Enforcement automation (ESLint rule custom + CI gate) DEFERRED com gatilhos cravados (5+ componentes / 10+ / primeira feature paga).
 - **Design system (ADR-0044 pivot · supersedes ADR-0043):**
   shadcn-canonical **~45 keys TweakCN-vocab** como interface pública obrigatória
   (32 cores + 3 fontes + 1 radius + 6 shadow primitives + shadow-color + letter-spacing + spacing-opt).

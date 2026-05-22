@@ -109,6 +109,23 @@ Tenant seed **JIT** no início da execução (decisão G6 cravada user
 2026-05-22) — não criar agora antes do plano executar. Quando código do
 editor pedir tenant pra testar, seed nesse momento.
 
+### 2.6 Component governance ativo desde dia 0 (rules path-loaded)
+
+Cada componente do editor TweakCN copiado (color-picker, hsl-controls,
+font-picker, shadow-control, code-panel, theme-control-panel, etc.)
+passa pelos checklists path-loaded:
+
+- **`.claude/rules/component-creation-governance.md`** — checklist A-J
+  obrigatório (identidade / contrato Zod / multi-tenant fit / a11y /
+  i18n / performance / storybook / testes / docs / registry-ready)
+- **`.claude/rules/registry-blocks.md`** — invariante D.13
+  (`pages.kind === registry-item.name === components/blocks/{kind}.tsx`)
+  - JSDoc `@registry-meta` formato canonical obrigatório
+
+Ambas carregam automático ao tocar `components/**`. Aplicação manual
+disciplinada — enforcement automation (ESLint rule custom + CI gate)
+DEFERRED com gatilhos cravados nas rules.
+
 ---
 
 ## 3. Pré-requisitos (todos satisfeitos pós pivot-tweakcn arquivado)
@@ -178,6 +195,38 @@ primitives cobrem 95% do uso confirmado em 5 boilerplates auditados
 variants + disabled). Confirma Storybook 10 boots + theme runtime aplica.
 
 **Tempo:** ~30min install + ~1h smoke test.
+
+### 4.1.5 — Registry setup desde dia 0 (ADR-0045 invariante D.13)
+
+Antes do primeiro componente do editor TweakCN ser portado:
+
+1. **Confirmar `.mcp.json`** tem entry `shadcn@canary registry:mcp`
+   (research-40 cravou — dev-time discovery)
+2. **Toda nova entrada em `components/ui/*`** passa por
+   `mcp__shadcn__get_audit_checklist` automaticamente (hook
+   `post-shadcn-add.sh` PostToolUse — ver `.claude/rules/shadcn-zone.md`)
+3. **Wrapper `components/app-*.tsx`** segue checklist A-J da rule
+   `.claude/rules/component-creation-governance.md` (carrega automático
+   ao tocar `components/**`)
+4. **Componentes do editor TweakCN** (color-picker, hsl-controls,
+   font-picker, shadow-control, code-panel, theme-control-panel) — ao
+   copiar pra nosso código, cada arquivo recebe JSDoc `@registry-meta`
+   no formato canonical (ver `.claude/rules/registry-blocks.md`
+   invariante D.13)
+5. **NÃO criar `scripts/build-block-catalog.ts`** (JIT 5+ block
+   contracts — registrado em
+   `docs/_deferred/v0-registry-integration-detail.md`)
+6. **NÃO criar ESLint rule custom** validando `@registry-meta` JSDoc
+   (JIT 5+ componentes — gatilho em
+   `.claude/rules/component-creation-governance.md` "Condição de
+   revisitar")
+
+**Razão:** princípio "registry-ready desde dia 1" (ADR-0045 + ADR-0046)
+— cada componente já nasce no formato canonical, evita refactor cego
+depois. Enforcement automation deferred não impede aplicação manual
+disciplinada via checklist A-J path-loaded.
+
+**Tempo:** ~15min (confirmação MCP + leitura das 2 rules novas).
 
 ### 4.2 — AI catalog discoverability placeholder (porta §6.0.5 do pivot)
 

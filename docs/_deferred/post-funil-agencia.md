@@ -211,20 +211,24 @@ escopo.
 
 ---
 
-## 12. `.claude/rules/registry-blocks.md` rule
+## 12. `.claude/rules/registry-blocks.md` rule — **PROMOVIDA 2026-05-22**
 
-**O que é:** rule path-loaded em `lib/contracts/page-blocks/*` +
-`lib/contracts/form-blocks/*` + `components/blocks/*` que crava
-invariante D.13 (`pages.kind === registry-item.name === block.type`) +
-formato JSDoc `@registry-meta` obrigatório.
+**Status:** ✅ criada em 2026-05-22 (supersedes deferred original) — user
+optou por cravar invariante D.13 desde dia 1 do theme-builder em vez de
+esperar 3+ block kinds. Razão: princípio "registry-ready desde dia 1"
+(ADR-0045 + ADR-0046 dogfooding-first) — cada componente do editor
+TweakCN copiado nasce no formato canonical, evita refactor cego depois.
 
-**Gatilho:** quando 3+ block kinds existirem em produção.
+**Arquivo final:** `.claude/rules/registry-blocks.md` path-loaded em
+`lib/contracts/page-blocks/**`, `lib/contracts/form-blocks/**`,
+`components/blocks/**`. Conteúdo: invariante D.13 + JSDoc
+`@registry-meta` formato canonical + composition rules
+L1↘npm/L2↘L1/L3↘L2 + 3 namespaces + smart blocks composição
+declarada.
 
-**Quando retornar:** após item 5 da ordem ADR-0046 (AI builders pages +
-forms engines) entregar primeiros block kinds reais.
-
-**Anti-padrão:** criar rule sem block kind real existindo = rule órfã
-sem escopo de aplicação.
+**O que continua deferred:** ESLint rule custom validando JSDoc
+estrutural + build script `scripts/build-block-catalog.ts` — gatilhos
+cravados na rule "Condição de revisitar" (5+ block contracts).
 
 ---
 
