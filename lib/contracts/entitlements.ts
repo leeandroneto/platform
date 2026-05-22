@@ -16,6 +16,7 @@ export const PlanFeaturesSchema = z.object({
   branded_pwa: z.boolean(),
   white_label_full: z.boolean(),
   automations: z.boolean(),
+  theme_studio: z.boolean(),
   // Quotas — `-1` = ilimitado convencionalmente.
   max_programs: z.number().int(),
   max_clients: z.number().int(),
