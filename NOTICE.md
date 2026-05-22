@@ -34,6 +34,9 @@ Each adapted file documents its origin in a top comment.
   - `lib/hooks/use-iframe-theme-injector.ts` (adapted from `hooks/use-iframe-theme-injector.ts` — Zustand store → arg de função, ADR-0040 §C)
   - `lib/hooks/use-contrast-checker.ts` (adapted from `hooks/use-contrast-checker.ts` — WCAG luminance → APCA Silver dual-gate, ADR-0040 §H)
   - `lib/hooks/use-theme-preset-from-url.ts` (adapted from `hooks/use-theme-preset-from-url.ts` — Zustand setter → callback arg)
+  - `app/admin/theme-studio/_state/theme-history-reducer.ts` (adapted from `store/editor-store.ts` — Zustand history/undo/redo/checkpoint → useReducer pure; ADR-0040 §C)
+  - `app/admin/theme-studio/_state/use-theme-form.ts` (adapted from `store/editor-store.ts` — Zustand global store → RHF + useReducer + useDebouncedCallback composto; ADR-0040 §C)
+  - `app/admin/theme-studio/_state/theme-form-provider.tsx` (custom — provider + useImperativeHandle pra distribuir ThemeFormApi sem prop drilling; pattern interno, não TweakCN)
 
 ## VoltAgent awesome-design-md (CC0)
 
