@@ -44,6 +44,8 @@ Each adapted file documents its origin in a top comment.
   - `components/admin/theme-studio/hsl-preset-button.tsx` (adapted from `components/editor/hsl-preset-button.tsx`)
   - `components/admin/theme-studio/control-section.tsx` (adapted from `components/editor/control-section.tsx`)
   - `components/admin/theme-studio/section-context.tsx` (adapted from `components/editor/section-context.tsx`)
+  - `components/admin/theme-studio/contrast-checker.tsx` (adapted from `components/editor/contrast-checker.tsx` — WCAG luminance/contrast → APCA Silver dual-gate; thresholds body Lc≥75/large ≥60/non-text ≥45; ADR-0040 §H + research-32)
+  - `components/admin/theme-studio/contrast-checker-pairs.ts` (extracted from `contrast-checker.tsx` — PAIR_SEEDS data file; max-lines compliance)
 
 ## VoltAgent awesome-design-md (CC0)
 

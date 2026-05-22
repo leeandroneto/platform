@@ -6,5 +6,31 @@
     "tailwindNotFound": "Nenhuma cor Tailwind encontrada.",
     "hexLabel": "Hex",
     "rgbLabel": "RGB"
+  },
+  "contrastChecker": {
+    "trigger": "Contraste",
+    "title": "Verificador de contraste APCA Silver",
+    "description": "APCA Silver requer Lc ≥75 (corpo), Lc ≥60 (texto grande) e Lc ≥45 (elementos não-texto)",
+    "learnMore": "Saiba mais",
+    "toggleTheme": "Alternar tema claro/escuro",
+    "filterAll": "Todos",
+    "filterIssues": "Problemas ({count})",
+    "categoryContent": "Conteúdo e Contêineres",
+    "categoryInteractive": "Elementos Interativos",
+    "categoryFunctional": "Navegação e Funcional",
+    "passBody": "Corpo",
+    "passLarge": "Texto grande",
+    "passNonText": "Não-texto",
+    "passLabel": "OK",
+    "failLabel": "Falha",
+    "lcUnit": "Lc",
+    "thresholdBody": "≥75",
+    "thresholdLarge": "≥60",
+    "thresholdNonText": "≥45",
+    "backgroundLabel": "Fundo",
+    "foregroundLabel": "Primeiro plano",
+    "sampleText": "Texto exemplo",
+    "previewLabel": "Pré-visualização",
+    "noData": "N/D"
   }
 }
