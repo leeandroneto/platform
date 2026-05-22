@@ -14,7 +14,7 @@ import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 
-import { ThemeFormProvider } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { ThemeFormProvider } from '@/app/temas/_state/theme-form-provider'
 
 type RenderWithProvidersOptions = RenderOptions & {
   /** Wrap em ThemeFormProvider (default false — só ative pra components que chamam useThemeFormContext). */

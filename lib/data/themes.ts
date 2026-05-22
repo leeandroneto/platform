@@ -1,5 +1,5 @@
 // lib/data/themes.ts — Data layer helpers for tenant theme resolution.
-// Used by: app/admin/theme-studio/page.tsx (RSC server fetch)
+// Used by: app/temas/page.tsx (RSC server fetch)
 //          app/api/r/themes/[tenantId]/[version]/route.ts (registry endpoint)
 //
 // Pattern: functions accept `client` as first argument and throw AppError on

@@ -1,4 +1,4 @@
-// app/admin/theme-studio/actions.test.ts — Vitest companheiro (Fase 4 ADR-0044).
+// app/temas/actions.test.ts — Vitest companheiro (Fase 4 ADR-0044).
 //
 // Cobre os 4 testes mínimos do escopo:
 //   1. Bootstrap from null → cria 1 theme + 1 version

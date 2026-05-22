@@ -49,7 +49,7 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs'
 
-import { useThemeFormContext } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { useThemeFormContext } from '@/app/temas/_state/theme-form-provider'
 
 import { AiTabContent } from './ai-tab-content'
 import { ColorsTabContent } from './colors-tab-content'

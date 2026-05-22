@@ -1,4 +1,4 @@
-// app/admin/theme-studio/actions.ts — Server actions Fase 4+7 do pivot ADR-0044.
+// app/temas/actions.ts — Server actions Fase 4+7 do pivot ADR-0044.
 // Adapted from tweakcn-ref/actions/themes.ts (Apache-2.0). See NOTICE.md.
 //
 // Pattern: Result<T, AppError> via ok()/fail() (rule server-actions + layers).

@@ -22,7 +22,7 @@
  *   "version": "1.0.0",
  *   "description": "Root view for the theme studio — wraps ThemeFormProvider, renders responsive layout with ControlPanel (left) and PreviewPanel (right) via ResizablePanelGroup on desktop and Tabs on mobile.",
  *   "examples": [],
- *   "when_to_use": ["app/admin/theme-studio/page.tsx — pass initialTheme from server"],
+ *   "when_to_use": ["app/temas/page.tsx — pass initialTheme from server"],
  *   "anti_patterns": ["nesting inside another ThemeFormProvider", "using without initialTheme prop"],
  *   "related": ["theme-studio-control-panel", "theme-studio-preview-panel", "theme-studio-form-provider"],
  *   "vertical": null
@@ -36,13 +36,13 @@ import { Sliders } from 'lucide-react'
 
 import { type Theme } from '@/lib/design/contract/theme'
 
+import ControlPanel from '@/components/admin/theme-studio/control-panel'
+import PreviewPanel from '@/components/admin/theme-studio/preview-panel'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 
-import ControlPanel from '../../../components/admin/theme-studio/control-panel'
-import PreviewPanel from '../../../components/admin/theme-studio/preview-panel'
 import { ThemeFormProvider } from './_state/theme-form-provider'
 
 // ─── Props ───────────────────────────────────────────────────────────────────

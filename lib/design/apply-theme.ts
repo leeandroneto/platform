@@ -3,7 +3,7 @@
 //
 // ADAPT: TweakCN aplicava CSS vars via document.documentElement.style.setProperty (DOM mutation).
 // Nosso projeto multi-tenant usa <style precedence="theme"> hoisted React 19 em
-// app/admin/theme-studio/view.tsx (Chunk 5 §4.7). Esta função fica disponível como
+// app/temas/view.tsx (Chunk 5 §4.7). Esta função fica disponível como
 // fallback dev/inspector ou pra aplicar tema temporário sem persist.
 
 import { applyStyleToElement } from '@/lib/design/apply-style'

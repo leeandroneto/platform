@@ -884,17 +884,6 @@ const eslintConfig = defineConfig([
       'better-tailwindcss/no-unknown-classes': 'off', // ADR-0031 §12 — @container variants
     },
   },
-  // ─── app/login dev tooling — strings hardcoded permitidas ─────────────────
-  // Login é página dev (signInWithPassword) pra testar rotas autenticadas.
-  // Não é produto user-facing. Substituir por flow auth real quando funil
-  // agência iniciar (próximo plano).
-  {
-    files: ['app/login/**/*.{ts,tsx}'],
-    rules: {
-      'i18next/no-literal-string': 'off',
-      'react/jsx-no-literals': 'off',
-    },
-  },
   // ─── ADR-0040 §J + research-39 Q8 (user 2026-05-21) — CSS var inline style esclarecido ───
   // no-css-var-in-style bloqueia style={{ prop: 'var(--token)' }} — usar className shadcn.
   // Intencao:

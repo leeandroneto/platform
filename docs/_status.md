@@ -1,6 +1,6 @@
 # Status — `platform`
 
-> Atualizado manualmente 2026-05-22 — pivot-tweakcn arquivado · theme-builder único plano ativo.
+> Atualizado manualmente 2026-05-22 — pivot-tweakcn arquivado · theme-builder único plano ativo · refactor theme-studio /admin → /temas (tenant-facing) + providers scoped.
 > NOTA: `pnpm docs:status` SOBRESCREVE este arquivo. Migrar info de Phase A + Plano dia 0 pra generator quando consolidar.
 
 ---

@@ -10,6 +10,19 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Changed (2026-05-22 — theme-studio refactor tenant-facing + scoped providers)
+
+- **Rota:** `app/admin/theme-studio/` movido pra `app/temas/` (URL PT-BR pública per `.claude/rules/naming.md`). Decisão arquitetural cravada: feature é **tenant-facing** (profissional customiza tema do app dele), não admin SaaS interno. Imports `@/app/admin/theme-studio/_state/*` atualizados pra `@/app/temas/_state/*` em 11 arquivos consumers (components/admin/theme-studio + tests).
+- **Providers scoped:** novo `app/temas/layout.tsx` envolve TooltipProvider + NuqsAdapter (consumidos só pelos 7 components Tooltip + preview-panel useQueryState). Removidos do `app/layout.tsx` global pra não pagar bundle desnecessário em rotas que não usam.
+- **Components folder mantido:** `components/admin/theme-studio/*` (26 files) permanecem na localização atual — rename = 26 file moves + cross-link breakage; future JIT quando reorganização `features/` for prioridade.
+- **Entitlement gate removido temporariamente** em `app/temas/page.tsx` (re-add JIT quando `custom_access_token` hook estiver registered no Supabase Dashboard pra JWT carregar `tenant_id` claim). `getActiveThemeForTenant(client)` fallback `DEFAULT_THEME` mantido.
+- **API route** `app/api/admin/theme-studio/google-fonts/route.ts` permanece (endpoint interno, não user-facing URL).
+
+### Removed (2026-05-22 — band-aid dev tooling deletado)
+
+- `app/login/` (page.tsx + form.tsx) — era flow dev pra testar `/admin/theme-studio` end-to-end. Será substituído por flow auth real (UI design + multi-provider + reset password) quando funil agência iniciar. ESLint override `app/login/**` removido do `eslint.config.mjs`.
+- `app/admin/` (pasta) — vazia após move do theme-studio.
+
 ### Docs (2026-05-22 — §15 governance portado + registry-blocks rule)
 
 - `.claude/rules/component-creation-governance.md` NOVO — porta §15.1 (checklist 10 categorias A-J), §15.5 (onboarding componente externo: shadcn/v0/TweakCN/Origin/Magic), §15.6 (refactor componente legado) do pivot arquivado. Path-loaded em `components/**`, `lib/contracts/page-blocks/**`, `lib/contracts/form-blocks/**`, `lib/contracts/components/**`. Enforcement automation (ESLint rule custom + CI gate) explicitamente DEFERRED via "Condição de revisitar" — gatilhos cravados (5+ componentes / 10+ componentes / primeira feature paga). User pediu não criar CI gates agora (trava desenvolvimento).

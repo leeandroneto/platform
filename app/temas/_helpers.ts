@@ -1,5 +1,5 @@
-// app/admin/theme-studio/_helpers.ts — helpers internos das server actions.
-// Não-action (sem `'use server'`); reside no diretório admin/theme-studio
+// app/temas/_helpers.ts — helpers internos das server actions.
+// Não-action (sem `'use server'`); reside no diretório temas/
 // pra co-localização. Importado só por ./actions.ts.
 
 import 'server-only'

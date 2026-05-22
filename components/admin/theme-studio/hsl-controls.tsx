@@ -35,7 +35,7 @@ import { debounce } from '@/lib/utils/debounce'
 
 import { Button } from '@/components/ui/button'
 
-import { useThemeFormContext } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { useThemeFormContext } from '@/app/temas/_state/theme-form-provider'
 
 import { HslPresetButton } from './hsl-preset-button'
 import { SliderWithInput } from './slider-with-input'

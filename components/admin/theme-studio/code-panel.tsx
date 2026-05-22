@@ -53,7 +53,7 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { useThemeFormContext } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { useThemeFormContext } from '@/app/temas/_state/theme-form-provider'
 
 // ---------------------------------------------------------------------------
 // Local preferences — sem Zustand global (pattern color-selector-popover)

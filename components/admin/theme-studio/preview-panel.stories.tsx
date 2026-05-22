@@ -11,7 +11,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import { DEFAULT_THEME } from '@/lib/design/theme-defaults'
 
-import { ThemeFormProvider } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { ThemeFormProvider } from '@/app/temas/_state/theme-form-provider'
 
 import PreviewPanel from './preview-panel'
 

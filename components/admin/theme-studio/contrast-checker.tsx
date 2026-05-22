@@ -42,7 +42,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { useThemeFormContext } from '@/app/admin/theme-studio/_state/theme-form-provider'
+import { useThemeFormContext } from '@/app/temas/_state/theme-form-provider'
 
 import { type ColorCategory, PAIR_SEEDS } from './contrast-checker-pairs'
 
