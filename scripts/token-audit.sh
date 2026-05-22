@@ -24,6 +24,7 @@ HITS=$(
   | grep -v 'components/ui/chart\.tsx' \
   | grep -v 'lib/design/presets/' \
   | grep -v 'lib/design/tailwind-colors\.ts' \
+  | grep -v 'components/admin/theme-studio/' \
   || true
 )
 
@@ -32,7 +33,7 @@ if [ -n "$HITS" ]; then
   echo "$HITS"
   echo ""
   echo "Use tokens semantic via 'var(--*)' ou className token shadcn."
-  echo "Allowlist: app/globals.css @theme, blurhash, ImageResponse (next/og), lib/design/presets/* (TweakCN preset data, convertido JIT pra OKLCH), lib/design/tailwind-colors.ts (Tailwind palette map)."
+  echo "Allowlist: app/globals.css @theme, blurhash, ImageResponse (next/og), lib/design/presets/* (TweakCN preset data, convertido JIT pra OKLCH), lib/design/tailwind-colors.ts (Tailwind palette map), components/admin/theme-studio/* (TweakCN-adapted files: brand logos inline + preserved upstream defaults; alinhado com override ESLint design-tokens/no-tailwind-bypass)."
   exit 1
 fi
 

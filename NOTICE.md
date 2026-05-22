@@ -37,6 +37,13 @@ Each adapted file documents its origin in a top comment.
   - `app/admin/theme-studio/_state/theme-history-reducer.ts` (adapted from `store/editor-store.ts` — Zustand history/undo/redo/checkpoint → useReducer pure; ADR-0040 §C)
   - `app/admin/theme-studio/_state/use-theme-form.ts` (adapted from `store/editor-store.ts` — Zustand global store → RHF + useReducer + useDebouncedCallback composto; ADR-0040 §C)
   - `app/admin/theme-studio/_state/theme-form-provider.tsx` (custom — provider + useImperativeHandle pra distribuir ThemeFormApi sem prop drilling; pattern interno, não TweakCN)
+  - `components/admin/theme-studio/color-picker.tsx` (adapted from `components/editor/color-picker.tsx`)
+  - `components/admin/theme-studio/color-selector-popover.tsx` (adapted from `components/editor/color-selector-popover.tsx`)
+  - `components/admin/theme-studio/slider-with-input.tsx` (adapted from `components/editor/slider-with-input.tsx`)
+  - `components/admin/theme-studio/shadow-control.tsx` (adapted from `components/editor/shadow-control.tsx`)
+  - `components/admin/theme-studio/hsl-preset-button.tsx` (adapted from `components/editor/hsl-preset-button.tsx`)
+  - `components/admin/theme-studio/control-section.tsx` (adapted from `components/editor/control-section.tsx`)
+  - `components/admin/theme-studio/section-context.tsx` (adapted from `components/editor/section-context.tsx`)
 
 ## VoltAgent awesome-design-md (CC0)
 

@@ -869,6 +869,17 @@ const eslintConfig = defineConfig([
       'i18next/no-literal-string': 'off',
     },
   },
+  // ─── theme-studio TweakCN-adapted files — visual identity exceptions ────────
+  // components/admin/theme-studio/** are direct adaptations of TweakCN source
+  // (Apache-2.0, third-party-component). `uppercase` + `tracking-wider` are part
+  // of the section header visual identity preserved from TweakCN (control-section.tsx).
+  // Disabling design-tokens/no-tailwind-bypass here is intentional and scoped.
+  {
+    files: ['components/admin/theme-studio/**/*.{ts,tsx}'],
+    rules: {
+      'design-tokens/no-tailwind-bypass': 'off',
+    },
+  },
   // ─── ADR-0040 §J + research-39 Q8 (user 2026-05-21) — CSS var inline style esclarecido ───
   // no-css-var-in-style bloqueia style={{ prop: 'var(--token)' }} — usar className shadcn.
   // Intencao:

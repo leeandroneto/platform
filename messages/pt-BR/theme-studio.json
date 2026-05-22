@@ -1,0 +1,10 @@
+{
+  "colorPicker": {
+    "placeholder": "Cor (hex ou tailwind)",
+    "tailwindVersion": "Tailwind v4",
+    "tailwindSearch": "Buscar cores Tailwind...",
+    "tailwindNotFound": "Nenhuma cor Tailwind encontrada.",
+    "hexLabel": "Hex",
+    "rgbLabel": "RGB"
+  }
+}
