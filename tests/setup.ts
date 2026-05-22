@@ -3,6 +3,10 @@
 
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
+// Mock `server-only` — impede que o guard "This module cannot be imported from a
+// Client Component module" quebre testes de unidade (Vitest não é Next.js RSC).
+vi.mock('server-only', () => ({}))
+
 // ─── Mock IntersectionObserver (jsdom não tem) ────────────────────────────
 global.IntersectionObserver = class IntersectionObserver {
   observe = vi.fn()
