@@ -23,6 +23,7 @@ import { Suspense } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
+import Script from 'next/script'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 
@@ -248,6 +249,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={fontVars} suppressHydrationWarning>
       <body>
+        <Script
+          src="https://tweakcn.com/live-preview.min.js"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
         <Suspense fallback={children}>
           <DynamicShell>{children}</DynamicShell>
         </Suspense>

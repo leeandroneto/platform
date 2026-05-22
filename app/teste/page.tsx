@@ -23,7 +23,6 @@ export default function TweakcnTest() {
           --popover-foreground: oklch(0.145 0 0);
         }
       `}</style>
-      <script src="https://tweakcn.com/live-preview.min.js" />
       <div style={{ padding: 40 }}>
         <div
           style={{
