@@ -153,8 +153,15 @@ Ver `docs/blueprint/21-engine-catalog.md` para enumeração de 22 engines em 3 c
 - ADR-0024 (multi-marca via hostname) — scope flag se alinha com tenant boundary
 - ADR-0033 (schema único public.\*) — todos engines em public.\*
 - ADR-0040 (fechamento dia 0) — wrappers + shadcn zone aplicam a renderers de todos engines
+- ADR-0044 (pivot TweakCN) — design system canonical que os renderers consomem
+- ADR-0045 (Registry Strategy accepted 2026-05-21) — formaliza catalog de blocks
+  L2/L3 sobre Page Engine. Invariante D.13 cravado:
+  `pages.kind === registry-item.name === components/blocks/{kind}.tsx`. Smart blocks
+  são composição declarada (não tabela separada). `block_kinds_catalog` table JIT
+  (gatilho: 3 consumers simultâneos — AI composer + Builder UI + Dev exporter)
 
 ## Supersede / Superseded by
 
 - Nenhuma supersede.
 - Será **complementada** por ADR pra cada engine novo (Program Engine, Email Engine, etc) à medida que entrarem em Fase 1+.
+- ADR-0045 (Registry Strategy) complementa formalizando catálogo de blocks sobre Page Engine.

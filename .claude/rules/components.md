@@ -7,12 +7,40 @@ paths:
   - 'lib/**/components/**/*.{ts,tsx}'
 ---
 
-## Princípio §39 — defer JIT
+## Princípio §39 — defer JIT (REVISADO 2026-05-21 pós research-45)
 
-**NÃO criar componente UX antes de dor real.** Mesmo com shadcn MCP + registries
-catalogados, a regra continua: usar shadcn primitive direto ou composição inline
-em página até feature precisar 3+ vezes. Aí promove pra wrapper. Lista canônica
-do que JÁ existe: `mcp__shadcn__list-components` (47 primitives shadcn dia 0).
+**Arsenal upfront, NÃO JIT puro pra primitives.** Research-45 cravou: 20 primitives
+essenciais instalados dia 0 Fase 5 (bundle impact zero — Next.js 16 tree-shaking +
+código copiado local). Lista canônica:
+
+```
+button input label form card dialog select textarea badge separator
+skeleton tabs dropdown-menu tooltip popover scroll-area sheet sonner switch command
+```
+
+**JIT continua valendo pra:**
+
+- **Wrappers compostos** (`components/app-*.tsx`) — só após 3+ usos
+- **Blocks L2/L3** (`components/blocks/*`) — só quando feature concreta usar
+- **JIT exceptions com deps pesadas:** `chart` (recharts ~250 KB), `calendar`
+  (react-day-picker ~45 KB), `carousel` (embla ~25 KB)
+- **Vendor catalogs** (Origin UI, Kibo UI, Magic UI) — copy-paste quando feature pedir
+
+Hook `component-research-gate.sh` bloqueia Write em pastas listadas acima sem
+marker `// RESEARCH: <fonte>` linha 1. Hook é gate determinístico (ADR-0036);
+esta regra é o playbook.
+
+## Folder structure (ADR-0045 D.13 invariante)
+
+```
+components/ui/              # L1 — shadcn primitives (quarentena ADR-0040)
+components/app-*.tsx        # L1.5 — wrappers compostos com valor agregado
+components/blocks/          # L2/L3 — Page Engine blocks (RSC + @registry-meta JSDoc)
+components/vendor/          # Third-party copy-paste JIT (Origin/Kibo/Magic)
+features/*/components/      # Feature-scoped (não-promovido)
+```
+
+**Invariante D.13 (ADR-0045):** `pages.kind === registry-item.name === components/blocks/{kind}.tsx`. Quem cria block novo respeita o nome canônico nas 3 surfaces.
 
 Hook `component-research-gate.sh` bloqueia Write em pastas listadas acima sem
 marker `// RESEARCH: <fonte>` linha 1. Hook é gate determinístico (ADR-0036);

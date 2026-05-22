@@ -10,10 +10,29 @@ paths:
 ## Princípio
 
 `components/**` foi DELETADO em surgical delete pós-pivot ADR-0044 (TweakCN
-canonical). Reinstalação JIT via `npx shadcn add <slug>` quando feature pedir
-primitive específico — single source vendor shadcn-canonical. Wrapper composto
+canonical). **Reinstalação UPFRONT em dia 0 Fase 5** de 20 primitives essential
+via `npx shadcn add` (research-45 cravou — bundle impact zero). Wrapper composto
 em `components/app-*.tsx` SÓ quando agregar valor real — passthrough proibido
 (Vercel Academy: "doubles design system size").
+
+## 20 primitives essential (dia 0 Fase 5 — research-45)
+
+Comando batch único:
+
+```bash
+pnpm dlx shadcn@latest add button input label form card dialog select textarea badge separator skeleton tabs dropdown-menu tooltip popover scroll-area sheet sonner switch command
+```
+
+**JIT exceptions** (deps npm pesadas, instalar quando feature consumer real):
+
+| Primitive  | Dep              | Bundle  |
+| ---------- | ---------------- | ------- |
+| `chart`    | recharts         | ~250 KB |
+| `calendar` | react-day-picker | ~45 KB  |
+| `carousel` | embla-carousel   | ~25 KB  |
+
+**Outras primitives shadcn** (`accordion`, `alert`, `alert-dialog`, `radio-group`,
+`checkbox`, `hover-card`, etc) — JIT quando feature pedir 3+ vezes.
 
 ## Zona quarentenada (`components/ui/**`)
 

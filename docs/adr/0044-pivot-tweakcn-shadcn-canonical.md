@@ -280,6 +280,11 @@ Extras opt-in decididos após estudo prévio.
 - ADR-0040 §H — APCA Silver (mantido)
 - ADR-0041 — engine catalog 2 motores (reusado em Fase 4
   `*_versions` pattern + Fase 7 `tenant_pages`/`tenant_blocks`)
+- ADR-0045 (accepted 2026-05-21) — Registry Strategy + AI Orchestration +
+  Novel adoption. Estende esta ADR via decisões D.1-D.17 (v0 demoted, Novel
+  ADOPT NOW, smart blocks composição declarada, 3 namespaces, invariante
+  `pages.kind === registry-item.name === components/blocks/{kind}.tsx`).
+  Validado via research-44 (20 players reais) + research-45 (component strategy)
 - Repo TweakCN clone (read-only SSOT):
   `C:\Users\leean\Desktop\tweakcn-ref\` (commit `9adabcf9`, branch
   `main`, Apache-2.0)
