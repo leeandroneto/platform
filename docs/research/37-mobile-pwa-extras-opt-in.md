@@ -463,6 +463,8 @@ Recomendação: sim, qualquer extension cuja key matche `/color/i` ou
 **Pergunta:** padrão regex automático ou opt-in explícito via metadata na
 extension?
 
+**✅ Decisão (user 2026-05-21):** Opção A + allowlist — terceira via. APCA é safety-critical (acessibilidade + compliance legal): default ON via regex `/color|border|ring/`. Falso positivo resolvido via allowlist explícita pequena (`shadow-color`, `glow-color`, `outline-color`, etc — keys sabidamente não-foreground). Preset author não precisa lembrar de declarar nada. Quando opção A (extension field) cravar via ADR-0046, regex + allowlist viram parte do `scripts/validate-palettes.ts` APCA dual-gate.
+
 ---
 
 ## 9. Referências
