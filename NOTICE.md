@@ -46,6 +46,14 @@ Each adapted file documents its origin in a top comment.
   - `components/admin/theme-studio/section-context.tsx` (adapted from `components/editor/section-context.tsx`)
   - `components/admin/theme-studio/contrast-checker.tsx` (adapted from `components/editor/contrast-checker.tsx` — WCAG luminance/contrast → APCA Silver dual-gate; thresholds body Lc≥75/large ≥60/non-text ≥45; ADR-0040 §H + research-32)
   - `components/admin/theme-studio/contrast-checker-pairs.ts` (extracted from `contrast-checker.tsx` — PAIR_SEEDS data file; max-lines compliance)
+  - `components/admin/theme-studio/hsl-controls.tsx` (adapted from `components/editor/hsl-adjustment-controls.tsx` — Zustand → useThemeFormContext; i18n; debounce via lib/utils/debounce.ts)
+  - `components/admin/theme-studio/colors-tab-content.tsx` (adapted from `components/editor/colors-tab-content.tsx` — Zustand → props; TooltipWrapper → shadcn Tooltip inline; i18n)
+  - `components/admin/theme-studio/ai-tab-content.tsx` (custom stub — Fase 6 deferred; no TweakCN equivalent yet)
+  - `components/admin/theme-studio/tabs-trigger-pill.tsx` (copied from `components/editor/theme-preview/tabs-trigger-pill.tsx`)
+  - `components/admin/theme-studio/horizontal-scroll-area.tsx` (copied from `components/horizontal-scroll-area.tsx` — import path adjusted to lib/hooks)
+  - `components/admin/theme-studio/control-panel.tsx` (adapted from `components/editor/theme-control-panel.tsx` — Zustand → useThemeFormContext; FontPicker/ThemePresetSelect stubbed deferred Chunk 6; aiEnabled prop; i18n)
+  - `components/admin/theme-studio/preview-panel.tsx` (adapted from `components/editor/theme-preview-panel.tsx` — Zustand → useThemeFormContext; sub-components stubbed deferred Chunk 6; v0/ShadcnBlocks branding removed; i18n)
+  - `app/admin/theme-studio/view.tsx` (adapted from `components/editor/editor.tsx` — Zustand → ThemeFormProvider; themePromise → initialTheme prop; ActionBar deferred Chunk 7; i18n)
 
 ## VoltAgent awesome-design-md (CC0)
 

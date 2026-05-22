@@ -32,5 +32,76 @@
     "sampleText": "Texto exemplo",
     "previewLabel": "Pré-visualização",
     "noData": "N/D"
+  },
+  "hslControls": {
+    "hueLabel": "Matiz",
+    "saturationLabel": "Saturação",
+    "lightnessLabel": "Luminosidade",
+    "showMorePresets": "Ver mais predefinições",
+    "hidePresets": "Ocultar predefinições",
+    "revertLabel": "Reverter ajustes HSL"
+  },
+  "colorsTabContent": {
+    "searchPlaceholder": "Buscar cores...",
+    "searchAriaLabel": "Buscar tokens de cor",
+    "clearSearchAriaLabel": "Limpar busca",
+    "noColorsFound": "Nenhuma cor encontrada.",
+    "sync": "Sincronizar",
+    "syncOn": "Sincronizado",
+    "syncTooltip": "Sincronizar cores da barra lateral com as cores base"
+  },
+  "controlPanel": {
+    "tabs": {
+      "colors": "Cores",
+      "typography": "Tipografia",
+      "other": "Outros",
+      "ai": "Gerar"
+    },
+    "typography": {
+      "customFontsNote": "Fontes personalizadas precisam ser incorporadas.",
+      "learnMore": "Saiba mais",
+      "fontFamilyTitle": "Família Tipográfica",
+      "sansLabel": "Sans-Serif",
+      "serifLabel": "Serif",
+      "monoLabel": "Mono",
+      "sansFontPlaceholder": "Fonte sans-serif...",
+      "serifFontPlaceholder": "Fonte serif...",
+      "monoFontPlaceholder": "Fonte mono...",
+      "letterSpacingTitle": "Espaçamento de Letras",
+      "trackingLabel": "Tracking"
+    },
+    "other": {
+      "hslTitle": "Ajustes HSL",
+      "radiusTitle": "Raio",
+      "radiusLabel": "Raio",
+      "spacingTitle": "Espaçamento",
+      "spacingLabel": "Espaçamento",
+      "shadowTitle": "Sombra"
+    }
+  },
+  "previewPanel": {
+    "tabs": {
+      "custom": "Personalizado",
+      "cards": "Cartões",
+      "dashboard": "Painel",
+      "mail": "E-mail",
+      "pricing": "Preços",
+      "colorPalette": "Paleta",
+      "typography": "Tipografia"
+    },
+    "morePreviews": "Mais visualizações",
+    "toggleInspector": "Ativar inspetor",
+    "inspectorOn": "ligado",
+    "enterFullscreen": "Tela cheia",
+    "exitFullscreen": "Sair da tela cheia",
+    "previewSubComponentsDeferred": "Visualização detalhada disponível em breve."
+  },
+  "view": {
+    "controlsTab": "Controles",
+    "previewTab": "Visualização",
+    "invalidThemeData": "Dados do tema inválidos."
+  },
+  "aiTab": {
+    "deferredMessage": "Geração de tema por IA disponível em breve."
   }
 }
