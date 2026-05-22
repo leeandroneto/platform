@@ -752,74 +752,108 @@ markmap:
 
 ---
 
-## O que vamos construir DO ZERO
+## O que vamos ADAPTAR pesado de OSS (não construir do zero)
 
-> Por particularidade nossa OU porque não há OSS moderno coberto.
+> Princípio cravado 2026-05-22: **sempre COPY + ADAPT, nunca "do zero"**. OSS resolve 80%, a gente faz mudanças cirúrgicas (multi-tenant, RLS, vertical, brand, AI integration) no código copiado — mesma estratégia TweakCN.
 
-### Engine de tokens shadcn-canonical multi-tenant
+### Theme infrastructure → ADAPT de TweakCN ✅ EM EXECUÇÃO
 
-- **Por quê:** TweakCN é single-user — nosso é multi-tenant + RLS + versionamento Hotmart-like
-- **Já em construção:** tenant_themes + tenant_theme_versions + build-theme-css.ts
+- **OSS base:** TweakCN (Apache 2.0)
+- **Reusa:** schema 45 tokens, builder UI, 25 presets, OKLCH-first, shadow algorithm
+- **Adapt cirúrgico:** multi-tenant via `tenant_themes`/`tenant_theme_versions`, RLS, APCA Silver (não WCAG), versions Hotmart-like
+- **Status:** Theme builder em construção
 
-### Multi-tenant hostname resolver
+### Form Engine → ADAPT de Survey.js OR Form.io
 
-- **Por quê:** Nenhum OSS faz hostname → tenant + brand snapshot da forma como precisamos
-- **Já em construção:** `proxy.ts` + `getRouteByHost` (ADR-0024)
+- **OSS base:** Survey.js (MIT) — preferência
+- **Reusa:** JSON spec maduro, 20+ tipos campos, branching logic, designer UI
+- **Adapt cirúrgico:** multi-tenant via `forms.tenant_id` + RLS, `kind` enum (form/quiz/survey/lead-capture/etc), integração AI report, brand-aware
+- **Inspiração arquitetural:** Formbricks (AGPL — só estudar) — mesma stack Next+Supabase, ideias multi-tenant
 
-### Form Engine (kind polimórfico + versions Hotmart-like)
+### Page Engine → ADAPT de Puck
 
-- **Por quê:** Survey.js é só spec, sem multi-tenant + RLS + reports + AI integrados
-- **Construir:** schema kind enum + form_versions snapshot imutável + RLS + integração AI report
+- **OSS base:** Puck (MIT)
+- **Reusa:** JSON spec recursivo, drag-drop, renderer, admin UI
+- **Adapt cirúrgico:** multi-tenant + RLS, versionamento Hotmart-like, RSC default (não Client-only), AI orchestration via tool calling
+- **Inspiração arquitetural:** Payload CMS (MIT) — schema-driven admin auto
 
-### Page Engine (spec JSONB recursivo + render RSC)
+### AI Report Engine → ADAPT de Vercel AI Chatbot
 
-- **Por quê:** Puck/Craft.js não cobrem RSC + multi-tenant + versionamento Hotmart-like
-- **Construir:** spec recursivo `{type, props, children[]}` + renderer RSC + versions
+- **OSS base:** Vercel AI Chatbot (MIT) — já clonado em `ai-chatbot-ref`
+- **Reusa:** Artifacts factory pattern (`createDocumentHandler<T>()`), tool layer, composite PK versioning, streaming UI
+- **Adapt cirúrgico:** report kinds nossos (não Document genérico), pipeline submission → IA → ProseMirror + PDF + email Resend, disclaimers LGPD determinísticos (research-25 cravou 30+ decisões)
 
-### Block Knowledge Cards + Registry interno
+### AI Builders → COMPOR Vercel AI Chatbot + Mastra + OpenV0
 
-- **Por quê:** Shadcn registry é só `registry-item.json` — não tem @registry-meta + ai_hints + vertical + when_to_use
-- **Construir:** JSDoc `@registry-meta` + `build-block-catalog.ts` script + AI context injection
+- **OSS base 1:** Vercel AI Chatbot Artifacts (MIT) — tool calling pattern
+- **OSS base 2:** Mastra (Apache 2.0) — multi-agent orchestration framework
+- **OSS base 3:** OpenV0 (MIT) — prompts pra IA gerar componentes shadcn
+- **Adapt cirúrgico:** orquestra Form Engine + Page Engine + AI Report via tools com Zod schemas, multi-model fallback (Sonnet → Haiku → Gemini)
 
-### Vertical extension (fitness/yoga/idiomas)
+### Email Builder → ADAPT de Maily
 
-- **Por quê:** Nenhum OSS modela vertical-specific content kinds com override per-tenant
-- **Construir:** `tenants.vertical` + `kind` polimórfico + `tenant_copy_overrides` JIT
+- **OSS base:** Maily (MIT) — drag-drop email editor
+- **Reusa:** Tiptap-based editor, blocks (heading/text/button/image), preview multi-cliente
+- **Adapt cirúrgico:** multi-tenant + RLS, snapshot Hotmart-like, integração Resend nossa, MJML opcional pra cross-client
 
-### Entitlements RPCs (Makerkit-inspired Postgres)
+### Programs / LMS Engine (Pacote B) → ESTUDAR LearnHouse + COPY parts de Decap
 
-- **Por quê:** Stripe Entitlements é vendor-locked + closed; ADR-0039 cravou RPC pattern
-- **Construir:** `requireEntitlement` + `requireQuota` + `incrementQuotaUsage` (já feito)
+- **OSS estudar:** LearnHouse (AGPL) — não copia código (AGPL bloqueia SaaS), só arquitetura de curriculum/sequencing/progresso
+- **OSS COPY parts:** Decap CMS (MIT) — git-based content patterns aplicáveis a programs/módulos
+- **OSS INSTALL:** Novel (Apache 2.0) — lesson editor AI-native (ADR-0045 D.4)
+- **OSS INSTALL:** xyflow (MIT) — flow visual pra gamificação/jornada aluno
+- **Adapt cirúrgico:** schemas programs+modules+lessons multi-tenant, sequencing progressive disclosure, progresso aluno via RLS
 
-### PWA per-tenant (manifest/icon/splash dinâmico)
+### Admin panels per-tenant → INSTALL Refine + customizar
 
-- **Por quê:** PWA standard é static-first — multi-tenant precisa runtime
-- **Construir:** API routes `manifest.webmanifest`, `icon/[size]`, `splash/[size]` (já feito)
+- **OSS base:** Refine (MIT) — admin panel framework
+- **Reusa:** CRUD auto-gerado, RBAC, filters, table views
+- **Adapt cirúrgico:** providers Supabase + RLS, customização brand-aware via theme tokens, integração entitlements ADR-0039
 
-### AI Report Engine (form → IA → ProseMirror + PDF + email)
+### Versionamento Hotmart-like → COPY pattern de Vercel AI Chatbot
 
-- **Por quê:** Vercel AI Chatbot Artifacts é pattern, não engine completa. Research-25 cravou 30+ decisões nossas
-- **Construir:** pipeline submission → IA → report_versions + disclaimers LGPD + email Resend
+- **OSS base:** Vercel AI Chatbot Artifacts (MIT)
+- **Reusa:** composite PK `(id, createdAt)` pattern + Suggestion table — versionamento automático sem trigger PL/pgSQL complexo
+- **Adapt cirúrgico:** `*_versions` table pattern aplicado a forms, pages, themes, reports — snapshot imutável + parent_id self-FK pra fork tracking
+- **Já implementado:** `tenant_theme_versions` (migration 0025)
 
-### Brand resolution (logo wordmark + cores per-host)
+### Block discovery (registro de blocks pra IA escolher) → COPY pattern Vercel AI Chatbot Artifacts
 
-- **Por quê:** Combinação brand + tenant + locale via hostname é particularidade nossa
-- **Construir:** `useBrand()` + Logo dynamic SVG + brand-aware components (parcial)
+- **OSS base:** Vercel AI Chatbot Artifacts (MIT)
+- **Reusa:** `kind` enum polymorphic dispatch + tool registration com Zod schemas (IA conhece tools disponíveis automaticamente)
+- **Adapt cirúrgico:** `block_kinds_catalog` table JIT quando 3+ consumers, JSDoc metadados se útil (não obrigatório), AI consulta catalog via tool calling
+- **Honesto:** abandonamos invenção `@registry-meta` JSDoc estrito. Usar pattern Artifacts é o jeito proven
 
-### Programs Engine futuro (Pacote B)
+### Multi-tenant hostname resolver → ADAPT inspirado em vercel/platforms
 
-- **Por quê:** LearnHouse é AGPL + LMS antigos (Moodle/edX) são heavyweight
-- **Construir:** programs + modules + lessons schema + curriculum sequencing + progresso aluno
+- **OSS estudar:** vercel/platforms repo (Apache 2.0) — multi-tenant via hostname Redis pattern
+- **Reusa:** approach proven Vercel pra hostname → tenant resolve
+- **Adapt cirúrgico:** Supabase em vez de Redis, brand+tenant snapshot (não só tenant), getRouteByHost retorna theme snapshot junto
+- **Já implementado:** `proxy.ts` + `getRouteByHost` (ADR-0024)
 
-### Tenant copy overrides per-vertical
+### Entitlements → COPY de Makerkit-inspired (Postgres RPC pattern)
 
-- **Por quê:** i18n cobre dev strings; nada cobre "BoxClub diz WOD, FitLab diz Treino"
-- **Construir:** `tenant_copy_overrides (tenant_id, key, value, locale)` (JIT — Pesquisa 21)
+- **OSS base:** Makerkit (paid mas patterns públicos)
+- **Reusa:** Postgres RPC pattern pra feature gating + quota tracking
+- **Adapt cirúrgico:** RPCs `requireEntitlement` + `requireQuota` + `incrementQuotaUsage` (ADR-0039)
+- **Já implementado:** migration 0009
 
-### Dogfooding-first execution pattern
+### PWA per-tenant → COMPOR Serwist + custom routes
 
-- **Por quê:** Não é OSS — é nossa filosofia cravada ADR-0046
-- **Aplicar:** cada feature primeira instância manual antes de engine
+- **OSS base:** Serwist (MIT) — service worker framework
+- **Adapt cirúrgico:** API routes dinâmicas pra manifest/icon/splash per-tenant (não há OSS que faça isso direto — é integração Serwist + nossos endpoints)
+- **Já implementado:** routes existem (Fase 1.5 pivot)
+
+### Vertical extension (fitness/yoga/idiomas) → Filosofia nossa + pattern Postgres polimórfico
+
+- **OSS estudar:** Strapi (MIT) — `kind` polimórfico em CMS proven
+- **Adapt cirúrgico:** `tenants.vertical` enum + `forms.kind` / `pages.kind` polimórficos, `tenant_copy_overrides` table pra vocab vertical-specific
+- **Status:** já tem base (ADR-0040 cravou), expandir JIT por feature
+
+### Dogfooding-first execution pattern → Filosofia (ADR-0046)
+
+- **Não é OSS** — é princípio meta cravado ADR-0046
+- **Aplicar:** cada feature 1ª instância manual antes de generalizar engine
 
 ---
 
@@ -863,44 +897,50 @@ markmap:
 - Kajabi, Hotmart, Mighty, Circle, Skool, GoHighLevel (closed course platforms)
 - Vercel, Stripe, Linear, Notion, Figma (closed SaaS infra)
 
-### BUILD do zero (sem OSS moderno cobrir)
+### ADAPT pesado (COPY de OSS + mudanças cirúrgicas)
 
-- Multi-tenant hostname resolver
-- Theme storage versioning Hotmart-like
-- Form Engine kind polimórfico + versions
-- Page Engine spec JSONB recursivo + RSC
-- Block Knowledge Cards + Registry interno
-- Vertical extension content kinds
-- Entitlements RPCs
-- PWA per-tenant runtime
-- AI Report Engine end-to-end
-- Brand resolution per-host
-- Programs Engine (Pacote B)
-- Tenant copy overrides per-vertical
+> Nunca "do zero". Sempre pega código existente, adapta multi-tenant + RLS + brand + AI.
+
+- Theme infra → **TweakCN** (em execução)
+- Form Engine → **Survey.js** (preferido) ou **Form.io**
+- Page Engine → **Puck**
+- AI Report Engine → **Vercel AI Chatbot** Artifacts
+- AI Builders → **Vercel AI Chatbot** + **Mastra** + **OpenV0**
+- Email Builder → **Maily**
+- Programs/LMS → **LearnHouse** estudo + **Decap** parts + **Novel** install
+- Admin panels → **Refine** install + customizar
+- Versionamento Hotmart-like → **Vercel AI Chatbot** Artifacts (composite PK pattern)
+- Block discovery IA → **Vercel AI Chatbot** Artifacts (kind enum + tool calling com Zod)
+- Multi-tenant hostname → **vercel/platforms** repo (já implementado)
+- Entitlements → **Makerkit** patterns (já implementado)
+- PWA per-tenant → **Serwist** + custom routes (já implementado)
+- Vertical extension → **Strapi** polimórfico patterns + nossa filosofia
 
 ---
 
 ## Cronologia operacional
 
 ```
-HOJE: TweakCN copy (theme builder em execução)
+HOJE: TweakCN COPY + ADAPT (theme builder em execução)
   ↓
-Form agência: Survey.js copy + Formbricks study + construir Form Engine
+Form agência: Survey.js COPY + ADAPT multi-tenant (+ Formbricks STUDY arquitetura)
   ↓
-Report IA: Vercel Artifacts copy + Mastra install + Inngest JIT + construir AI Report Engine
+Report IA: Vercel Artifacts COPY + ADAPT + Mastra INSTALL + Inngest INSTALL JIT
   ↓
-Sales page: Puck copy + Payload study + construir Page Engine
+Sales page: Puck COPY + ADAPT multi-tenant (+ Payload STUDY schema-driven)
   ↓
-AI Builders: compor engines via tool calling AI SDK
+AI Builders: Vercel Artifacts COPY + Mastra + OpenV0 prompts COPY — compor engines via tool calling
   ↓
-Email: Maily copy + React Email (já)
+Email: Maily COPY + ADAPT (React Email já INSTALADO)
   ↓
-Pacote B Programs: Novel install + LearnHouse study + xyflow copy + construir Programs Engine
+Pacote B Programs: Novel INSTALL + LearnHouse STUDY + xyflow COPY + Decap COPY parts
   ↓
-Admin panels: Refine install
+Admin panels: Refine INSTALL + customizar brand-aware
   ↓
-Plus contínuo: Origin/Kibo blocks JIT, Tremor JIT, PostHog JIT, Uppy JIT
+Plus contínuo: Origin/Kibo COPY JIT, Tremor INSTALL JIT, PostHog INSTALL JIT, Uppy INSTALL JIT
 ```
+
+**Princípio cravado:** nenhum item da cronologia diz "construir do zero". Toda etapa começa com COPY/INSTALL/STUDY de OSS + adaptações cirúrgicas (multi-tenant + RLS + brand + AI integration). Mesma estratégia do TweakCN aplicada uniformemente.
 
 ---
 
