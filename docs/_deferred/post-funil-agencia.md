@@ -260,6 +260,27 @@ Anti-padrão: não esquecer dessa lista. Revisitar a cada plano novo pra ver se 
 
 ---
 
+## OSS references por feature (2026-05-22)
+
+Lista cravada de projetos open source que podem ser copiados/integrados/estudados pra cada feature futura. Reduz risco de reinventar roda.
+
+**Localização:** `docs/_deferred/oss-references-by-feature.md`
+
+**Cobertura (13 categorias):** AI orchestration · Forms · AI Reports · Pages/Visual builders · AI app builders · Programs/LMS · Workflow builders · Admin panels · Email builders · CMS · Component libraries · Analytics · Prose editors
+
+**Foco prioritário por feature (ordem ADR-0046):**
+
+- **Form agência (item 2):** Survey.js (copy spec) + Formbricks (estudar arquitetura — AGPL)
+- **Report IA (item 3):** Vercel AI Chatbot Artifacts (copy pattern) + Mastra + Inngest
+- **Sales page (item 4):** Puck (copy) + Payload CMS (schema-driven inspiração)
+- **AI builders (item 5):** Vercel AI Chatbot + OpenV0 + Mastra + AutoGen patterns
+- **Pacote B (programs):** LearnHouse (estudar) + xyflow (copy flow lib)
+- **Email builders (futuro):** Maily (copy editor) + React Email (já)
+
+Cada feature consulta o arquivo ANTES de implementar. Anti-padrão: implementar sem consultar e descobrir tarde que tinha OSS proven cobrindo 80%.
+
+---
+
 ## Revisão deste arquivo
 
 **Quando revisitar:** a cada plano novo abrir. Conferir se algum gatilho

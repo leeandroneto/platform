@@ -870,14 +870,18 @@ const eslintConfig = defineConfig([
     },
   },
   // ─── theme-studio TweakCN-adapted files — visual identity exceptions ────────
+  // ADR-0031 §12 — TweakCN Apache-2.0 adapted files; complexity exceptions documented.
   // components/admin/theme-studio/** are direct adaptations of TweakCN source
   // (Apache-2.0, third-party-component). `uppercase` + `tracking-wider` are part
   // of the section header visual identity preserved from TweakCN (control-section.tsx).
+  // better-tailwindcss/no-unknown-classes: @6xl, focus are valid Tailwind v4 container
+  //   query variants — linter does not recognise all @container breakpoints yet.
   // Disabling design-tokens/no-tailwind-bypass here is intentional and scoped.
   {
     files: ['components/admin/theme-studio/**/*.{ts,tsx}'],
     rules: {
       'design-tokens/no-tailwind-bypass': 'off',
+      'better-tailwindcss/no-unknown-classes': 'off', // ADR-0031 §12 — @container variants
     },
   },
   // ─── ADR-0040 §J + research-39 Q8 (user 2026-05-21) — CSS var inline style esclarecido ───
@@ -897,6 +901,46 @@ const eslintConfig = defineConfig([
   // Defer: gatilho = primeira feature paga real em features/<name>/ com 3+ submodulos.
   // Com menos de 15 modulos ativos, no-restricted-imports path-based cobre boundary critico.
   // Config pronta em docs/research/42-eslint-best-practices-validation.md §C.2.
+  // ─── ADR-0031 §12 — components/admin/theme-studio/** long TweakCN-adapted files ─
+  // ADR-0031 §12 — TweakCN Apache-2.0 adapted files; complexity exceptions documented.
+  // max-lines/max-lines-per-function: TweakCN editor UI components are inherently long.
+  // react-hooks/set-state-in-effect: async fetch in useEffect (same rationale as §7).
+  // no-use (inline comments): noInlineConfig blocks disable; overridden via config instead.
+  // react/jsx-no-literals + i18next: file name labels (tailwind.config.ts, layout.tsx) are
+  //   technical identifiers, NOT UI copy — not translated.
+  // react-hooks/exhaustive-deps: intentional dep omissions (sync-once effects from TweakCN).
+  {
+    files: [
+      'components/admin/theme-studio/code-panel.tsx',
+      'components/admin/theme-studio/code-panel-dialog.tsx',
+      'components/admin/theme-studio/font-picker.tsx',
+      'components/admin/theme-studio/theme-preview/color-preview.tsx',
+      'components/admin/theme-studio/theme-preview/components-showcase.tsx',
+    ],
+    rules: {
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/exhaustive-deps': 'off', // ADR-0031 §12 — intentional sync-once effects
+      '@eslint-community/eslint-comments/no-use': 'off',
+      '@eslint-community/eslint-comments/require-description': 'off',
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
+      'react/no-unstable-nested-components': 'off',
+    },
+  },
+  // ─── ADR-0031 §11 — lib/hooks/use-font-search.ts (async fetch in useEffect) ─
+  // Standard data-fetching pattern: useEffect triggers async function that calls
+  // setState after await (not synchronously). Rule set-state-in-effect can't
+  // distinguish sync vs async setState — same override as use-mobile.ts §7.
+  // Documented: no-restricted-syntax off (Error throw inside helper, no t() context).
+  {
+    files: ['lib/hooks/use-font-search.ts'],
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+      'no-restricted-syntax': 'off',
+    },
+  },
   ...storybook.configs['flat/recommended'],
 ])
 

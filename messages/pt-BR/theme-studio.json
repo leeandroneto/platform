@@ -67,6 +67,7 @@
       "sansFontPlaceholder": "Fonte sans-serif...",
       "serifFontPlaceholder": "Fonte serif...",
       "monoFontPlaceholder": "Fonte mono...",
+      "selectFontPlaceholder": "Selecionar fonte...",
       "letterSpacingTitle": "Espaçamento de Letras",
       "trackingLabel": "Tracking"
     },
@@ -103,5 +104,57 @@
   },
   "aiTab": {
     "deferredMessage": "Geração de tema por IA disponível em breve."
+  },
+  "codePanel": {
+    "title": "Exportar tema",
+    "tabs": {
+      "css": "CSS Tailwind v4",
+      "registry": "shadcn Registry"
+    },
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "registryUrlHint": "Adicione ao seu projeto:",
+    "registryShadcnCommand": "npx shadcn add",
+    "dialogDescription": "Visualize e copie o código do seu tema personalizado."
+  },
+  "fontPicker": {
+    "search": "Buscar fontes...",
+    "categoryAll": "Todas as categorias",
+    "categorySansSerif": "Sans-Serif",
+    "categorySerif": "Serif",
+    "categoryMonospace": "Mono",
+    "categoryDisplay": "Display",
+    "categoryHandwriting": "Manuscrita",
+    "loading": "Carregando fontes...",
+    "loadMore": "Carregando mais...",
+    "noResults": "Nenhuma fonte encontrada.",
+    "groupPopular": "Populares",
+    "groupAllFonts": "Todas as fontes",
+    "variableLabel": "Variável"
+  },
+  "presetSelect": {
+    "search": "Buscar temas...",
+    "randomTheme": "Tema aleatório",
+    "prevTheme": "Tema anterior",
+    "nextTheme": "Próximo tema",
+    "themes": "temas",
+    "theme": "tema",
+    "noThemesFound": "Nenhum tema encontrado.",
+    "builtInThemes": "Temas integrados",
+    "new": "Novo"
+  },
+  "colorPreview": {
+    "lightMode": "Claro",
+    "darkMode": "Escuro"
+  },
+  "componentsShowcase": {
+    "button": "Botão",
+    "input": "Campo",
+    "badge": "Rótulo",
+    "alert": "Alerta",
+    "card": "Cartão"
+  },
+  "examplesPreviewContainer": {
+    "loading": "Carregando visualização..."
   }
 }

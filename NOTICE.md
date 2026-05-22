@@ -54,6 +54,16 @@ Each adapted file documents its origin in a top comment.
   - `components/admin/theme-studio/control-panel.tsx` (adapted from `components/editor/theme-control-panel.tsx` — Zustand → useThemeFormContext; FontPicker/ThemePresetSelect stubbed deferred Chunk 6; aiEnabled prop; i18n)
   - `components/admin/theme-studio/preview-panel.tsx` (adapted from `components/editor/theme-preview-panel.tsx` — Zustand → useThemeFormContext; sub-components stubbed deferred Chunk 6; v0/ShadcnBlocks branding removed; i18n)
   - `app/admin/theme-studio/view.tsx` (adapted from `components/editor/editor.tsx` — Zustand → ThemeFormProvider; themePromise → initialTheme prop; ActionBar deferred Chunk 7; i18n)
+  - `components/admin/theme-studio/code-panel.tsx` (adapted from `components/editor/code-panel.tsx` — usePreferencesStore→useState+localStorage; v0 tab removed ADR-0045 D.1; PostHog removed; i18n; registry URL placeholder Chunk 7)
+  - `components/admin/theme-studio/code-panel-dialog.tsx` (adapted from `components/editor/code-panel-dialog.tsx` — ResponsiveDialog→Dialog shadcn canonical)
+  - `components/admin/theme-studio/font-picker.tsx` (adapted from `components/editor/font-picker.tsx` — Zustand→context; endpoint /api/admin/theme-studio/google-fonts; nuqs mantido; i18n)
+  - `components/admin/theme-studio/theme-font-select.tsx` (copied from `components/editor/theme-font-select.tsx`)
+  - `lib/hooks/use-font-search.ts` (extracted helper for font-picker search — internal)
+  - `app/api/admin/theme-studio/google-fonts/route.ts` (copied from `app/api/google-fonts/route.ts` — env var direto sem lib/env.ts JIT; entitlement gate deferred Chunk 7)
+  - `components/admin/theme-studio/preset-select.tsx` (adapted from `components/editor/theme-preset-select.tsx` — useThemePresetStore Zustand→lib/design/presets/theme-presets; useEditorStore→useThemeFormContext; PostHog removed; i18n)
+  - `components/admin/theme-studio/theme-preview/color-preview.tsx` (copied from `components/editor/theme-preview/color-preview.tsx`)
+  - `components/admin/theme-studio/theme-preview/components-showcase.tsx` (copied from `components/editor/theme-preview/components-showcase.tsx`)
+  - `components/admin/theme-studio/theme-preview/examples-preview-container.tsx` (copied from `components/editor/theme-preview/examples-preview-container.tsx`)
 
 ## VoltAgent awesome-design-md (CC0)
 
