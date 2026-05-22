@@ -35,27 +35,39 @@
 ### Decisões cravadas (não re-discutir)
 
 - **ADR-0044** — pivot TweakCN/shadcn-canonical
+- **ADR-0045** (accepted 2026-05-21) — Registry Strategy + AI Orchestration + Novel. 17 decisões cravadas + validadas em research-44/45. Cobre: v0 DEMOTED (D.1), `block_kinds_catalog` JIT 3 consumers (D.2/D.3), Novel ADOPT NOW + INSTALL JIT (D.4), AI híbrido `generateObject` + tool calling (D.5), model policy tabular (D.6), vertical extension A+B híbrido (D.7), Smart blocks composição declarada (D.8), 7 L2 page blocks MVP (D.9), registry hosting plataforma única (D.10), 3 namespaces `@shadcn`/`@platform`/`@desafit` (D.11), composition L1↘npm/L2↘L1/L3↘L2 (D.12), invariante `pages.kind === registry-item.name === block.type` (D.13), versionamento JIT (D.14), `registry:style` (D.15), Gemini Flash fallback (D.16), APCA soft warn (D.17). 4 open questions remanescentes (Tiptap collab, Novel+precedence PoC, mídia Novel, contador JSDoc→table).
+- **Component strategy (research-45)** — arsenal **20 primitives upfront** (não JIT puro) dia 0 da Fase 5 — bundle impact zero. Folder structure `components/blocks/*` (substitui `components/sections/*` — espelha invariante D.13). AI catalog discoverability: JSDoc `@registry-meta` em `lib/contracts/page-blocks/*` → build script → `lib/generated/block-catalog.json` (gitignored, prebuild). 3 JIT exceptions por bundle impact real: `chart` (recharts ~250 KB), `calendar` (react-day-picker ~45 KB), `carousel` (embla ~25 KB).
 - **G.1-G.5** (research-33): lock imutável-on-insert, cap 50, fork JIT, theme_mode separado, lazy bootstrap
 - **Princípios 1-10** (§0) — incluindo §8 extract+adapt, §9 versionamento, §10 audit-per-phase
 - **Princípio cross-cutting §11** (§0 item 11) — paralelismo + batches temáticos
 
 ### Decisões pendentes (decidir em batches temáticos antes de executar)
 
-| Batch                  | Source                               | Items                                                                        | Bloqueia               |
-| ---------------------- | ------------------------------------ | ---------------------------------------------------------------------------- | ---------------------- |
-| **Theming**            | research-37 F.1-F.5 + research-39 Q9 | descartar/manter tokens mobile/PWA, paths exception jsx-no-literals          | Execução Fase 2        |
-| **AI/Registry**        | research-38 H.1-H.11                 | v0 demoted, catalog JIT, Novel adopt, AI orchestration híbrida, smart blocks | ADR-0045 + Fase 7      |
-| **ESLint/Conventions** | research-39 Q1-Q3 + Q5-Q8 + Q10      | bump limites, loose tailwind bypass, plan-gates WARN, novas regras           | ESLint config refactor |
+| Batch                  | Source                               | Items                                                               | Bloqueia               |
+| ---------------------- | ------------------------------------ | ------------------------------------------------------------------- | ---------------------- |
+| **Theming**            | research-37 F.1-F.5 + research-39 Q9 | descartar/manter tokens mobile/PWA, paths exception jsx-no-literals | Execução Fase 2        |
+| **ESLint/Conventions** | research-39 Q1-Q3 + Q5-Q8 + Q10      | bump limites, loose tailwind bypass, plan-gates WARN, novas regras  | ESLint config refactor |
 
-Detalhamento completo em §17 Open questions ativas.
+**Gaps execução Fase 6/7 readiness** (research arquitetural mestre, 3 gaps fora do batch resolvido):
+
+- GAP-1 rate limit AI per-tenant (Upstash ratelimit)
+- GAP-3 domain catalog skeleton
+- GAP-4 block schema versioning path (addendum ADR-0041)
+
+Batch AI/Registry (research-38 H.1-H.11 + research-40 G.1-G.8 + research-41 4 novos) ✅ **resolvido via ADR-0045 accepted 2026-05-21**.
+Detalhamento completo + status em §17 Open questions ativas.
 
 ### Próxima execução
 
-**Bloqueado em:** decisões em batch (acima). Caminho de menor fricção:
+Caminho cravado pós ADR-0045 accepted:
 
-1. (paralelo) dispatch background agents: research-40 (shadcn registry deep-dive), research-41 (batch audit S5+S6+S7), i18n wireup
-2. (main thread) resolver 3 batches temáticos com recomendações cravadas nos research docs
-3. (unblocked) executar Fase 2 (0.5-1h pós F.1-F.5), Fase 5 (pós research-40/41), Fase 6 (pós research-41 + H.4/H.5/H.6), Fase 7 (pós ADR-0045)
+1. (paralelo background, 8h wall-time) 3 gaps Fase 6/7 readiness:
+   - GAP-1 rate limit AI per-tenant (Upstash ratelimit)
+   - GAP-3 domain catalog skeleton
+   - GAP-4 block schema versioning path (addendum ADR-0041)
+2. Fase 5 dia 0 — install 20 essential primitives (§6.0) + smoke story button (~30min install + 1h smoke) + AI catalog discoverability setup (§6.0.5 placeholder)
+3. Fase 5 execução Builder UI (28-34h após dia 0)
+4. Fase 6 + Fase 7 paralelo após Fase 5 sem 1-2 (sequencing research-41)
 
 ### Background workstreams (se ativos)
 
@@ -64,6 +76,10 @@ Dispatch 2026-05-21 (3 agents Sonnet paralelos — background):
 - **research-40 shadcn registry deep-dive** ✅ — MCP tools, private registry hosting, namespaces `@platform`/`@desafit`, composition L1→L2→L3 via `registryDependencies`, auth Bearer/query, per-tenant analysis. 8 decisões G.1-G.8 cravadas. Output: `docs/research/40-shadcn-registry-deep-dive.md`
 - **research-41 batch audit TweakCN Fases 5+6+7** ✅ — 514 LOC / 55 arquivos auditados. Esforço revisado: Fase 5 = 34h, Fase 6 = 25h (+6h vs teto), Fase 7 = 12h (-2.5h vs piso). Total 71h (dentro range 65-79h plano). 5 bloqueadores críticos identificados (Zustand→RHF history risk, gemini-3-flash availability, APCA UX, `registry:style` vs `:theme`, ADR-0045 antes migration). Sequencing: extrair `shadows.ts`+`color-converter.ts`+`registry-gen.ts` dia 0 Fase 5 → Fase 5 sem 1-2 → Fase 6+7 paralelo a partir sem 3. TipTap DEFER (MVP textarea). Output: `docs/research/41-audit-tweakcn-fases-5-6-7.md`
 - **i18n wireup execução** ✅ commit `91fdbe0` — wireup já estava feito em Fase 4; gap real era `pnpm i18n:audit` script + 3 keys faltantes em common.json + rule i18n.md header desatualizado. Resolvido.
+- **research arquitetural mestre (master system map + stack comparative)** ✅ 2026-05-21 — 7 repos clonados read-only (`tweakcn-ref` pré-existente + `novel-ref`, `tiptap-ref`, `vercel-saas-ref`, `vercel-platforms-ref`, `ai-chatbot-ref`, `next-forge-ref`, `shadcn-ref`). Outputs: `docs/architecture/01-master-system-map.md` (7 layers + 7 gaps identificados + ordering crítico) + `docs/research/43-stack-comparative-analysis.md` (feature×repo matrix + veredito peça-por-peça + D1/D4/D8 confirmados). 3 gaps arquiteturais críticos pré-Fase 5/6/7: rate limit AI per-tenant, domain catalog skeleton, block schema versioning migration path.
+- **research-44 real players integration patterns** ✅ 2026-05-21 — auditoria de 10 course/community platforms (Kajabi, Hotmart, Mighty, Circle, Teachable, Thinkific, Maven, Skool, Lemon Squeezy, GoHighLevel) + 11 AI-native builders (Lovable, Replit Agent 3, Bolt, Tempo, v0, Cursor, Windsurf, Plasmic, Webstudio, Framer AI, Anthropic Console). D8 re-investigado: ai-chatbot Artifacts é "polymorphic kind dispatch", NÃO "smart blocks composition" literal — PARCIAL (decisão ADR-0045 D.8 mantém, justificativa refina). Veredito combinação: somos primeiros a juntar Next 16 + Supabase + shadcn + TweakCN-way + Novel + AI Gateway + hostname multi-tenant + PWA nesta configuração — cada peça validada em produção massiva, integration é novel. ADR-0045 pode promover DRAFT → ACCEPTED sem ajustes estruturais. Output: `docs/research/44-real-players-integration-patterns.md`. **Research validou ADR-0045 sem mudanças estruturais.**
+- **research-45 component strategy best practices** ✅ 2026-05-21 — cravou arsenal de **20 primitives upfront** (não JIT puro nem arsenal completo) dia 0 da Fase 5, bundle impact zero (shadcn copia código + Next.js 16 tree-shaking). Folder structure `components/blocks/*` (substitui `sections/*` — espelha invariante D.13 `pages.kind === registry-item.name === components/blocks/{kind}.tsx`). AI catalog discoverability: JSDoc `@registry-meta` em `lib/contracts/page-blocks/*` → build script `scripts/build-block-catalog.ts` → `lib/generated/block-catalog.json` (gitignored, prebuild). 3 JIT exceptions confirmadas por bundle impact real: `chart` (recharts ~250 KB), `calendar` (react-day-picker ~45 KB), `carousel` (embla ~25 KB). Validado contra 5 boilerplates auditados (next-forge 52, ai-chatbot 22, tweakcn 46, vercel-saas 6, vercel-platforms 7) — produtos reais Vercel usam 6-22; frameworks/boilerplates usam 46-52. Output: `docs/research/45-component-strategy-best-practices.md`. **Arsenal + folder + catalog cravados pra execução Fase 5.**
+- **consolidação plano + ADR-0045 accepted** ✅ 2026-05-21 — research-44 (real players, 20 players) + research-45 (component strategy, arsenal+folder+catalog) traduzidas integralmente no plano. ADR-0045 promovido draft → accepted (17 decisões + Validation 2026-05-21 cruzando research-44/45 + D.8 refinement opcional sobre `createDocumentHandler<T>()` factory pattern de ai-chatbot). Folder structure `sections/` → `blocks/` em §15.1 C + §15.3. §6.0 install 20 primitives + §6.0.5 AI catalog discoverability setup adicionados em Fase 5. Concept-map 20, \_status, CHANGELOG sincronizados. Zero código tocado — só docs.
 
 (Atualizar pra ✅ + commit hash quando cada agent reportar conclusão.)
 
@@ -1209,6 +1225,44 @@ Storybook foi deletado em Fase 0 surgical delete. Antes do PRIMEIRO componente s
 
 Estimativa: 1-2h. Bloqueia §15.1 G stories obrigatórias.
 
+#### 6.0 — Install 20 essential primitives (research-45 cravado)
+
+**Antes** de qualquer trabalho de builder UI:
+
+`pnpm dlx shadcn@latest add button input label form card dialog select textarea badge separator skeleton tabs dropdown-menu tooltip popover scroll-area sheet sonner switch command`
+
+**Razão:** research-45 cravou arsenal upfront (não JIT puro) — bundle impact zero
+(Next.js 16 tree-shaking + código copiado local). 20 primitives cobrem 95%
+do uso confirmado em 5 boilerplates auditados (Vercel AI Chatbot usa 22,
+next-forge 52 mas é monorepo, etc).
+
+**JIT depois (gatilho: feature consumer real):**
+
+- `chart` (recharts ~250 KB) — quando 1ª chart entrar
+- `calendar` (react-day-picker ~45 KB) — quando date picker entrar
+- `carousel` (embla ~25 KB) — quando carousel entrar
+- `accordion`, `alert`, `alert-dialog`, `radio-group`, `checkbox`, `hover-card` — JIT
+
+**Smoke test:** criar `components/ui/button.stories.tsx` (Default + variants
+
+- disabled). Confirma Storybook 10 boots + theme runtime aplica.
+
+**Tempo:** ~30min install + ~1h smoke test.
+
+#### 6.0.5 — AI catalog discoverability pattern (research-45 cravado)
+
+Não criar `block_kinds_catalog` table ainda (JIT — 3+ consumers, ADR-0045 §3).
+
+**Setup discoverability:**
+
+1. **L1 primitives (shadcn/ui):** MCP `shadcn@latest mcp` em `.mcp.json` (dev-time discovery — já configurado)
+2. **L2/L3 blocks:** JSDoc `@registry-meta` em `lib/contracts/page-blocks/*.ts` (será criado em §6.4+ Fase 5)
+3. **Build script:** `scripts/build-block-catalog.ts` agrega JSDoc → `lib/generated/block-catalog.json` (gitignored, prebuild)
+4. **AI composer:** Fase 6 injeta `block-catalog.json` como contexto em `generateObject` (Anthropic prompt caching)
+5. **DB table:** SÓ quando 3 consumers simultâneos (AI composer + Builder UI + Dev exporter) — gatilho ADR-0045 §3
+
+**Setup nesta fase:** apenas placeholder do build script (vazio até primeiro block existir).
+
 #### 6.1 — Setup `app/admin/theme-studio/` route + shell
 
 **Faz:**
@@ -1873,7 +1927,9 @@ Cada componente novo só faz merge se TODOS os blocos abaixo estiverem cravados.
 - [ ] **Localização correta:**
   - `components/ui/*` (zona quarentenada shadcn — só `npx shadcn add`)
   - `components/app-*.tsx` (wrappers compostos com valor agregado, ADR-0040 §E)
-  - `components/sections/*.tsx` (blocos de página, padrão registry)
+  - `components/blocks/*` (Page Engine blocks L2+L3, RSC default, @registry-meta JSDoc) — invariante D.13 `pages.kind === registry-item.name === components/blocks/{kind}.tsx`
+  - `components/vendor/*` (third-party copy-paste JIT: Origin UI, Kibo UI, etc — sempre com `// RESEARCH:` marker)
+  - `features/*/components/` (feature-scoped, não-promovido)
 - [ ] **Versão:** semver no header do arquivo (`v1.0.0`) — bump major em breaking change
 
 #### B. Contrato técnico (Zod obrigatório)
@@ -1974,13 +2030,13 @@ Estudo dedicado contém: motivação, alternativas consideradas, decisão cravad
 
 A serem criadas/atualizadas conforme fases avançam:
 
-| Rule                                       | Quando criar | Path-loaded em                                  | Conteúdo                                                                               |
-| ------------------------------------------ | ------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `.claude/rules/design-system-component.md` | Fase 5       | `components/app-*.tsx`, `components/sections/*` | Aponta pro checklist §15.1 + condição de revisitar quando crescer                      |
-| `.claude/rules/components.md` (existe)     | Fase 3       | `components/**`                                 | UPDATE pra consumir shadcn-canonical + linkar §15.1                                    |
-| `.claude/rules/registry-blocks.md`         | Fase 7       | `lib/contracts/blocks/*`, `components/blocks/*` | Formato block knowledge card + relação com `block_kinds_catalog`                       |
-| `.claude/rules/storybook-stories.md`       | Fase 5       | `**/*.stories.tsx`                              | Stories obrigatórias: default + variants + states + viewports + multi-preset matrix    |
-| `.claude/rules/component-tokens.md`        | Fase 1 ✅    | `components/**`                                 | Já existe parcialmente em `design-tokens.md` — refinar Fase 5 com tabela token-consumo |
+| Rule                                       | Quando criar | Path-loaded em                                                                      | Conteúdo                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------ | ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/rules/design-system-component.md` | Fase 5       | `components/app-*.tsx`, `components/blocks/*`                                       | Aponta pro checklist §15.1 + condição de revisitar quando crescer                                                                                                                                                                                                                                                                           |
+| `.claude/rules/components.md` (existe)     | Fase 3       | `components/**`                                                                     | UPDATE pra consumir shadcn-canonical + linkar §15.1                                                                                                                                                                                                                                                                                         |
+| `.claude/rules/registry-blocks.md`         | Fase 7       | `lib/contracts/page-blocks/*`, `lib/contracts/form-blocks/*`, `components/blocks/*` | **Planejada** (research-45 cravou). Invariante `pages.kind === registry-item.name === block.type` (ADR-0045 D.13) + formato JSDoc `@registry-meta` obrigatório (kind, category, layer L2\|L3, vertical, when_to_use, anti_patterns, variants, composition, example) + relação com `block_kinds_catalog` (JIT 3 consumers, ADR-0045 D.2/D.3) |
+| `.claude/rules/storybook-stories.md`       | Fase 5       | `**/*.stories.tsx`                                                                  | Stories obrigatórias: default + variants + states + viewports + multi-preset matrix                                                                                                                                                                                                                                                         |
+| `.claude/rules/component-tokens.md`        | Fase 1 ✅    | `components/**`                                                                     | Já existe parcialmente em `design-tokens.md` — refinar Fase 5 com tabela token-consumo                                                                                                                                                                                                                                                      |
 
 Cada rule tem seção **"Condição de revisitar"** (padrão ADR-0040 §L): sob qual gatilho a rule precisa ser atualizada (ex: "quando 10+ componentes consumirem token novo → considerar promover de extras opt-in pra canonical").
 
@@ -2086,34 +2142,43 @@ Se algum item parecer overhead, perguntar: **"que bug futuro esse item previne?"
 - [ ] F.5 — APCA gate em extensions automático ou opt-in? **REC: opt-in via flag**
 - [ ] Q9 — Paths exception jsx-no-literals JIT ou pré-cravar agora? **REC: pré-cravar (i18n.md já documentou)**
 
-### Batch AI/Registry (research-38 H.\*)
+### Batch AI/Registry (research-38 H.\* + research-40 G.\* + research-41 4 novos) ✅ RESOLVIDO
 
-- [ ] H.1 — v0 OUT vs DEMOTED? **REC: DEMOTED (ideation dev-only)**
-- [ ] H.2 — `block_kinds_catalog` dia 0 ou JIT? **REC: JIT (JSDoc @registry-meta interim)**
-- [ ] H.3 — Novel adopt agora (cravar stack) ou esperar 3+ features? **REC: cravar agora + install JIT**
-- [ ] H.4 — AI orchestration: structured vs tool calling vs híbrido? **REC: HÍBRIDO**
-- [ ] H.5 — Model policy (Sonnet orq / Haiku router / Gemini theme / GPT-5-mini Novel?) **REC: confirmar tabela proposta**
-- [ ] H.6 — Vertical strategy A/B/C? **REC: A+B híbrido (column + variant_hint)**
-- [ ] H.7 — Smart blocks storage: composição declarada vs tabela separada? **REC: composição**
-- [ ] H.8 — L2 page blocks: 7 MVP vs 30 catalog? **REC: 7 MVP**
-- [ ] H.9 bonus — Tiptap collab?
-- [ ] H.10 bonus — Novel + theme override PoC?
-- [ ] H.11 bonus — Mídia em Novel?
+**Status:** ✅ resolvido via **ADR-0045 accepted 2026-05-21**. Decisão cravada em `docs/adr/0045-registry-strategy.md`. Research-44/45 validaram sem mudanças estruturais. Mantido aqui pra histórico de batch (mover bullets pra §STATUS ATUAL "Decisões cravadas" — já feito).
 
-### Batch ESLint/Conventions (research-39 Q.\*)
+- [x] H.1 — v0 OUT vs DEMOTED? ✅ **DEMOTED** (ADR-0045 D.1, ideation dev-only)
+- [x] H.2 — `block_kinds_catalog` dia 0 ou JIT? ✅ **JIT** (ADR-0045 D.2, JSDoc @registry-meta interim)
+- [x] H.3 — Novel adopt agora (cravar stack) ou esperar 3+ features? ✅ **ADOPT NOW + INSTALL JIT** (ADR-0045 D.4)
+- [x] H.4 — AI orchestration: structured vs tool calling vs híbrido? ✅ **HÍBRIDO** (ADR-0045 D.5, generateObject greenfield + streamText+toolCalling edits)
+- [x] H.5 — Model policy? ✅ **Tabela cravada** (ADR-0045 D.6 + D.16 fallback Gemini 2.5 Flash)
+- [x] H.6 — Vertical strategy A/B/C? ✅ **A+B HÍBRIDO** (ADR-0045 D.7, coluna + variant_hint)
+- [x] H.7 — Smart blocks storage? ✅ **Composição declarada** (ADR-0045 D.8, sem tabela separada)
+- [x] H.8 — L2 page blocks: 7 MVP vs 30 catalog? ✅ **7 MVP** (ADR-0045 D.9)
+- [x] G.1-G.8 (research-40 shadcn registry) — ✅ resolvido em ADR-0045 D.10 (hosting plataforma única), D.11 (3 namespaces), D.12 (composition rules), D.13 (invariante âncora), D.14 (versionamento JIT), D.15 (`registry:style`).
+- [x] research-41 4 bloqueadores — ✅ resolvido em ADR-0045 (`registry:style` D.15, APCA UX D.17, ADR antes migration D.13, Gemini fallback D.16).
+- [ ] H.9 bonus — Tiptap collab? **JIT** quando 2+ admins simultâneos virarem dor (ADR-0045 open Q1).
+- [ ] H.10 bonus — Novel + `<style precedence="theme">` PoC? **JIT** antes de instalar Novel (ADR-0045 open Q2).
+- [ ] H.11 bonus — Mídia em Novel? **JIT** quando Lesson editor entrar (ADR-0045 open Q3).
+- [ ] research-44 contador formal "3 consumers" → milestone Fase 7/8 (ADR-0045 open Q4).
 
-- [ ] Q1 — Bump max-lines 300→400, complexity 12→16? **REC: SIM**
-- [ ] Q2 — Loose `text-*`/`rounded-*` tailwind bypass até wrappers voltarem? **REC: SIM temporário**
-- [ ] Q3 — `plan-gates-required` ERROR→WARN? **REC: SIM até Fase 1 negócio**
-- [ ] Q5 — Origin/Magic copy-paste enforce? **REC: regra JIT**
-- [ ] Q6 — Block builder timing? **REC: Fase 7**
-- [ ] Q7 — Registry catalog timing? **REC: JIT (igual H.2)**
-- [ ] Q8 — CSS var inline style permitido? **REC: SIM controlado**
-- [ ] Q10 — Sheriff boundaries timing? **REC: JIT depois de 20+ files em features/**
+### Batch ESLint/Conventions (research-39 Q.\*) ✅ RESOLVIDO
+
+**Status:** ✅ resolvido via commit `7b5affa` (2026-05-21).
+
+- [x] Q1 — Bump max-lines 300→400, complexity 12→16? ✅ SIM
+- [x] Q2 — Loose `text-*`/`rounded-*` tailwind bypass até wrappers voltarem? ✅ SIM temporário
+- [x] Q3 — `plan-gates-required` ERROR→WARN? ✅ SIM até Fase 1 negócio
+- [ ] Q5 — Origin/Magic copy-paste enforce? **JIT** quando primeira install acontecer (research-42 refutou Magic UI bloqueio framer-motion).
+- [x] Q6 — Block builder timing? ✅ Fase 7 (ADR-0045 alinhou)
+- [x] Q7 — Registry catalog timing? ✅ JIT (ADR-0045 D.2)
+- [x] Q8 — CSS var inline style permitido? ✅ SIM controlado
+- [x] Q10 — Sheriff boundaries timing? ✅ JIT depois de 20+ files em features/
 
 ### Decididas (mover pra topo do plano §STATUS ATUAL ao resolver)
 
 Conforme batches forem resolvidos, mover bullets pra seção "Decisões cravadas" no STATUS ATUAL + cravar resposta no research correspondente.
+
+**Status 2026-05-21:** Batch AI/Registry + Batch ESLint movidos. Resta apenas Batch Theming (F.1-F.5 + Q9, resolvido em commits `3b66024`/`256faae`/`7615d2f`/`c0da78c`/`9e4ae3f` — já refletido em §STATUS ATUAL Fase 2 ✅).
 
 ---
 

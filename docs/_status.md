@@ -22,12 +22,22 @@
 
 ### Background workstreams ativos (2026-05-21)
 
-- **research-43 master architecture + stack comparative** 🟡 rodando (Opus) — clona 5 repos referência (Novel, Tiptap, Makerkit, Vercel SaaS, shadcn) + cria mapa mestre 7 layers + análise comparativa peça-por-peça
+- **research-43 master architecture + stack comparative** ✅ (Opus) — 7 repos clonados read-only + `docs/architecture/01-master-system-map.md` + `docs/research/43-stack-comparative-analysis.md`. 3 gaps arquiteturais pré-Fase 5/6/7: rate limit AI per-tenant, domain catalog skeleton, block schema versioning path.
+- **research-44 real players integration patterns** ✅ (2026-05-21) — 20 players auditados (10 course/community + 11 AI-native). Validou ADR-0045 sem mudanças estruturais. Output: `docs/research/44-real-players-integration-patterns.md`.
+- **research-45 component strategy best practices** ✅ (2026-05-21) — arsenal 20 primitives upfront + folder `blocks/` (substitui `sections/`) + AI catalog discoverability JSDoc → `lib/generated/block-catalog.json`. Output: `docs/research/45-component-strategy-best-practices.md`.
 
 ### Decisões pendentes consolidadas
 
-- **ADR-0045 draft** — 17 decisões cravadas em status `draft` aguardando review user (Registry Strategy + AI Orchestration + Novel)
-- **Batch AI/Registry** (H.1-H.11 + G.1-G.8 + 4 do research-41) — espera ADR-0045 + research-43
+- **ADR-0045 accepted** (2026-05-21) — 17 decisões cravadas + validadas via research-44/45 (Registry Strategy + AI Orchestration + Novel). Veredito: draft → accepted sem mudanças estruturais. D.8 refinement opcional (createDocumentHandler factory pattern de ai-chatbot).
+- **Batch AI/Registry** (H.1-H.11 + G.1-G.8 + 4 research-41) ✅ resolvido via ADR-0045 accepted.
+- **Gaps execução Fase 6/7 readiness** (3 gaps research-43): GAP-1 rate limit AI per-tenant, GAP-3 domain catalog skeleton, GAP-4 block schema versioning path — paralelo background 8h wall-time.
+
+### Próxima execução cravada
+
+1. (paralelo background, 8h) 3 gaps Fase 6/7 readiness
+2. Fase 5 dia 0 — install 20 essential primitives + smoke story + AI catalog setup placeholder
+3. Fase 5 execução Builder UI (28-34h)
+4. Fase 6 + Fase 7 paralelo após Fase 5 sem 1-2
 
 ---
 
@@ -85,11 +95,11 @@
 
 ## ADRs (estado atual)
 
-- **Total:** 45 (0001-0045 — ADR-0043 design system pré-pivot superseded, ADR-0044 pivot TweakCN accepted, ADR-0045 registry strategy draft)
-- **accepted:** 38+
-- **draft:** ADR-0045 (Registry Strategy + AI Orchestration + Novel — 17 decisões aguardando review user)
+- **Total:** 45 (0001-0045 — ADR-0043 design system pré-pivot superseded, ADR-0044 pivot TweakCN accepted, ADR-0045 registry strategy accepted)
+- **accepted:** 39+
+- **draft:** —
 - **superseded:** 7+ (0021 → 0025; 0025 → 0033; 0027 → 0028; 0028 → 0029; 0013 → 0038; ADR-0034 arch → ADR-0039; ADR-0043 → ADR-0044)
-- **Último accepted:** ADR-0044 — Pivot TweakCN-way + shadcn-canonical (2026-05-21)
+- **Último accepted:** ADR-0045 — Registry Strategy + AI Orchestration + Novel (2026-05-21, 17 decisões + validation research-44/45)
 
 ## Blueprints
 
@@ -104,9 +114,9 @@
 
 ## Research docs
 
-- **Total:** 42 (`docs/research/01-42.md`)
-- **Pivot-related (2026-05-21):** 28 tweakcn-eval · 29-31 estudos pivot · 33 theme-versioning (G.1-G.5) · 37 mobile/PWA extras opt-in (F.1-F.5) · 38 registry+Novel+AI (H.1-H.11) · 39 ESLint conventions (Q1-Q10) · 40 shadcn registry deep-dive (G.1-G.8) · 41 batch audit Fases 5+6+7 · 42 ESLint best-practices validation (90% alinhado)
-- **Em curso:** 43 master architecture + stack comparative (Opus background)
+- **Total:** 45 (`docs/research/01-45.md`)
+- **Pivot-related (2026-05-21):** 28 tweakcn-eval · 29-31 estudos pivot · 33 theme-versioning (G.1-G.5) · 37 mobile/PWA extras opt-in (F.1-F.5) · 38 registry+Novel+AI (H.1-H.11) · 39 ESLint conventions (Q1-Q10) · 40 shadcn registry deep-dive (G.1-G.8) · 41 batch audit Fases 5+6+7 · 42 ESLint best-practices validation (90% alinhado) · 43 master architecture + stack comparative · 44 real players integration patterns (20 players) · 45 component strategy best practices (arsenal 20 + folder + catalog)
+- **Em curso:** —
 
 ## Master Architecture
 

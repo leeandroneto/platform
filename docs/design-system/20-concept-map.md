@@ -29,10 +29,60 @@ markmap:
 ### ⏭️ Próximo
 
 - **Fase 2** (decide D2): Estudo mobile/PWA extension — extras opt-in (`--touch-min`, `--mobile-nav-height`, `--frosted-*`) — bloqueado em §17 batch Theming
-- Fase 5: Builder UI clone TweakCN (S5.0 consolidado em research-41 audit) + `forkTheme` action (G.3 deferred) + Storybook 10 re-install (5.0)
-- Fase 3, 6-8: Presets, AI generation, registry (ADR-0045 / batch AI), Validation Suite Contínua (8.1-8.4)
+- Fase 5: Builder UI clone TweakCN (S5.0 consolidado em research-41 audit) + install 20 essential primitives (§6.0 research-45) + `forkTheme` action (G.3 deferred) + Storybook 10 re-install (5.0)
+- Fase 3, 6-8: Presets, AI generation, registry (ADR-0045 accepted), Validation Suite Contínua (8.1-8.4)
 
 > **Detalhe operacional:** ver `docs/plans/pivot-tweakcn.md` §STATUS ATUAL (topo) + §17 Open questions ativas (batches Theming/AI/Registry/ESLint).
+
+## Status atualizado pós research-44/45 + ADR-0045 accepted (2026-05-21)
+
+**Research-44 (real players, 20 players auditados)** validou composição:
+
+- GoHighLevel valida modelo white-label agency multi-tenant em escala bilhão hits/dia
+- Tiptap em produção massiva (LinkedIn, GitLab, Anthropic, Substack, NYT)
+- shadcn registry production validado via MakerKit + Supastarter
+- AI orchestration híbrida confirmada pelo state-of-the-art (Lovable, Replit Agent 3, Vercel Artifacts)
+- 80% cobertura via precedents proven; 20% novel mas com base sólida
+
+**Research-45 (component strategy)** cravou execução pragmática:
+
+- **20 essential primitives upfront** dia 0 Fase 5 (bundle impact zero)
+- **Folder structure:** `components/blocks/*` substitui `components/sections/*` (espelha invariante ADR-0045 D.13)
+- **AI catalog:** JSDoc `@registry-meta` → `lib/generated/block-catalog.json` (gitignored prebuild)
+- **JIT exceptions:** `chart` (recharts ~250 KB), `calendar` (~45 KB), `carousel` (~25 KB)
+
+**ADR-0045 accepted (17 decisões + validation 2026-05-21):**
+
+- D.1 v0 demoted · D.2/D.3 catalog JIT 3 consumers · D.4 Novel ADOPT NOW + INSTALL JIT
+- D.5 AI híbrido (`generateObject` + tool calling) · D.6 model policy tabular · D.7 vertical A+B
+- D.8 Smart blocks composição declarada · D.9 7 L2 MVP · D.10 registry plataforma única
+- D.11 3 namespaces (`@shadcn`/`@platform`/`@desafit`) · D.12 composition L1↘npm/L2↘L1/L3↘L2
+- D.13 invariante `pages.kind === registry-item.name === block.type` · D.14 versionamento JIT
+- D.15 `registry:style` · D.16 Gemini Flash fallback · D.17 APCA soft warn
+
+### 20 essential primitives (instalar dia 0 Fase 5)
+
+`button` · `input` · `label` · `form` · `card` · `dialog` · `select` · `textarea` · `badge` · `separator` · `skeleton` · `tabs` · `dropdown-menu` · `tooltip` · `popover` · `scroll-area` · `sheet` · `sonner` · `switch` · `command`
+
+### Folder structure final (research-45 cravado)
+
+```
+components/
+├── ui/                  # L1 — shadcn primitives (quarentenada, Edit bloqueado)
+├── app-*.tsx            # L1.5 — wrappers compostos com valor agregado (ADR-0040)
+├── blocks/              # L2/L3 — Page Engine blocks (RSC default, @registry-meta JSDoc)
+│   └── <kind>.tsx       # invariante D.13 ADR-0045
+└── vendor/              # Third-party copy-paste JIT (Origin UI, Kibo UI)
+    └── <lib>/<name>.tsx # // RESEARCH: marker obrigatório
+
+features/<name>/components/ # Feature-scoped (não promovido)
+```
+
+**Patterns copy JIT pra Fase 6/7 (research-44):**
+
+- `createDocumentHandler<T>()` factory pattern de ai-chatbot (`lib/artifacts/server.ts`) → adapta pra `createBlockHandler<T>()` quando 3+ kinds
+- Tool layer pattern (`lib/ai/tools/create-document.ts`) → adapta pra `createPage`, `updatePage`, `applyPagePatch`
+- `resumable-stream` pacote — quando Fase 6 theme generation ficar lenta (5-30s)
 
 ## 10 Princípios não-negociáveis (ADR-0044 + plan §0)
 
