@@ -542,6 +542,8 @@ Os 4 limites (max-lines, max-lines-per-function, complexity, max-params) foram c
 
 User decide: aceita bump? OU mantém estrito e refactor é OK?
 
+✅ **Decisão (user 2026-05-21): bumps cravados em `eslint.config.mjs`** — max-lines 300→400 (600 em actions.ts + lib/design/** + lib/contracts/** + lib/ai/\*\*), max-lines-per-function 60→80, complexity 12→16, max-params 4 mantido. Research-42 B.1-B.3 confirma (Airbnb desliga todos; RSC patterns reais batem 60 fácil). Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
+
 ### Q2. `text-*` e `rounded-*` Tailwind bypass — loose temporário ou manter ON?
 
 Wrappers `<Heading>`, `<Eyebrow>`, `<Text>` foram deletados em surgical delete. Hoje regra dispara em código legítimo. Opções:
@@ -552,6 +554,8 @@ Wrappers `<Heading>`, `<Eyebrow>`, `<Text>` foram deletados em surgical delete. 
 
 Recomendação: **A**. User decide qual.
 
+✅ **Decisão (user 2026-05-21): Opção A — cravado em `eslint.config.mjs`** — textSize e roundedSize sub-detectors removidos do `check()` do tokenBypassPlugin. Manter uppercase, hexArbitrary, rgbArbitrary estritos. Re-apertar quando `<Heading>` voltar. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
+
 ### Q3. `plan-gates-required` por feature — WARN ou ERROR?
 
 `features/**` está vazio. ERROR dispara em `features/_template/index.ts` (referência). Opções:
@@ -560,6 +564,8 @@ Recomendação: **A**. User decide qual.
 - **B.** Manter ERROR, aceitar que `_template` precisa cumprir.
 
 Recomendação: **A**. User decide.
+
+✅ **Decisão (user 2026-05-21): Opção A — cravado em `eslint.config.mjs`** — severity flipada pra `warn`. Erguer pra ERROR quando primeira feature paga real em `features/<name>/`. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
 
 ### Q4. Novel/Tiptap content storage — JSON canonical ou negotiable?
 
@@ -572,6 +578,8 @@ Opções:
 - **C.** Ambos colunados (`content_json jsonb`, `content_html text`) com trigger sync.
 
 Recomendação: **A** (canonical pattern Tiptap). User decide.
+
+✅ **Decisão (user 2026-05-21): Opção A — ProseMirrorJSON canonical em DB** — research-42 Q4 confirma com citação direta de Tiptap docs. Regra ESLint custom D.3 (novel/persist-prosemirror-json) será adicionada JIT quando Novel entrar. Documentado como comentário em `eslint.config.mjs` §Q6. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
 
 ### Q5. Origin UI / Magic UI — npm package OU copy-paste via shadcn CLI?
 
@@ -586,6 +594,8 @@ Opções:
 
 Recomendação: **A**. User decide.
 
+❌ **Refutado (research-42 Q5)** — Magic UI já migrou pra `motion` v12 (dependência interna reescrita). `@origin-ui/*` e `@magicui/*` não existem como paths npm reais — regra D.5 bloquearia imports fantasma (falso positivo). Risco real é diferente: Magic UI traz `framer-motion` internamente em alguns componentes legados; ação JIT = reescrever imports para `motion/react` nos arquivos copiados (motion v12 API-compatível). Regra ESLint não necessária agora.
+
 ### Q6. Block builder vs template+slots — re-confirmar pós-pivot?
 
 `tenant-content.md` cravou em ADR (4 níveis hierarquia): "Primeira landing page por tenant = nível 3 (template+slots). NÃO pular direto pra nível 4". Mas Novel/Tiptap entrando pode tentar **se** pivot pra block builder cedo.
@@ -597,11 +607,15 @@ Opções:
 
 Recomendação: **A** — domínios diferentes. User decide.
 
+✅ **Decisão (user 2026-05-21): Opção A — dominios distintos confirmados** — Novel/Tiptap = ProseMirrorJSON em programa/lesson/protocol. Form/Page Engine = JSONB proprio. Sem regra ESLint customizada agora. Documentar em `tenant-content.md` quando Novel entrar (Fase 3+). Documentado como comentário em `eslint.config.mjs`. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
+
 ### Q7. Registry catalog timing — aguardar Fase 1 pivot ou começar paralelo?
 
 Form/Page engines têm catalog open-set (forms-engine.md). Registry catalog (forward planning) generaliza isso pra "qualquer kind". Regra D.6 enforce whitelist quando parser existir.
 
 User decide: começar catálogo paralelo agora OU defer pra Fase 1?
+
+✅ **Decisão (user 2026-05-21): Defer Fase 1 — consistente com ADR-0045 draft** — Não há regra ESLint atual exigindo `block_kinds_catalog` table check. Confirmado: eslint.config.mjs não tem regra D.6. Documentado como comentário em `eslint.config.mjs`. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
 
 ### Q8. CSS var em JSX style — manter strict ou afrouxar pra Motion presets?
 
@@ -613,6 +627,8 @@ Opções:
 - **B.** Allowlist propriedades de animação (`transform`, `opacity`, `filter`) no detector
 
 Recomendação: **A**. User decide.
+
+✅ **Decisão (user 2026-05-21): Opção A — manter strict, clarificado em comentário** — research-42 Q8 confirma: `motion/react style={{ transform: ... }}` não dispara a regra (não é Literal `'var(--...)'`). Intencao documentada no eslint.config.mjs: style={{'var(--x)'}} bloqueado, motion props dinâmicas permitidas. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
 
 ### Q9. `i18next/no-literal-string` paths exception — adicionar ao eslint.config agora?
 
@@ -638,6 +654,8 @@ Opções:
 - **B.** Defer pra Fase 1 quando features reais existirem
 
 Recomendação: **B** — boundaries são over-engineered sem features pra proteger. User decide.
+
+✅ **Decisão (user 2026-05-21): Opção B — Sheriff deferred JIT** — `sheriff.config.ts` não criado. Gatilho = primeira feature paga real em `features/<name>/` com 3+ submodulos. Com menos de 15 modulos ativos, `no-restricted-imports` path-based cobre boundary critico. Config pronta em research-42 §C.2 pra quando gatilho atingir. Documentado como comentário em `eslint.config.mjs`. Referência: commit `chore(lint): refactor eslint config (research-39 q1-q4/q6-q8/q10 + react-hooks v7)`.
 
 ---
 

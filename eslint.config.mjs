@@ -5,6 +5,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import betterTailwind from 'eslint-plugin-better-tailwindcss' // ADR-0040 §B
 import i18next from 'eslint-plugin-i18next'
+import reactHooks from 'eslint-plugin-react-hooks' // ADR-0012 §2.5 — v7.1.1 bundla React Compiler rules (research-42 H.1)
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import storybook from 'eslint-plugin-storybook'
 import unusedImports from 'eslint-plugin-unused-imports'
@@ -29,9 +30,11 @@ const tokenBypassPlugin = {
         },
         schema: [],
       },
+      // ADR-0044 surgical delete + research-39 Q2 (user 2026-05-21): textSize + roundedSize
+      // sub-detectors LOOSE ate wrappers <Heading>/<Eyebrow> re-introduzidos pos-pivot (Fase 1-3).
+      // Manter: uppercase, hexArbitrary, rgbArbitrary (bypass reais, independem de wrapper).
+      // Re-apertar textSize + roundedSize quando <Heading> voltar.
       create(context) {
-        const TEXT_SIZE = /\btext-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)\b/
-        const ROUNDED_SIZE = /\brounded-(sm|md|lg|xl|2xl|3xl)\b/
         const UPPERCASE = /\buppercase\b/
         const HEX_ARBITRARY = /\[#[0-9a-fA-F]{3,8}\]/
         const RGB_ARBITRARY = /\[rgba?\(/
@@ -39,12 +42,6 @@ const tokenBypassPlugin = {
         function check(node) {
           if (typeof node.value !== 'string') return
           const v = node.value
-          const textMatch = TEXT_SIZE.exec(v)
-          if (textMatch)
-            context.report({ node, messageId: 'textSize', data: { size: textMatch[1] } })
-          const roundedMatch = ROUNDED_SIZE.exec(v)
-          if (roundedMatch)
-            context.report({ node, messageId: 'roundedSize', data: { size: roundedMatch[1] } })
           if (UPPERCASE.test(v)) context.report({ node, messageId: 'uppercase' })
           if (HEX_ARBITRARY.test(v)) context.report({ node, messageId: 'hexArbitrary' })
           if (RGB_ARBITRARY.test(v)) context.report({ node, messageId: 'rgbArbitrary' })
@@ -390,6 +387,12 @@ const eslintConfig = defineConfig([
     },
   },
   // ─── Strict unused vars + sizes ───────────────────────────────────────────
+  // ADR-0012 §2.4 origem. ADR-0044 + research-39 Q1 (user 2026-05-21) bumps:
+  //   max-lines 300→400: Novel/Tiptap 350-450 LOC tipico; Storybook stories 400-500 (research-42 B.3).
+  //   max-lines-per-function 60→80: RSC fetch+parse+render; reducer engine pattern (research-42 B.2).
+  //   complexity 12→16: JSON Logic dispatch forms-engine; Zod refine chain (research-42 B.1).
+  //   max-params 4: mantido — hard cap contra primitive obsession.
+  // Path overrides 600: app/**/actions.ts + lib/design/** + lib/contracts/** + lib/ai/** (ADR-0031 §9+).
   {
     rules: {
       '@typescript-eslint/no-unused-vars': [
@@ -401,9 +404,9 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
-      'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
-      complexity: ['error', 12],
+      'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
+      'max-lines-per-function': ['error', { max: 80, skipBlankLines: true, skipComments: true }],
+      complexity: ['error', 16],
       'max-params': ['error', 4],
     },
   },
@@ -639,10 +642,13 @@ const eslintConfig = defineConfig([
     },
   },
   // ─── ADR-0034 §6 — plan-gates obrigatório em features/<name>/index.ts ─────
+  // ADR-0034 §5+§6 origem. Research-39 Q3 (user 2026-05-21): WARN ate Fase 1 pivot.
+  // features/** esta vazio pos-ADR-0044 surgical delete — ERROR aqui = phantom enforcement.
+  // Erguer de volta pra ERROR quando primeira feature paga real existir em features/<name>/.
   {
     files: ['features/*/index.ts'],
     rules: {
-      'plan-gates/plan-gates-required': 'error',
+      'plan-gates/plan-gates-required': 'warn',
     },
   },
   // ─── Test files relaxed ───────────────────────────────────────────────────
@@ -773,6 +779,15 @@ const eslintConfig = defineConfig([
   // ─── ADR-0031 §6 removido — Ladle saiu, substituído por Storybook (ADR-0038).
   // Override era pra `.ladle/config.mjs export default {}`. Storybook usa
   // `defineMain`/`Preview` types — não precisa override de regra.
+  // ─── ADR-0012 §2.5 + research-42 H.1 (user 2026-05-21) — React Compiler rules react-hooks v7 ───
+  // eslint-plugin-react-hooks@7.1.1 bundla React Compiler rules em recommended-latest preset.
+  // Regras (immutability, purity, static-components, gating, globals, refs, config) sao WARN
+  // por default — nao bloqueiam CI sem compilador instalado. Safe upgrade confirmado por React team.
+  // Aplicado ANTES dos overrides de path especificos pra overrides subsequentes tomarem precedencia.
+  {
+    plugins: { 'react-hooks': reactHooks },
+    rules: { ...reactHooks.configs['recommended-latest'].rules },
+  },
   // ─── ADR-0031 §7 — hooks/use-mobile.ts (SSR-safe pattern shadcn) ────────
   // Dep block shadcn sidebar. Pattern useState(undefined)+useEffect+matchMedia
   // é oficial shadcn — aceitável "external store sync".
@@ -793,6 +808,34 @@ const eslintConfig = defineConfig([
   // ─── ADR-0031 §9 — lib/design/seeds/** (long data files, JSON-like) ───────
   {
     files: ['lib/design/seeds/**/*.ts'],
+    rules: {
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+    },
+  },
+  // ─── ADR-0012 §2.4 + ADR-0031 §9 + research-39 Q1 (user 2026-05-21) — max-lines 600 paths complexos ───
+  // Aplicado DEPOIS do override 'off' de lib/design/seeds/** (que continua off via arquivo especifico).
+  // actions.ts: server actions com helpers inline (assertTenantMatch + ok/fail co-localizados).
+  // lib/design/**: theme algorithms + builders (buildThemeCSS, contrast, tonal derivation).
+  // lib/contracts/**: Zod schemas + types co-localizados (database.ts override off via ADR-0031 §8).
+  // lib/ai/**: orchestration + prompts (router + classifier + generator + fallback Vercel AI SDK).
+  {
+    files: [
+      'app/**/actions.ts',
+      'lib/design/**/*.ts',
+      'lib/design/**/*.tsx',
+      'lib/contracts/**/*.ts',
+      'lib/ai/**/*.ts',
+    ],
+    rules: {
+      'max-lines': ['error', { max: 600, skipBlankLines: true, skipComments: true }],
+    },
+  },
+  // ─── ADR-0031 §8 pt.2 — lib/contracts/database.ts gerado por supabase CLI (max-lines off) ────
+  // Override re-aplicado DEPOIS do bloco 600-limit de lib/contracts/** (last-wins flat config).
+  // ADR-0031 §8 documenta que database.ts e gerado, nao escrito a mao — limite nao aplica.
+  {
+    files: ['lib/contracts/database.ts'],
     rules: {
       'max-lines': 'off',
       'max-lines-per-function': 'off',
@@ -826,6 +869,23 @@ const eslintConfig = defineConfig([
       'i18next/no-literal-string': 'off',
     },
   },
+  // ─── ADR-0040 §J + research-39 Q8 (user 2026-05-21) — CSS var inline style esclarecido ───
+  // no-css-var-in-style bloqueia style={{ prop: 'var(--token)' }} — usar className shadcn.
+  // Intencao:
+  //   style={{ width: 'var(--touch-min)' }}  bloqueado — usar Tailwind alias
+  //   style={{ color: '#ffaa40' }}            bloqueado — usar className="text-primary"
+  //   style={{ x: motionTransform }}          permitido — motion prop dinamica (nao Literal)
+  // research-42 Q8: motion/react style={{ transform: ... }} nao dispara (nao e Literal 'var(--)').
+  // ─── Research-39 Q6 (user 2026-05-21) — Novel vs Form/Page Engine: dominios distintos ───
+  // Novel/Tiptap = ProseMirrorJSON canonical em DB; Form/Page Engine = JSONB proprio.
+  // Sem conflito de modelo. Documentar em tenant-content.md quando Novel entrar (Fase 3+).
+  // ─── Research-39 Q7 (user 2026-05-21) — Registry catalog deferred ─────────────────────────
+  // Nao ha regra ESLint exigindo block_kinds_catalog table check — consistente com ADR-0045 draft defer.
+  // ─── Research-39 Q10 + research-42 C.3 (user 2026-05-21) — Sheriff deferred JIT ───────────
+  // @softarc/eslint-plugin-sheriff@0.19.6 instalado mas sheriff.config.ts NAO existe (ADR-0012 §3).
+  // Defer: gatilho = primeira feature paga real em features/<name>/ com 3+ submodulos.
+  // Com menos de 15 modulos ativos, no-restricted-imports path-based cobre boundary critico.
+  // Config pronta em docs/research/42-eslint-best-practices-validation.md §C.2.
   ...storybook.configs['flat/recommended'],
 ])
 

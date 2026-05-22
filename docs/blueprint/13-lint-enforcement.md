@@ -68,12 +68,16 @@ Cobre Identifier + Property + Literal string match em paths `app/`, `components/
 
 ### 2.4 Estrutura código (4 regras)
 
-| #   | Selector                 | Limite | Trigger ❌             | OK ✅                  |
-| --- | ------------------------ | ------ | ---------------------- | ---------------------- |
-| 19  | `max-lines` file         | 300    | arquivo 350 linhas     | quebrar em 2 files     |
-| 20  | `max-lines-per-function` | 60     | função 80 linhas       | extrair sub-funções    |
-| 21  | `complexity`             | 12     | função com 15 branches | refatorar early-return |
-| 22  | `max-params`             | 4      | `function(a,b,c,d,e)`  | objeto `{a,b,c,d,e}`   |
+Limites bumpeados em 2026-05-21 (research-39 Q1 · user aprovado · research-42 B.1-B.3 confirma):
+
+| #   | Selector                 | Limite anterior | Limite atual                            | Trigger ❌             | OK ✅                  |
+| --- | ------------------------ | --------------- | --------------------------------------- | ---------------------- | ---------------------- |
+| 19  | `max-lines` file         | 300             | 400 (600 em actions.ts/lib/design/\*\*) | arquivo 450 linhas     | quebrar em 2 files     |
+| 20  | `max-lines-per-function` | 60              | 80                                      | função 90 linhas       | extrair sub-funções    |
+| 21  | `complexity`             | 12              | 16                                      | função com 17 branches | refatorar early-return |
+| 22  | `max-params`             | 4               | 4 (mantido)                             | `function(a,b,c,d,e)`  | objeto `{a,b,c,d,e}`   |
+
+Path overrides 600 linhas: `app/**/actions.ts`, `lib/design/**`, `lib/contracts/**`, `lib/ai/**`.
 
 ### 2.5 Guards arquiteturais (2 regras)
 
@@ -86,7 +90,13 @@ Cobre Identifier + Property + Literal string match em paths `app/`, `components/
 
 ## 3. Sheriff boundaries
 
-`@softarc/eslint-plugin-sheriff` configurado com tags em cada folder via `sheriff.config.ts`:
+> **Status 2026-05-21 (research-39 Q10 · user aprovado):** Sheriff deferred JIT.
+> `sheriff.config.ts` **não existe** ainda. Gatilho = primeira feature paga real em
+> `features/<name>/` com 3+ submodulos. Com menos de 15 modulos ativos,
+> `no-restricted-imports` path-based cobre o boundary critico.
+> Config viavel pronta em `docs/research/42-eslint-best-practices-validation.md` §C.2.
+
+Quando implementado, `@softarc/eslint-plugin-sheriff` configurado com tags em cada folder via `sheriff.config.ts`:
 
 ```
 app/         → tag: type:feature, side:server
