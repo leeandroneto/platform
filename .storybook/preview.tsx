@@ -1,25 +1,33 @@
 // .storybook/preview.tsx — Storybook 10 preview config (ADR-0038).
 // Providers globais:
-//   - NextIntlClientProvider (messages/pt-BR/common.json) — `useTranslations` em wrappers
+//   - NuqsAdapter (nuqs/adapters/react) — `useQueryState` em PreviewPanel etc. (bug #4)
+//   - NextIntlClientProvider (common + theme-studio namespaces) — `useTranslations`
+//   - TooltipProvider (Radix) — `<Tooltip>` used in preset-select, control-panel etc.
 //   - RouteProvider (brand+tenant mock) — `useBrand`/`useTenant` no Logo, gates
 //   - EntitlementProvider (plan B mock) — `useEntitlement` no AppEntitlementGate
 //   - Toaster sonner — pro AppToast renderizar
-// Tokens via import globals.css (Tailwind v4 @theme + tokens OKLCH).
+// Tokens: globals.css (universal) + DEFAULT_THEME_CSS inject via decorator (bug #6).
+// Dark mode toggle: globalTypes `theme` light|dark + decorator `.dark` class (bonus).
 
 import '../app/globals.css'
 
+import { useEffect } from 'react'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 
 import type { Preview } from '@storybook/nextjs-vite'
+import { NuqsAdapter } from 'nuqs/adapters/react'
 import { Toaster } from 'sonner'
 
+import { TooltipProvider } from '../components/ui/tooltip'
 import type { Brand } from '../lib/brand/types'
 import { EntitlementProvider } from '../lib/entitlements/EntitlementProvider'
 import type { PlanFeatures, PlanSlug } from '../lib/entitlements/types'
 import { RouteProvider } from '../lib/route/RouteProvider'
 import type { Tenant } from '../lib/route/types'
 import commonMessages from '../messages/pt-BR/common.json'
+import themeStudioMessages from '../messages/pt-BR/theme-studio.json'
+import { DEFAULT_THEME_CSS } from './default-theme.css'
 
 // next/font Geist (espelha app/layout.tsx) — injeta CSS vars no decorator
 const geistSans = Geist({
@@ -33,11 +41,12 @@ const geistMono = Geist_Mono({
   display: 'swap',
 })
 
+// bug #5 fix: removido `default_palette_id: 'palette-mock'` — campo dropado
+// em migration 0024. Brand type em lib/brand/types.ts não tem este campo.
 const mockBrand: Brand = {
   id: 'brand-storybook',
   name: 'storybook',
   host: 'localhost:6006',
-  default_palette_id: 'palette-mock',
   logo_url: null,
   default_vertical: 'fitness',
   parent_label: null,
@@ -70,6 +79,21 @@ const mockFeatures: PlanFeatures = {
 const mockPlan: PlanSlug = 'B'
 
 const preview: Preview = {
+  // bonus: dark mode toggle via Storybook toolbar
+  globalTypes: {
+    theme: {
+      name: 'Theme',
+      defaultValue: 'dark',
+      toolbar: {
+        icon: 'circlehollow',
+        items: [
+          { value: 'light', title: 'Light' },
+          { value: 'dark', title: 'Dark' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -91,19 +115,48 @@ const preview: Preview = {
     },
   },
   decorators: [
+    // bug #6 fix: emite tokens DEFAULT_THEME como <style> antes do Story.
+    // buildThemeCSS é server-only — usamos string literal pré-gerada em
+    // .storybook/default-theme.css.ts (sem dep server-only). Regenerar se
+    // DEFAULT_THEME mudar (ver comentário no arquivo).
     (Story) => (
-      <NextIntlClientProvider locale="pt-BR" messages={{ common: commonMessages }}>
-        <RouteProvider brand={mockBrand} tenant={mockTenant}>
-          <EntitlementProvider features={mockFeatures} plan={mockPlan}>
-            <div
-              className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background p-8 font-sans text-foreground`}
-            >
-              <Story />
-              <Toaster richColors closeButton position="top-center" />
-            </div>
-          </EntitlementProvider>
-        </RouteProvider>
-      </NextIntlClientProvider>
+      <>
+        <style dangerouslySetInnerHTML={{ __html: DEFAULT_THEME_CSS }} />
+        <Story />
+      </>
+    ),
+    // bonus: aplica .dark class no documentElement via globalTypes theme toggle
+    (Story, context) => {
+      const isDark = context.globals['theme'] === 'dark'
+      useEffect(() => {
+        document.documentElement.classList.toggle('dark', isDark)
+      }, [isDark])
+      return <Story />
+    },
+    // bug #4 fix: NuqsAdapter wraps todos os stories — resolve
+    // "[nuqs] nuqs requires an adapter" em PreviewPanel + outros
+    // que usam useQueryState. Adapter react (não next/app) pois
+    // Storybook é Vite/browser sem App Router context.
+    (Story) => (
+      <NuqsAdapter>
+        <NextIntlClientProvider
+          locale="pt-BR"
+          messages={{ common: commonMessages, 'theme-studio': themeStudioMessages }}
+        >
+          <TooltipProvider>
+            <RouteProvider brand={mockBrand} tenant={mockTenant}>
+              <EntitlementProvider features={mockFeatures} plan={mockPlan}>
+                <div
+                  className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background p-8 font-sans text-foreground`}
+                >
+                  <Story />
+                  <Toaster richColors closeButton position="top-center" />
+                </div>
+              </EntitlementProvider>
+            </RouteProvider>
+          </TooltipProvider>
+        </NextIntlClientProvider>
+      </NuqsAdapter>
     ),
   ],
 }
