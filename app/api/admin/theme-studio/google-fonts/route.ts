@@ -8,6 +8,7 @@
 //   4. FALLBACK_FONTS + fetchGoogleFonts → @/lib/design/fonts
 
 import { unstable_cache } from 'next/cache'
+import { connection } from 'next/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 import type { PaginatedFontsResponse } from '@/lib/design/contract/fonts'
@@ -19,6 +20,9 @@ const cachedFetchGoogleFonts = unstable_cache(fetchGoogleFonts, ['google-fonts-c
 })
 
 export async function GET(request: NextRequest) {
+  // Signal dynamic route — opt out of prerendering (Next 16 cache components).
+  await connection()
+
   try {
     // ADAPT: env var deve ser adicionada ao lib/env.ts schema JIT quando feature ativar em prod.
     const apiKey = process.env.GOOGLE_FONTS_API_KEY ?? ''

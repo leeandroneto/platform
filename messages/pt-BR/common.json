@@ -18,7 +18,12 @@
     "forbidden": "Acesso negado.",
     "unauthorized": "Autenticação necessária.",
     "offline": "Você está offline. Algumas funcionalidades podem estar indisponíveis.",
-    "rate_limited": "Muitas requisições. Aguarde um momento."
+    "rate_limited": "Muitas requisições. Aguarde um momento.",
+    "theme": {
+      "apca": {
+        "failed": "Tema falhou validação APCA Silver. Verifique o contraste dos pares indicados."
+      }
+    }
   },
   "validation": {
     "required": "Campo obrigatório",

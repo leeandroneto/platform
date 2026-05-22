@@ -64,6 +64,8 @@ Each adapted file documents its origin in a top comment.
   - `components/admin/theme-studio/theme-preview/color-preview.tsx` (copied from `components/editor/theme-preview/color-preview.tsx`)
   - `components/admin/theme-studio/theme-preview/components-showcase.tsx` (copied from `components/editor/theme-preview/components-showcase.tsx`)
   - `components/admin/theme-studio/theme-preview/examples-preview-container.tsx` (copied from `components/editor/theme-preview/examples-preview-container.tsx`)
+  - `app/api/r/themes/[tenantId]/[version]/route.ts` (adapted from `app/r/themes/[id]/route.ts` — multi-tenant + RLS; force-static→dynamic; single `id` param → `tenantId`+`version` params; built-in preset lookup → `getTenantThemeWithVersion` DB helper; cache tag Next 16)
+  - `lib/design/contrast.ts` (modified — added `validateThemeAPCA` wrapper, `ApcaValidationFailure`, `ApcaValidationResult`, `APCA_CHECK_PAIRS` per ADR-0045 D.17 soft-warn gate)
 
 ## VoltAgent awesome-design-md (CC0)
 

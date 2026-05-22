@@ -5,14 +5,19 @@
 //   - validacao Silver thresholds (body 75 / large 60 / non-text 45)
 //   - ajuste automatico de cor pra atingir threshold (bisection L)
 //   - escolha de foreground readable (black|white) por |Lc| maximo
+//   - validateThemeAPCA wrapper (ADR-0045 D.17 — soft warn gate pra save actions)
 //
 // Consumers:
 //   - scripts/validate-palettes.ts (gate build-time, prebuild)
 //   - app/api/{tenants,brands}/[id]/theme.css/route.ts (runtime tenant theme)
-//   - server actions ao salvar paleta tenant custom
+//   - server actions ao salvar paleta tenant custom (validateThemeAPCA)
 
 import { APCAcontrast, sRGBtoY } from 'apca-w3'
 import { converter, formatHex, type Oklch, parse, type Rgb } from 'culori'
+
+import { AppError } from '@/lib/contracts/errors'
+import { ok, type Result } from '@/lib/contracts/result'
+import type { Theme } from '@/lib/design/contract/theme'
 
 // ─── Silver thresholds (APCA-W3 official naming) ────────────────────────────
 export const APCA_SILVER = {
@@ -119,4 +124,110 @@ export function ensureAccessible(fgOklch: string, bgOklch: string, minLc: number
   throw new Error(
     `ensureAccessible: nao foi possivel atingir Lc=${minLc} (melhor=${bestLc.toFixed(1)})`,
   )
+}
+
+// ─── APCA theme validation (ADR-0045 D.17) ──────────────────────────────────
+
+export interface ApcaValidationFailure {
+  /** Pair identifier, e.g. "light:background-foreground" */
+  pair: string
+  fg: string
+  bg: string
+  lc: number
+  threshold: number
+  tier: 'body' | 'large' | 'non-text'
+}
+
+export interface ApcaValidationResult {
+  passed: boolean
+  failures: ApcaValidationFailure[]
+}
+
+type ApcaCheckSpec = {
+  pair: string
+  fgKey: keyof Theme['light']
+  bgKey: keyof Theme['light']
+  tier: 'body' | 'large' | 'non-text'
+}
+
+/**
+ * Critical pairs tested in validateThemeAPCA (applied to both light and dark modes).
+ * Thresholds: body Lc≥75, large Lc≥60, non-text Lc≥45 (ADR-0040 §H APCA Silver).
+ */
+export const APCA_CHECK_PAIRS: readonly ApcaCheckSpec[] = [
+  // body Lc ≥75 — text content surfaces
+  { pair: 'background-foreground', fgKey: 'foreground', bgKey: 'background', tier: 'body' },
+  { pair: 'card-card-foreground', fgKey: 'card-foreground', bgKey: 'card', tier: 'body' },
+  {
+    pair: 'popover-popover-foreground',
+    fgKey: 'popover-foreground',
+    bgKey: 'popover',
+    tier: 'body',
+  },
+  // large Lc ≥60 — action surfaces (buttons, badges)
+  {
+    pair: 'primary-primary-foreground',
+    fgKey: 'primary-foreground',
+    bgKey: 'primary',
+    tier: 'large',
+  },
+  {
+    pair: 'secondary-secondary-foreground',
+    fgKey: 'secondary-foreground',
+    bgKey: 'secondary',
+    tier: 'large',
+  },
+  // non-text Lc ≥45 — decorative borders/rings vs page background
+  { pair: 'border-vs-background', fgKey: 'border', bgKey: 'background', tier: 'non-text' },
+  { pair: 'input-vs-background', fgKey: 'input', bgKey: 'background', tier: 'non-text' },
+  { pair: 'ring-vs-background', fgKey: 'ring', bgKey: 'background', tier: 'non-text' },
+] as const
+
+/**
+ * Validates a Theme snapshot against APCA Silver thresholds.
+ *
+ * ADR-0045 D.17: soft warn UX — does NOT hard-block by itself.
+ * The calling server action decides: hard reject OR soft warn
+ * based on `ignoreApcaWarning` flag passed by the UI.
+ *
+ * Tests both light and dark mode for each critical pair.
+ * Pairs with missing or non-OKLCH tokens are skipped (HEX fallback tolerance).
+ */
+export function validateThemeAPCA(theme: Theme): Result<ApcaValidationResult, AppError> {
+  const failures: ApcaValidationFailure[] = []
+  const modes: Array<'light' | 'dark'> = ['light', 'dark']
+
+  for (const mode of modes) {
+    const styles = theme[mode]
+    for (const spec of APCA_CHECK_PAIRS) {
+      const fg = styles[spec.fgKey] as string | undefined
+      const bg = styles[spec.bgKey] as string | undefined
+
+      // Skip pair if either token is missing or not OKLCH (HEX fallback — tolerate)
+      if (!fg || !bg) continue
+      if (!fg.startsWith('oklch(') || !bg.startsWith('oklch(')) continue
+
+      let lc: number
+      try {
+        lc = apca(fg, bg)
+      } catch {
+        // Skip pair on parse error (malformed OKLCH string)
+        continue
+      }
+
+      const threshold = APCA_SILVER[spec.tier]
+      if (lc < threshold) {
+        failures.push({
+          pair: `${mode}:${spec.pair}`,
+          fg,
+          bg,
+          lc,
+          threshold,
+          tier: spec.tier,
+        })
+      }
+    }
+  }
+
+  return ok({ passed: failures.length === 0, failures })
 }

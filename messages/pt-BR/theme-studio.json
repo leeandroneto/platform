@@ -102,6 +102,11 @@
     "previewTab": "Visualização",
     "invalidThemeData": "Dados do tema inválidos."
   },
+  "apca": {
+    "validationFailed": "Tema falhou validação APCA Silver",
+    "saveAnyway": "Salvar mesmo assim",
+    "failureCount": "{count} pares com contraste insuficiente"
+  },
   "aiTab": {
     "deferredMessage": "Geração de tema por IA disponível em breve."
   },

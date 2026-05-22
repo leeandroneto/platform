@@ -1,25 +1,28 @@
-// app/admin/theme-studio/actions.ts — Server actions Fase 4 do pivot ADR-0044.
+// app/admin/theme-studio/actions.ts — Server actions Fase 4+7 do pivot ADR-0044.
 // Adapted from tweakcn-ref/actions/themes.ts (Apache-2.0). See NOTICE.md.
 //
 // Pattern: Result<T, AppError> via ok()/fail() (rule server-actions + layers).
-// Decisões cravadas: G.1 imutável-on-insert, G.2 cap 50 versions, G.3 fork JIT
-// Fase 5, G.4 theme_mode separado em tenants.theme_mode, G.5 lazy bootstrap.
+// Decisões cravadas: G.1 imutável-on-insert, G.2 cap 50 versions, G.3 fork (Fase 7),
+// G.4 theme_mode separado em tenants.theme_mode, G.5 lazy bootstrap.
 //
-// 4 actions implementadas:
+// 5 actions implementadas (Fase 4 + Fase 7):
 //   - bootstrapTenantTheme(tenantId)
-//   - saveThemeVersion({ themeId, snapshot, promptText?, aiModelId? })
+//   - saveThemeVersion({ themeId, snapshot, promptText?, aiModelId?, ignoreApcaWarning? })
 //   - listThemeVersions(themeId)
 //   - restoreThemeVersion({ tenantId, versionId })
-//
-// NÃO criado: forkTheme, createTenantTheme (Fase 5 conforme G.3).
+//   - forkTheme({ themeId, name? }) — G.3, Fase 7
 
 'use server'
 
 import 'server-only'
 
+import { z } from 'zod'
+
 import { AppError } from '@/lib/contracts/errors'
 import { fail, ok, type Result } from '@/lib/contracts/result'
 import { type Theme, ThemeSchema } from '@/lib/design/contract/theme'
+import { validateThemeAPCA } from '@/lib/design/contrast'
+import { requireEntitlement } from '@/lib/entitlements/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 import {
@@ -81,6 +84,12 @@ export interface SaveThemeVersionInput {
   snapshot: unknown // Zod-validated dentro da action
   promptText?: string | null
   aiModelId?: string | null
+  /**
+   * Soft-warn bypass (ADR-0045 D.17).
+   * When true, saves the theme even if APCA Silver validation fails.
+   * UI must surface failures to user before allowing bypass.
+   */
+  ignoreApcaWarning?: boolean
 }
 
 export async function saveThemeVersion(
@@ -113,11 +122,26 @@ export async function saveThemeVersion(
 
     await assertTenantMatch(theme.tenant_id)
 
-    // 3. Compute next version_number
+    // 3. APCA dual-gate (ADR-0045 D.17 soft warn)
+    // Runs after ownership so we don't leak info about non-owned themes.
+    const apcaResult = validateThemeAPCA(parsed.data as unknown as Theme)
+    if (!apcaResult.ok) return apcaResult
+
+    const { passed: apcaPassed, failures: apcaFailures } = apcaResult.data
+    if (!apcaPassed && !input.ignoreApcaWarning) {
+      return fail(
+        AppError.invalidInput(
+          { key: 'theme.apca.failed', fallback: 'Tema falhou validação APCA Silver' },
+          { failures: apcaFailures },
+        ),
+      )
+    }
+
+    // 4. Compute next version_number
     const nextRes = await getNextVersionNumber(admin, input.themeId)
     if (!nextRes.ok) return nextRes
 
-    // 4. INSERT new version (trigger cap 50 protege)
+    // 5. INSERT new version (trigger cap 50 protege)
     const insertRes = await insertVersion(admin, {
       themeId: input.themeId,
       versionNumber: nextRes.data,
@@ -127,7 +151,7 @@ export async function saveThemeVersion(
     })
     if (!insertRes.ok) return insertRes
 
-    // 5. Touch tenant_themes.updated_at (signal lineage activity)
+    // 6. Touch tenant_themes.updated_at (signal lineage activity)
     await admin
       .from('tenant_themes')
       .update({ updated_at: new Date().toISOString() })
@@ -263,6 +287,123 @@ export async function restoreThemeVersion(
       activeVersionId: version.id,
       activeVersionNumber: version.version_number,
     })
+  } catch (err) {
+    return fail(AppError.from(err))
+  }
+}
+
+// ─── 5. forkTheme ────────────────────────────────────────────────────────────
+// Clona theme + última version pra nova row tenant_themes (G.3, Fase 7).
+// parent_theme_id self-FK registra lineage (migration 0025).
+// Retorna { id } do novo theme — UI pode navegar direto pro fork.
+
+const ForkThemeInputSchema = z.object({
+  themeId: z.string().uuid({ message: 'themeId must be a valid UUID' }),
+  name: z.string().min(1).max(255).optional(),
+})
+
+export interface ForkThemeResult {
+  id: string
+}
+
+/**
+ * Fork: clona theme + última version pra nova row tenant_themes.
+ * parent_theme_id self-FK registra lineage (migration 0025 G.3).
+ *
+ * @param input.themeId — theme a clonar
+ * @param input.name — nome opcional (default: "<original> (fork)")
+ */
+export async function forkTheme(
+  input: z.infer<typeof ForkThemeInputSchema>,
+): Promise<Result<ForkThemeResult>> {
+  try {
+    // 1. Validate input
+    const parsed = ForkThemeInputSchema.safeParse(input)
+    if (!parsed.success) {
+      return fail(
+        AppError.invalidInput(
+          { key: 'themes.fork_invalid_input', fallback: 'Invalid fork input' },
+          { issues: parsed.error.issues },
+        ),
+      )
+    }
+
+    const admin = createAdminClient()
+
+    // 2. Load source theme (validates ownership via tenant match)
+    const { data: sourceTheme, error: themeErr } = await admin
+      .from('tenant_themes')
+      .select('id, tenant_id, name')
+      .eq('id', parsed.data.themeId)
+      .maybeSingle()
+
+    if (themeErr || !sourceTheme) {
+      return fail(AppError.notFound({ key: 'themes.theme_not_found', fallback: 'Theme not found' }))
+    }
+
+    // requireEntitlement gate (static import at top) — throws AppError.forbidden if denied
+    try {
+      await requireEntitlement('theme_studio')
+    } catch (err) {
+      return fail(AppError.from(err))
+    }
+
+    await assertTenantMatch(sourceTheme.tenant_id)
+
+    // 3. Load latest version snapshot from source theme
+    const { data: latestVersion, error: vErr } = await admin
+      .from('tenant_theme_versions')
+      .select('snapshot')
+      .eq('theme_id', parsed.data.themeId)
+      .order('version_number', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (vErr || !latestVersion) {
+      return fail(
+        AppError.notFound({
+          key: 'themes.version_not_found',
+          fallback: 'No version found for source theme',
+        }),
+      )
+    }
+
+    // 4. INSERT new tenant_themes row with parent_theme_id = themeId
+    const forkName = parsed.data.name ?? `${sourceTheme.name} (fork)`
+    const { data: newTheme, error: insertThemeErr } = await admin
+      .from('tenant_themes')
+      .insert({
+        tenant_id: sourceTheme.tenant_id,
+        name: forkName,
+        source: 'custom',
+        parent_theme_id: parsed.data.themeId,
+      })
+      .select('id')
+      .single()
+
+    if (insertThemeErr || !newTheme) {
+      return fail(
+        insertThemeErr
+          ? AppError.from(insertThemeErr)
+          : AppError.internal({
+              key: 'themes.insert_theme_failed',
+              fallback: 'Failed to insert forked tenant_themes row',
+            }),
+      )
+    }
+
+    // 5. INSERT version v1 with snapshot copied from source
+    const { error: insertVersionErr } = await admin.from('tenant_theme_versions').insert({
+      theme_id: newTheme.id,
+      version_number: 1,
+      snapshot: latestVersion.snapshot,
+    })
+
+    if (insertVersionErr) {
+      return fail(AppError.from(insertVersionErr))
+    }
+
+    return ok({ id: newTheme.id })
   } catch (err) {
     return fail(AppError.from(err))
   }
