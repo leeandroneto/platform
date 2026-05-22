@@ -10,6 +10,50 @@ Cita ADR-NNNN ou issue-NN quando aplicável. 1 entrada por mudança user-facing 
 
 ## [Unreleased]
 
+### Docs (2026-05-21 — Architecture research dispatched)
+
+- Research-43 master architecture + stack comparative analysis (Opus background) — dispatch 2026-05-21. Clona 5 repos de referência (Novel, Tiptap, Makerkit, Vercel SaaS, shadcn) + cria mapa mestre 7 layers + análise comparativa peça-por-peça (auth, billing, multi-tenant, theme, prose editor, block system, AI, forms, DB, PWA). Output: `docs/architecture/01-master-system-map.md` + `docs/research/43-stack-comparative-analysis.md`.
+
+### Added (2026-05-21 — ADR-0045 Registry Strategy DRAFT)
+
+- ADR-0045 (`docs/adr/0045-registry-strategy.md`) — 17 decisões cravadas em status `draft` aguardando review user. Cobre: v0 DEMOTED, `block_kinds_catalog` JIT, trigger "3 consumers" formalizado, Novel ADOPT NOW + install JIT, AI orchestration HÍBRIDO (`generateObject` Zod + tool calling), model policy (Haiku router / Sonnet gen / Gemini Flash theme), vertical extension A+B híbrido, smart blocks composição declarada (sem tabela), 7 L2 page blocks MVP, registry hosting plataforma única, 3 namespaces (`@shadcn`/`@platform`/`@desafit`), composition rules L1↘npm/L2↘L1/L3↘L2, invariante `pages.kind === registry-item.name`, versionamento JIT, registry type `registry:style`, fallback Gemini 2.5 Flash, APCA soft warn UX. 4 open questions remanescentes (Tiptap collab, Novel+precedence theme PoC, mídia Novel, contador JSDoc→table).
+
+### Changed (2026-05-21 — Pivot ADR-0044 Fase 2 + ESLint config refactor)
+
+- Pivot Fase 2 (Batch Theming) resolvido — 5 decisões cravadas em `docs/research/37-mobile-pwa-extras-opt-in.md`:
+  - **F.1** (commit `3b66024`) — `--sticky-cta-height` e `--mini-player-height` deletados de `app/globals.css` (TweakCN não tem token mobile algum; sem feature consumer hoje; re-add JIT quando feature real existir)
+  - **F.2 + F.3** — 18 tokens órfãos confirmados NÃO retornam (Tailwind utilities cobrem `disabled:opacity-50`, `hover:opacity-80`, `aspect-video`, etc)
+  - **F.4** (commit `256faae`) — Opção C: sem campo `extensions` no Zod schema hoje; tokens opt-in viram universal com fallback chain `var(--token, default)`. Migrar pra Opção A (`common.extensions` JSONB) quando regra-de-3 cumprir (ADR-0046 futura).
+  - **F.5** (commit `7615d2f`) — APCA gate regex automático `/color|border|ring/` + allowlist explícita (`shadow-color`, `glow-color`, `outline-color`). Safe-by-default; preset author não precisa lembrar de declarar.
+  - **Q9** (commit `c0da78c`) — `eslint.config.mjs` ganhou exception `react/jsx-no-literals` + `i18next/no-literal-string` em 6 paths de renderers/seeds (pre-empt evita PR bloqueado quando Fase 5/7 entregarem renderers reais).
+- `.claude/rules/design-tokens.md` atualizada (commit `9e4ae3f`) — removidos `--sticky-cta-height` e `--mini-player-height` da tabela universal; exemplos de extension opt-in trocados pra `--touch-min`/`--frosted-blur` (que existem); fallback chain instrução generalizada.
+
+### Changed (2026-05-21 — ESLint config refactor research-39+42)
+
+- ESLint config (commit `7b5affa`) — bump limites estruturais: `max-lines` 300→400 (600 em `actions/lib/design/lib/contracts/lib/ai`), `max-lines-per-function` 60→80, `complexity` 12→16 (razão: refactor Fase 4 forçou particionamento por regra, não necessidade).
+- Loose temporário `text-*`/`rounded-*` Tailwind bypass (mantém `[#hex]`, `[rgb(`, `uppercase` strict) — até wrappers `<Heading>`/`<Eyebrow>` re-introduzidos pós-pivot.
+- `plan-gates-required` ERROR→WARN — `features/` vazio dia 0; phantom enforcement com ERROR. Promover de volta ERROR quando primeira feature paga em produção.
+- 7 novas regras propostas em `docs/research/39-eslint-conventions-multi-tenant-stack.md` (JIT — quando stack consumer real chegar): novel/persist-prosemirror-json, novel/no-tailwind-class-inline-attrs, origin-ui|magicui/no-bulk-import, registry/no-block-kind-without-whitelist, next-themes/attribute-must-be-class, tenant-context-in-theme-mutation, no-raw-fontfamily (prometida ADR-0044 §12), no-vh-in-mobile-aware (prometida ADR-0044 §12).
+- Validação research-42 (ESLint best practices 2026): research-39 90% alinhado. Q5 REFUTADO (Magic UI já migrou pra `motion` v12 — bloqueio framer-motion seria redundante). 3 achados novos: React Compiler hooks v7 bump, Magic UI conflito mitigado, Next.js issue #80741 (`'use client'` rule oficial JIT esperar). `eslint-plugin-react-hooks@7.1.1` adicionado como devDependency explícita.
+
+### Added (2026-05-21 — Pivot ADR-0044 Fase 5 dia 0 prep)
+
+- `lib/design/shadows.ts` (commit `975ade6`) — `generateShadowLevels()` extraído de `build-theme-css.ts` (adapted from `tweakcn-ref/utils/shadows.ts`). Servir 2-3 fases per research-41 sequencing.
+- `lib/design/color-format.ts` confirmado completo (`hex/hsl/oklch/rgb` via culori + `oklchToHex` re-export).
+- `lib/design/registry/generate-registry-item.ts` criado (~110 LOC) — gera payload `registry-item.json` shadcn-compatible com `type: 'registry:style'` (research-41 bloqueador 4 confirmado), OKLCH literal, `cssVars.theme` + `cssVars.light` + `cssVars.dark`. 3 testes Vitest passando.
+- Storybook 10 confirmado instalado/configurado (já entrega da Etapa 12 do plano dia 0).
+- `tests/setup.ts` ganhou `vi.mock('server-only', () => ({}))` pra unit tests poderem importar módulos server-only.
+
+### Research docs (2026-05-21 — Pivot ADR-0044 batch parallelization)
+
+- `docs/research/37-mobile-pwa-extras-opt-in.md` — F.1-F.5 cravadas (Batch Theming resolvido)
+- `docs/research/38-registry-novel-ai-integration.md` — H.1-H.11 + bonus, alimenta ADR-0045
+- `docs/research/39-eslint-conventions-multi-tenant-stack.md` — Q1-Q10 + 8 regras novas propostas
+- `docs/research/40-shadcn-registry-deep-dive.md` — G.1-G.8 MCP `shadcn@canary registry:mcp` + private registries + composition
+- `docs/research/41-audit-tweakcn-fases-5-6-7.md` — 55 arquivos auditados, esforço revisado 71h, 5 bloqueadores críticos
+- `docs/research/42-eslint-best-practices-validation.md` — validação research-39 (90% alinhado)
+- `docs/_sessions/2026-05-21-ai-stack-registry-novel-reflection.md` — reflexão estratégica usuário (Registry vs v0 vs Templates + Novel position)
+
 ### Refactor (2026-05-21 — Theme schema flat alinhado TweakCN)
 
 - `lib/design/contract/theme.ts`: `ThemeCommonSchema` removido, `ThemeColorsSchema` renomeado `ThemeStylePropsSchema` (45 keys flat). `ThemeSchema` vira `{ light, dark }` puro — sem `common`. `ThemePartialSchema` atualizado. Alinha 100% com `tweakcn-ref/types/theme.ts` upstream. Menos atrito pra importar presets TweakCN oficiais (Fase 6) e zero conversão pro shadcn registry (Fase 7).

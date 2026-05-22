@@ -7,17 +7,27 @@
 
 ## Pivot ADR-0044 (TweakCN shadcn-canonical) — em execução
 
-| Fase     | Tema                                                                                         | Status     |
-| -------- | -------------------------------------------------------------------------------------------- | ---------- |
-| -1       | Clone TweakCN read-only (SSOT)                                                               | ✅         |
-| 0        | Surgical delete `components/**`                                                              | ✅         |
-| 1        | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical                        | ✅         |
-| 1.5      | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21)                | ✅         |
-| 2        | Estudo mobile/PWA + decisão extras opt-in (D2)                                               | ⏭️ próximo |
-| 4        | Migration 0025 theme storage + versioning + 4 actions + next-themes (2026-05-21)             | ✅         |
-| 5 dia 0  | Extract shadows/color/registry-gen + Storybook confirm (research-41 sequencing) (2026-05-21) | ✅         |
-| refactor | Theme schema flat alinhado TweakCN upstream — elimina `ThemeCommonSchema` (2026-05-21)       | ✅         |
-| 3,5-8    | Builder UI, presets, integration completa                                                    | ⏳         |
+| Fase     | Tema                                                                                                             | Status |
+| -------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
+| -1       | Clone TweakCN read-only (SSOT)                                                                                   | ✅     |
+| 0        | Surgical delete `components/**`                                                                                  | ✅     |
+| 1        | globals.css limpo + DEFAULT_THEME + build-theme-css.ts emit canonical                                            | ✅     |
+| 1.5      | Migration 0024 drop design system orphans + pré-fix 6 PWA routes (2026-05-21)                                    | ✅     |
+| 2        | Batch Theming F.1-F.5+Q9: 18 órfãos não voltam, 2 provisórios deletados, opção C extension, APCA regex+allowlist | ✅     |
+| 4        | Migration 0025 theme storage + versioning + 4 actions + next-themes (2026-05-21)                                 | ✅     |
+| 5 dia 0  | Extract shadows/color/registry-gen + Storybook confirm (research-41 sequencing)                                  | ✅     |
+| refactor | Theme schema flat alinhado TweakCN upstream — elimina `ThemeCommonSchema`                                        | ✅     |
+| ESLint   | Config refactor Q1-Q3+Q6-Q8+Q10 (research-39+42) + react-hooks v7 bump                                           | ✅     |
+| 3,5-8    | Builder UI, presets, integration completa                                                                        | ⏳     |
+
+### Background workstreams ativos (2026-05-21)
+
+- **research-43 master architecture + stack comparative** 🟡 rodando (Opus) — clona 5 repos referência (Novel, Tiptap, Makerkit, Vercel SaaS, shadcn) + cria mapa mestre 7 layers + análise comparativa peça-por-peça
+
+### Decisões pendentes consolidadas
+
+- **ADR-0045 draft** — 17 decisões cravadas em status `draft` aguardando review user (Registry Strategy + AI Orchestration + Novel)
+- **Batch AI/Registry** (H.1-H.11 + G.1-G.8 + 4 do research-41) — espera ADR-0045 + research-43
 
 ---
 
@@ -75,21 +85,33 @@
 
 ## ADRs (estado atual)
 
-- **Total:** 42 (0001-0042 — ADR-0036/37/38/39/40/41/42 adicionados pós Phase A pré-pesquisa)
-- **accepted:** 36+
-- **superseded:** 6+ (0021 → 0025; 0025 → 0033; 0027 → 0028; 0028 → 0029; 0013 → 0038; ADR-0034 arch → ADR-0039)
-- **Último:** ADR-0042 — elevation tokens 3 níveis (Etapa 10 plano)
+- **Total:** 45 (0001-0045 — ADR-0043 design system pré-pivot superseded, ADR-0044 pivot TweakCN accepted, ADR-0045 registry strategy draft)
+- **accepted:** 38+
+- **draft:** ADR-0045 (Registry Strategy + AI Orchestration + Novel — 17 decisões aguardando review user)
+- **superseded:** 7+ (0021 → 0025; 0025 → 0033; 0027 → 0028; 0028 → 0029; 0013 → 0038; ADR-0034 arch → ADR-0039; ADR-0043 → ADR-0044)
+- **Último accepted:** ADR-0044 — Pivot TweakCN-way + shadcn-canonical (2026-05-21)
 
 ## Blueprints
 
-- **Total:** 18 (`docs/blueprint/01-18.md`)
-- **Planejados Etapa 15:** `19-wrapper-strategy.md` + `20-i18n-strategy.md`
+- **Total:** 21 (`docs/blueprint/00-PROJETO.md` + 01-21)
+- **Recentes:** 19-wrapper-strategy, 20-i18n-strategy, 21-engine-catalog
 
 ## `.claude/rules/`
 
-- **Total:** 15 rules path-loaded
+- **Total:** 19 rules path-loaded
 - **Adições ADR-0040 §L:** i18n, contrast, shadcn-zone, design-tokens, brand, entitlements
-- **Adições pós ADR-0040:** tenant-content, design-references
+- **Pós-pivot ADR-0044:** tenant-content, forms-engine, docs-writing (design-references DELETADA)
+
+## Research docs
+
+- **Total:** 42 (`docs/research/01-42.md`)
+- **Pivot-related (2026-05-21):** 28 tweakcn-eval · 29-31 estudos pivot · 33 theme-versioning (G.1-G.5) · 37 mobile/PWA extras opt-in (F.1-F.5) · 38 registry+Novel+AI (H.1-H.11) · 39 ESLint conventions (Q1-Q10) · 40 shadcn registry deep-dive (G.1-G.8) · 41 batch audit Fases 5+6+7 · 42 ESLint best-practices validation (90% alinhado)
+- **Em curso:** 43 master architecture + stack comparative (Opus background)
+
+## Master Architecture
+
+- **`docs/architecture/01-master-system-map.md`** — em criação via research-43 (Opus background)
+- **`docs/design-system/20-concept-map.md`** — concept map atualizado pós-pivot ADR-0044 + refactor flat schema
 
 ## Migrations
 
