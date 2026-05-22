@@ -52,11 +52,11 @@
   /* dvh evita Safari URL bar bug (ESLint no-vh-in-mobile-aware enforce). */
   --mobile-full-height: 100dvh;
 
-  /* Mobile chrome heights — usados em PWA aluno (bottom nav, mini-player). */
+  /* Mobile chrome heights — usados em PWA aluno (bottom nav). */
   --mobile-nav-height: 56px;
   --fab-size: 56px;
-  --sticky-cta-height: 64px;
-  --mini-player-height: 64px;
+  /* --sticky-cta-height + --mini-player-height removidos 2026-05-21 (research-37 F.1):
+     re-add JIT quando feature consumer real existir (funil sticky CTA, PWA audio). */
 
   /* Press feedback Material — usado em :active scale transform. */
   --press-scale: 0.97;

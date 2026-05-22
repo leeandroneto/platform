@@ -425,13 +425,15 @@ e sticky CTA wrappers — manter os 2 tokens agora poupa um round-trip.
 2+ presets variarem */`, ou prefere deletar agora e re-adicionar JIT quando
 wrapper voltar?
 
+**✅ Decisão (user 2026-05-21):** Opção B — deletar agora. Razão: TweakCN globals.css tem ZERO tokens mobile (confirmado via grep — eles são desktop-only), e princípio §8 (extract+adapt, não inventar paralelo) sugere deletar quando não há feature consumer. Re-add JIT quando feature real chegar: `--sticky-cta-height` quando funil/landing tiver botão fixo (Fase 7+), `--mini-player-height` quando PWA aluno tiver audio. Edit aplicado a `app/globals.css` linha 55-58 com comentário de tombstone.
+
 ### F.2 — Promover `--frosted-opacity-strong` e `--frosted-opacity-light` agora?
 
 Hoje não estão em `globals.css`. Blueprint pre-pivot mencionava. Se algum
 preset Apple-glass-heavy chegar (decisão Fase 3), eles voltam. Recomendação:
 **descarte agora**, re-add JIT.
 
-**Pergunta:** ok descartar e re-add JIT, ou prefere pre-load por completude?
+**✅ Decisão (user 2026-05-21):** descarte confirmado. Re-add JIT só quando preset Apple-glass-heavy real existir.
 
 ### F.3 — `--press-opacity` (0.6) e `--disabled-opacity` (0.5) — re-add?
 
@@ -439,7 +441,7 @@ Tailwind v4 cobre `disabled:opacity-50` nativamente. `--press-opacity` é
 override mais agressivo do default. Recomendação: **descartar**, usar utility
 Tailwind canonical.
 
-**Pergunta:** ok descartar?
+**✅ Decisão (user 2026-05-21):** descarte confirmado. Tailwind utilities cobrem. Mesma decisão cobre os 18 tokens órfãos da tabela "DESCARTE final dia 0" — nenhum retorna ao `globals.css`.
 
 ### F.4 — Opt-in formal (opção A) chega quando?
 
