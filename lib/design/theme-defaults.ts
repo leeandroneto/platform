@@ -120,3 +120,22 @@ export const DEFAULT_THEME: Theme = {
   light: DEFAULT_LIGHT_COLORS,
   dark: DEFAULT_DARK_COLORS,
 }
+
+// ─── COMMON_STYLES: keys shared between light/dark (TweakCN-way) ─────────────
+// Copied from tweakcn-ref/config/theme.ts (Apache-2.0). See NOTICE.md.
+// UI treats these as shared via 1 picker (no separate light/dark controls).
+export const COMMON_STYLES = [
+  'font-sans',
+  'font-serif',
+  'font-mono',
+  'radius',
+  'shadow-opacity',
+  'shadow-blur',
+  'shadow-spread',
+  'shadow-offset-x',
+  'shadow-offset-y',
+  'letter-spacing',
+  'spacing',
+] as const
+
+export type CommonStyle = (typeof COMMON_STYLES)[number]
