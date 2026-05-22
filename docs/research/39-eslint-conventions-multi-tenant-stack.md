@@ -625,6 +625,9 @@ Opções:
 
 Recomendação: **A** (cheap + previne lint paralisia futura). User decide.
 
+✅ **Decisão (user 2026-05-21): Opção A — cravado em `eslint.config.mjs`**
+Override adicionado como último bloco antes de `storybook.configs`. Desliga `react/jsx-no-literals` + `i18next/no-literal-string` nos 6 paths de renderers e seeds (ver `.claude/rules/i18n.md` §"Paths onde literal eh PERMITIDO"). Referência: commit `chore(lint): exception react/jsx-no-literals em renderers (research-39 q9)`.
+
 ### Q10. Sheriff boundaries — implementar agora ou Fase 1?
 
 Blueprint 13 §3 menciona `@softarc/eslint-plugin-sheriff` instalado (package.json confirma 0.19.6) — mas `sheriff.config.ts` não existe ainda. Hoje só `no-restricted-imports` path-based cobre boundary.

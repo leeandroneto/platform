@@ -807,6 +807,25 @@ const eslintConfig = defineConfig([
       'no-restricted-syntax': 'off',
     },
   },
+  // ─── Renderers + seeds — conteúdo do tenant (research-39 Q9 · i18n.md §"Paths onde literal eh PERMITIDO") ───
+  // Decisão user 2026-05-21 Opção A: pre-empt exception pra evitar PR bloqueado
+  // quando renderers reais entrarem (Fase 5+7 do pivot TweakCN).
+  // Estes paths consomem JSONB do banco (labels, copy, FAQ escritos pelo profissional/IA),
+  // NAO strings de chrome do app — forcar t() aqui confunde camadas (ver i18n.md §"Conteudo gerado por tenant").
+  {
+    files: [
+      'components/app-form-renderer*.tsx',
+      'components/app-form-block-*.tsx',
+      'components/app-page-renderer*.tsx',
+      'components/app-page-block-*.tsx',
+      'lib/forms/seed-templates/**/*.ts',
+      'lib/pages/seed-templates/**/*.ts',
+    ],
+    rules: {
+      'react/jsx-no-literals': 'off',
+      'i18next/no-literal-string': 'off',
+    },
+  },
   ...storybook.configs['flat/recommended'],
 ])
 
