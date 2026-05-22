@@ -67,6 +67,20 @@ Each adapted file documents its origin in a top comment.
   - `app/api/r/themes/[tenantId]/[version]/route.ts` (adapted from `app/r/themes/[id]/route.ts` — multi-tenant + RLS; force-static→dynamic; single `id` param → `tenantId`+`version` params; built-in preset lookup → `getTenantThemeWithVersion` DB helper; cache tag Next 16)
   - `lib/design/contrast.ts` (modified — added `validateThemeAPCA` wrapper, `ApcaValidationFailure`, `ApcaValidationResult`, `APCA_CHECK_PAIRS` per ADR-0045 D.17 soft-warn gate)
 
+## Storybook stories — theme-studio (custom, §4.11 Chunk 8)
+
+Stories co-localizadas criadas em 2026-05-22 pra os 7 componentes top-level do theme-studio:
+
+- `components/admin/theme-studio/contrast-checker.stories.tsx` (custom story — Default + WithDefaultTheme)
+- `components/admin/theme-studio/control-panel.stories.tsx` (custom story — Default + AiEnabled + MobileViewport)
+- `components/admin/theme-studio/preview-panel.stories.tsx` (custom story — Default + DesktopWide + MobileViewport)
+- `components/admin/theme-studio/code-panel.stories.tsx` (custom story — Default + WithRegistryId + DarkMode)
+- `components/admin/theme-studio/font-picker.stories.tsx` (custom story — Default + WithValue + SerifCategory + MonoCategory)
+- `components/admin/theme-studio/preset-select.stories.tsx` (custom story — Default + WithoutCycleButtons + Disabled)
+- `app/admin/theme-studio/view.stories.tsx` (custom story — Default + MobileLayout; fullscreen layout; ThemeStudioView wraps ThemeFormProvider internally)
+
+`.storybook/main.ts` atualizado: adicionado `../app/**/*.stories.@(ts|tsx|mdx)` pra detectar view.stories.tsx fora de `components/`.
+
 ## VoltAgent awesome-design-md (CC0)
 
 - Origin: https://github.com/VoltAgent/awesome-design-md
