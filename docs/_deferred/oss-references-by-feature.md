@@ -11,10 +11,23 @@ markmap:
 
 ### Ação
 
+- **FORK** = clonar repo OSS como fork próprio + host em subdomínio + iframe + postMessage (ADR-0047)
 - **COPY** = clone arquivos pro nosso repo + atribuição NOTICE
 - **INSTALL** = `pnpm add` como dependency
 - **STUDY** = ler código mas não copia (AGPL/GPL ou stack diferente)
+- **SELF-HOST** = sobe binário OSS as-is (sem patches) em subdomínio próprio
 - **SKIP** = não usar (license incompatível ou abandonado)
+
+### Critério A-D pra escolher FORK (ADR-0047)
+
+Antes de COPY/clone+adapt, checar A-D:
+
+- **A** OSS é APP completa (não lib/componente)?
+- **B** Stack idêntico (Next.js + shadcn + Tailwind v4)?
+- **C** Self-contained (UI não compartilha state com app principal)?
+- **D** License MIT/Apache/BSD (sem AGPL/BSL = risco SaaS)?
+
+**A+B+C+D = 4/4 → FORK ganha.** Menos de 4 → COPY/INSTALL/STUDY conforme caso.
 
 ### Licenças permitem o quê
 
@@ -52,27 +65,56 @@ markmap:
 - **Ação:** ✅ JÁ INSTALADO
 - **Por quê:** generateObject + streamText + tool calling + AI Gateway (multi-model fallback)
 
-#### Inngest + `@inngest/agent-kit`
+#### Inngest + `@inngest/agent-kit` — REJECTED 2026-05-22
 
 - **License:** Apache 2.0
-- **Stack:** TypeScript multi-platform
-- **Ação:** INSTALL JIT (quando AI Reports entrar — item 3 ADR-0046 — e AI Builders — item 5)
-- **Por quê:** Não só durable workflows pra AI longa (5-30s) com retry/resumable. `@inngest/agent-kit` fornece `createAgent` + `createNetwork` + `createState` + tool registration com Zod — orquestração multi-agent stateful proven. Pattern validado por nextjs-vibe (Code With Antonio) + research-44 (Lovable)
+- **Ação:** ❌ NÃO ADOTAR (substituído por stack nativo Vercel + Supabase)
+- **Razão da rejeição:** análise 2026-05-22 cravou que stack Vercel + Supabase cobre 100% dos casos pro MVP solo dev sem dep externa. **AI Gateway** (retry/fallback de provider), **Workflow DevKit** (durabilidade multi-step pause/resume), **AI SDK v6** (tool calling + agent loop built-in), **Supabase pgmq** (queues), **Vercel Cron Jobs** (scheduled) — todos nativos, billing unificado, sem signing webhook.
+- **Gatilho de revisitar:** (a) pipeline regularmente >300s não coberto por WDK · (b) volume >100 reports/dia com rate limit constante · (c) multi-cloud portability virar requisito · (d) Workflow DevKit faltar feature crítica (cancel granular, throttle complex)
+- **Patterns do `@inngest/agent-kit` permanecem válidos** (3-agent chain, AgentState, `<task_summary>` marker, custom router) mas portáveis pra **AI SDK v6** direto via `generateText` + tools
+
+#### Vercel AI Gateway — NATIVE primary (retry/fallback de provider)
+
+- **Ação:** ✅ JÁ TEMOS (parte do plano)
+- **Por quê:** `providerOptions.gateway.models: [primary, fallback1, fallback2]` cobre retry de rate limit / timeout / provider down. `caching: 'auto'` corta cost 90% em prompts repetidos. `providerTimeouts` permite failover rápido. Observabilidade via `getGenerationInfo` (cost/latency/tokens). Substitui necessidade de orquestrador externo pra retry de chamadas AI
+
+#### Vercel Workflow DevKit (WDK) — NATIVE primary (durabilidade multi-step)
+
+- **License:** Native Vercel platform
+- **Ação:** AVALIAR JIT (gatilhos: pipeline crítico >300s, side effects irreversíveis cross-step, pause/resume com state)
+- **Por quê:** Diretiva `'use workflow'` torna função durável. `workflow.sleep("7 days")` pausa sem consumir compute. Hooks pra resume via API route externa. Roda em Fluid Compute (mesma infra das functions). Cobre o caso AI Report (item 3 ADR-0046) se virar gargalo
+- **Hoje não necessário:** MVP solo, volume baixo, server actions + Vercel 300s timeout cobrem
+
+#### Supabase pgmq — NATIVE alt (queues)
+
+- **License:** PostgreSQL extension (open source)
+- **Ação:** AVALIAR JIT (gatilho: queue real necessária — não no roadmap atual)
+- **Por quê:** Postgres Message Queue nativo Supabase, sem infra extra. Alternativa zero-dep ao Inngest queue. Não usar até gatilho concreto
+
+#### Vercel Queues — NATIVE alt (queues, beta)
+
+- **Status:** Public beta (anunciado session knowledge update)
+- **Ação:** AVALIAR JIT junto com pgmq quando queue real necessária
+- **Por quê:** Durable event streaming Vercel-native, at-least-once delivery, sobre Fluid Compute
 
 #### nextjs-vibe (Code With Antonio)
 
 - **License:** ❌ sem license declarada (= all rights reserved default)
 - **Stack:** Next 15 + Inngest agent-kit + E2B + Clerk + Prisma
 - **Ação:** STUDY pattern (não COPY — license bloqueia)
-- **Por quê:** Implementação completa Lovable/v0 clone tutorial-grade. Patterns aplicáveis a AI Builders (item 5 ADR-0046): (1) **3-agent chain** `codeAgent` (max 15 iter, stateful) → `fragmentTitleAgent` → `responseAgent`; (2) **AgentState** `{summary, files}` persistido via `createState()` cross-iteration; (3) tools `terminal`/`createOrUpdateFiles`/`readFiles`; (4) router termina loop ao detectar `<task_summary>` marker (token-efficient); (5) sandbox Docker template pré-cooking shadcn. **Substituir cirurgicamente:** E2B (paid) → Vercel Sandbox (GA jan/2026, native) · Clerk → Supabase Auth · Prisma → Supabase + RLS
+- **Por quê:** Implementação completa Lovable/v0 clone tutorial-grade. Patterns aplicáveis a AI Builders (item 5 ADR-0046): (1) **3-agent chain** `codeAgent` (max 15 iter, stateful) → `fragmentTitleAgent` → `responseAgent`; (2) **AgentState** `{summary, files}` persistido via `createState()` cross-iteration; (3) tools `terminal`/`createOrUpdateFiles`/`readFiles`; (4) router termina loop ao detectar `<task_summary>` marker (token-efficient); (5) sandbox Docker template pré-cooking shadcn. **Substituir cirurgicamente:**
+  - E2B (paid) → Vercel Sandbox (GA jan/2026, native)
+  - Clerk → Supabase Auth
+  - Prisma → Supabase + RLS
+  - **Inngest + `@inngest/agent-kit` → AI SDK v6 (`generateText` + tools + step loop built-in) + AI Gateway (retry/fallback)** — patterns valem cross-orquestrador, não estamos atrelados ao agent-kit
+  - **OpenAI direto → v0-1.5-md (geração JSX) + Sonnet/Haiku (orquestração) via AI Gateway**
 - **Insights destilados:** `docs/_deferred/codewithantonio-insights/` (3 lições já capturadas — 06 AI Jobs, 08 Agent Tools, 19 Agent Memory). Ler INDEX.md ao iniciar item 5 ADR-0046
 
-#### Trigger.dev
+#### Trigger.dev — REJECTED 2026-05-22
 
 - **License:** Apache 2.0
-- **Stack:** Node + TypeScript
-- **Ação:** INSTALL alt (escolher 1 entre Inngest/Trigger)
-- **Por quê:** Alternativa Inngest, jobs durables — Vercel-friendly
+- **Ação:** ❌ NÃO ADOTAR (mesma razão que Inngest — stack nativo Vercel + Supabase cobre)
+- **Gatilho de revisitar:** mesmo que Inngest (ver acima)
 
 #### LangChain.js
 
@@ -136,6 +178,45 @@ markmap:
 - **Stack:** Next.js + Claude/GPT
 - **Ação:** COPY parts
 - **Por quê:** AI gera shadcn components — patterns prompt + parsing + safety
+
+### Modelos AI (via AI Gateway) — stack cravado 2026-05-22
+
+#### v0-1.5-md (Vercel) — geração de JSX shadcn-friendly
+
+- **Status:** Beta · **Acesso:** Vercel Premium/Team plan + usage-based billing
+- **Pricing:** $3 / 1M input · $15 / 1M output (igual Sonnet — mas accuracy maior reduz cost total via menos retry)
+- **Ação:** ✅ ADOTAR como gerador JSX no AI Builder (item 5 ADR-0046)
+- **Por quê:** **NÃO é modelo simples** — é pipeline RAG + Sonnet 4 + AutoFix (vercel-autofixer-01). RAG indexa shadcn + Magic UI + Origin UI + Framer Motion + docs frameworks. AutoFix corrige output automaticamente. **Taxa erro-free 94% vs 78% Sonnet sozinho** em tarefas de UI documentado. Menos erros = menos retry = menor cost total. Tokens extras TweakCN (shadows primitivos, font-sans/serif/mono, tracking) precisam system prompt — sem vantagem de lado nenhum aí
+- **Contexto:** 128k tokens · 32k output max · Multimodal (text + image input) · OpenAI-compatible API
+- **NÃO CONFUNDIR COM:**
+  - `v0.dev` plataforma (closed-source, REJECTED ADR-0045 D.1)
+  - v0 Platform API (paga, REJECTED — diferente do modelo)
+- **Limitação:** beta (breaking changes possíveis) · requer plan Vercel pago
+
+#### Claude Sonnet 4.6 (via AI Gateway) — classificação + orquestração
+
+- **Pricing:** $3 / 1M input · $15 / 1M output · Cache 90% off · Batch 50% off
+- **Ação:** ✅ ADOTAR como orquestrador (decompõe intent, escolhe blocks/tools, decide arquitetura)
+- **Por quê:** 1M context window · tool calling state-of-the-art · raciocínio forte. **Não usar pra gerar JSX final** — v0-1.5-md vence aí. Sonnet brilha em: classificar intent do user, decompor "quero hero verde com CTA agendar" em estrutura semântica, escolher block do catálogo, decidir composição
+
+#### Claude Haiku 4.5 (via AI Gateway) — fallback rápido + tasks pequenas
+
+- **Pricing:** $0.25 / 1M input · $1.25 / 1M output
+- **Ação:** ✅ ADOTAR pra tasks pequenas (title gen, response gen, classification simples, summarization)
+- **Por quê:** Cheap + fast + bom enough pra tasks que não precisam raciocínio profundo
+
+#### Gemini Flash (via AI Gateway) — fallback non-tool
+
+- **Ação:** ⚠️ FALLBACK SÓ pra tasks SEM tool calling (research-45 D.16 cravou — Gemini falha em tool calling)
+- **Por quê:** Cheap pra resumo/classification onde tool calling não é necessário. NÃO USAR em agent loop com tools
+
+#### Stack final cravado (AI Builder)
+
+```
+1. Sonnet 4.6 / Haiku 4.5 → classifica intent + decompõe + orquestra (raciocínio)
+2. v0-1.5-md              → gera JSX final (shadcn + Magic UI + Origin UI + motion)
+3. Zod valida output      → salva em DB com RLS
+```
 
 ### Generative UI / output validation
 
@@ -275,9 +356,10 @@ markmap:
 #### Maily
 
 - **License:** MIT
-- **Stack:** React + Tiptap
-- **Ação:** COPY
-- **Por quê:** Drag-drop email editor — React Email-compatible
+- **Stack:** Next.js + React + Tiptap
+- **Ação:** **FORK** (A+B+C+D = 4/4 — ADR-0047)
+- **Por quê:** Drag-drop email editor. APP completa (A), stack idêntico (B), self-contained (C), MIT (D). Padrão IDÊNTICO ao TweakCN — fork → `email.desafit.app` → iframe no admin → postMessage `{ subject, html }` no save → handler salva no nosso DB. Economia estimada vs clone+adapt: ~semanas (mesma ordem de grandeza que TweakCN gastou)
+- **Quando:** Pacote A bonus (futuro, pós-funil agência)
 
 #### React Email
 
@@ -763,6 +845,8 @@ markmap:
 ## O que vamos ADAPTAR pesado de OSS (não construir do zero)
 
 > Princípio cravado 2026-05-22: **sempre COPY + ADAPT, nunca "do zero"**. OSS resolve 80%, a gente faz mudanças cirúrgicas (multi-tenant, RLS, vertical, brand, AI integration) no código copiado — mesma estratégia TweakCN.
+>
+> **Exceção FORK (ADR-0047 — adicionado retrospectivamente):** quando A-D = 4/4, fork+host+iframe vence clone+adapt. Aplica em: TweakCN (retrospectivo — pivot opcional), Maily (futuro).
 
 ### Theme infrastructure → ADAPT de TweakCN ✅ EM EXECUÇÃO
 
@@ -798,11 +882,15 @@ markmap:
 - **OSS base 3:** OpenV0 (MIT) — prompts pra IA gerar componentes shadcn
 - **Adapt cirúrgico:** orquestra Form Engine + Page Engine + AI Report via tools com Zod schemas, multi-model fallback (Sonnet → Haiku → Gemini)
 
-### Email Builder → ADAPT de Maily
+### Email Builder → FORK Maily (ADR-0047)
 
 - **OSS base:** Maily (MIT) — drag-drop email editor
-- **Reusa:** Tiptap-based editor, blocks (heading/text/button/image), preview multi-cliente
-- **Adapt cirúrgico:** multi-tenant + RLS, snapshot Hotmart-like, integração Resend nossa, MJML opcional pra cross-client
+- **Estratégia:** **FORK** (não clone+adapt — A-D = 4/4)
+- **Setup:** fork repo → deploy em `email.desafit.app` Vercel project separado → iframe no admin do platform → postMessage `{ subject, html, mjml? }` on save
+- **Patches mínimos no fork:** logo swap, postMessage emitter no botão Save, remover features que não usamos (multi-user collab se houver), brand-aware via query param
+- **Integração no platform:** handler recebe postMessage → Zod validate → save em `tenant_emails`/`tenant_email_versions` (Hotmart-like) → integração Resend pra envio
+- **Atualização upstream:** `git remote add upstream` → `git fetch && git merge` periódico
+- **Adapt cirúrgico:** zero no fork (deixa o Maily fazer o que faz bem). Multi-tenant + RLS + brand vivem no `platform` recebendo via postMessage
 
 ### Programs / LMS Engine (Pacote B) → ESTUDAR LearnHouse + COPY parts de Decap
 
@@ -880,10 +968,9 @@ markmap:
 
 ### INSTALL agora ou JIT
 
-- Mastra (AI agents)
+- Mastra (AI agents — STUDY, talvez não necessário com AI SDK v6 + WDK)
 - Novel + Tiptap (lesson/journal)
 - Refine (admin panels)
-- Inngest (durable AI workflows)
 - Promptfoo (CI prompt eval)
 - @react-pdf/renderer (PDF export)
 - Tremor (dashboard)
@@ -893,6 +980,21 @@ markmap:
 - Meilisearch (search)
 - Novu (notifications)
 - GrowthBook (feature flags)
+
+### NATIVE Vercel/Supabase (sem dep externa — preferir sobre OSS terceiros)
+
+- **AI Gateway** (retry/fallback de provider, cache, observabilidade)
+- **AI SDK v6** (`generateText` + tools + agent loop built-in)
+- **Workflow DevKit** (durabilidade multi-step pause/resume — JIT)
+- **Vercel Sandbox** (ephemeral microVMs pra código untrusted — substitui E2B)
+- **Vercel Cron Jobs** (scheduled — JIT)
+- **Vercel Queues** (beta — durable event streaming)
+- **Supabase pgmq** (queue Postgres — JIT alt)
+
+### REJECTED 2026-05-22 (substituídos por nativos)
+
+- Inngest + `@inngest/agent-kit` (substituído por AI SDK v6 + AI Gateway + WDK)
+- Trigger.dev (mesma razão)
 
 ### STUDY (não copia código)
 
@@ -914,7 +1016,7 @@ markmap:
 - Form Engine → **Survey.js** (preferido) ou **Form.io**
 - Page Engine → **Puck**
 - AI Report Engine → **Vercel AI Chatbot** Artifacts
-- AI Builders → **Vercel AI Chatbot** + **Mastra** + **OpenV0**
+- AI Builders → **AI SDK v6** (orquestração) + **v0-1.5-md** (geração JSX) + **Sonnet/Haiku** (classificação) — patterns de **Vercel AI Chatbot** + **nextjs-vibe** valem como referência arquitetural (3-agent chain, AgentState, termination marker)
 - Email Builder → **Maily**
 - Programs/LMS → **LearnHouse** estudo + **Decap** parts + **Novel** install
 - Admin panels → **Refine** install + customizar
@@ -938,7 +1040,7 @@ Report IA: Vercel Artifacts COPY + ADAPT + Mastra INSTALL + Inngest INSTALL JIT
   ↓
 Sales page: Puck COPY + ADAPT multi-tenant (+ Payload STUDY schema-driven)
   ↓
-AI Builders: Vercel Artifacts COPY + Mastra + OpenV0 prompts COPY + Inngest agent-kit INSTALL (3-agent chain pattern de nextjs-vibe STUDY) + Vercel Sandbox (runtime) — compor engines via tool calling
+AI Builders: AI SDK v6 (orquestração + tools + agent loop) + v0-1.5-md (gera JSX shadcn-friendly via AI Gateway) + Sonnet/Haiku (classifica intent + decompõe) + Workflow DevKit JIT (se durabilidade virar problema) + Vercel Sandbox (runtime untrusted) — patterns 3-agent chain de nextjs-vibe STUDY (orquestrador nosso = AI SDK, não @inngest/agent-kit rejected)
   ↓
 Email: Maily COPY + ADAPT (React Email já INSTALADO)
   ↓
@@ -955,12 +1057,13 @@ Plus contínuo: Origin/Kibo COPY JIT, Tremor INSTALL JIT, PostHog INSTALL JIT, U
 
 ## Gatilhos pra revisitar
 
-- Iniciar plano nova feature → consultar categoria correspondente
+- Iniciar plano nova feature → consultar categoria correspondente + **rodar critério A-D (ADR-0047) antes de COPY**
 - Update major em algum OSS → re-avaliar
 - 3+ features consumindo mesma lib copy → promover pra INSTALL
-- License mudou (ex: MIT→BSL) → re-avaliar
+- License mudou (ex: MIT→BSL) → re-avaliar critério D
 - Lib abandonada (6m+ sem commit) → buscar alternativa
-- Closed-source virou OSS → reavaliar STUDY → COPY
+- Closed-source virou OSS → reavaliar STUDY → COPY (ou FORK se A-D = 4/4)
+- Plano clone+adapt passando de N+50% do estimado → reconsiderar FORK (ADR-0047 §lição retrospectiva)
 
 ---
 
@@ -969,6 +1072,7 @@ Plus contínuo: Origin/Kibo COPY JIT, Tremor INSTALL JIT, PostHog INSTALL JIT, U
 - ADR-0044 — pivot TweakCN-way
 - ADR-0045 — Registry Strategy + Novel adopt
 - ADR-0046 — Dogfooding-first execution order
+- ADR-0047 — Fork vs Clone+Adapt critério A-D (lição retrospectiva theme-builder)
 - `docs/plans/funil-agencia.md` — ordem execução
 - `docs/_deferred/post-funil-agencia.md` — index deferred
 - `docs/_deferred/ai-theme-generation-detail.md`
