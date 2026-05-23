@@ -3,6 +3,7 @@ export default function TweakcnTest() {
     <>
       <style>{`
         :root {
+          --radius: 0.625rem;
           --background: oklch(1 0 0);
           --foreground: oklch(0.145 0 0);
           --primary: oklch(0.205 0 0);
