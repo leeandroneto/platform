@@ -82,7 +82,6 @@ const config: KnipConfig = {
   ignoreDependencies: [
     // Runtime deps consumidas Sprint 2-6 (§39 JIT consumer) — não detectadas
     // por knip porque ainda não há import site em código fora vendor shadcn.
-    '@ai-sdk/anthropic', // Sprint 4 — Edge Function generate-assessment
     '@dnd-kit/core',
     '@dnd-kit/modifiers',
     '@dnd-kit/sortable',
