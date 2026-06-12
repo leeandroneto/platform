@@ -1,0 +1,233 @@
+<!-- @dsCard group="Sponsor Panel" viewport="1280x900" name="Painel do Patrocinador" subtitle="Marca cadastra cupom, acompanha impressões/cliques/usos e comissão da rede" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Painel do patrocinador · Pacefuel</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--surface-page); }
+  .top { background: var(--grafite-ink); color: var(--creme); }
+  .top-in { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 16px; }
+  .top img { height: 18px; }
+  .top .sep { width: 1px; height: 20px; background: var(--border-on-dark); }
+  .top .who { font: 600 13px/1 var(--font-body); color: var(--creme); display: flex; align-items: center; gap: 9px; }
+  .top .who b { font: 700 16px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; }
+  .top .right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 26px 28px 48px; }
+  svg.lucide { stroke-width: 2; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../_shared/retake-ui.jsx"></script>
+</head>
+<body>
+
+<header class="top" data-screen-label="Topo do painel">
+  <div class="top-in">
+    <img src="../../assets/logo-full-cream.svg" alt="retake.run">
+    <span class="sep"></span>
+    <span class="who"><b>Pacefuel</b> Painel do patrocinador</span>
+    <span class="right" id="top-right"></span>
+  </div>
+</header>
+
+<div class="wrap"><div id="root"></div></div>
+
+<script type="text/babel" data-presets="react">
+;(function () {
+const { Card, StatCard, Badge, Button, Switch, Icon, Tabs } = window.RT;
+const React_ = React;
+const { useState } = React;
+
+/* barras de usos por mês */
+function UsesChart() {
+  const data = [['Jan', 118], ['Fev', 142], ['Mar', 169], ['Abr', 204], ['Mai', 277], ['Jun', 312]];
+  const max = Math.max(...data.map((d) => d[1]));
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, height: 150, padding: '0 4px' }}>
+      {data.map(([m, v], i) => (
+        <div key={m} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+          <span style={{ font: '700 11px/1 var(--font-mono)', color: i === data.length - 1 ? 'var(--terracota-600)' : 'var(--text-muted)' }}>{v}</span>
+          <div style={{ width: '100%', height: (v / max) * 108, borderRadius: 'var(--radius-4)', background: i === data.length - 1 ? 'var(--terracota)' : 'var(--azul-300)' }} />
+          <span style={{ font: 'var(--mono-sm)', fontSize: 10, color: 'var(--text-muted)' }}>{m}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Bar({ label, pct, tone }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <span style={{ width: 104, font: 'var(--body-sm)', fontSize: 13, color: 'var(--text-body)' }}>{label}</span>
+      <div style={{ flex: 1, height: 10, borderRadius: 999, background: 'var(--creme-200)', overflow: 'hidden' }}><span style={{ display: 'block', height: '100%', width: pct + '%', background: tone || 'var(--terracota)' }} /></div>
+      <span style={{ width: 40, textAlign: 'right', font: '700 12px/1 var(--font-mono)', color: 'var(--text-strong)' }}>{pct}%</span>
+    </div>
+  );
+}
+function SponsorExtra({ tab }) {
+  const h4 = { font: 'var(--h4)', margin: 0 };
+  const cap = { font: 'var(--caption)', color: 'var(--text-muted)' };
+  if (tab === 'criativos') return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 18, alignItems: 'start' }}>
+      <Card pad="0">
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><h4 style={h4}>Criativo na faixa de marcas</h4><Badge tone="success" dot>Aprovado</Badge></div>
+        <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ height: 64, borderRadius: 'var(--radius-12)', background: 'linear-gradient(135deg, var(--grafite-ink), var(--terracota-600))', display: 'flex', alignItems: 'center', justifyContent: 'center', font: '700 24px/1 var(--font-display)', letterSpacing: '0.12em', color: 'var(--creme)' }}>PACEFUEL</div>
+          <span style={cap}>Prévia de como sua marca aparece na faixa de todos os sites da rede. PNG/SVG, fundo transparente, 240×64.</span>
+          <div style={{ display: 'flex', gap: 8 }}><Button variant="secondary" size="sm" iconLeft={<Icon name="image-up" size={15} />}>Trocar imagem</Button><Button variant="ghost" size="sm">Ver diretrizes</Button></div>
+        </div>
+      </Card>
+      <Card pad="0">
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)' }}><h4 style={h4}>Variações · teste A/B</h4></div>
+        {[['Logo claro', 1.4, true], ['Logo + tagline', 1.1, false]].map(([n, ctr, on], i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 20px', borderTop: i ? '1px solid var(--border-soft)' : 'none' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 'var(--radius-8)', background: 'var(--grafite-ink)', flex: 'none' }} />
+            <div style={{ flex: 1 }}><div style={{ font: '600 13.5px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{n}</div><div style={cap}>CTR {ctr}%</div></div>
+            {on && <Badge tone="accent" variant="soft">vencedora</Badge>}
+          </div>
+        ))}
+        <div style={{ padding: 16 }}><Button variant="secondary" size="sm" iconLeft={<Icon name="plus" size={15} />}>Nova variação</Button></div>
+      </Card>
+    </div>
+  );
+  if (tab === 'conteudo') return (
+    <Card pad="0">
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div><h4 style={h4}>Post no feed da retake</h4><span style={cap}>1 post incluído ao contratar · posts extras sob combinação</span></div><Button variant="primary" size="sm" iconLeft={<Icon name="plus" size={15} />}>Enviar pauta</Button></div>
+      {[['Post de boas-vindas', 'Publicado', 'success', '41,2k alcance · incluído'], ['Post extra de campanha', 'Sob combinação', 'neutral', 'fora do pacote — fale com a retake']].map(([t, s, tone, meta], i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', borderTop: i ? '1px solid var(--border-soft)' : 'none' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-8)', background: 'var(--creme-200)', display: 'grid', placeItems: 'center', flex: 'none' }}><Icon name="instagram" size={20} color="var(--grafite)" /></div>
+          <div style={{ flex: 1 }}><div style={{ font: '600 14px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{t}</div><div style={cap}>{meta}</div></div>
+          <Badge tone={tone} variant="soft" dot>{s}</Badge>
+        </div>
+      ))}
+    </Card>
+  );
+  if (tab === 'faturas') return (
+    <Card pad="0">
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)' }}><h4 style={h4}>Faturas</h4></div>
+      {[['Junho 2026', 'R$ 500', 'paga'], ['Maio 2026', 'R$ 500', 'paga'], ['Abril 2026', 'R$ 500', 'paga']].map(([m, v, s], i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderTop: i ? '1px solid var(--border-soft)' : 'none' }}>
+          <span style={{ font: 'var(--body-sm)', color: 'var(--text-body)' }}>{m}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><span style={{ font: '700 13px/1 var(--font-mono)', color: 'var(--text-strong)' }}>{v}</span><Badge tone="success" variant="soft" dot>{s}</Badge><Icon name="receipt" size={15} color="var(--text-muted)" /></div>
+        </div>
+      ))}
+    </Card>
+  );
+  return null;
+}
+function Panel() {
+  const [active, setActive] = useState(true);
+  const [tab, setTab] = useState('perf');
+  /* agregado por praça — a rede não abre dados por assessoria */
+  const sites = [
+    ['Rio de Janeiro', '12 assessorias', '281k', 127],
+    ['São Paulo', '9 assessorias', '226k', 112],
+    ['Florianópolis', '5 assessorias', '97k', 41],
+    ['Belo Horizonte', '4 assessorias', '88k', 38],
+  ];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <Tabs value={tab} onChange={setTab} items={[{ id: 'perf', label: 'Desempenho' }, { id: 'criativos', label: 'Criativos' }, { id: 'conteudo', label: 'Post no feed' }, { id: 'faturas', label: 'Faturas' }]} />
+      {tab !== 'perf' && <SponsorExtra tab={tab} />}
+      {tab === 'perf' && <React.Fragment>
+      {/* KPIs do mês */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        <StatCard label="Impressões · faixa de marcas" value="1,2M" delta={14} caption="124 sites da rede" />
+        <StatCard label="Cliques no cupom" value="8.412" delta={22} caption="página + faixa de marcas" />
+        <StatCard label="Usos do cupom" value="312" delta={13} caption="junho · ALUNO15" />
+        <StatCard label="Vendas atribuídas" value="R$ 42.300" delta={18} accent caption="comissão retake: R$ 4.230" />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 18, alignItems: 'start' }}>
+        {/* coluna esquerda: gráfico + sites */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <Card>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h4 style={{ font: 'var(--h4)', margin: 0 }}>Usos do cupom por mês</h4>
+              <Badge tone="success" dot>+165% no semestre</Badge>
+            </div>
+            <UsesChart />
+          </Card>
+
+          <Card pad="0">
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)' }}>
+              <h4 style={{ font: 'var(--h4)', margin: 0 }}>Onde sua marca aparece</h4>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.8fr 0.7fr', gap: '0 18px', padding: '10px 20px', borderBottom: '1px solid var(--border-soft)', font: '600 10.5px/1 var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>
+              <span>Praça</span><span>Assessorias</span><span style={{ textAlign: 'right' }}>Impressões</span><span style={{ textAlign: 'right' }}>Usos</span>
+            </div>
+            {sites.map((s, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.8fr 0.7fr', gap: '0 18px', alignItems: 'center', padding: '12px 20px', borderBottom: i < sites.length - 1 ? '1px solid var(--border-soft)' : 'none' }}>
+                <span style={{ font: '600 13.5px/1.3 var(--font-body)', color: 'var(--text-strong)' }}>{s[0]}</span>
+                <span style={{ font: 'var(--body-sm)', fontSize: 13, color: 'var(--text-body)' }}>{s[1]}</span>
+                <span style={{ textAlign: 'right', font: 'var(--mono-sm)', color: 'var(--text-body)' }}>{s[2]}</span>
+                <span style={{ textAlign: 'right', font: '700 13px/1 var(--font-mono)', color: 'var(--terracota-600)' }}>{s[3]}</span>
+              </div>
+            ))}
+            <div style={{ padding: '10px 20px', background: 'var(--surface-sunken)', font: 'var(--caption)', color: 'var(--text-muted)', borderRadius: '0 0 var(--radius-16) var(--radius-16)' }}>
+              + 28 praças · dados agregados por cidade — a rede não abre números por assessoria
+            </div>
+          </Card>
+        </div>
+
+        {/* coluna direita: cupom + assinatura */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <Card pad="0" style={{ overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-soft)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h4 style={{ font: 'var(--h4)', margin: 0 }}>Seu cupom na rede</h4>
+              <Badge tone="success" dot>Aprovado</Badge>
+            </div>
+            <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1.5px dashed var(--terracota)', borderRadius: 'var(--radius-8)', padding: '12px 16px' }}>
+                <span style={{ font: '700 19px/1 var(--font-mono)', color: 'var(--terracota-600)', letterSpacing: '0.05em' }}>ALUNO15</span>
+                <span style={{ font: '600 12px/1.3 var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-body)' }}>-15% na loja</span>
+              </div>
+              {[['Comissão da rede', '10% por venda atribuída'], ['Atribuição', 'código + link rastreado'], ['Validade', 'renova com a assinatura']].map((r, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, font: 'var(--body-sm)', fontSize: 13 }}>
+                  <span style={{ color: 'var(--text-muted)' }}>{r[0]}</span>
+                  <span style={{ color: 'var(--text-strong)', fontWeight: 600, textAlign: 'right' }}>{r[1]}</span>
+                </div>
+              ))}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid var(--border-soft)' }}>
+                <span style={{ font: '600 13px/1.3 var(--font-body)', color: 'var(--text-strong)' }}>Cupom ativo na rede</span>
+                <Switch checked={active} onChange={setActive} />
+              </div>
+              <Button variant="secondary" size="sm" iconLeft={<Icon name="plus" size={15} />}>Cadastrar novo cupom</Button>
+              <span style={{ font: 'var(--caption)', color: 'var(--text-muted)' }}>Novos cupons passam pela aprovação da retake antes de publicar.</span>
+            </div>
+          </Card>
+
+          <Card tone="dark">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
+              <Icon name="badge-check" size={18} color="var(--terracota)" />
+              <h4 style={{ font: 'var(--h4)', margin: 0, color: 'var(--text-on-dark)' }}>Patrocinador Nacional</h4>
+            </div>
+            {[['Assinatura', 'R$ 500/mês'], ['Próxima fatura', '01 jul 2026'], ['Comissões de junho', 'R$ 4.230 · fechamento 05 jul']].map((r, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, font: 'var(--body-sm)', fontSize: 13, padding: '7px 0', borderBottom: i < 2 ? '1px solid var(--border-on-dark)' : 'none' }}>
+                <span style={{ color: 'var(--text-on-dark-muted)' }}>{r[0]}</span>
+                <span style={{ color: 'var(--text-on-dark)', fontWeight: 600, textAlign: 'right' }}>{r[1]}</span>
+              </div>
+            ))}
+            <p style={{ font: 'var(--caption)', color: 'var(--text-on-dark-muted)', margin: '12px 0 0' }}>Em breve: venda direto para assessorias no marketplace B2B.</p>
+          </Card>
+        </div>
+      </div>
+      </React.Fragment>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Panel />);
+
+const right = document.getElementById('top-right');
+right.innerHTML = '<span style="font:600 11px/1 var(--font-body);text-transform:uppercase;letter-spacing:0.12em;color:var(--terracota-300);border:1px solid var(--terracota);border-radius:999px;padding:6px 12px;white-space:nowrap;">Patrocinador Nacional</span>';
+})();
+</script>
+</body>
+</html>

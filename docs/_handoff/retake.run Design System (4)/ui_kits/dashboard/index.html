@@ -1,0 +1,89 @@
+<!-- @dsCard group="Dashboard" viewport="1280x820" name="Coach Dashboard" subtitle="Tenant command center — overview, athletes, training" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Coach Dashboard</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; }
+  #root { height: 100vh; }
+  .rt-app { display: flex; height: 100vh; background: var(--surface-page); }
+  .rt-main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; }
+  .rt-scroll { flex: 1; overflow-y: auto; }
+  svg.lucide { stroke-width: 2; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../_shared/retake-ui.jsx"></script>
+<script type="text/babel" src="./AppShell.jsx"></script>
+<script type="text/babel" src="./screens.jsx"></script>
+<script type="text/babel" src="./SiteScreen.jsx"></script>
+<script type="text/babel" src="./ComissoesScreen.jsx"></script>
+<script type="text/babel" src="./DashboardExtra.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+;(function () {
+const { Sidebar, Topbar, OverviewScreen, AthletesScreen, TrainingScreen, FinanceScreen, MarketplaceScreen, LeadsScreen, EventsScreen, ProductsScreen, SiteScreen, ComissoesScreen, CommunityScreen, SettingsScreen, AgendaScreen, AthletesScreen2, TrainingPlanScreen } = window.RTK;
+const { Button, Avatar, Icon } = window.RT;
+
+const META = {
+  overview:    { title: 'Visão geral', subtitle: 'Acelera Run Club', screen: OverviewScreen, cta: 'Relatório' },
+  site:        { title: 'Meu site',    subtitle: 'acelera.retake.run · Essencial', screen: SiteScreen, cta: null },
+  leads:       { title: 'Captação',    subtitle: 'Funil de leads e CRM', screen: LeadsScreen, cta: null },
+  athletes:    { title: 'Atletas',     subtitle: 'Gestão de alunos',  screen: AthletesScreen2, cta: null },
+  training:    { title: 'Treinos',     subtitle: 'Periodização, biblioteca e compliance', screen: TrainingPlanScreen, cta: null },
+  agenda:      { title: 'Agenda',      subtitle: 'Sessões e check-in de aula', screen: AgendaScreen, cta: null },
+  community:   { title: 'Comunidade',  subtitle: 'Mural, avisos e desafios', screen: CommunityScreen, cta: null },
+  settings:    { title: 'Configurações', subtitle: 'Equipe, assinatura e pagamentos', screen: SettingsScreen, cta: null },
+  finance:     { title: 'Financeiro',  subtitle: 'Receita, repasses e split', screen: FinanceScreen, cta: 'Exportar' },
+  comissoes:   { title: 'Comissões',   subtitle: 'O que a sua loja te paga', screen: ComissoesScreen, cta: null },
+  marketplace: { title: 'Marketplace', subtitle: 'Catálogo e fornecedores', screen: MarketplaceScreen, cta: null },
+  events:      { title: 'Eventos',     subtitle: 'Provas, treinões e inscrições', screen: EventsScreen, cta: null },
+  products:    { title: 'Produtos',    subtitle: 'Catálogo do tenant', screen: ProductsScreen, cta: null },
+};
+const STUB = {};
+
+function App() {
+  const [active, setActive] = React.useState('overview');
+
+  const meta = META[active];
+  const Screen = meta && meta.screen;
+  return (
+    <div className="rt-app">
+      <Sidebar active={active} onNav={setActive} />
+      <div className="rt-main">
+        {meta ? (
+          <>
+            <Topbar title={meta.title} subtitle={meta.subtitle}>
+              {meta.cta && <Button variant="secondary" iconLeft={<Icon name="download" size={16} />}>{meta.cta}</Button>}
+              <Avatar name="Coach Léo" size={42} ring />
+            </Topbar>
+            <div className="rt-scroll"><Screen /></div>
+          </>
+        ) : (
+          <>
+            <Topbar title={STUB[active]} subtitle="Acelera Run Club"><Avatar name="Coach Léo" size={42} ring /></Topbar>
+            <div className="rt-scroll" style={{ display: 'grid', placeItems: 'center' }}>
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 60 }}>
+                <Icon name="hammer" size={30} color="var(--cinza-mineral)" />
+                <p style={{ marginTop: 12, font: 'var(--body)' }}>Módulo <strong>{STUB[active]}</strong> — não incluído neste kit de demonstração.</p>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+})();
+</script>
+</body>
+</html>

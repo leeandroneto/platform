@@ -1,0 +1,383 @@
+<!-- @dsCard group="Landing" viewport="1280x980" name="Eventos — Calendário" subtitle="Agregador público de corridas: sidebar por tipo, chips de distância, filtro de praça e mês, cards-calendário" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Calendário de corridas</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .header img { height: 22px; display: block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+  .btn svg { width: 17px; height: 17px; }
+
+  /* ---------- dropdown nav ---------- */
+  .nav { display: flex; gap: 4px; align-items: center; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover, .nav-dd:hover .nav-it, .nav-dd:focus-within .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it.on { color: var(--terracota-300); opacity: 1; }
+  .nav-it svg { width: 13px; height: 13px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 320px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); letter-spacing: 0; text-transform: none; }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); letter-spacing: 0; text-transform: none; white-space: normal; }
+  .soon-tag { font: 700 8.5px/1 var(--font-body); letter-spacing: 0.12em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; }
+
+  /* ---------- hero strip ---------- */
+  .hero { background: var(--grafite-ink); color: var(--creme); padding: 56px 0 48px; }
+  .eyebrow-acc { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .hero h1 { font: var(--display-2); font-size: 48px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 12px 0 14px; }
+  .hero p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 620px; margin: 0; }
+  .hero p a { color: var(--terracota-300); }
+  .hero-stats { display: flex; gap: 40px; margin-top: 28px; flex-wrap: wrap; }
+  .hero-stats div { display: flex; flex-direction: column; gap: 2px; }
+  .hero-stats b { font: var(--metric); color: var(--creme); }
+  .hero-stats small { font: var(--caption); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-on-dark-muted); }
+
+  /* ---------- month rail ---------- */
+  .monthrail { background: var(--grafite-800); border-bottom: 1px solid var(--border-on-dark); position: sticky; top: 68px; z-index: 40; }
+  .monthrail-in { display: flex; gap: 6px; padding: 12px 0; overflow-x: auto; }
+  .mchip { flex: none; display: inline-flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 16px; border-radius: var(--radius-8); background: transparent; border: 1px solid transparent; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+  .mchip:hover { background: rgba(241,236,226,0.06); }
+  .mchip.on { background: var(--terracota); }
+  .mchip b { font: 600 13px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; color: var(--creme); }
+  .mchip small { font: 700 10px/1 var(--font-mono); color: var(--text-on-dark-muted); }
+  .mchip.on b, .mchip.on small { color: var(--creme); }
+
+  /* ---------- layout: sidebar + content ---------- */
+  .layout { display: grid; grid-template-columns: 248px 1fr; gap: 40px; align-items: start; padding: 36px 0 80px; }
+  .side { position: sticky; top: 132px; display: flex; flex-direction: column; gap: 2px; }
+  .side h4 { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); margin: 18px 0 8px; padding: 0 12px; }
+  .side h4:first-child { margin-top: 0; }
+  .side a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-8); font: 500 13.5px/1.2 var(--font-body); color: var(--text-body); transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+  .side a:hover { background: var(--creme-200); color: var(--text-strong); }
+  .side a.on { background: var(--terracota); color: var(--creme); }
+  .side a svg { width: 16px; height: 16px; flex: none; }
+  .side a .n { margin-left: auto; font: 700 11px/1 var(--font-mono); color: var(--text-muted); }
+  .side a.on .n { color: rgba(241,236,226,0.85); }
+  .side .cta-side { margin-top: 22px; padding: 16px 14px; background: var(--grafite); border-radius: var(--radius-12); color: var(--creme); }
+  .side .cta-side p { font: var(--body-sm); font-size: 12.5px; color: var(--text-on-dark-muted); margin: 0 0 10px; }
+  .side .cta-side a { display: inline-flex; padding: 0; background: none; color: var(--terracota-300); font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; }
+  .side .cta-side a:hover { color: var(--terracota); background: none; }
+
+  /* ---------- content ---------- */
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 22px; }
+  .chip-f { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid var(--border-strong); background: var(--surface-card); font: 600 12px/1 var(--font-body); color: var(--text-body); cursor: pointer; white-space: nowrap; transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out); }
+  .chip-f:hover { border-color: var(--grafite); }
+  .chip-f.on { background: var(--grafite); border-color: var(--grafite); color: var(--creme); }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  .sec-head h2 { font: var(--h2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+  .sec-head .n { font: var(--mono-sm); color: var(--text-muted); white-space: nowrap; }
+
+  /* event list rows */
+  .ev-list { display: flex; flex-direction: column; gap: 12px; }
+  .ev { display: grid; grid-template-columns: 76px 1fr auto; gap: 18px; align-items: center; background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 16px 20px; box-shadow: var(--shadow-100); transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out); }
+  .ev:hover { transform: translateY(-2px); box-shadow: var(--shadow-200); border-color: var(--border-strong); }
+  .ev.feat { border: 2px solid var(--terracota); }
+  /* date tile */
+  .date { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 76px; height: 76px; border-radius: var(--radius-12); background: var(--grafite-ink); color: var(--creme); flex: none; }
+  .date .d { font: 700 30px/1 var(--font-display); }
+  .date .m { font: 700 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracota-300); margin-top: 3px; }
+  .date .wd { font: 600 9px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-on-dark-muted); margin-top: 4px; }
+  .ev.feat .date { background: var(--terracota); }
+  .ev.feat .date .m { color: var(--creme); }
+  /* event body */
+  .ev-main { min-width: 0; }
+  .ev-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 7px; }
+  .ev-tag { font: 600 9.5px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--grafite); background: var(--creme-200); border-radius: var(--radius-pill); padding: 4px 9px; white-space: nowrap; }
+  .ev-tag.type { background: var(--grafite); color: var(--creme); }
+  .ev-tag.rede { background: var(--terracota-100); color: var(--terracota-600); display: inline-flex; align-items: center; gap: 4px; }
+  .ev-tag.rede svg { width: 11px; height: 11px; }
+  .ev-tag.feat { background: var(--terracota); color: var(--creme); }
+  .ev-tag.free { background: var(--green-100); color: var(--green); }
+  .ev h3 { font: var(--h4); font-size: 20px; text-transform: uppercase; letter-spacing: 0.01em; color: var(--text-strong); margin: 0 0 5px; }
+  .ev .meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .ev .meta span { display: inline-flex; align-items: center; gap: 6px; font: var(--body-sm); font-size: 13px; color: var(--text-body); }
+  .ev .meta svg { width: 14px; height: 14px; color: var(--terracota); flex: none; }
+  .ev .by { display: inline-flex; align-items: center; gap: 5px; font: var(--caption); font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+  .ev .by b { font: 600 11px/1 var(--font-body); color: var(--text-body); }
+  /* distances + cta column */
+  .ev-side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+  .dists { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+  .dist { font: 700 11px/1 var(--font-mono); color: var(--text-strong); background: var(--creme-200); border-radius: var(--radius-4); padding: 5px 8px; white-space: nowrap; }
+  .ev-side .price { font: var(--caption); color: var(--text-muted); }
+  .ev-side .price b { font: 700 14px/1 var(--font-mono); color: var(--text-strong); }
+  .ev-go { display: inline-flex; align-items: center; gap: 5px; font: 600 11.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota); white-space: nowrap; }
+  .ev-go:hover { color: var(--terracota-600); }
+  .ev-go svg { width: 13px; height: 13px; }
+
+  .empty { display: none; text-align: center; padding: 60px 0; color: var(--text-muted); }
+  .empty svg { width: 34px; height: 34px; color: var(--border-strong); margin-bottom: 12px; }
+
+  /* organizer banner */
+  .org-banner { background: var(--grafite); border-radius: var(--radius-16); padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin: 8px 0 30px; }
+  .org-banner h3 { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 6px; }
+  .org-banner p { font: var(--body-sm); color: var(--text-on-dark-muted); margin: 0; max-width: 460px; }
+
+  /* ---------- bottom CTA + footer ---------- */
+  .cta { background: var(--grafite-ink); color: var(--creme); }
+  .cta-in { padding: 52px 0; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .cta h2 { font: var(--h1); font-size: 28px; color: var(--creme); margin: 0 0 8px; }
+  .cta p { font: var(--body-sm); color: var(--text-on-dark-muted); margin: 0; max-width: 520px; }
+  .cta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-outline-dark { background: transparent; color: var(--creme); border-color: var(--creme); }
+  .btn-outline-dark:hover { background: rgba(241,236,226,0.1); color: var(--creme); }
+  .footer { background: var(--grafite-ink); border-top: 1px solid var(--border-on-dark); padding: 24px 0; }
+  .footer-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer img { height: 18px; }
+  .footer small { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  @media (max-width: 980px) {
+    .nav { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    .side { position: static; flex-direction: row; flex-wrap: wrap; top: 0; }
+    .side h4 { width: 100%; }
+    .side .cta-side { display: none; }
+  }
+  @media (max-width: 680px) {
+    .ev { grid-template-columns: 60px 1fr; }
+    .date { width: 60px; height: 60px; }
+    .date .d { font-size: 24px; }
+    .ev-side { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; text-align: left; padding-top: 12px; border-top: 1px solid var(--border-soft); }
+    .dists { justify-content: flex-start; }
+  }
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+
+
+<section class="hero" data-screen-label="Hero calendário">
+  <div class="wrap">
+    <span class="eyebrow-acc">Calendário de corridas</span>
+    <h1>Toda corrida,<br>num lugar só.</h1>
+    <p>Provas de rua, trail, revezamentos e os treinões abertos das assessorias da rede — filtre por praça, distância e mês. É de graça e a inscrição acontece no site oficial de cada prova. <a href="publicar-evento.html">Organiza um evento? Publique aqui →</a></p>
+    <div class="hero-stats">
+      <div><b id="hs-total">—</b><small>eventos listados</small></div>
+      <div><b id="hs-rede">—</b><small>treinões da rede</small></div>
+      <div><b>14</b><small>estados</small></div>
+    </div>
+  </div>
+</section>
+
+<div class="monthrail" data-screen-label="Trilho de meses">
+  <div class="wrap monthrail-in" id="monthrail"></div>
+</div>
+
+<div class="wrap layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side" id="side" data-screen-label="Sidebar de tipos">
+    <h4>Tipo de evento</h4>
+    <a href="#" data-type="" class="on"><i data-lucide="layout-grid"></i>Todos<span class="n" id="sn-all"></span></a>
+    <a href="#" data-type="rua"><i data-lucide="flag"></i>Provas de rua<span class="n" data-n="rua"></span></a>
+    <a href="#" data-type="trail"><i data-lucide="mountain"></i>Trail &amp; montanha<span class="n" data-n="trail"></span></a>
+    <a href="#" data-type="revezamento"><i data-lucide="repeat"></i>Revezamentos<span class="n" data-n="revezamento"></span></a>
+    <a href="#" data-type="treinao"><i data-lucide="users"></i>Treinões da rede<span class="n" data-n="treinao"></span></a>
+    <a href="#" data-type="clinica"><i data-lucide="graduation-cap"></i>Clínicas &amp; encontros<span class="n" data-n="clinica"></span></a>
+    <a href="#" data-type="viagem"><i data-lucide="plane"></i>Viagens de corrida<span class="n" data-n="viagem"></span></a>
+    <div class="cta-side">
+      <p>Sua prova ou treinão na rede inteira?</p>
+      <a href="publicar-evento.html">Publicar evento →</a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <main>
+    <div class="toolbar" data-screen-label="Filtros">
+      <span style="font: var(--caption); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-right: 4px;">Distância</span>
+      <button class="chip-f on" data-dist="" type="button">Todas</button>
+      <button class="chip-f" data-dist="5" type="button">5K</button>
+      <button class="chip-f" data-dist="10" type="button">10K</button>
+      <button class="chip-f" data-dist="21" type="button">21K</button>
+      <button class="chip-f" data-dist="42" type="button">42K</button>
+      <button class="chip-f" data-dist="ultra" type="button">Ultra</button>
+      <button class="chip-f" data-dist="livre" type="button">Livre</button>
+    </div>
+    <div class="toolbar" style="margin-top: -8px;">
+      <span style="font: var(--caption); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-right: 4px;">Praça</span>
+      <button class="chip-f on" data-uf="" type="button">Brasil</button>
+      <button class="chip-f" data-uf="SP" type="button">São Paulo</button>
+      <button class="chip-f" data-uf="RJ" type="button">Rio</button>
+      <button class="chip-f" data-uf="MG" type="button">Minas</button>
+      <button class="chip-f" data-uf="PR" type="button">Paraná</button>
+      <button class="chip-f" data-uf="RS" type="button">Rio Grande do Sul</button>
+      <button class="chip-f" data-uf="BA" type="button">Bahia</button>
+    </div>
+
+    <div class="org-banner" id="rede" data-screen-label="Banner organizador">
+      <div>
+        <h3>Organiza uma prova?</h3>
+        <p>Liste de graça e apareça para os corredores da rede. Eventos das assessorias entram automaticamente — os alunos veem na agenda do app.</p>
+      </div>
+      <a class="btn btn-primary" href="publicar-evento.html">Publicar meu evento <i data-lucide="arrow-right"></i></a>
+    </div>
+
+    <section data-screen-label="Lista de eventos">
+      <div class="sec-head">
+        <h2 id="list-title">Próximos eventos</h2>
+        <span class="n" id="list-count">—</span>
+      </div>
+      <div class="ev-list" id="ev-list"></div>
+      <div class="empty" id="empty"><i data-lucide="calendar-x"></i><p style="font: var(--body-sm); margin: 0;">Nenhum evento com esses filtros. Tente outra praça ou mês.</p></div>
+    </section>
+  </main>
+</div>
+
+<section class="cta" data-screen-label="CTA">
+  <div class="wrap cta-in">
+    <div>
+      <h2>Coloque sua corrida no mapa</h2>
+      <p>Listagem gratuita para qualquer organizador. Marcas e patrocinadores que querem aparecer no calendário falam com a gente.</p>
+    </div>
+    <div class="cta-btns">
+      <a class="btn btn-primary" href="publicar-evento.html">Publicar evento <i data-lucide="arrow-right"></i></a>
+      <a class="btn btn-outline-dark" href="patrocinio.html">Patrocinar a rede</a>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+  const TYPES = { rua: 'Prova de rua', trail: 'Trail', revezamento: 'Revezamento', treinao: 'Treinão da rede', clinica: 'Clínica', viagem: 'Viagem' };
+  const MESES = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  const WD = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+
+  // d = day, mo = month idx (0-11), uf, city, dists[], price (null=gratis), org, rede(bool), feat(bool)
+  const EV = [
+    { t: 'rua', d: 14, mo: 5, uf: 'SP', city: 'São Paulo · SP', n: 'Circuito Retake — Etapa Ibirapuera', dists: ['5','10','21'], price: 89, org: 'Rio Run Series', feat: true },
+    { t: 'treinao', d: 15, mo: 5, uf: 'SP', city: 'São Paulo · SP', n: 'Treinão Longo de Domingo', dists: ['livre'], price: null, org: 'Pace Club', rede: true },
+    { t: 'rua', d: 21, mo: 5, uf: 'RJ', city: 'Rio de Janeiro · RJ', n: 'Corrida da Orla — Leme ao Pontal', dists: ['5','10'], price: 79, org: 'Rio Run Series' },
+    { t: 'treinao', d: 22, mo: 5, uf: 'MG', city: 'Belo Horizonte · MG', n: 'Fartlek no Parque das Mangabeiras', dists: ['livre'], price: null, org: 'Movimento BH', rede: true },
+    { t: 'trail', d: 28, mo: 5, uf: 'RJ', city: 'Petrópolis · RJ', n: 'Trilha da Serra — Travessia', dists: ['21','ultra'], price: 145, org: 'Trilha Brasil' },
+    { t: 'clinica', d: 29, mo: 5, uf: 'SP', city: 'São Paulo · SP', n: 'Clínica de Pace &amp; Respiração', dists: ['livre'], price: null, org: 'Pace Club', rede: true },
+
+    { t: 'rua', d: 5, mo: 6, uf: 'PR', city: 'Curitiba · PR', n: 'Meia de Curitiba', dists: ['10','21'], price: 99, org: 'Sul Eventos', feat: true },
+    { t: 'revezamento', d: 6, mo: 6, uf: 'SP', city: 'Campos do Jordão · SP', n: 'Revezamento da Mantiqueira — 4×', dists: ['42','ultra'], price: 320, org: 'Trilha Brasil' },
+    { t: 'rua', d: 12, mo: 6, uf: 'RS', city: 'Porto Alegre · RS', n: 'Corrida do Guaíba', dists: ['5','10','21'], price: 85, org: 'Sul Eventos' },
+    { t: 'treinao', d: 13, mo: 6, uf: 'RJ', city: 'Rio de Janeiro · RJ', n: 'Treinão Aberto na Lagoa', dists: ['livre'], price: null, org: 'Equipe Maré', rede: true },
+    { t: 'viagem', d: 19, mo: 6, uf: 'SP', city: 'Saindo de São Paulo', n: 'Caravana — Maratona de Buenos Aires', dists: ['42'], price: 2890, org: 'RotaRun Viagens' },
+    { t: 'rua', d: 20, mo: 6, uf: 'BA', city: 'Salvador · BA', n: 'Night Run Salvador', dists: ['5','10'], price: 95, org: 'Bahia Sports' },
+    { t: 'trail', d: 27, mo: 6, uf: 'MG', city: 'Ouro Preto · MG', n: 'Ultra das Minas — 50K', dists: ['ultra'], price: 210, org: 'Trilha Brasil' },
+
+    { t: 'rua', d: 3, mo: 7, uf: 'SP', city: 'São Paulo · SP', n: 'Maratona de São Paulo', dists: ['10','21','42'], price: 220, org: 'Rio Run Series', feat: true },
+    { t: 'treinao', d: 4, mo: 7, uf: 'PR', city: 'Curitiba · PR', n: 'Treinão de Tiros no Barigui', dists: ['livre'], price: null, org: 'Curitiba Run', rede: true },
+    { t: 'rua', d: 10, mo: 7, uf: 'RJ', city: 'Niterói · RJ', n: 'Corrida da Ponte', dists: ['5','10','21'], price: 110, org: 'Rio Run Series' },
+    { t: 'clinica', d: 11, mo: 7, uf: 'RS', city: 'Porto Alegre · RS', n: 'Workshop — Corrida sem Lesão', dists: ['livre'], price: null, org: 'Equipe Sul', rede: true },
+    { t: 'revezamento', d: 18, mo: 7, uf: 'BA', city: 'Linha Verde · BA', n: 'Revezamento Litoral Norte', dists: ['ultra'], price: 280, org: 'Bahia Sports' },
+    { t: 'rua', d: 25, mo: 7, uf: 'MG', city: 'Belo Horizonte · MG', n: 'Circuito Retake — Etapa Pampulha', dists: ['5','10','21'], price: 89, org: 'Movimento BH', feat: true },
+  ];
+
+  let fType = '', fDist = '', fUf = '', fMo = null;
+
+  // build month rail from data
+  const monthsPresent = [...new Set(EV.map((e) => e.mo))].sort((a, b) => a - b);
+  const railEl = document.getElementById('monthrail');
+  function renderRail() {
+    railEl.innerHTML = '<button class="mchip' + (fMo === null ? ' on' : '') + '" data-mo=""><b>Todos</b><small>os meses</small></button>' +
+      monthsPresent.map((m) => {
+        const c = EV.filter((e) => e.mo === m).length;
+        return '<button class="mchip' + (fMo === m ? ' on' : '') + '" data-mo="' + m + '"><b>' + MESES[m] + '</b><small>' + c + ' eventos</small></button>';
+      }).join('');
+    railEl.querySelectorAll('.mchip').forEach((b) => b.addEventListener('click', () => {
+      fMo = b.dataset.mo === '' ? null : +b.dataset.mo;
+      renderRail(); render();
+    }));
+  }
+
+  function wd(mo, d) { return WD[new Date(2026, mo, d).getDay()]; }
+
+  function row(e) {
+    const badges = [];
+    if (e.feat) badges.push('<span class="ev-tag feat">Destaque</span>');
+    badges.push('<span class="ev-tag type">' + TYPES[e.t] + '</span>');
+    if (e.rede) badges.push('<span class="ev-tag rede"><i data-lucide="check-circle"></i>Evento da rede</span>');
+    if (e.price === null) badges.push('<span class="ev-tag free">Gratuito</span>');
+    const dists = e.dists.map((d) => '<span class="dist">' + (d === 'livre' ? 'Livre' : d === 'ultra' ? 'Ultra' : d + 'K') + '</span>').join('');
+    const price = e.price === null
+      ? '<div class="price">Entrada <b>livre</b></div>'
+      : '<div class="price">a partir de<br><b>R$ ' + e.price.toLocaleString('pt-BR') + '</b></div>';
+    return '<article class="ev' + (e.feat ? ' feat' : '') + '">' +
+      '<div class="date"><span class="d">' + e.d + '</span><span class="m">' + MESES[e.mo] + '</span><span class="wd">' + wd(e.mo, e.d) + '</span></div>' +
+      '<div class="ev-main"><div class="ev-badges">' + badges.join('') + '</div>' +
+      '<h3>' + e.n + '</h3>' +
+      '<div class="meta"><span><i data-lucide="map-pin"></i>' + e.city + '</span></div>' +
+      '<div class="by"><i data-lucide="' + (e.rede ? 'users' : 'flag') + '" style="width:12px;height:12px;color:var(--text-muted);"></i>' + (e.rede ? 'Assessoria' : 'Organização') + ' · <b>' + e.org + '</b></div></div>' +
+      '<div class="ev-side"><div class="dists">' + dists + '</div>' + price +
+      '<a class="ev-go" href="evento.html">' + (e.rede ? 'Ver detalhes' : 'Ver e inscrever') + ' <i data-lucide="arrow-up-right"></i></a></div>' +
+      '</article>';
+  }
+
+  function render() {
+    const rows = EV.filter((e) =>
+      (!fType || e.t === fType) &&
+      (!fDist || e.dists.includes(fDist)) &&
+      (!fUf || e.uf === fUf) &&
+      (fMo === null || e.mo === fMo)
+    ).sort((a, b) => a.mo - b.mo || a.d - b.d);
+    document.getElementById('ev-list').innerHTML = rows.map(row).join('');
+    document.getElementById('list-count').textContent = rows.length + ' de ' + EV.length + ' eventos';
+    document.getElementById('list-title').textContent = fType ? TYPES[fType] + (fType === 'treinao' || fType === 'clinica' ? '' : 's') : 'Próximos eventos';
+    document.getElementById('empty').style.display = rows.length ? 'none' : 'block';
+    lucide.createIcons();
+  }
+
+  // sidebar type
+  const sideLinks = [...document.querySelectorAll('.side a[data-type]')];
+  sideLinks.forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    fType = a.dataset.type;
+    sideLinks.forEach((x) => x.classList.toggle('on', x === a));
+    render();
+  }));
+  // distance chips
+  document.querySelectorAll('.chip-f[data-dist]').forEach((c) => c.addEventListener('click', () => {
+    fDist = c.dataset.dist;
+    document.querySelectorAll('.chip-f[data-dist]').forEach((x) => x.classList.toggle('on', x === c));
+    render();
+  }));
+  // uf chips
+  document.querySelectorAll('.chip-f[data-uf]').forEach((c) => c.addEventListener('click', () => {
+    fUf = c.dataset.uf;
+    document.querySelectorAll('.chip-f[data-uf]').forEach((x) => x.classList.toggle('on', x === c));
+    render();
+  }));
+
+  // counts
+  document.getElementById('sn-all').textContent = EV.length;
+  document.querySelectorAll('.side a .n[data-n]').forEach((el) => {
+    el.textContent = EV.filter((e) => e.t === el.dataset.n).length;
+  });
+  document.getElementById('hs-total').textContent = EV.length;
+  document.getElementById('hs-rede').textContent = EV.filter((e) => e.rede).length;
+
+  renderRail();
+  render();
+  lucide.createIcons();
+</script>
+<script src="_chrome.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+- [retake.run — projeto vertical de corrida](project_retake_overview.md) — plataforma de corrida BR · 5 públicos · fosso = núcleo de treino · stack travado · sprints S0-S7
+- [Decisões cravadas — 14 pontos foundation](project_retake_decisoes_cravadas.md) — validação ponto-a-ponto pré-código · marca/app/identidade/tokens/page/form/IA/vocab/recursos/preços/stack/lint/comunicação/execução
+- [Princípio cravado — Zero exposição client-side](feedback_zero_client_exposure.md) — service role nunca client · mutações via Server Actions · 'server-only' em lib/data · JWT minimal
+- [shadcn-canonical + extensões opt-in retake](feedback_tokens_shadcn_canonical.md) — vocab shadcn-canonical · valores apontam pros tokens retake · shadcn primitives recoloram automático
+- [Composição em banco — vibe-coding-ready](feedback_composition_in_db.md) — page_versions.content jsonb · IA edita via tools registry SSOT + approval gate

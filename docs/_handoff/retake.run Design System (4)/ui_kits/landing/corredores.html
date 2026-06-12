@@ -1,0 +1,378 @@
+<!-- @dsCard group="Landing" viewport="1280x940" name="Para Corredores" subtitle="Hub do corredor: sidebar-filtro (assessorias · marcas por categoria · cupons), destaques primeiro" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Para corredores</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .header img { height: 22px; display: block; }
+  .nav { display: flex; gap: 4px; align-items: center; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; white-space: nowrap; }
+  .nav-it:hover, .nav-dd:hover .nav-it, .nav-dd:focus-within .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it.on { color: var(--terracota-300); opacity: 1; }
+  .nav-it svg { width: 13px; height: 13px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 310px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); }
+  .soon-tag { font: 700 8.5px/1 var(--font-body); letter-spacing: 0.12em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; margin-left: 6px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+
+  /* ---------- hero ---------- */
+  .hero { background: var(--grafite-ink); color: var(--creme); padding: 50px 0 44px; }
+  .eyebrow-acc { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .hero h1 { font: var(--display-2); font-size: 46px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 12px 0 12px; }
+  .hero p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 600px; margin: 0; }
+
+  /* ---------- layout sidebar + content ---------- */
+  .layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: 40px; align-items: start; padding: 36px 0 80px; }
+  .side { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 2px; }
+  .side h4 { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); margin: 18px 0 8px; padding: 0 12px; }
+  .side h4:first-child { margin-top: 0; }
+  .side button { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: none; background: transparent; text-align: left; width: 100%; cursor: pointer; border-radius: var(--radius-8); font: 500 13.5px/1.2 var(--font-body); color: var(--text-body); transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+  .side button:hover { background: var(--creme-200); color: var(--text-strong); }
+  .side button.on { background: var(--terracota); color: var(--creme); }
+  .side button svg { width: 16px; height: 16px; flex: none; }
+  .side button .n { margin-left: auto; font: 700 11px/1 var(--font-mono); color: var(--text-muted); }
+  .side button.on .n { color: rgba(241,236,226,0.8); }
+  .side button.sub { padding-left: 38px; font-size: 13px; }
+
+  /* ---------- views/sections ---------- */
+  .view { display: none; }
+  .view.on { display: block; }
+  .cat-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+  .cat-head h2 { font: var(--h2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+  .cat-head .n { font: var(--mono-sm); color: var(--text-muted); white-space: nowrap; }
+  .desc { font: var(--body-sm); color: var(--text-muted); margin: 0 0 16px; max-width: 600px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  /* toolbar */
+  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 180px; height: 42px; padding: 0 13px; background: var(--surface-card); border: 1.5px solid var(--border-strong); border-radius: var(--radius-8); }
+  .search:focus-within { border-color: var(--terracota); }
+  .search svg { width: 16px; height: 16px; color: var(--cinza-mineral); flex: none; }
+  .search input { flex: 1; border: none; outline: none; background: transparent; font: var(--body-sm); font-size: 14px; color: var(--text-body); min-width: 0; }
+  .toolbar select { height: 42px; padding: 0 34px 0 12px; background: var(--surface-card); border: 1.5px solid var(--border-strong); border-radius: var(--rad-8, 8px); border-radius: var(--radius-8); font: var(--body-sm); font-size: 13px; color: var(--text-body); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A8A84' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+  .chk { display: inline-flex; align-items: center; gap: 8px; font: var(--body-sm); font-size: 13px; color: var(--text-body); cursor: pointer; user-select: none; white-space: nowrap; }
+  .chk input { width: 16px; height: 16px; accent-color: var(--terracota); cursor: pointer; }
+
+  /* ---------- cards ---------- */
+  .card { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); overflow: hidden; box-shadow: var(--shadow-100); transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-200); }
+  .card.pro, .card.feat { border: 2px solid var(--terracota); }
+  .card-top { height: 76px; display: flex; align-items: center; padding: 0 18px; position: relative; }
+  .wordmark { font: 700 22px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--creme); }
+  .wordmark small { font: 600 9px/1 var(--font-body); letter-spacing: 0.26em; display: block; opacity: 0.75; margin-top: 3px; }
+  .badge-t { position: absolute; right: 12px; top: 12px; display: inline-flex; align-items: center; gap: 5px; font: 700 9px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+  .badge-t.pro, .badge-t.feat { background: var(--terracota); color: var(--creme); }
+  .badge-t.rede { font-family: var(--font-mono); color: rgba(241,236,226,0.9); background: rgba(13,13,12,0.32); }
+  .badge-t svg { width: 11px; height: 11px; }
+  .card-body { padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .loc { display: flex; align-items: center; gap: 7px; font: var(--body-sm); font-size: 13px; color: var(--text-body); }
+  .loc svg { width: 14px; height: 14px; color: var(--terracota); flex: none; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font: 600 10px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.07em; color: var(--grafite); background: var(--creme-200); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
+  .tag.cup { background: var(--terracota-100); color: var(--terracota-600); }
+  .card-foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .card-foot a, .card-foot button.lnk { white-space: nowrap; font: 600 11.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota); display: inline-flex; align-items: center; gap: 5px; border: none; background: transparent; cursor: pointer; padding: 0; }
+  .card-foot a:hover, .card-foot button.lnk:hover { color: var(--terracota-600); }
+  .card-foot a svg, .card-foot button.lnk svg { width: 13px; height: 13px; }
+  .byline { display: inline-flex; align-items: center; gap: 5px; font: var(--caption); font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+  .byline img { height: 11px; }
+  .sup-desc { font: var(--body-sm); font-size: 13px; color: var(--text-muted); margin: 0; }
+  .off { font: 600 11px/1.3 var(--font-body); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-body); }
+  .coupon { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1.5px dashed var(--terracota); border-radius: var(--radius-8); padding: 9px 12px; }
+  .coupon code { font: 700 13.5px/1 var(--font-mono); color: var(--terracota-600); letter-spacing: 0.05em; }
+  .coupon button { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--creme); background: var(--grafite); border: none; border-radius: 999px; padding: 7px 12px; cursor: pointer; white-space: nowrap; transition: background var(--dur) var(--ease-out); }
+  .coupon button:hover { background: var(--terracota-600); }
+  .coupon button.ok { background: var(--green); }
+  .empty { text-align: center; padding: 48px 0; color: var(--text-muted); display: none; }
+  .empty p { font: var(--body-sm); margin: 10px 0 0; }
+
+  /* ---------- footer ---------- */
+  .footer { background: var(--grafite-ink); padding: 24px 0; }
+  .footer-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer img { height: 18px; }
+  .footer small { font: var(--caption); color: var(--text-on-dark-muted); }
+  .footer a { font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; color: var(--creme); opacity: 0.8; }
+  .footer a:hover { opacity: 1; color: var(--terracota-300); }
+
+  @media (max-width: 980px) {
+    .nav { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    .side { position: static; flex-direction: row; flex-wrap: wrap; }
+    .side h4 { width: 100%; }
+    .side button { width: auto; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+
+
+<section class="hero" data-screen-label="Hero corredores">
+  <div class="wrap">
+    <span class="eyebrow-acc">Para corredores</span>
+    <h1>Corra com a rede.</h1>
+    <p>Encontre uma assessoria na sua cidade, conheça as marcas que patrocinam o movimento e use os cupons exclusivos. Tudo de graça.</p>
+  </div>
+</section>
+
+<div class="wrap layout">
+  <!-- ============ SIDEBAR (filtro de verdade) ============ -->
+  <aside class="side" id="side" data-screen-label="Sidebar">
+    <h4>Encontre</h4>
+    <button data-view="assessorias" class="on" type="button"><i data-lucide="users"></i>Assessorias<span class="n" id="n-clubs">8</span></button>
+    <h4>Marcas</h4>
+    <button data-view="marcas" data-cat="" type="button"><i data-lucide="store"></i>Todas as marcas<span class="n" id="n-brands">9</span></button>
+    <button data-view="marcas" data-cat="nutricao" class="sub" type="button">Nutrição &amp; suplementação<span class="n">3</span></button>
+    <button data-view="marcas" data-cat="equipamento" class="sub" type="button">Equipamento &amp; tecnologia<span class="n">3</span></button>
+    <button data-view="marcas" data-cat="vestuario" class="sub" type="button">Vestuário &amp; recovery<span class="n">3</span></button>
+    <h4>Cupons</h4>
+    <button data-view="cupons" type="button"><i data-lucide="ticket-percent"></i>Cupons ativos<span class="n" id="n-coupons">7</span></button>
+  </aside>
+
+  <!-- ============ CONTENT (uma view por vez) ============ -->
+  <main>
+    <!-- VIEW: ASSESSORIAS -->
+    <section class="view on" id="view-assessorias" data-screen-label="Assessorias">
+      <div class="cat-head"><h2>Assessorias</h2><span class="n" id="a-count">—</span></div>
+      <p class="desc">Clubes que constroem sua presença com a retake. As <strong>PRO</strong> têm site próprio e loja.</p>
+      <div class="toolbar">
+        <div class="search"><i data-lucide="search"></i><input id="a-busca" type="text" placeholder="Buscar assessoria"></div>
+        <select id="a-cidade">
+          <option value="">Todas as cidades</option>
+          <option>Rio de Janeiro · RJ</option>
+          <option>São Paulo · SP</option>
+          <option>Belo Horizonte · MG</option>
+          <option>Curitiba · PR</option>
+          <option>Florianópolis · SC</option>
+          <option>Recife · PE</option>
+        </select>
+        <select id="a-foco">
+          <option value="">Todos os focos</option>
+          <option>Rua · 5k–21k</option>
+          <option>Maratona</option>
+          <option>Trail run</option>
+          <option>Iniciantes</option>
+        </select>
+        <label class="chk"><input id="a-pro" type="checkbox">Só PRO</label>
+      </div>
+      <div class="grid" id="a-grid"></div>
+      <div class="empty" id="a-empty"><i data-lucide="search-x"></i><p>Nenhuma assessoria com esses filtros.</p></div>
+    </section>
+
+    <!-- VIEW: MARCAS -->
+    <section class="view" id="view-marcas" data-screen-label="Marcas">
+      <div class="cat-head"><h2 id="m-title">Marcas</h2><span class="n" id="m-count">—</span></div>
+      <p class="desc">Quem patrocina a rede e veste, alimenta e equipa o corredor. <strong>Destaques</strong> aparecem primeiro. Cupons ficam na aba Cupons.</p>
+      <div class="toolbar">
+        <div class="search"><i data-lucide="search"></i><input id="m-busca" type="text" placeholder="Buscar marca"></div>
+        <label class="chk"><input id="m-feat" type="checkbox">Só destaques</label>
+      </div>
+      <div class="grid" id="m-grid"></div>
+      <div class="empty" id="m-empty"><i data-lucide="search-x"></i><p>Nenhuma marca com esses filtros.</p></div>
+    </section>
+
+    <!-- VIEW: CUPONS -->
+    <section class="view" id="view-cupons" data-screen-label="Cupons">
+      <div class="cat-head"><h2>Cupons ativos</h2><span class="n" id="c-count">—</span></div>
+      <p class="desc">Descontos exclusivos das marcas patrocinadoras para quem corre na rede. Copie e use na loja da marca.</p>
+      <div class="toolbar">
+        <select id="c-cat">
+          <option value="">Todas as categorias</option>
+          <option value="nutricao">Nutrição &amp; suplementação</option>
+          <option value="equipamento">Equipamento &amp; tecnologia</option>
+          <option value="vestuario">Vestuário &amp; recovery</option>
+        </select>
+      </div>
+      <div class="grid" id="c-grid"></div>
+      <div class="empty" id="c-empty"><i data-lucide="search-x"></i><p>Nenhum cupom nessa categoria.</p></div>
+    </section>
+  </main>
+</div>
+
+
+
+<script>
+  /* ================= DADOS ================= */
+  const CLUBS = [
+    { name: 'Pace', sub: 'Assessoria', city: 'Rio de Janeiro · RJ', focus: ['Rua · 5k–21k', 'Maratona'], members: 320, since: 2024, pro: true, grad: ['#D96C3A', '#1D1D1B'] },
+    { name: 'KM·Club', sub: 'Running', city: 'São Paulo · SP', focus: ['Rua · 5k–21k', 'Iniciantes'], members: 540, since: 2024, pro: true, grad: ['#1D1D1B', '#3A3A36'] },
+    { name: 'Alta', sub: 'Performance', city: 'Belo Horizonte · MG', focus: ['Maratona'], members: 180, since: 2025, pro: false, grad: ['#7FABB5', '#5E8A94'] },
+    { name: 'Move', sub: 'Assessoria', city: 'Curitiba · PR', focus: ['Iniciantes', 'Rua · 5k–21k'], members: 260, since: 2025, pro: true, grad: ['#8A8A84', '#56564F'] },
+    { name: 'RZN', sub: 'Run Club', city: 'Rio de Janeiro · RJ', focus: ['Trail run'], members: 95, since: 2025, pro: false, grad: ['#C25C2D', '#7A3A1D'] },
+    { name: 'Evo', sub: 'Assessoria', city: 'Florianópolis · SC', focus: ['Trail run', 'Maratona'], members: 150, since: 2026, pro: false, grad: ['#2A2A27', '#56564F'] },
+    { name: 'Bravo', sub: 'Running', city: 'Recife · PE', focus: ['Iniciantes'], members: 64, since: 2026, pro: false, grad: ['#D9A23A', '#C25C2D'] },
+    { name: 'Onda', sub: 'Run Club', city: 'Florianópolis · SC', focus: ['Rua · 5k–21k'], members: 112, since: 2026, pro: false, grad: ['#2C6E7E', '#142226'] },
+  ];
+  const BRANDS = [
+    { name: 'Pacefuel', sub: 'Nutrition', cat: 'nutricao', desc: 'Gel de carboidrato e isotônico para endurance.', off: '-15% na loja oficial', coupon: 'ALUNO15', featured: true, grad: ['#1D1D1B', '#C25C2D'] },
+    { name: 'Z2', sub: 'Suplementos', cat: 'nutricao', desc: 'Linha completa de suplementação para corredores.', off: '-12% na primeira compra', coupon: 'Z2RUN', featured: false, grad: ['#7FABB5', '#2A2A27'] },
+    { name: 'Kenta', sub: 'Recovery', cat: 'nutricao', desc: 'Proteínas e recovery pós-treino.', off: '-10% em kits recovery', coupon: 'KENTA10', featured: false, grad: ['#4E8C5A', '#1D1D1B'] },
+    { name: 'GPSRun', sub: 'Tech', cat: 'equipamento', desc: 'Relógios GPS e sensores de frequência cardíaca.', off: '-10% em relógios selecionados', coupon: 'REDE10', featured: true, grad: ['#1D1D1B', '#5E8A94'] },
+    { name: 'Audia', sub: 'Sport', cat: 'equipamento', desc: 'Fones open-ear feitos para correr na rua.', off: '-15% na linha sport', coupon: 'SOM15', featured: false, grad: ['#56564F', '#D96C3A'] },
+    { name: 'Vetor', sub: 'Bikes & Esteiras', cat: 'equipamento', desc: 'Equipamentos de treino indoor.', off: null, coupon: null, featured: false, grad: ['#2C6E7E', '#142226'] },
+    { name: 'Stride Wear', sub: 'Vestuário', cat: 'vestuario', desc: 'Vestuário técnico de corrida — linha completa.', off: '-20% acima de R$ 250', coupon: 'CORRE20', featured: false, grad: ['#0D0D0C', '#56564F'] },
+    { name: 'IceBrasil', sub: 'Recovery', cat: 'vestuario', desc: 'Banheiras de gelo e crioterapia doméstica.', off: '-10% em recovery doméstico', coupon: 'GELO10', featured: false, grad: ['#7FABB5', '#B4D0D6'] },
+    { name: 'Terra Firme', sub: 'Meias técnicas', cat: 'vestuario', desc: 'Meias de compressão feitas no Brasil.', off: null, coupon: null, featured: false, grad: ['#D9A23A', '#7A3A1D'] },
+  ];
+  const CAT_LABELS = { nutricao: 'Nutrição & suplementação', equipamento: 'Equipamento & tecnologia', vestuario: 'Vestuário & recovery' };
+
+  /* ================= VIEW SWITCHER (sidebar = filtro) ================= */
+  let view = 'assessorias';
+  let mCat = '';
+  const sideBtns = [...document.querySelectorAll('.side button')];
+  function setView(v, cat) {
+    view = v; if (v === 'marcas') mCat = cat || '';
+    document.querySelectorAll('.view').forEach((s) => s.classList.toggle('on', s.id === 'view-' + v));
+    sideBtns.forEach((b) => {
+      const match = b.dataset.view === v && (v !== 'marcas' || (b.dataset.cat || '') === mCat);
+      b.classList.toggle('on', match);
+    });
+    if (v === 'marcas') renderBrands();
+    if (v === 'cupons') renderCoupons();
+    window.scrollTo({ top: 0 });
+  }
+  sideBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view, b.dataset.cat)));
+
+  /* ================= ASSESSORIAS ================= */
+  function clubCard(d) {
+    return `
+    <article class="card${d.pro ? ' pro' : ''}">
+      <div class="card-top" style="background: linear-gradient(135deg, ${d.grad[0]}, ${d.grad[1]});">
+        ${d.pro ? '<span class="badge-t pro"><i data-lucide="badge-check"></i>PRO</span>' : '<span class="badge-t rede">desde ' + d.since + '</span>'}
+        <span class="wordmark">${d.name}<small>${d.sub}</small></span>
+      </div>
+      <div class="card-body">
+        <span class="loc"><i data-lucide="map-pin"></i>${d.city} · ${d.members} alunos</span>
+        <div class="tags">${d.focus.map((f) => `<span class="tag">${f}</span>`).join('')}</div>
+        <div class="card-foot">
+          <a href="#">Visitar site <i data-lucide="arrow-up-right"></i></a>
+          <span class="byline">site by <img src="../../assets/logo-full.svg" alt="retake"></span>
+        </div>
+      </div>
+    </article>`;
+  }
+  const aBusca = document.getElementById('a-busca'), aCidade = document.getElementById('a-cidade'), aFoco = document.getElementById('a-foco'), aPro = document.getElementById('a-pro');
+  function renderClubs() {
+    const q = aBusca.value.trim().toLowerCase();
+    const rows = CLUBS.filter((d) =>
+      (!q || (d.name + ' ' + d.sub).toLowerCase().includes(q)) &&
+      (!aCidade.value || d.city === aCidade.value) &&
+      (!aFoco.value || d.focus.includes(aFoco.value)) &&
+      (!aPro.checked || d.pro)
+    );
+    document.getElementById('a-grid').innerHTML = rows.map(clubCard).join('');
+    document.getElementById('a-empty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('a-count').textContent = rows.length + ' de ' + CLUBS.length;
+    lucide.createIcons();
+  }
+  [aBusca, aCidade, aFoco, aPro].forEach((el) => el.addEventListener(el.type === 'text' ? 'input' : 'change', renderClubs));
+
+  /* ================= MARCAS (sem cupom — divulgação) ================= */
+  function brandCard(b) {
+    return `
+    <article class="card${b.featured ? ' feat' : ''}">
+      <div class="card-top" style="background: linear-gradient(135deg, ${b.grad[0]}, ${b.grad[1]});">
+        ${b.featured ? '<span class="badge-t feat"><i data-lucide="star"></i>Destaque</span>' : ''}
+        <span class="wordmark">${b.name}<small>${b.sub}</small></span>
+      </div>
+      <div class="card-body">
+        <p class="sup-desc">${b.desc}</p>
+        <div class="tags">
+          <span class="tag">${CAT_LABELS[b.cat]}</span>
+          ${b.coupon ? '<span class="tag cup">Tem cupom</span>' : ''}
+        </div>
+        <div class="card-foot">
+          <a href="#">Conhecer marca <i data-lucide="arrow-up-right"></i></a>
+          ${b.coupon ? `<button class="lnk" type="button" onclick="setView('cupons')">Ver cupom <i data-lucide="ticket-percent"></i></button>` : ''}
+        </div>
+      </div>
+    </article>`;
+  }
+  const mBusca = document.getElementById('m-busca'), mFeat = document.getElementById('m-feat');
+  function renderBrands() {
+    const q = mBusca.value.trim().toLowerCase();
+    const rows = BRANDS
+      .filter((b) =>
+        (!mCat || b.cat === mCat) &&
+        (!q || (b.name + ' ' + b.sub).toLowerCase().includes(q)) &&
+        (!mFeat.checked || b.featured))
+      .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    document.getElementById('m-title').textContent = mCat ? CAT_LABELS[mCat] : 'Todas as marcas';
+    document.getElementById('m-grid').innerHTML = rows.map(brandCard).join('');
+    document.getElementById('m-empty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('m-count').textContent = rows.length + ' de ' + BRANDS.length;
+    lucide.createIcons();
+  }
+  [mBusca, mFeat].forEach((el) => el.addEventListener(el.type === 'text' ? 'input' : 'change', renderBrands));
+
+  /* ================= CUPONS ================= */
+  function couponCard(b) {
+    return `
+    <article class="card${b.featured ? ' feat' : ''}">
+      <div class="card-top" style="background: linear-gradient(135deg, ${b.grad[0]}, ${b.grad[1]});">
+        ${b.featured ? '<span class="badge-t feat"><i data-lucide="star"></i>Destaque</span>' : ''}
+        <span class="wordmark">${b.name}<small>${b.sub}</small></span>
+      </div>
+      <div class="card-body">
+        <span class="tag" style="align-self: flex-start;">${CAT_LABELS[b.cat]}</span>
+        <span class="off">${b.off}</span>
+        <div class="coupon"><code>${b.coupon}</code><button type="button">Copiar</button></div>
+      </div>
+    </article>`;
+  }
+  const cCat = document.getElementById('c-cat');
+  function renderCoupons() {
+    const all = BRANDS.filter((b) => b.coupon);
+    const rows = all
+      .filter((b) => !cCat.value || b.cat === cCat.value)
+      .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    document.getElementById('c-grid').innerHTML = rows.map(couponCard).join('');
+    document.getElementById('c-empty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('c-count').textContent = rows.length + ' de ' + all.length;
+    document.querySelectorAll('.coupon button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const code = btn.parentElement.querySelector('code').textContent;
+        try { navigator.clipboard.writeText(code); } catch (e) {}
+        btn.textContent = 'Copiado!'; btn.classList.add('ok');
+        setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 1600);
+      });
+    });
+    lucide.createIcons();
+  }
+  cCat.addEventListener('change', renderCoupons);
+
+  renderClubs();
+  lucide.createIcons();
+</script>
+<script src="_chrome.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* ============================================================
+   retake.run — Webfonts
+   ------------------------------------------------------------
+   Brand faces (licensed, not bundled):
+     · Display / headlines → DRUK CONDENSED (Commercial Type)
+     · Body / UI           → NEUE HAAS GROTESK (Linotype)
+
+   FREE SUBSTITUTES loaded here (flag to client, swap for the
+   licensed faces in production):
+     · Display → "Oswald"          (athletic heavy condensed)
+     · Body    → "Hanken Grotesk"  (neutral grotesque, Helvetica lineage)
+     · Mono    → "Space Mono"      (tabular metrics / data)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Mono:wght@400;700&display=swap');

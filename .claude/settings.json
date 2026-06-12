@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(node:*)",
+      "Bash(tsx:*)",
+      "Bash(vercel:*)",
+      "Bash(npx shadcn:*)",
+      "Bash(npx shadcn@latest:*)",
+      "Bash(bash scripts/*)",
+      "Edit(*)",
+      "Write(*)",
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "mcp__plugin_supabase_supabase__*",
+      "mcp__shadcn__*",
+      "mcp__context7__*",
+      "mcp__plugin_vercel_vercel__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(git push --force origin main:*)",
+      "Bash(git push -f origin main:*)",
+      "Bash(git reset --hard:*)",
+      "Edit(.env)",
+      "Edit(.env.local)",
+      "Edit(.env.*.local)",
+      "Write(.env)",
+      "Write(.env.local)",
+      "Edit(docs/_handoff/**)",
+      "Write(docs/_handoff/**)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/load-context.sh" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/vocab-warn.sh" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/enforce-handoff-readonly.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-eslint.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/block-token-bypass.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/enforce-vocab-retake.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/enforce-server-only-data-layer.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/post-shadcn-add.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/format-on-write.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

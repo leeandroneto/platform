@@ -1,0 +1,73 @@
+/* ============================================================
+   retake.run — Color tokens
+   Palette from brand board §06. Graphite-led, cream surfaces,
+   terracotta as the single energetic accent, ocean-blue + mineral
+   grey as quiet supports.  Usage weight ≈ 60 / 25 / 10 / 5.
+   ============================================================ */
+:root {
+  /* ---- Raw brand palette -------------------------------- */
+  --grafite:        #1D1D1B;  /* GRAFITE  — primary ink (≈60%) */
+  --grafite-ink:    #0D0D0C;  /* near-black used in the wordmark */
+  --creme:          #F1ECE2;  /* CREME    — primary surface (≈25%) */
+  --terracota:      #D96C3A;  /* TERRACOTA— energetic accent (≈10%) */
+  --azul-oceano:    #7FABB5;  /* AZUL OCEANO — recovery / calm support */
+  --cinza-mineral:  #8A8A84;  /* CINZA MINERAL — muted detail (≈5%) */
+
+  /* ---- Tints & shades (derived, harmonious) ------------- */
+  --grafite-800:    #2A2A27;
+  --grafite-700:    #3A3A36;
+  --grafite-600:    #56564F;
+
+  --creme-50:       #FAF8F3;  /* lifted surface */
+  --creme-100:      #F1ECE2;  /* base creme */
+  --creme-200:      #E7E0D2;  /* sunken / hairline on cream */
+  --creme-300:      #D8CFBC;  /* stronger divider on cream */
+
+  --terracota-600:  #C25C2D;  /* hover / pressed */
+  --terracota-300:  #E9A985;  /* soft fill */
+  --terracota-100:  #F6E2D6;  /* tint background */
+
+  --azul-700:       #5E8A94;
+  --azul-300:       #B4D0D6;
+  --azul-100:       #E3EEF0;
+
+  /* semantic feedback (kept inside the palette's temperature) */
+  --green:          #4E8C5A;
+  --green-100:      #E0EBE0;
+  --amber:          #D9A23A;
+  --amber-100:      #F6ECD4;
+  --red:            #C0492F;
+  --red-100:        #F4DDD6;
+
+  /* ---- Semantic surface roles --------------------------- */
+  --surface-page:       var(--creme-100);  /* default app background */
+  --surface-card:       var(--creme-50);   /* raised card on cream */
+  --surface-sunken:     var(--creme-200);  /* wells, track grooves */
+  --surface-ink:        var(--grafite);    /* dark sections / footer */
+  --surface-ink-2:      var(--grafite-800);
+  --surface-inverse:    var(--grafite-ink);/* deepest dark */
+
+  /* ---- Semantic text roles ------------------------------ */
+  --text-strong:    var(--grafite-ink);    /* headlines on light */
+  --text-body:      var(--grafite);        /* default copy */
+  --text-muted:     var(--cinza-mineral);  /* captions, meta */
+  --text-on-dark:   var(--creme-100);       /* copy on graphite */
+  --text-on-dark-muted: #A7A79F;
+  --text-accent:    var(--terracota);
+
+  /* ---- Lines & accents ---------------------------------- */
+  --border-soft:    var(--creme-200);
+  --border-strong:  var(--creme-300);
+  --border-ink:     var(--grafite);
+  --border-on-dark: rgba(241,236,226,0.16);
+
+  --accent:         var(--terracota);
+  --accent-hover:   var(--terracota-600);
+  --focus-ring:     color-mix(in oklch, var(--terracota) 55%, transparent);
+
+  /* ---- The RUN·EAT·RECOVERY·REPEAT cycle ---------------- */
+  --cycle-run:      var(--terracota);
+  --cycle-eat:      var(--grafite);
+  --cycle-recovery: var(--azul-oceano);
+  --cycle-repeat:   var(--creme-300);
+}

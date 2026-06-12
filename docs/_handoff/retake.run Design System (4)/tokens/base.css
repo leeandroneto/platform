@@ -1,0 +1,53 @@
+/* ============================================================
+   retake.run — Base element defaults
+   Light, optional reset that maps raw elements to brand tokens.
+   Consumers can rely on these or ignore them.
+   ============================================================ */
+:root {
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-body);
+  font: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  text-transform: uppercase;
+  letter-spacing: var(--track-display);
+  margin: 0 0 var(--space-2);
+}
+h1 { font: var(--h1); }
+h2 { font: var(--h2); }
+h3 { font: var(--h3); }
+h4 { font: var(--h4); }
+
+p { margin: 0 0 var(--space-2); text-wrap: pretty; }
+a { color: var(--text-accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+::selection { background: var(--terracota-300); color: var(--grafite-ink); }
+
+/* Eyebrow / overline utility */
+.eyebrow {
+  font: var(--eyebrow);
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--text-muted);
+}
+
+/* Mono metric utility */
+.metric { font: var(--metric); color: var(--text-strong); font-variant-numeric: tabular-nums; }
+
+*:focus-visible {
+  outline: var(--border-2) solid var(--accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,342 @@
+<!-- @dsCard group="Landing" viewport="1280x1400" name="Evento — Detalhe" subtitle="SEO landing de uma prova: percursos, organizador, patrocinadores e link p/ inscrição externa" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Circuito Retake · Etapa Ibirapuera</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .header img { height: 22px; display: block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-lg { height: 52px; padding: 0 28px; font-size: 14px; }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+  .btn svg { width: 17px; height: 17px; }
+  .nav { display: flex; gap: 4px; align-items: center; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it.on { color: var(--terracota-300); opacity: 1; }
+
+  /* ---------- breadcrumb ---------- */
+  .crumb { background: var(--grafite-800); border-bottom: 1px solid var(--border-on-dark); }
+  .crumb-in { display: flex; align-items: center; gap: 8px; padding: 11px 0; font: var(--caption); color: var(--text-on-dark-muted); }
+  .crumb-in a { color: var(--text-on-dark-muted); }
+  .crumb-in a:hover { color: var(--terracota-300); }
+  .crumb-in svg { width: 13px; height: 13px; }
+
+  /* ---------- hero ---------- */
+  .ehero { background: var(--grafite-ink); color: var(--creme); position: relative; overflow: hidden; }
+  .ehero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(217,108,58,0.18)); pointer-events: none; }
+  .ehero-in { position: relative; z-index: 2; padding: 44px 0 40px; display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+  .ebadges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .eb { font: 600 10px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; padding: 5px 11px; border-radius: var(--radius-pill); }
+  .eb.type { background: var(--terracota); color: var(--creme); }
+  .eb.line { background: transparent; border: 1px solid var(--border-on-dark); color: var(--creme); }
+  .ehero h1 { font: var(--display-2); font-size: 52px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 16px; }
+  .ehero .facts { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 4px; }
+  .fact { display: flex; align-items: center; gap: 10px; }
+  .fact svg { width: 20px; height: 20px; color: var(--terracota-300); flex: none; }
+  .fact .lab { font: var(--caption); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-on-dark-muted); }
+  .fact .val { font: 600 16px/1.2 var(--font-body); color: var(--creme); }
+
+  /* sign-up card */
+  .signup { background: var(--creme-50); border-radius: var(--radius-16); box-shadow: var(--shadow-300); overflow: hidden; }
+  .signup-top { background: var(--terracota); padding: 16px 22px; }
+  .signup-top .from { font: var(--caption); text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.85); }
+  .signup-top .price { font: 700 34px/1 var(--font-mono); color: var(--creme); margin-top: 2px; }
+  .signup-top .price small { font: 600 13px/1 var(--font-body); }
+  .signup-body { padding: 18px 22px 22px; }
+  .signup-body .ext { display: flex; align-items: center; gap: 8px; font: var(--caption); color: var(--text-muted); margin-top: 12px; justify-content: center; }
+  .signup-body .ext svg { width: 13px; height: 13px; }
+  .signup-meta { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+  .signup-meta div { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: var(--body-sm); }
+  .signup-meta .k { color: var(--text-muted); display: inline-flex; align-items: center; gap: 7px; }
+  .signup-meta .k svg { width: 14px; height: 14px; color: var(--terracota); }
+  .signup-meta .v { font-weight: 600; color: var(--text-strong); }
+  .progress { height: 7px; border-radius: 999px; background: var(--creme-200); overflow: hidden; margin: 3px 0 6px; }
+  .progress span { display: block; height: 100%; background: var(--terracota); border-radius: 999px; }
+
+  /* ---------- body sections ---------- */
+  .body-grid { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; padding: 44px 0 60px; }
+  .main-col { min-width: 0; }
+  .sec { margin-bottom: 40px; }
+  .sec > h2 { font: var(--h2); font-size: 26px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0 0 16px; }
+  .sec p { font: var(--body); color: var(--text-body); margin: 0 0 14px; }
+  .sec p:last-child { margin-bottom: 0; }
+
+  /* percursos */
+  .courses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .course { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-12); padding: 18px; box-shadow: var(--shadow-100); }
+  .course .km { font: 700 30px/1 var(--font-display); color: var(--terracota); }
+  .course .km small { font: 700 14px/1 var(--font-mono); color: var(--text-strong); }
+  .course .nm { font: 600 12px/1.3 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-strong); margin: 8px 0 10px; }
+  .course .li { display: flex; align-items: center; gap: 7px; font: var(--body-sm); font-size: 12.5px; color: var(--text-muted); margin-top: 5px; }
+  .course .li svg { width: 13px; height: 13px; color: var(--terracota); flex: none; }
+
+  /* kit */
+  .kit { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .kit div { display: flex; align-items: center; gap: 10px; background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-8); padding: 13px 15px; font: var(--body-sm); color: var(--text-body); }
+  .kit svg { width: 17px; height: 17px; color: var(--terracota); flex: none; }
+
+  /* map placeholder */
+  .map { height: 240px; border-radius: var(--radius-12); background: linear-gradient(135deg, var(--grafite-700), var(--grafite-ink)); border: 1px solid var(--border-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-on-dark-muted); position: relative; overflow: hidden; }
+  .map svg.pin { width: 30px; height: 30px; color: var(--terracota-300); }
+  .map .lab { font: var(--caption); text-transform: uppercase; letter-spacing: 0.12em; }
+  .map .addr { font: var(--body-sm); color: var(--creme); }
+  .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(241,236,226,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,226,0.06) 1px, transparent 1px); background-size: 32px 32px; }
+
+  /* timeline */
+  .tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+  .tl li { display: grid; grid-template-columns: 84px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
+  .tl li:last-child { border-bottom: none; }
+  .tl .hr { font: 700 15px/1.3 var(--font-mono); color: var(--terracota); }
+  .tl .ev2 { font: var(--body-sm); color: var(--text-body); }
+  .tl .ev2 b { font-weight: 600; color: var(--text-strong); display: block; }
+
+  /* organizer + sponsors (sidebar widgets) */
+  .widget { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 20px; box-shadow: var(--shadow-100); margin-bottom: 16px; }
+  .widget h4 { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin: 0 0 14px; }
+  .org-row { display: flex; align-items: center; gap: 12px; }
+  .org-logo { width: 46px; height: 46px; border-radius: var(--radius-8); background: linear-gradient(135deg, var(--terracota), var(--grafite-ink)); display: flex; align-items: center; justify-content: center; font: 700 16px/1 var(--font-display); color: var(--creme); flex: none; }
+  .org-row .nm { font: 600 15px/1.2 var(--font-body); color: var(--text-strong); }
+  .org-row .sub { font: var(--caption); color: var(--text-muted); margin-top: 2px; }
+  .org-link { display: inline-flex; align-items: center; gap: 6px; font: 600 11.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota); margin-top: 14px; }
+  .org-link svg { width: 13px; height: 13px; }
+
+  .spon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .spon { height: 50px; border-radius: var(--radius-8); display: flex; align-items: center; justify-content: center; font: 700 14px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.08em; color: var(--creme); }
+  .spon.master { grid-column: 1 / -1; height: 62px; font-size: 19px; position: relative; }
+  .spon.master::before { content: 'PATROCÍNIO MASTER'; position: absolute; top: 7px; left: 0; right: 0; text-align: center; font: 700 8px/1 var(--font-body); letter-spacing: 0.14em; color: rgba(255,255,255,0.7); }
+  .spon-foot { font: var(--caption); color: var(--text-muted); margin-top: 12px; text-align: center; }
+  .spon-foot a { color: var(--terracota); }
+
+  /* related */
+  .rel { background: var(--grafite-ink); color: var(--creme); padding: 48px 0; }
+  .rel h2 { font: var(--h2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 20px; }
+  .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .relc { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); padding: 16px; display: flex; gap: 14px; align-items: center; transition: border-color 0.15s ease, transform 0.15s ease; }
+  .relc:hover { border-color: var(--terracota); transform: translateY(-2px); }
+  .relc .dt { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: var(--radius-8); background: var(--grafite-ink); flex: none; }
+  .relc .dt b { font: 700 20px/1 var(--font-display); color: var(--creme); }
+  .relc .dt small { font: 700 9px/1 var(--font-mono); color: var(--terracota-300); letter-spacing: 0.1em; }
+  .relc .ri b { font: 600 13.5px/1.25 var(--font-body); color: var(--creme); display: block; }
+  .relc .ri small { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  .footer { background: var(--grafite-ink); border-top: 1px solid var(--border-on-dark); padding: 24px 0; }
+  .footer-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .footer img { height: 18px; }
+  .footer small { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  @media (max-width: 900px) {
+    .nav { display: none; }
+    .ehero-in, .body-grid { grid-template-columns: 1fr; }
+    .signup { position: static; }
+    .courses, .rel-grid { grid-template-columns: 1fr; }
+    .kit { grid-template-columns: 1fr; }
+    .ehero h1 { font-size: 38px; }
+  }
+  .sticky-side { position: sticky; top: 92px; }
+
+  .nav { gap: 4px; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover, .nav-dd:hover .nav-it, .nav-dd:focus-within .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it svg { width: 13px; height: 13px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 320px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); opacity: 1; }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); letter-spacing: 0; text-transform: none; }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); letter-spacing: 0; text-transform: none; white-space: normal; }
+
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+
+
+<div class="crumb" data-screen-label="Breadcrumb">
+  <div class="wrap crumb-in">
+    <a href="eventos.html">Calendário</a><i data-lucide="chevron-right"></i>
+    <a href="eventos.html">Provas de rua · SP</a><i data-lucide="chevron-right"></i>
+    <span>Circuito Retake — Etapa Ibirapuera</span>
+  </div>
+</div>
+
+<section class="ehero" data-screen-label="Hero do evento">
+  <div class="wrap ehero-in">
+    <div>
+      <div class="ebadges">
+        <span class="eb type">Prova de rua</span>
+        <span class="eb line">Circuito Retake</span>
+        <span class="eb line">Cronometrado · chip</span>
+      </div>
+      <h1>Circuito Retake<br>Etapa Ibirapuera</h1>
+      <div class="facts">
+        <div class="fact"><i data-lucide="calendar"></i><div><div class="lab">Data</div><div class="val">Dom, 14 jun 2026</div></div></div>
+        <div class="fact"><i data-lucide="flag"></i><div><div class="lab">Largada</div><div class="val">06h00 · Portão 10</div></div></div>
+        <div class="fact"><i data-lucide="map-pin"></i><div><div class="lab">Local</div><div class="val">Parque Ibirapuera · SP</div></div></div>
+        <div class="fact"><i data-lucide="ruler"></i><div><div class="lab">Distâncias</div><div class="val">5K · 10K · 21K</div></div></div>
+      </div>
+    </div>
+
+    <!-- sign-up card -->
+    <aside class="signup sticky-side" id="inscricao" data-screen-label="Card de inscrição">
+      <div class="signup-top">
+        <div class="from">Inscrição a partir de</div>
+        <div class="price">R$ 89<small> · 5K</small></div>
+      </div>
+      <div class="signup-body">
+        <div class="signup-meta">
+          <div><span class="k"><i data-lucide="users"></i>Vagas</span><span class="v">3.000</span></div>
+          <div><span class="k"><i data-lucide="trending-up"></i>Lote atual</span><span class="v">2º lote</span></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font: var(--caption); color: var(--text-muted); margin-bottom: 4px;"><span>2.140 inscritos</span><span>71%</span></div>
+          <div class="progress"><span style="width:71%;"></span></div>
+        </div>
+        <a class="btn btn-primary btn-lg" href="https://exemplo-inscricoes.com.br" target="_blank" rel="noopener" style="width:100%; margin-top:14px;">Inscreva-se no site oficial <i data-lucide="external-link"></i></a>
+        <div class="ext"><i data-lucide="shield-check"></i>A inscrição é feita no site do organizador</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div class="wrap body-grid">
+  <!-- ============ MAIN COLUMN ============ -->
+  <div class="main-col">
+    <section class="sec" data-screen-label="Sobre">
+      <h2>Sobre a prova</h2>
+      <p>A etapa de São Paulo do Circuito Retake leva os corredores da rede para uma volta clássica pelo Parque Ibirapuera e seu entorno, com percursos cronometrados de 5K, 10K e 21K. Largada e chegada no Portão 10, com pórtico, hidratação a cada 2,5 km e cronometragem por chip.</p>
+      <p>É uma prova aberta — qualquer corredor pode se inscrever. Alunos das assessorias da rede têm cupom de desconto no lote e ponto de encontro próprio antes da largada.</p>
+    </section>
+
+    <section class="sec" data-screen-label="Percursos">
+      <h2>Percursos</h2>
+      <div class="courses">
+        <div class="course">
+          <div class="km">5<small>K</small></div>
+          <div class="nm">Percurso leve</div>
+          <div class="li"><i data-lucide="trending-up"></i>Plano</div>
+          <div class="li"><i data-lucide="droplet"></i>2 postos de água</div>
+          <div class="li"><i data-lucide="clock"></i>Limite 1h</div>
+        </div>
+        <div class="course">
+          <div class="km">10<small>K</small></div>
+          <div class="nm">Volta do parque</div>
+          <div class="li"><i data-lucide="trending-up"></i>Leve ondulação</div>
+          <div class="li"><i data-lucide="droplet"></i>4 postos de água</div>
+          <div class="li"><i data-lucide="clock"></i>Limite 1h30</div>
+        </div>
+        <div class="course">
+          <div class="km">21<small>K</small></div>
+          <div class="nm">Meia maratona</div>
+          <div class="li"><i data-lucide="trending-up"></i>Ondulado</div>
+          <div class="li"><i data-lucide="droplet"></i>7 postos · gel no 14k</div>
+          <div class="li"><i data-lucide="clock"></i>Limite 3h</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-screen-label="Programação">
+      <h2>Programação do dia</h2>
+      <ul class="tl">
+        <li><span class="hr">05h00</span><span class="ev2"><b>Abertura da arena</b>Retirada de kit de última hora e guarda-volumes.</span></li>
+        <li><span class="hr">05h40</span><span class="ev2"><b>Aquecimento coletivo</b>Ponto de encontro das assessorias da rede no Portão 10.</span></li>
+        <li><span class="hr">06h00</span><span class="ev2"><b>Largada 21K e 10K</b>Pelotões por tempo estimado.</span></li>
+        <li><span class="hr">06h15</span><span class="ev2"><b>Largada 5K</b>Após a passagem dos pelotões principais.</span></li>
+        <li><span class="hr">09h00</span><span class="ev2"><b>Premiação</b>Geral e por faixa etária, no palco principal.</span></li>
+      </ul>
+    </section>
+
+    <section class="sec" data-screen-label="Kit">
+      <h2>Kit do atleta</h2>
+      <div class="kit">
+        <div><i data-lucide="shirt"></i>Camiseta técnica da prova</div>
+        <div><i data-lucide="award"></i>Medalha de finisher</div>
+        <div><i data-lucide="hash"></i>Número de peito com chip</div>
+        <div><i data-lucide="package"></i>Sacola com brindes dos patrocinadores</div>
+      </div>
+    </section>
+
+    <section class="sec" data-screen-label="Local">
+      <h2>Local &amp; como chegar</h2>
+      <div class="map">
+        <div class="map-grid"></div>
+        <i data-lucide="map-pin" class="pin"></i>
+        <div class="lab">Arena da prova</div>
+        <div class="addr">Portão 10 · Parque Ibirapuera · São Paulo — SP</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ SIDEBAR WIDGETS ============ -->
+  <aside data-screen-label="Widgets laterais">
+    <div class="sticky-side">
+      <div class="widget" data-screen-label="Organizador">
+        <h4>Organização</h4>
+        <div class="org-row">
+          <div class="org-logo">RR</div>
+          <div><div class="nm">Rio Run Series</div><div class="sub">Organizador verificado · 18 provas</div></div>
+        </div>
+        <a class="org-link" href="empresas.html">Ver outras provas <i data-lucide="arrow-up-right"></i></a>
+      </div>
+
+      <div class="widget" data-screen-label="Patrocinadores">
+        <h4>Patrocinadores da prova</h4>
+        <div class="spon-grid">
+          <div class="spon master" style="background: linear-gradient(135deg, var(--terracota), var(--terracota-600));">Pacefuel</div>
+          <div class="spon" style="background: linear-gradient(135deg, var(--grafite-700), var(--grafite-ink));">Stride</div>
+          <div class="spon" style="background: linear-gradient(135deg, var(--azul-700), var(--grafite));">GPSRun</div>
+        </div>
+        <div class="spon-foot">Sua marca aqui? <a href="patrocinio.html">Patrocine a rede →</a></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<section class="rel" data-screen-label="Eventos relacionados">
+  <div class="wrap">
+    <h2>Perto de você na rede</h2>
+    <div class="rel-grid">
+      <a class="relc" href="evento.html">
+        <div class="dt"><b>15</b><small>JUN</small></div>
+        <div class="ri"><b>Treinão Longo de Domingo</b><small>Pace Club · São Paulo · gratuito</small></div>
+      </a>
+      <a class="relc" href="evento.html">
+        <div class="dt"><b>21</b><small>JUN</small></div>
+        <div class="ri"><b>Corrida da Orla — Leme ao Pontal</b><small>Rio Run Series · Rio de Janeiro</small></div>
+      </a>
+      <a class="relc" href="evento.html">
+        <div class="dt"><b>03</b><small>JUL</small></div>
+        <div class="ri"><b>Maratona de São Paulo</b><small>Rio Run Series · São Paulo</small></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+
+<script>lucide.createIcons();</script>
+<script src="_chrome.js"></script>
+</body>
+</html>

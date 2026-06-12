@@ -1,0 +1,319 @@
+<!-- @dsCard group="Landing" viewport="1280x1320" name="Publicar Evento" subtitle="Organizadores listam prova/treinão de graça — formulário mock, sem pagamento (Destaque = em breve)" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Publicar um evento</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .header img { height: 22px; display: block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-lg { height: 52px; padding: 0 28px; font-size: 14px; }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+  .btn svg { width: 17px; height: 17px; }
+  .nav { display: flex; gap: 4px; align-items: center; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it.on { color: var(--terracota-300); opacity: 1; }
+
+  /* ---------- hero ---------- */
+  .hero { background: var(--grafite-ink); color: var(--creme); padding: 56px 0 50px; }
+  .eyebrow-acc { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .hero h1 { font: var(--display-2); font-size: 50px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 12px 0 14px; max-width: 760px; }
+  .hero p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 600px; margin: 0; }
+  .hero .why { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; }
+  .hero .why div { display: flex; align-items: flex-start; gap: 10px; max-width: 260px; }
+  .hero .why svg { width: 19px; height: 19px; color: var(--terracota-300); flex: none; margin-top: 2px; }
+  .hero .why b { font: 600 14px/1.3 var(--font-body); color: var(--creme); display: block; }
+  .hero .why span { font: var(--body-sm); font-size: 13px; color: var(--text-on-dark-muted); }
+
+  /* ---------- plans ---------- */
+  .plans-sec { padding: 44px 0 8px; }
+  .sec-eyebrow { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .sec-h { font: var(--h2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 8px 0 20px; }
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .plan { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 26px; box-shadow: var(--shadow-100); display: flex; flex-direction: column; }
+  .plan.feat { border: 2px solid var(--grafite); background: var(--creme-50); position: relative; }
+  .plan .tier { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+  .plan .tier h3 { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+  .plan .pill { font: 700 9px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; padding: 5px 9px; border-radius: 999px; }
+  .pill.free { background: var(--green-100); color: var(--green); }
+  .pill.soon { background: var(--terracota); color: var(--creme); }
+  .plan .price { font: 700 30px/1 var(--font-mono); color: var(--text-strong); margin: 10px 0 4px; }
+  .plan .price small { font: 600 13px/1 var(--font-body); color: var(--text-muted); }
+  .plan .lead { font: var(--body-sm); color: var(--text-muted); margin: 0 0 16px; }
+  .plan ul { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .plan li { display: flex; gap: 9px; align-items: flex-start; font: var(--body-sm); font-size: 13.5px; color: var(--text-body); }
+  .plan li svg { width: 15px; height: 15px; color: var(--terracota); flex: none; margin-top: 2px; }
+  .plan li.off { color: var(--text-muted); }
+  .plan li.off svg { color: var(--border-strong); }
+  .btn-ghost { background: var(--creme-200); color: var(--text-strong); }
+  .btn-ghost:hover { background: var(--creme-300); }
+  .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+  /* ---------- form ---------- */
+  .form-sec { padding: 40px 0 70px; }
+  .form-card { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); box-shadow: var(--shadow-200); overflow: hidden; }
+  .form-head { background: var(--grafite); padding: 22px 30px; }
+  .form-head h2 { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0; }
+  .form-head p { font: var(--body-sm); color: var(--text-on-dark-muted); margin: 4px 0 0; }
+  .form-body { padding: 30px; }
+  .fieldset { margin-bottom: 30px; }
+  .fieldset:last-of-type { margin-bottom: 0; }
+  .fieldset > legend { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracota-600); padding: 0; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; width: 100%; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font: 600 12px/1 var(--font-body); color: var(--text-strong); display: flex; align-items: center; gap: 6px; }
+  .field label .opt { font: 400 11px/1 var(--font-body); color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+  .field input, .field select, .field textarea { width: 100%; box-sizing: border-box; height: 46px; padding: 0 14px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-8); background: var(--creme-50); font: var(--body); font-size: 14.5px; color: var(--text-strong); transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .field textarea { height: auto; padding: 12px 14px; resize: vertical; min-height: 96px; line-height: 1.55; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--terracota); box-shadow: 0 0 0 3px var(--focus-ring); }
+  .field .hint { font: var(--caption); color: var(--text-muted); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--cinza-mineral); }
+
+  /* segmented type picker */
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .seg label { cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg .opt-box { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 16px 8px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-8); background: var(--creme-50); text-align: center; transition: border-color 0.15s ease, background 0.15s ease; height: 100%; box-sizing: border-box; }
+  .seg .opt-box svg { width: 20px; height: 20px; color: var(--text-muted); }
+  .seg .opt-box b { font: 600 12.5px/1.2 var(--font-body); color: var(--text-strong); }
+  .seg input:checked + .opt-box { border-color: var(--terracota); background: var(--terracota-100); }
+  .seg input:checked + .opt-box svg { color: var(--terracota); }
+
+  /* distance checkboxes */
+  .dist-pick { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dist-pick label { cursor: pointer; }
+  .dist-pick input { position: absolute; opacity: 0; pointer-events: none; }
+  .dist-pick .db { display: inline-flex; align-items: center; padding: 9px 16px; border: 1.5px solid var(--border-strong); border-radius: 999px; background: var(--creme-50); font: 700 12px/1 var(--font-mono); color: var(--text-body); transition: all 0.15s ease; }
+  .dist-pick input:checked + .db { background: var(--grafite); border-color: var(--grafite); color: var(--creme); }
+
+  /* logo drop */
+  .drop { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1.5px dashed var(--border-strong); border-radius: var(--radius-8); background: var(--creme-50); }
+  .drop .ic { width: 52px; height: 52px; border-radius: var(--radius-8); background: var(--creme-200); display: flex; align-items: center; justify-content: center; flex: none; }
+  .drop .ic svg { width: 22px; height: 22px; color: var(--text-muted); }
+  .drop b { font: 600 13px/1.3 var(--font-body); color: var(--text-strong); display: block; }
+  .drop span { font: var(--caption); color: var(--text-muted); }
+
+  .form-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px 30px; background: var(--creme-50); border-top: 1px solid var(--border-soft); }
+  .form-foot .note { font: var(--caption); color: var(--text-muted); display: flex; align-items: center; gap: 7px; max-width: 420px; }
+  .form-foot .note svg { width: 15px; height: 15px; color: var(--terracota); flex: none; }
+
+  /* success toast */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--grafite-ink); color: var(--creme); padding: 14px 22px; border-radius: var(--radius-pill); box-shadow: var(--shadow-300); display: flex; align-items: center; gap: 10px; font: var(--body-sm); opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 80; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast svg { width: 18px; height: 18px; color: var(--green); }
+
+  .footer { background: var(--grafite-ink); border-top: 1px solid var(--border-on-dark); padding: 24px 0; }
+  .footer-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .footer img { height: 18px; }
+  .footer small { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  @media (max-width: 860px) {
+    .nav { display: none; }
+    .plans, .grid2, .grid3 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 38px; }
+    .seg { grid-template-columns: 1fr; }
+  }
+
+  .nav { gap: 4px; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover, .nav-dd:hover .nav-it, .nav-dd:focus-within .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it svg { width: 13px; height: 13px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 320px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); opacity: 1; }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); letter-spacing: 0; text-transform: none; }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); letter-spacing: 0; text-transform: none; white-space: normal; }
+
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+
+
+<section class="hero" data-screen-label="Hero publicar">
+  <div class="wrap">
+    <span class="eyebrow-acc">Para organizadores</span>
+    <h1>Publique seu evento na rede.</h1>
+    <p>Provas de rua, trail, revezamentos, treinões e clínicas. A listagem é gratuita e aparece para os corredores de toda a rede retake. A inscrição continua no seu site — a gente só conecta você ao público certo.</p>
+    <div class="why">
+      <div><i data-lucide="search"></i><div><b>Encontrado no Google</b><span>cada evento vira uma página otimizada para busca.</span></div></div>
+      <div><i data-lucide="users"></i><div><b>Público qualificado</b><span>visto pelos corredores e alunos das assessorias da rede.</span></div></div>
+      <div><i data-lucide="link"></i><div><b>Inscrição no seu site</b><span>linkamos para a sua plataforma — sem intermediar pagamento.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLANS ============ -->
+<section class="plans-sec wrap" data-screen-label="Planos de listagem">
+  <span class="sec-eyebrow">Como aparecer</span>
+  <h2 class="sec-h">Listagem gratuita — destaque em breve</h2>
+  <div class="plans">
+    <div class="plan" data-screen-label="Plano gratuito">
+      <div class="tier"><h3>Listagem</h3><span class="pill free">Grátis</span></div>
+      <div class="price">R$ 0</div>
+      <p class="lead">Tudo que um evento precisa para ser encontrado na rede.</p>
+      <ul>
+        <li><i data-lucide="check"></i>Página própria do evento, otimizada para busca</li>
+        <li><i data-lucide="check"></i>Aparece no calendário, filtros e por praça</li>
+        <li><i data-lucide="check"></i>Percursos, programação, kit e local</li>
+        <li><i data-lucide="check"></i>Botão de inscrição que leva ao seu site</li>
+        <li><i data-lucide="check"></i>Eventos de assessoria da rede entram automaticamente</li>
+      </ul>
+      <a class="btn btn-primary" href="#form">Publicar agora <i data-lucide="arrow-right"></i></a>
+    </div>
+    <div class="plan feat" data-screen-label="Plano destaque">
+      <div class="tier"><h3>Destaque</h3><span class="pill soon">Em breve</span></div>
+      <div class="price">—<small> · em breve</small></div>
+      <p class="lead">Mais alcance para provas que querem lotar os lotes.</p>
+      <ul>
+        <li><i data-lucide="check"></i>Topo do calendário e selo "Destaque"</li>
+        <li><i data-lucide="check"></i>Banner nos sites das assessorias da praça</li>
+        <li><i data-lucide="check"></i>Disparo para os alunos da região na agenda do app</li>
+        <li><i data-lucide="check"></i>Cupom da rede com link rastreado</li>
+        <li class="off"><i data-lucide="lock"></i>Disponível quando a rede abrir mídia paga</li>
+      </ul>
+      <button class="btn btn-ghost" type="button" disabled>Avise-me quando abrir</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORM ============ -->
+<section class="form-sec wrap" id="form" data-screen-label="Formulário de publicação">
+  <div class="form-card">
+    <div class="form-head">
+      <h2>Cadastre seu evento</h2>
+      <p>Leva 3 minutos. Revisamos e publicamos em até 1 dia útil. Sem custo.</p>
+    </div>
+    <form class="form-body" id="ev-form" autocomplete="off">
+
+      <fieldset class="fieldset">
+        <legend><i data-lucide="flag" style="width:14px;height:14px;"></i>O evento</legend>
+        <div class="field full">
+          <label>Tipo de evento</label>
+          <div class="seg">
+            <label><input type="radio" name="tipo" value="rua" checked><div class="opt-box"><i data-lucide="flag"></i><b>Prova de rua</b></div></label>
+            <label><input type="radio" name="tipo" value="trail"><div class="opt-box"><i data-lucide="mountain"></i><b>Trail</b></div></label>
+            <label><input type="radio" name="tipo" value="revezamento"><div class="opt-box"><i data-lucide="repeat"></i><b>Revezamento</b></div></label>
+            <label><input type="radio" name="tipo" value="treinao"><div class="opt-box"><i data-lucide="users"></i><b>Treinão</b></div></label>
+            <label><input type="radio" name="tipo" value="clinica"><div class="opt-box"><i data-lucide="graduation-cap"></i><b>Clínica</b></div></label>
+            <label><input type="radio" name="tipo" value="viagem"><div class="opt-box"><i data-lucide="plane"></i><b>Viagem</b></div></label>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Nome do evento</label>
+          <input type="text" placeholder="Ex.: Circuito Retake — Etapa Ibirapuera">
+        </div>
+        <div class="field full">
+          <label>Distâncias <span class="opt">— marque todas que tiver</span></label>
+          <div class="dist-pick">
+            <label><input type="checkbox"><span class="db">5K</span></label>
+            <label><input type="checkbox"><span class="db">10K</span></label>
+            <label><input type="checkbox"><span class="db">21K</span></label>
+            <label><input type="checkbox"><span class="db">42K</span></label>
+            <label><input type="checkbox"><span class="db">ULTRA</span></label>
+            <label><input type="checkbox"><span class="db">LIVRE</span></label>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Descrição <span class="opt">— sobre a prova, percurso, clima</span></label>
+          <textarea placeholder="Conte o que torna seu evento especial: percurso, estrutura, premiação…"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend><i data-lucide="calendar" style="width:14px;height:14px;"></i>Quando &amp; onde</legend>
+        <div class="grid3">
+          <div class="field"><label>Data</label><input type="date"></div>
+          <div class="field"><label>Largada</label><input type="time" value="06:00"></div>
+          <div class="field"><label>Estado</label>
+            <select>
+              <option value="">Selecione…</option>
+              <option>São Paulo</option><option>Rio de Janeiro</option><option>Minas Gerais</option>
+              <option>Paraná</option><option>Rio Grande do Sul</option><option>Bahia</option><option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Cidade</label><input type="text" placeholder="Ex.: São Paulo"></div>
+          <div class="field"><label>Local da largada <span class="opt">— opcional</span></label><input type="text" placeholder="Ex.: Portão 10, Parque Ibirapuera"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend><i data-lucide="link" style="width:14px;height:14px;"></i>Inscrição &amp; marca</legend>
+        <div class="grid2">
+          <div class="field"><label>Link de inscrição</label><input type="url" placeholder="https://…"><span class="hint">Para onde mandamos quem clica em "Inscreva-se".</span></div>
+          <div class="field"><label>Valor a partir de <span class="opt">— opcional</span></label><input type="text" placeholder="Ex.: R$ 89 — deixe em branco se for grátis"></div>
+        </div>
+        <div class="field full">
+          <label>Logo / imagem do evento <span class="opt">— opcional</span></label>
+          <div class="drop">
+            <div class="ic"><i data-lucide="image-up"></i></div>
+            <div><b>Arraste uma imagem ou clique para enviar</b><span>PNG ou JPG, até 2 MB · proporção 16:9 fica melhor</span></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend><i data-lucide="user" style="width:14px;height:14px;"></i>Organizador</legend>
+        <div class="grid2">
+          <div class="field"><label>Nome da organização</label><input type="text" placeholder="Ex.: Rio Run Series"></div>
+          <div class="field"><label>Você é da rede? <span class="opt">— assessoria parceira</span></label>
+            <select>
+              <option>Não — sou organizador externo</option>
+              <option>Sim — minha assessoria está na rede</option>
+            </select>
+          </div>
+          <div class="field"><label>E-mail de contato</label><input type="email" placeholder="voce@organizacao.com.br"></div>
+          <div class="field"><label>WhatsApp <span class="opt">— opcional</span></label><input type="tel" placeholder="(11) 90000-0000"></div>
+        </div>
+      </fieldset>
+    </form>
+    <div class="form-foot">
+      <div class="note"><i data-lucide="shield-check"></i>Sem pagamento nesta etapa. A retake não cobra pela listagem nem intermedeia a inscrição — você recebe direto na sua plataforma.</div>
+      <button class="btn btn-primary btn-lg" id="submit-btn" type="button">Enviar para revisão <i data-lucide="send"></i></button>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"><i data-lucide="check-circle"></i>Evento enviado! Avisaremos por e-mail quando estiver no ar.</div>
+
+
+
+<script>
+  lucide.createIcons();
+  const toast = document.getElementById('toast');
+  document.getElementById('submit-btn').addEventListener('click', () => {
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3200);
+  });
+</script>
+<script src="_chrome.js"></script>
+</body>
+</html>

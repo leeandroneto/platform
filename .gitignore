@@ -1,0 +1,47 @@
+# Next.js
+.next/
+out/
+
+# Node
+node_modules/
+.pnpm-store/
+*.log
+
+# Env
+.env
+.env.local
+.env*.local
+
+# Build / tooling
+.turbo/
+.vercel/
+.cache/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Tests / coverage
+coverage/
+playwright-report/
+test-results/
+
+# Misc
+*.tsbuildinfo
+.size-limit.json
+.claude/scheduled_tasks.lock
+
+*storybook.log
+storybook-static
+
+.vercel
+
+# pasta de descarte da migração 2026-05-28 — apagar manualmente quando confirmar
+.trash-migration/

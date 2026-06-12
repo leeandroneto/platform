@@ -1,0 +1,244 @@
+<!-- @dsCard group="Auth" viewport="1280x860" name="Login & Cadastro" subtitle="Entrada da rede: login, escolha de tipo de conta e onboarding do tenant (plano → dados → pagamento)" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Entrar / Criar conta</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--surface-page); }
+  .split { display: grid; grid-template-columns: 0.9fr 1.1fr; min-height: 100vh; }
+  .brand { background: var(--grafite-ink); color: var(--creme); padding: 48px 52px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .brand::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 1.5px 1.5px, rgba(241,236,226,0.08) 1.5px, transparent 1.6px); background-size: 26px 26px; pointer-events: none; }
+  .brand img { height: 24px; align-self: flex-start; position: relative; z-index: 2; }
+  .brand .mid { margin-top: auto; margin-bottom: auto; position: relative; z-index: 2; }
+  .brand h1 { font: var(--display-2); font-size: 44px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 16px; }
+  .brand h1 .acc { color: var(--terracota); }
+  .brand p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 380px; margin: 0; }
+  .brand .cadence { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; position: relative; z-index: 2; }
+  .brand .cadence span { font: 700 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--terracota-300); }
+  .brand .cadence i { color: var(--grafite-600); font-style: normal; }
+  .formside { display: flex; align-items: center; justify-content: center; padding: 48px 32px; }
+  .formwrap { width: 100%; max-width: 420px; }
+  svg.lucide { stroke-width: 2; }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } .brand { display: none; } }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../_shared/retake-ui.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+;(function () {
+const { Card, Badge, Button, Input, Icon } = window.RT;
+const { useState } = React;
+
+const eyebrow = { font: 'var(--eyebrow)', textTransform: 'uppercase', letterSpacing: 'var(--track-eyebrow)', color: 'var(--terracota)' };
+const h2 = { font: 'var(--h2)', textTransform: 'uppercase', letterSpacing: 'var(--track-display)', color: 'var(--text-strong)', margin: '8px 0 6px' };
+const cap = { font: 'var(--caption)', color: 'var(--text-muted)' };
+const link = { color: 'var(--terracota)', cursor: 'pointer', fontWeight: 600 };
+
+function Field({ label, ...rest }) {
+  return <Input label={label} {...rest} />;
+}
+
+const ROLES = [
+  { id: 'tenant', icon: 'users-round', t: 'Assessoria / clube', s: 'Gerir atletas, treinos e site', go: 'plan' },
+  { id: 'athlete', icon: 'user', t: 'Atleta', s: 'Entrar no app do meu clube', go: 'athlete' },
+  { id: 'sponsor', icon: 'megaphone', t: 'Marca / patrocinador', s: 'Aparecer na rede e medir vendas', go: 'sponsor' },
+  { id: 'supplier', icon: 'package', t: 'Fornecedor B2B', s: 'Vender para as assessorias', go: 'supplier' },
+  { id: 'organizer', icon: 'flag', t: 'Organizador de evento', s: 'Publicar e gerir provas', go: 'organizer' },
+];
+
+function App() {
+  const [view, setView] = useState('login');
+  const [role, setRole] = useState(null);
+  const [plan, setPlan] = useState('gratis');
+
+  const Brand = (
+    <div className="brand">
+      <img src="../../assets/logo-full-cream.svg" alt="RETAKE" />
+      <div className="mid">
+        <h1>Infraestrutura para comunidades que <span className="acc">movem</span> pessoas.</h1>
+        <p>O sistema operacional das assessorias de corrida do Brasil — atletas, treino, site, eventos e comunidade em um só lugar.</p>
+        <div className="cadence"><span>Run</span><i>·</i><span>Eat</span><i>·</i><span>Recovery</span><i>·</i><span>Repeat</span></div>
+      </div>
+    </div>
+  );
+
+  function Login() {
+    return (
+      <div className="formwrap">
+        <span style={eyebrow}>Bem-vindo de volta</span>
+        <h2 style={h2}>Entrar</h2>
+        <p style={{ ...cap, marginBottom: 22 }}>Acesse o painel da sua assessoria, marca ou conta.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Field label="E-mail" type="email" placeholder="voce@email.com" />
+          <Field label="Senha" type="password" placeholder="••••••••" />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}><span style={{ ...cap, ...link }}>Esqueci a senha</span></div>
+          <Button variant="primary" size="lg" style={{ width: '100%' }} onClick={() => setView('app-redirect')} arrow>Entrar</Button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '22px 0' }}><span style={{ flex: 1, height: 1, background: 'var(--border-soft)' }} /><span style={cap}>ou</span><span style={{ flex: 1, height: 1, background: 'var(--border-soft)' }} /></div>
+        <Button variant="secondary" size="lg" style={{ width: '100%' }} iconLeft={<Icon name="chrome" size={18} />}>Continuar com Google</Button>
+        <p style={{ ...cap, textAlign: 'center', marginTop: 22 }}>Não tem conta? <span style={link} onClick={() => setView('signup')}>Criar conta</span></p>
+      </div>
+    );
+  }
+
+  function Signup() {
+    return (
+      <div className="formwrap">
+        <span style={eyebrow}>Criar conta</span>
+        <h2 style={h2}>Quem é você?</h2>
+        <p style={{ ...cap, marginBottom: 22 }}>Escolha o tipo de conta — cada um entra numa porta diferente da rede.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {ROLES.map((r) => (
+            <button key={r.id} onClick={() => { setRole(r); setView(r.go); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: 'var(--surface-card)', border: '1.5px solid var(--border-soft)', borderRadius: 'var(--radius-12)', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'border-color var(--dur) var(--ease-out)' }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--terracota)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-soft)'}>
+              <span style={{ width: 42, height: 42, borderRadius: 'var(--radius-8)', background: 'var(--creme-200)', display: 'grid', placeItems: 'center', flex: 'none' }}><Icon name={r.icon} size={20} color="var(--grafite)" /></span>
+              <div style={{ flex: 1 }}><div style={{ font: '600 15px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{r.t}</div><div style={cap}>{r.s}</div></div>
+              <Icon name="chevron-right" size={18} color="var(--cinza-mineral)" />
+            </button>
+          ))}
+        </div>
+        <p style={{ ...cap, textAlign: 'center', marginTop: 22 }}>Já tem conta? <span style={link} onClick={() => setView('login')}>Entrar</span></p>
+      </div>
+    );
+  }
+
+  function Plan() {
+    const plans = [
+      { id: 'gratis', t: 'Grátis', price: 'Grátis', s: 'Site na rede, captação e vitrine de fornecedores. Com a faixa de marcas.', feat: ['retake.run/seuclube', '6 paletas (light e dark)', 'Formulário de leads — 100% seus', 'Fornecedores B2B'] },
+      { id: 'apoiador', t: 'Apoiador', price: 'R$ 29', per: '/mês · anual', alt: 'ou R$ 19/mês no bienal', s: 'Vitrine pública, white label, domínio próprio e produtos próprios.', feat: ['Aparece na vitrine pública', 'Site white label com sua identidade', 'Domínio próprio', 'Até 3 eventos · produtos próprios'] },
+      { id: 'membro', t: 'Membro', price: 'R$ 59', per: '/mês · anual', alt: 'ou R$ 39/mês no bienal', s: 'Site sob medida pela retake, sem marcas, programas e voz nas decisões.', feat: ['Site 100% personalizado pela retake', 'Remoção total das marcas', 'Até 5 programas divulgados', 'Voto + acesso antecipado'] },
+    ];
+    return (
+      <div className="formwrap" style={{ maxWidth: 480 }}>
+        <button onClick={() => setView('signup')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer', ...cap, marginBottom: 8 }}><Icon name="arrow-left" size={14} />Voltar</button>
+        <span style={eyebrow}>Assessoria / clube</span>
+        <h2 style={h2}>Escolha seu plano</h2>
+        <p style={{ ...cap, marginBottom: 20 }}>Comece grátis e suba quando quiser — sem refazer nada.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {plans.map((p) => (
+            <Card key={p.id} interactive onClick={() => setPlan(p.id)} pad="18px" style={{ border: plan === p.id ? '2px solid var(--terracota)' : '1px solid var(--border-soft)' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                <div>
+                  <div style={{ font: 'var(--h4)', textTransform: 'uppercase', color: 'var(--text-strong)' }}>{p.t}</div>
+                  <div style={{ font: '700 22px/1 var(--font-mono)', color: 'var(--text-strong)', margin: '6px 0 2px' }}>{p.price}<span style={cap}>{p.per || ''}</span></div>
+                  {p.alt && <div style={cap}>{p.alt}</div>}
+                </div>
+                <span style={{ width: 22, height: 22, borderRadius: 999, border: '2px solid ' + (plan === p.id ? 'var(--terracota)' : 'var(--border-strong)'), background: plan === p.id ? 'var(--terracota)' : 'transparent', display: 'grid', placeItems: 'center', flex: 'none' }}>{plan === p.id && <Icon name="check" size={13} color="var(--creme)" />}</span>
+              </div>
+              <p style={{ ...cap, margin: '8px 0 10px' }}>{p.s}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{p.feat.map((f) => <div key={f} style={{ display: 'flex', gap: 8, alignItems: 'center', font: 'var(--body-sm)', fontSize: 13, color: 'var(--text-body)' }}><Icon name="check" size={14} color="var(--terracota)" />{f}</div>)}</div>
+            </Card>
+          ))}
+        </div>
+        <Button variant="primary" size="lg" style={{ width: '100%', marginTop: 16 }} onClick={() => setView('account')} arrow>Continuar</Button>
+      </div>
+    );
+  }
+
+  function Account() {
+    return (
+      <div className="formwrap">
+        <button onClick={() => setView('plan')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer', ...cap, marginBottom: 8 }}><Icon name="arrow-left" size={14} />Voltar</button>
+        <span style={eyebrow}>Plano {plan === 'membro' ? 'Membro' : plan === 'apoiador' ? 'Apoiador' : 'Grátis'}</span>
+        <h2 style={h2}>Dados da assessoria</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
+          <Field label="Nome da assessoria" placeholder="Ex.: Acelera Run Club" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}><Field label="CNPJ" placeholder="00.000.000/0001-00" /><Field label="Cidade" placeholder="Rio de Janeiro" /></div>
+          <Field label="E-mail" type="email" placeholder="contato@clube.com" />
+          <Field label="Senha" type="password" placeholder="crie uma senha" />
+          <Button variant="primary" size="lg" style={{ width: '100%' }} onClick={() => setView(plan === 'gratis' ? 'done' : 'payment')} arrow>{plan === 'gratis' ? 'Criar conta grátis' : 'Ir para pagamento'}</Button>
+          <p style={cap}>Ao criar, você concorda com os termos e a política de privacidade (LGPD).</p>
+        </div>
+      </div>
+    );
+  }
+
+  function Payment() {
+    const label = plan === 'membro' ? 'Membro' : 'Apoiador';
+    const val = plan === 'membro' ? 'R$ 59' : 'R$ 29';
+    return (
+      <div className="formwrap">
+        <button onClick={() => setView('account')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer', ...cap, marginBottom: 8 }}><Icon name="arrow-left" size={14} />Voltar</button>
+        <span style={eyebrow}>Plano {label} · {val}/mês</span>
+        <h2 style={h2}>Pagamento</h2>
+        <Card pad="16px" tone="sunken" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '12px 0 18px' }}>
+          <span style={{ font: 'var(--body-sm)', color: 'var(--text-body)' }}>{label} · cobrança anual</span><span style={{ font: '700 16px/1 var(--font-mono)', color: 'var(--text-strong)' }}>{val}/mês</span>
+        </Card>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <Button variant="secondary" size="sm" iconLeft={<Icon name="credit-card" size={15} />}>Cartão</Button>
+          <Button variant="ghost" size="sm" iconLeft={<Icon name="qr-code" size={15} />}>Pix</Button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Field label="Número do cartão" placeholder="0000 0000 0000 0000" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}><Field label="Validade" placeholder="MM/AA" /><Field label="CVV" placeholder="123" /></div>
+          <Field label="Nome no cartão" placeholder="como impresso" />
+          <Button variant="primary" size="lg" style={{ width: '100%' }} onClick={() => setView('done')} iconLeft={<Icon name="lock" size={16} />}>Pagar e criar conta</Button>
+          <p style={{ ...cap, textAlign: 'center' }}>Pagamento seguro · cancele quando quiser</p>
+        </div>
+      </div>
+    );
+  }
+
+  function Done() {
+    return (
+      <div className="formwrap" style={{ textAlign: 'center' }}>
+        <div style={{ width: 76, height: 76, borderRadius: 999, background: 'var(--green-100)', display: 'grid', placeItems: 'center', margin: '0 auto 18px' }}><Icon name="check" size={36} color="var(--green)" /></div>
+        <h2 style={{ ...h2, textAlign: 'center' }}>Conta criada!</h2>
+        <p style={{ font: 'var(--body)', color: 'var(--text-muted)', margin: '0 0 22px' }}>Sua assessoria está na rede. Vamos montar seu site em 4 passos.</p>
+        <a href="../tenant-site/onboarding.html" style={{ textDecoration: 'none' }}><Button variant="primary" size="lg" style={{ width: '100%' }} arrow>Configurar meu site</Button></a>
+        <a href="../dashboard/index.html" style={{ textDecoration: 'none' }}><Button variant="ghost" size="md" style={{ width: '100%', marginTop: 10 }}>Ir direto ao dashboard</Button></a>
+      </div>
+    );
+  }
+
+  function Redirect({ icon, title, desc, href, cta }) {
+    return (
+      <div className="formwrap" style={{ textAlign: 'center' }}>
+        <button onClick={() => setView('signup')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none', background: 'none', cursor: 'pointer', ...cap, marginBottom: 18 }}><Icon name="arrow-left" size={14} />Trocar tipo de conta</button>
+        <div style={{ width: 68, height: 68, borderRadius: 'var(--radius-16)', background: 'var(--creme-200)', display: 'grid', placeItems: 'center', margin: '0 auto 16px' }}><Icon name={icon} size={30} color="var(--terracota)" /></div>
+        <h2 style={{ ...h2, textAlign: 'center' }}>{title}</h2>
+        <p style={{ font: 'var(--body)', color: 'var(--text-muted)', margin: '0 0 22px' }}>{desc}</p>
+        <a href={href} style={{ textDecoration: 'none' }}><Button variant="primary" size="lg" style={{ width: '100%' }} arrow>{cta}</Button></a>
+      </div>
+    );
+  }
+
+  const redirects = {
+    athlete: { icon: 'smartphone', title: 'App do atleta', desc: 'Baixe o app retake.run e entre com o código de convite do seu clube.', href: '../athlete-app/index.html', cta: 'Ver o app' },
+    sponsor: { icon: 'megaphone', title: 'Quero patrocinar', desc: 'Escolha sua cota e cadastre sua marca — aprovação da retake antes de publicar.', href: '../landing/patrocinio.html', cta: 'Ver cotas e cadastrar' },
+    supplier: { icon: 'package', title: 'Fornecedor B2B', desc: 'Liste sua empresa na vitrine por R$ 99/mês e receba pedidos das assessorias.', href: '../landing/empresas.html', cta: 'Cadastrar empresa' },
+    organizer: { icon: 'flag', title: 'Organizador de evento', desc: 'Publique sua prova de graça e gere lotes, inscritos e check-in.', href: '../landing/publicar-evento.html', cta: 'Publicar evento' },
+  };
+
+  let content;
+  if (view === 'login') content = <Login />;
+  else if (view === 'signup') content = <Signup />;
+  else if (view === 'plan') content = <Plan />;
+  else if (view === 'account') content = <Account />;
+  else if (view === 'payment') content = <Payment />;
+  else if (view === 'done') content = <Done />;
+  else if (view === 'app-redirect') content = <Redirect icon="layout-dashboard" title="Entrando…" desc="Login de demonstração. Escolha um painel para visitar." href="../dashboard/index.html" cta="Ir ao dashboard" />;
+  else if (redirects[view]) content = <Redirect {...redirects[view]} />;
+
+  return (
+    <div className="split">
+      {Brand}
+      <div className="formside">{content}</div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+})();
+</script>
+</body>
+</html>

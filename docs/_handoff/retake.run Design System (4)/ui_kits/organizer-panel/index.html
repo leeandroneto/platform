@@ -1,0 +1,313 @@
+<!-- @dsCard group="Organizer Panel" viewport="1280x1000" name="Painel do Organizador" subtitle="Organizador gere os próprios eventos: lotes, inscritos, check-in e reivindicação de evento" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Painel do organizador · Rio Run Series</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--surface-page); }
+  .top { background: var(--grafite-ink); color: var(--creme); }
+  .top-in { max-width: 1180px; margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 16px; }
+  .top img { height: 18px; }
+  .top .sep { width: 1px; height: 20px; background: var(--border-on-dark); }
+  .top .who { font: 600 13px/1 var(--font-body); color: var(--creme); display: flex; align-items: center; gap: 9px; }
+  .top .who b { font: 700 16px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; }
+  .top .right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 26px 28px 56px; }
+  svg.lucide { stroke-width: 2; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../_shared/retake-ui.jsx"></script>
+</head>
+<body>
+
+<header class="top" data-screen-label="Topo do painel">
+  <div class="top-in">
+    <img src="../../assets/logo-full-cream.svg" alt="retake.run">
+    <span class="sep"></span>
+    <span class="who"><b>Rio Run Series</b> Painel do organizador</span>
+    <span class="right" id="top-right"></span>
+  </div>
+</header>
+
+<div class="wrap"><div id="root"></div></div>
+
+<script type="text/babel" data-presets="react">
+;(function () {
+const { Card, StatCard, Badge, Button, Switch, Icon, Tabs, Input, Avatar } = window.RT;
+const { useState } = React;
+
+const MES = { JUN: 'JUN', JUL: 'JUL', AGO: 'AGO' };
+const mono = { font: '700 14px/1 var(--font-mono)', color: 'var(--text-strong)', fontVariantNumeric: 'tabular-nums' };
+
+/* date tile */
+function DateTile({ d, m, big }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: big ? 64 : 54, height: big ? 64 : 54, borderRadius: 'var(--radius-12)', background: 'var(--grafite-ink)', color: 'var(--creme)', flex: 'none' }}>
+      <span style={{ font: `700 ${big ? 26 : 22}px/1 var(--font-display)` }}>{d}</span>
+      <span style={{ font: '700 9px/1 var(--font-mono)', color: 'var(--terracota-300)', letterSpacing: '0.1em', marginTop: 2 }}>{m}</span>
+    </div>
+  );
+}
+
+/* ============ EVENTS DATA ============ */
+const EVENTS = [
+  { id: 'ibira', d: '14', m: 'JUN', name: 'Circuito Retake — Etapa Ibirapuera', city: 'São Paulo · SP', status: 'live', verified: true, subs: 2140, cap: 3000, rev: '190.460', dists: '5K · 10K · 21K' },
+  { id: 'orla', d: '21', m: 'JUN', name: 'Corrida da Orla — Leme ao Pontal', city: 'Rio de Janeiro · RJ', status: 'live', verified: true, subs: 880, cap: 1500, rev: '69.520', dists: '5K · 10K' },
+  { id: 'sp', d: '03', m: 'JUL', name: 'Maratona de São Paulo', city: 'São Paulo · SP', status: 'draft', verified: true, subs: 0, cap: 5000, rev: '0', dists: '10K · 21K · 42K' },
+];
+
+const STATUS = { live: ['success', 'No ar'], draft: ['warning', 'Rascunho'], past: ['neutral', 'Encerrado'] };
+
+/* ============ EVENT LIST ============ */
+function EventsList({ onOpen }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <StatCard label="Eventos ativos" value="2" caption="1 rascunho" accent />
+        <StatCard label="Inscritos (total)" value="3.020" delta={12} caption="vs mês passado" />
+        <StatCard label="Receita prevista" value="260" unit="mil R$" caption="lotes em aberto" />
+        <StatCard label="Check-in médio" value="92" unit="%" caption="presença nas provas" />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <h2 style={{ font: 'var(--h2)', textTransform: 'uppercase', letterSpacing: 'var(--track-display)', color: 'var(--text-strong)', margin: 0, whiteSpace: 'nowrap' }}>Meus eventos</h2>
+        <Button variant="primary" size="sm" iconLeft={<Icon name="plus" size={16} />}>Novo evento</Button>
+      </div>
+      {EVENTS.map((e) => (
+        <Card key={e.id} interactive onClick={() => onOpen(e)} pad="0">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 18, padding: '16px 20px' }}>
+            <DateTile d={e.d} m={e.m} big />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 5 }}>
+                <span style={{ font: 'var(--h4)', fontSize: 19, textTransform: 'uppercase', color: 'var(--text-strong)' }}>{e.name}</span>
+                <Badge tone={STATUS[e.status][0]} variant="soft" dot>{STATUS[e.status][1]}</Badge>
+                {e.verified && <Badge tone="accent" variant="outline"><Icon name="badge-check" size={11} style={{ marginRight: 3 }} />Verificado</Badge>}
+              </div>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', font: 'var(--body-sm)', color: 'var(--text-muted)' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Icon name="map-pin" size={14} color="var(--terracota)" />{e.city}</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Icon name="ruler" size={14} color="var(--terracota)" />{e.dists}</span>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right', minWidth: 130 }}>
+              <div style={mono}>{e.subs.toLocaleString('pt-BR')} <span style={{ font: 'var(--caption)', color: 'var(--text-muted)' }}>/ {e.cap.toLocaleString('pt-BR')}</span></div>
+              <div style={{ font: 'var(--caption)', color: 'var(--text-muted)', marginBottom: 6 }}>inscritos</div>
+              <div style={{ height: 6, borderRadius: 999, background: 'var(--creme-200)', overflow: 'hidden' }}><span style={{ display: 'block', height: '100%', width: (e.subs / e.cap * 100) + '%', background: 'var(--terracota)' }} /></div>
+            </div>
+            <Icon name="chevron-right" size={20} color="var(--cinza-mineral)" />
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+/* ============ EVENT DETAIL ============ */
+function Lotes() {
+  const lotes = [
+    { name: '1º lote', price: 'R$ 79', dist: '5K', sold: 600, cap: 600, status: 'sold' },
+    { name: '2º lote', price: 'R$ 89', dist: '5K', sold: 412, cap: 700, status: 'open' },
+    { name: '1º lote', price: 'R$ 99', dist: '10K', sold: 540, cap: 800, status: 'open' },
+    { name: '1º lote', price: 'R$ 129', dist: '21K', sold: 588, cap: 900, status: 'open' },
+    { name: '2º lote', price: 'R$ 149', dist: '21K', sold: 0, cap: 600, status: 'scheduled' },
+  ];
+  const st = { sold: ['neutral', 'Esgotado'], open: ['success', 'Aberto'], scheduled: ['warning', 'Programado'] };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <Card tone="sunken" pad="16px 20px" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <Icon name="info" size={18} color="var(--azul-700)" />
+        <span style={{ font: 'var(--body-sm)', color: 'var(--text-body)' }}>A retake não processa o pagamento — a venda acontece no seu site. Aqui você só controla preço, vagas e janela de cada lote.</span>
+      </Card>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}><Button variant="primary" size="sm" iconLeft={<Icon name="plus" size={15} />}>Adicionar lote</Button></div>
+      <Card pad="0">
+        {lotes.map((l, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 20px', borderTop: i ? '1px solid var(--border-soft)' : 'none' }}>
+            <Badge tone="neutral" variant="soft" style={{ minWidth: 44, justifyContent: 'center' }}>{l.dist}</Badge>
+            <div style={{ flex: 1 }}>
+              <div style={{ font: '600 14px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{l.name}</div>
+              <div style={{ font: 'var(--caption)', color: 'var(--text-muted)' }}>{l.sold}/{l.cap} vagas</div>
+            </div>
+            <div style={{ width: 110, height: 6, borderRadius: 999, background: 'var(--creme-200)', overflow: 'hidden' }}><span style={{ display: 'block', height: '100%', width: (l.sold / l.cap * 100) + '%', background: l.status === 'sold' ? 'var(--cinza-mineral)' : 'var(--terracota)' }} /></div>
+            <span style={{ ...mono, minWidth: 70, textAlign: 'right' }}>{l.price}</span>
+            <Badge tone={st[l.status][0]} variant="soft" dot>{st[l.status][1]}</Badge>
+            <Button variant="ghost" size="sm" style={{ padding: '0 8px' }}><Icon name="pencil" size={15} /></Button>
+          </div>
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+function Inscritos() {
+  const [q, setQ] = useState('');
+  const rows = [
+    { n: 'Marina Costa', d: '21K', lote: '1º lote', pay: 'paid', when: '02 jun' },
+    { n: 'Diego Martins', d: '10K', lote: '1º lote', pay: 'paid', when: '02 jun' },
+    { n: 'Paula Reis', d: '5K', lote: '2º lote', pay: 'pending', when: '03 jun' },
+    { n: 'Rodrigo Alves', d: '21K', lote: '1º lote', pay: 'paid', when: '03 jun' },
+    { n: 'Fernanda Dias', d: '10K', lote: '1º lote', pay: 'paid', when: '04 jun' },
+    { n: 'Marcos Lima', d: '5K', lote: '2º lote', pay: 'pending', when: '04 jun' },
+  ];
+  const pay = { paid: ['success', 'Pago'], pending: ['warning', 'Pendente'] };
+  const filt = rows.filter((r) => r.n.toLowerCase().includes(q.toLowerCase()));
+  const th = { font: '600 11px/1.2 var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', textAlign: 'left', padding: '16px 18px 10px' };
+  const td = { padding: '13px 18px', borderTop: '1px solid var(--border-soft)', font: 'var(--body-sm)', color: 'var(--text-body)' };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+        <Input placeholder="Buscar inscrito" value={q} onChange={(e) => setQ(e.target.value)} prefix={<Icon name="search" size={16} />} style={{ width: 280 }} />
+        <Button variant="secondary" size="sm" iconLeft={<Icon name="download" size={15} />}>Exportar lista</Button>
+      </div>
+      <Card pad="0">
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead><tr><th style={th}>Atleta</th><th style={th}>Distância</th><th style={th}>Lote</th><th style={th}>Inscrição</th><th style={th}>Pagamento</th></tr></thead>
+          <tbody>
+            {filt.map((r, i) => (
+              <tr key={i}>
+                <td style={td}><div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Avatar name={r.n} size={30} /><span style={{ font: '600 13.5px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{r.n}</span></div></td>
+                <td style={td}><Badge tone="neutral" variant="soft">{r.d}</Badge></td>
+                <td style={td}>{r.lote}</td>
+                <td style={{ ...td, color: 'var(--text-muted)' }}>{r.when}</td>
+                <td style={td}><Badge tone={pay[r.pay][0]} variant="soft" dot>{pay[r.pay][1]}</Badge></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
+function CheckIn() {
+  const init = [
+    { n: 'Marina Costa', d: '21K', num: '1042', in: true },
+    { n: 'Diego Martins', d: '10K', num: '2310', in: true },
+    { n: 'Paula Reis', d: '5K', num: '3551', in: false },
+    { n: 'Rodrigo Alves', d: '21K', num: '1088', in: false },
+    { n: 'Fernanda Dias', d: '10K', num: '2477', in: false },
+  ];
+  const [list, setList] = useState(init);
+  const [q, setQ] = useState('');
+  const done = list.filter((x) => x.in).length;
+  const toggle = (i) => setList((l) => l.map((x, j) => j === i ? { ...x, in: !x.in } : x));
+  const filt = list.map((r, i) => ({ ...r, i })).filter((r) => r.n.toLowerCase().includes(q.toLowerCase()) || r.num.includes(q));
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <Card pad="16px 22px" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div><div style={{ font: 'var(--caption)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Check-in do dia</div><div style={{ font: 'var(--metric-xl)', fontSize: 34, color: 'var(--terracota)' }}>{done}<span style={{ font: 'var(--mono-sm)', color: 'var(--text-muted)' }}> / {list.length}</span></div></div>
+          <div style={{ width: 64, height: 64, borderRadius: 999, display: 'grid', placeItems: 'center', background: 'var(--terracota-100)' }}><Icon name="scan-line" size={28} color="var(--terracota-600)" /></div>
+        </Card>
+        <Input placeholder="Buscar nome ou número de peito" value={q} onChange={(e) => setQ(e.target.value)} prefix={<Icon name="search" size={16} />} style={{ flex: 2, alignSelf: 'center' }} />
+      </div>
+      <Card pad="0">
+        {filt.map((r) => (
+          <div key={r.i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 20px', borderTop: r.i ? '1px solid var(--border-soft)' : 'none', background: r.in ? 'var(--green-100)' : 'transparent', transition: 'background var(--dur) var(--ease-out)' }}>
+            <span style={{ font: '700 13px/1 var(--font-mono)', color: 'var(--text-muted)', width: 44 }}>{r.num}</span>
+            <Avatar name={r.n} size={32} />
+            <div style={{ flex: 1 }}><span style={{ font: '600 14px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{r.n}</span></div>
+            <Badge tone="neutral" variant="soft">{r.d}</Badge>
+            <Button variant={r.in ? 'ghost' : 'primary'} size="sm" onClick={() => toggle(r.i)} iconLeft={<Icon name={r.in ? 'check-circle-2' : 'circle'} size={15} />}>{r.in ? 'Presente' : 'Check-in'}</Button>
+          </div>
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+function EventDetail({ e, onBack }) {
+  const [tab, setTab] = useState('lotes');
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <button onClick={onBack} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, alignSelf: 'flex-start', border: 'none', background: 'none', cursor: 'pointer', font: '600 12px/1 var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)' }}><Icon name="arrow-left" size={15} />Meus eventos</button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <DateTile d={e.d} m={e.m} big />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h2 style={{ font: 'var(--h2)', textTransform: 'uppercase', letterSpacing: 'var(--track-display)', color: 'var(--text-strong)', margin: 0 }}>{e.name}</h2>
+            <Badge tone={STATUS[e.status][0]} variant="soft" dot>{STATUS[e.status][1]}</Badge>
+          </div>
+          <div style={{ font: 'var(--body-sm)', color: 'var(--text-muted)', marginTop: 4 }}>{e.city} · {e.dists}</div>
+        </div>
+        <Button variant="secondary" size="sm" iconLeft={<Icon name="external-link" size={15} />}>Ver página pública</Button>
+      </div>
+      <Tabs value={tab} onChange={setTab} items={[{ id: 'lotes', label: 'Lotes' }, { id: 'inscritos', label: 'Inscritos', count: e.subs }, { id: 'checkin', label: 'Check-in' }]} />
+      <div>{tab === 'lotes' ? <Lotes /> : tab === 'inscritos' ? <Inscritos /> : <CheckIn />}</div>
+    </div>
+  );
+}
+
+/* ============ CLAIM EVENT ============ */
+function Claim() {
+  const [step, setStep] = useState(0);
+  const found = [
+    { d: '20', m: 'JUL', name: 'Corrida do Bosque 10K', city: 'Curitiba · PR', src: 'Importado pela retake' },
+    { d: '11', m: 'AGO', name: 'Night Run Rio', city: 'Rio de Janeiro · RJ', src: 'Sugerido pela comunidade' },
+  ];
+  if (step === 2) return (
+    <Card pad="40px" style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto' }}>
+      <div style={{ width: 64, height: 64, borderRadius: 999, background: 'var(--green-100)', display: 'grid', placeItems: 'center', margin: '0 auto 16px' }}><Icon name="shield-check" size={30} color="var(--green)" /></div>
+      <h3 style={{ font: 'var(--h3)', color: 'var(--text-strong)', margin: '0 0 8px' }}>Reivindicação enviada</h3>
+      <p style={{ font: 'var(--body)', color: 'var(--text-muted)', margin: '0 0 20px' }}>A retake confirma o CNPJ e libera o controle do evento para você em até 1 dia útil. Depois disso ele aparece em "Meus eventos" com selo de verificado.</p>
+      <Button variant="secondary" onClick={() => setStep(0)}>Voltar</Button>
+    </Card>
+  );
+  if (step === 1) return (
+    <Card pad="32px" style={{ maxWidth: 560, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div><div className="eyebrow" style={{ font: 'var(--eyebrow)', textTransform: 'uppercase', letterSpacing: 'var(--track-eyebrow)', color: 'var(--text-muted)' }}>Verificação do organizador</div><h3 style={{ font: 'var(--h3)', color: 'var(--text-strong)', margin: '6px 0 0' }}>Confirme que o evento é seu</h3></div>
+      <Input label="CNPJ da organização" placeholder="00.000.000/0001-00" />
+      <Input label="Site ou rede social oficial" placeholder="https://…" />
+      <Input label="E-mail no domínio da organização" placeholder="voce@suaorganizacao.com.br" />
+      <Card tone="sunken" pad="14px 16px" style={{ display: 'flex', gap: 10 }}><Icon name="info" size={16} color="var(--azul-700)" /><span style={{ font: 'var(--caption)', color: 'var(--text-body)' }}>Só liberamos a edição de lotes e o botão de inscrição após confirmar o CNPJ — é o que protege os corredores de eventos falsos.</span></Card>
+      <div style={{ display: 'flex', gap: 10 }}><Button variant="primary" onClick={() => setStep(2)}>Enviar verificação</Button><Button variant="ghost" onClick={() => setStep(0)}>Cancelar</Button></div>
+    </Card>
+  );
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <Card tone="dark" pad="20px 24px" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <Icon name="flag" size={22} color="var(--terracota-300)" />
+        <div style={{ flex: 1 }}><div style={{ font: '600 15px/1.3 var(--font-body)', color: 'var(--creme)' }}>Seu evento já está no calendário da retake?</div><div style={{ font: 'var(--body-sm)', color: 'var(--text-on-dark-muted)' }}>Reivindique para assumir o controle de lotes, inscritos e check-in.</div></div>
+      </Card>
+      <Input placeholder="Busque pelo nome do seu evento" prefix={<Icon name="search" size={16} />} />
+      <div style={{ font: 'var(--caption)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Encontrados no calendário</div>
+      {found.map((f, i) => (
+        <Card key={i} pad="0">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 20px' }}>
+            <DateTile d={f.d} m={f.m} />
+            <div style={{ flex: 1 }}><div style={{ font: '600 15px/1.2 var(--font-body)', color: 'var(--text-strong)' }}>{f.name}</div><div style={{ font: 'var(--caption)', color: 'var(--text-muted)' }}>{f.city} · {f.src}</div></div>
+            <Button variant="secondary" size="sm" onClick={() => setStep(1)}>Reivindicar</Button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+/* ============ ROOT ============ */
+function App() {
+  const [tab, setTab] = useState('eventos');
+  const [open, setOpen] = useState(null);
+  return (
+    <div>
+      {!open && (
+        <div style={{ marginBottom: 22 }}>
+          <Tabs value={tab} onChange={(t) => { setTab(t); setOpen(null); }} items={[{ id: 'eventos', label: 'Meus eventos' }, { id: 'claim', label: 'Reivindicar evento' }]} />
+        </div>
+      )}
+      {open ? <EventDetail e={open} onBack={() => setOpen(null)} /> : tab === 'eventos' ? <EventsList onOpen={setOpen} /> : <Claim />}
+    </div>
+  );
+}
+
+const right = document.getElementById('top-right');
+ReactDOM.createRoot(right).render(<span style={{ display: 'flex', alignItems: 'center', gap: 12 }}><span style={{ font: '600 12px/1 var(--font-body)', color: 'var(--text-on-dark-muted)' }}>Organizador verificado</span><Avatar name="Rio Run" size={34} /></span>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+})();
+</script>
+</body>
+</html>

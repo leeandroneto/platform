@@ -1,0 +1,31 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Tints & shades" subtitle="Derived steps for hover, fills, dividers" -->
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding: 24px; display: grid; gap: 14px; }
+  .ramp { display: grid; grid-template-columns: repeat(5,1fr); gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft); }
+  .c { height: 44px; display: flex; align-items: flex-end; padding: 5px 7px; font: var(--mono-sm); font-size: 10px; }
+  .lbl { font: var(--caption); text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); margin-bottom: 2px; }
+</style></head>
+<body>
+  <div>
+    <div class="lbl">Terracota</div>
+    <div class="ramp">
+      <div class="c" style="background:var(--terracota-100)">100</div>
+      <div class="c" style="background:var(--terracota-300)">300</div>
+      <div class="c" style="background:var(--terracota);color:#fff">500</div>
+      <div class="c" style="background:var(--terracota-600);color:#fff">600</div>
+      <div class="c" style="background:var(--grafite-ink);color:#fff">ink</div>
+    </div>
+  </div>
+  <div>
+    <div class="lbl">Creme / surfaces</div>
+    <div class="ramp">
+      <div class="c" style="background:var(--creme-50)">50</div>
+      <div class="c" style="background:var(--creme-100)">100</div>
+      <div class="c" style="background:var(--creme-200)">200</div>
+      <div class="c" style="background:var(--creme-300)">300</div>
+      <div class="c" style="background:var(--grafite);color:#fff">ink</div>
+    </div>
+  </div>
+</body></html>

@@ -1,0 +1,972 @@
+<!-- @dsCard group="Landing" viewport="1280x1100" name="Landing Page" subtitle="Landing explicativa retake.run — ecossistema, planos, mockup do template, faixa de marcas, tráfego pago" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — A rede que coloca a sua assessoria de corrida online. De graça.</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .narrow { max-width: 940px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+  .header img { height: 22px; display: block; }
+  .nav { display: flex; gap: 2px; align-items: center; }
+  .nav a, .nav-it { font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; }
+  .nav > a, .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav > a:hover, .nav-it:hover, .nav-dd:hover .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it svg { width: 13px; height: 13px; }
+  .soon-tag { font: 700 8.5px/1 var(--font-body); letter-spacing: 0.12em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; margin-left: 4px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 320px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); opacity: 1; }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); letter-spacing: 0; text-transform: none; }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); letter-spacing: 0; text-transform: none; white-space: normal; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-outline-dark { background: transparent; color: var(--creme); border-color: var(--creme); }
+  .btn-outline-dark:hover { background: rgba(241,236,226,0.1); }
+  .btn-outline { background: transparent; color: var(--grafite); border-color: var(--creme-300); border-radius: var(--radius-8); }
+  .btn-outline:hover { border-color: var(--grafite); background: rgba(29,29,27,0.04); }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+  .btn-lg { height: 52px; padding: 0 28px; font-size: 14px; }
+  .btn svg { width: 17px; height: 17px; }
+
+  /* ---------- section scaffolding ---------- */
+  .sec { padding: 92px 0; }
+  .sec-tight { padding: 72px 0; }
+  .sec-dark { background: var(--grafite-ink); color: var(--creme); }
+  .sec-cream { background: var(--creme-100); }
+  .eyebrow-acc { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .sec h2 { font: var(--h1); font-size: 40px; margin: 12px 0 0; color: var(--text-strong); text-wrap: balance; }
+  .sec-dark h2 { color: var(--creme); }
+  .sec-head-c { text-align: center; max-width: 680px; margin: 0 auto 56px; }
+  .sec-head-c .lead { font: var(--body-lg); color: var(--text-muted); margin: 18px 0 0; }
+  .sec-dark .sec-head-c .lead { color: var(--text-on-dark-muted); }
+
+  /* ---------- hero ---------- */
+  .hero { background: var(--grafite-ink); color: var(--creme); position: relative; overflow: hidden; }
+  .hero-photo { position: absolute; inset: 0 0 0 46%; background: url('../../assets/landing/hero-runners.jpg') center right / cover no-repeat; }
+  .hero-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, var(--grafite-ink) 40%, color-mix(in srgb, var(--grafite-ink) 60%, transparent) 62%, color-mix(in srgb, var(--grafite-ink) 22%, transparent) 100%); }
+  .hero-in { position: relative; padding: 88px 0 76px; max-width: 640px; }
+  .hero .kicker { display: inline-flex; align-items: center; gap: 8px; font: 700 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--terracota-300); background: rgba(217,108,58,0.14); border: 1px solid rgba(217,108,58,0.4); padding: 7px 13px; border-radius: 999px; margin-bottom: 22px; }
+  .hero h1 { font: var(--display-2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 22px; }
+  .hero h1 .accent { color: var(--terracota); }
+  .hero p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 480px; margin: 0 0 30px; }
+  .hero p strong { color: var(--creme); font-weight: 600; }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
+  .hero-meta { display: flex; gap: 22px; flex-wrap: wrap; }
+  .hero-meta div { display: flex; align-items: center; gap: 8px; font: var(--body-sm); color: var(--text-on-dark-muted); }
+  .hero-meta svg { width: 16px; height: 16px; color: var(--terracota-300); flex: none; }
+  .cycle { display: flex; gap: 9px; font: 700 14px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 34px; }
+  .cycle .run { color: var(--terracota); } .cycle .eat { color: var(--creme); } .cycle .rec { color: var(--azul-oceano); } .cycle .rep { color: var(--cinza-mineral); }
+  /* hoje x futuro (assessoria) */
+  .afut { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .afut-card { border-radius: var(--radius-16); padding: 30px; border: 1px solid var(--border-soft); background: var(--surface-card); box-shadow: var(--shadow-100); }
+  .afut-card.now { border: 2px solid var(--terracota); }
+  .afut-card .k { display: inline-flex; align-items: center; gap: 8px; font: 700 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.14em; padding: 7px 13px; border-radius: 999px; margin-bottom: 18px; }
+  .afut-card.now .k { background: var(--terracota); color: var(--creme); }
+  .afut-card.soon .k { background: var(--azul-100); color: var(--azul-700); }
+  .afut-card h3 { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0 0 18px; }
+  .afut-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .afut-card li { display: flex; gap: 11px; align-items: flex-start; font: var(--body); color: var(--text-strong); }
+  .afut-card li svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
+  .afut-card.now li svg { color: var(--green); }
+  .afut-card.soon li svg { color: var(--azul-700); }
+  .afut-card li b { font-weight: 600; }
+  .afut-card li span { display: block; font: var(--body-sm); color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+  .afut-hook { text-align: center; margin-top: 34px; font: var(--body-lg); color: var(--text-muted); }
+  .afut-hook a { color: var(--terracota); font-weight: 600; white-space: nowrap; }
+  @media (max-width: 980px) { .afut { grid-template-columns: 1fr; } }
+
+  /* ---------- ecosystem ---------- */
+  .eco { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .eco-card { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 26px 22px; box-shadow: var(--shadow-100); display: flex; flex-direction: column; gap: 12px; }
+  .eco-card .ic { width: 50px; height: 50px; border-radius: var(--radius-12); display: grid; place-items: center; background: var(--creme-200); }
+  .eco-card .ic svg { width: 24px; height: 24px; color: var(--grafite); }
+  .eco-card h3 { font: var(--h4); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+  .eco-card p { font: var(--body-sm); color: var(--text-muted); margin: 0; }
+  .eco-card .tag { font: 600 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota-600); background: var(--terracota-100); border-radius: 999px; padding: 5px 9px; align-self: flex-start; }
+  .eco-flow { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 44px; padding: 22px 26px; background: var(--surface-sunken); border-radius: var(--radius-16); }
+  .eco-flow .node { display: flex; align-items: center; gap: 10px; font: 600 14px/1.2 var(--font-body); color: var(--text-strong); }
+  .eco-flow .node svg { width: 18px; height: 18px; color: var(--terracota); }
+  .eco-flow .arr { color: var(--cinza-mineral); }
+  .eco-flow .arr svg { width: 20px; height: 20px; }
+
+  /* ---------- device mockup ---------- */
+  .show { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
+  .show .lead { font: var(--body-lg); color: var(--text-muted); margin: 18px 0 26px; }
+  .show-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+  .show-item { display: flex; gap: 12px; align-items: flex-start; }
+  .show-item svg { width: 19px; height: 19px; color: var(--terracota); flex: none; margin-top: 2px; }
+  .show-item b { font: 600 14px/1.4 var(--font-body); color: var(--text-strong); display: block; }
+  .show-item span { font: var(--body-sm); color: var(--text-muted); }
+  .show-soon { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: var(--radius-12); background: var(--azul-100); border: 1px solid var(--azul-300); margin-bottom: 26px; }
+  .show-soon i[data-lucide] { width: 19px; height: 19px; color: var(--azul-700); flex: none; margin-top: 2px; }
+  .show-soon .stag { display: inline-block; font: 700 9px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); background: var(--azul-700); padding: 4px 7px; border-radius: 999px; margin-bottom: 6px; }
+  .show-soon b { font: 600 14px/1.4 var(--font-body); color: var(--grafite); display: block; }
+  .show-soon span { font: var(--body-sm); color: var(--text-body); }
+  .device { position: relative; }
+  .device-top { background: #2a2a27; border: 1px solid #3a3a36; border-bottom: none; border-radius: 14px 14px 0 0; padding: 9px 14px; display: flex; align-items: center; gap: 8px; }
+  .device-top .dots { display: flex; gap: 5px; }
+  .device-top .dots i { width: 9px; height: 9px; border-radius: 999px; background: #55524c; display: block; }
+  .device-url { flex: 1; margin-left: 8px; height: 24px; border-radius: 999px; background: #1d1d1b; display: flex; align-items: center; gap: 7px; padding: 0 12px; font: 600 11px/1 var(--font-mono); color: var(--text-on-dark-muted); }
+  .device-url svg { width: 11px; height: 11px; color: var(--green); }
+  .device-screen { border: 1px solid #3a3a36; border-top: none; overflow: hidden; box-shadow: var(--shadow-300); background: #000; }
+  .device-screen img { width: 100%; display: block; }
+  .device-base { height: 16px; background: linear-gradient(#26261f, #14140f); border-radius: 0 0 16px 16px; position: relative; box-shadow: var(--shadow-200); }
+  .device-base::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 7px; background: #0a0a08; border-radius: 0 0 8px 8px; }
+  .device-note { text-align: center; font: var(--caption); color: var(--text-muted); margin-top: 16px; }
+  .show-specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 22px; }
+  .show-spec { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-12); padding: 16px 14px; text-align: center; box-shadow: var(--shadow-100); }
+  .show-spec svg { width: 22px; height: 22px; color: var(--terracota); margin-bottom: 8px; }
+  .show-spec b { font: 600 13px/1.2 var(--font-body); color: var(--text-strong); display: block; }
+  .show-spec span { font: var(--caption); color: var(--text-muted); }
+
+  /* ---------- preview lightbox ---------- */
+  .lb { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 32px; background: rgba(13,13,12,0.72); backdrop-filter: blur(6px); }
+  .lb.open { display: flex; animation: lbf var(--dur) var(--ease-out); }
+  @keyframes lbf { from { opacity: 0; } to { opacity: 1; } }
+  .lb-frame { width: 100%; max-width: 1100px; height: 88vh; background: var(--surface-card); border-radius: var(--radius-16); overflow: hidden; box-shadow: var(--shadow-300); display: flex; flex-direction: column; }
+  .lb-bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--grafite-ink); border-bottom: 1px solid var(--border-on-dark); flex: none; }
+  .lb-bar .dots { display: flex; gap: 6px; }
+  .lb-bar .dots i { width: 11px; height: 11px; border-radius: 999px; background: #55524c; display: block; }
+  .lb-url { flex: 1; margin-left: 6px; height: 28px; border-radius: 999px; background: #1d1d1b; display: flex; align-items: center; gap: 8px; padding: 0 14px; font: 600 12px/1 var(--font-mono); color: var(--text-on-dark-muted); }
+  .lb-url svg { width: 12px; height: 12px; color: var(--green); }
+  .lb-open { display: inline-flex; align-items: center; gap: 6px; font: 600 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-on-dark-muted); padding: 7px 10px; border-radius: var(--radius-8); border: 1px solid var(--border-on-dark); }
+  .lb-open:hover { color: var(--creme); border-color: var(--creme); }
+  .lb-open svg { width: 13px; height: 13px; }
+  .lb-close { width: 30px; height: 30px; border-radius: 999px; border: none; background: rgba(241,236,226,0.12); color: var(--creme); display: grid; place-items: center; cursor: pointer; flex: none; transition: background var(--dur) var(--ease-out); }
+  .lb-close:hover { background: var(--terracota); }
+  .lb-close svg { width: 16px; height: 16px; }
+  .lb-frame iframe { flex: 1; width: 100%; border: none; background: var(--surface-page); }
+
+  /* ---------- glossary ---------- */
+  .terms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .term { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-12); padding: 22px; box-shadow: var(--shadow-100); }
+  .term .h { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .term .h svg { width: 18px; height: 18px; color: var(--terracota); flex: none; }
+  .term h4 { font: 600 14px/1.2 var(--font-body); color: var(--text-strong); margin: 0; }
+  .term p { font: var(--body-sm); color: var(--text-muted); margin: 0; }
+  .term p strong { color: var(--text-body); font-weight: 600; }
+
+  /* ---------- money flow (faixa de marcas) ---------- */
+  .money { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .money h2 { color: var(--creme); }
+  .money .lead { font: var(--body-lg); color: var(--text-on-dark-muted); margin: 18px 0 0; }
+  .money-steps { display: flex; flex-direction: column; gap: 0; }
+  .money-step { display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--border-on-dark); }
+  .money-step:last-child { border-bottom: none; }
+  .money-step .n { width: 34px; height: 34px; border-radius: 999px; background: var(--terracota); color: var(--creme); display: grid; place-items: center; font: 700 15px/1 var(--font-mono); flex: none; }
+  .money-step b { font: 600 15px/1.3 var(--font-body); color: var(--creme); display: block; margin-bottom: 3px; }
+  .money-step span { font: var(--body-sm); color: var(--text-on-dark-muted); }
+  .money-aside { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-16); padding: 28px; }
+  .money-aside h4 { font: var(--h4); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 16px; }
+  .money-aside .row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border-on-dark); }
+  .money-aside .row:first-of-type { border-top: none; }
+  .money-aside .row svg { width: 18px; height: 18px; color: var(--terracota-300); flex: none; }
+  .money-aside .row span { font: var(--body-sm); color: var(--text-on-dark-muted); }
+  .money-aside .row b { color: var(--creme); font-weight: 600; }
+
+  /* ---------- steps ---------- */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .step { display: flex; flex-direction: column; gap: 12px; }
+  .step-top { display: flex; align-items: center; gap: 14px; }
+  .step-n { font: 700 30px/1 var(--font-display); color: var(--creme); }
+  .step svg.ic { width: 28px; height: 28px; color: var(--terracota-300); stroke-width: 1.5; }
+  .step h3 { font: 600 15px/1.2 var(--font-body); color: var(--creme); margin: 0; }
+  .step p { font: var(--body-sm); font-size: 13px; color: var(--text-on-dark-muted); margin: 0; }
+
+  /* ---------- pricing ---------- */
+  .bill-toggle { display: inline-flex; gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--creme-200); margin: 0 auto 30px; width: fit-content; }
+  .bill-toggle .bt { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border: none; background: transparent; border-radius: var(--radius-pill); cursor: pointer; font: 600 13px/1 var(--font-body); color: var(--text-muted); transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+  .bill-toggle .bt.on { background: var(--grafite-ink); color: var(--creme); }
+  .bill-toggle .save { font: 700 10px/1 var(--font-body); letter-spacing: 0.04em; padding: 3px 6px; border-radius: 999px; background: var(--terracota); color: var(--creme); }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .plan { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 28px 24px; display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow-100); }
+  .plan-hot { border: 2px solid var(--terracota); box-shadow: var(--shadow-200); }
+  .plan-flag { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--terracota); color: var(--creme); border-radius: var(--radius-pill); font: 700 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; padding: 7px 14px; white-space: nowrap; }
+  .plan h3 { font: 600 14px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-strong); margin: 0 0 6px; }
+  .plan .who { font: var(--body-sm); font-size: 12.5px; color: var(--text-muted); margin: 0 0 16px; min-height: 34px; }
+  .price { display: flex; align-items: baseline; gap: 7px; margin-bottom: 4px; }
+  .price .cur { font: 700 15px/1 var(--font-mono); color: var(--text-strong); }
+  .price .val { font: var(--metric-xl); font-size: 38px; color: var(--text-strong); }
+  .price .per { font: var(--caption); color: var(--text-muted); }
+  .plan-sub { font: var(--caption); color: var(--text-muted); margin: 0 0 20px; }
+  .plan-list { display: flex; flex-direction: column; gap: 11px; margin-bottom: 26px; }
+  .plan-li { display: flex; gap: 9px; align-items: flex-start; font: var(--body-sm); font-size: 13.5px; color: var(--text-body); }
+  .plan-li svg { width: 15px; height: 15px; color: var(--green); flex: none; margin-top: 2px; }
+  .plan-li.head { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
+  .plan-li.head svg { color: var(--cinza-mineral); }
+  .plan-li.muted { color: var(--text-muted); }
+  .plan-li.muted svg { color: var(--cinza-mineral); }
+  .plan-li em { font-style: normal; color: var(--text-muted); }
+  .plan .btn { margin-top: auto; width: 100%; }
+  .plan-hot .btn { background: var(--terracota); color: var(--creme); border-radius: var(--radius-8); }
+  .plan-hot .btn:hover { background: var(--terracota-600); }
+  .plans-note { text-align: center; font: var(--caption); color: var(--text-muted); margin-top: 24px; }
+
+  /* ---------- plan detail sections ---------- */
+  .pdetail-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+  .pdetail-head .lbl { display: inline-flex; align-items: center; gap: 8px; font: 700 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.14em; padding: 7px 13px; border-radius: 999px; }
+  .lbl-free { background: var(--creme-200); color: var(--grafite); }
+  .lbl-sup { background: var(--terracota-100); color: var(--terracota-600); }
+  .lbl-mem { background: var(--terracota); color: var(--creme); }
+  .pdetail-head h3 { font: var(--h1); font-size: 32px; color: var(--text-strong); margin: 14px 0 6px; }
+  .sec-dark .pdetail-head h3 { color: var(--creme); }
+  .pdetail-head .one { font: var(--body-lg); color: var(--text-muted); margin: 0; max-width: 540px; }
+  .sec-dark .pdetail-head .one { color: var(--text-on-dark-muted); }
+  .pdetail-price { text-align: right; flex: none; }
+  .pdetail-price b { font: var(--metric-xl); font-size: 34px; color: var(--text-strong); }
+  .sec-dark .pdetail-price b { color: var(--creme); }
+  .pdetail-price span { display: block; font: var(--caption); color: var(--text-muted); }
+  .pgroups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .pgroup { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 24px; box-shadow: var(--shadow-100); display: flex; flex-direction: column; gap: 14px; }
+  .sec-dark .pgroup { background: var(--grafite-800); border-color: var(--border-on-dark); box-shadow: none; }
+  .pgroup .gh { display: flex; align-items: center; gap: 10px; }
+  .pgroup .gh .gi { width: 38px; height: 38px; border-radius: var(--radius-10); background: var(--creme-200); display: grid; place-items: center; flex: none; }
+  .sec-dark .pgroup .gh .gi { background: var(--grafite-700); }
+  .pgroup .gh .gi svg { width: 19px; height: 19px; color: var(--terracota); }
+  .pgroup .gh h4 { font: 600 13px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-strong); margin: 0; }
+  .sec-dark .pgroup .gh h4 { color: var(--creme); }
+  .pgroup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .pgroup li { display: flex; gap: 9px; align-items: flex-start; font: var(--body-sm); font-size: 13.5px; color: var(--text-body); }
+  .sec-dark .pgroup li { color: var(--text-on-dark-muted); }
+  .pgroup li svg { width: 15px; height: 15px; color: var(--green); flex: none; margin-top: 2px; }
+  .pgroup li.soon { color: var(--text-muted); }
+  .pgroup li.soon svg { color: var(--azul-oceano); }
+  .pgroup li b { color: var(--text-strong); font-weight: 600; }
+  .sec-dark .pgroup li b { color: var(--creme); }
+  .soon-chip { font: 700 8.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; background: var(--azul-100); color: var(--azul-700); padding: 3px 6px; border-radius: 999px; margin-left: 4px; vertical-align: 1px; }
+  .pcarry { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1.3 var(--font-body); color: var(--terracota-600); margin-bottom: 18px; }
+  .sec-dark .pcarry { color: var(--terracota-300); }
+  .pcarry svg { width: 15px; height: 15px; flex: none; }
+
+  /* ---------- traffic service ---------- */
+  .traffic { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .traffic h2 { color: var(--creme); }
+  .traffic .lead { font: var(--body-lg); color: var(--text-on-dark-muted); margin: 18px 0 26px; }
+  .traffic .why { display: flex; align-items: center; gap: 10px; font: var(--body-sm); color: var(--text-on-dark-muted); margin-bottom: 12px; }
+  .traffic .why svg { width: 17px; height: 17px; color: var(--terracota-300); flex: none; }
+  .pkgs { display: flex; flex-direction: column; gap: 14px; }
+  .pkg { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-16); padding: 22px 24px; display: flex; align-items: center; gap: 20px; }
+  .pkg.hot { border-color: var(--terracota); }
+  .pkg .pk-main { flex: 1; }
+  .pkg h4 { font: var(--h4); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .pkg h4 .badge { font: 700 8.5px/1 var(--font-body); letter-spacing: 0.1em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; }
+  .pkg p { font: var(--body-sm); color: var(--text-on-dark-muted); margin: 0; }
+  .pkg .pk-price { text-align: right; flex: none; }
+  .pkg .pk-price b { font: 700 22px/1 var(--font-mono); color: var(--creme); display: block; }
+  .pkg .pk-price span { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  /* ---------- directory preview ---------- */
+  .dir { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 56px; align-items: center; }
+  .dir .lead { font: var(--body-lg); color: var(--text-muted); margin: 18px 0 26px; }
+  .dir-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .dir-card { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-12); padding: 18px; box-shadow: var(--shadow-100); }
+  .dir-card .top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .dir-logo { width: 42px; height: 42px; border-radius: var(--radius-8); display: grid; place-items: center; font: 700 15px/1 var(--font-display); color: var(--creme); flex: none; }
+  .dir-card h4 { font: 600 14px/1.2 var(--font-body); color: var(--text-strong); margin: 0; }
+  .dir-card .city { font: var(--caption); color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+  .dir-card .city svg { width: 11px; height: 11px; }
+  .dir-card .badge { font: 600 9.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 8px; border-radius: 999px; }
+  .badge-member { background: var(--terracota-100); color: var(--terracota-600); }
+  .badge-sup { background: var(--creme-200); color: var(--grafite); }
+  .dir-card .meta { display: flex; gap: 12px; }
+  .dir-card .meta span { font: var(--caption); color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
+  .dir-card .meta svg { width: 12px; height: 12px; color: var(--terracota); }
+
+  /* ---------- roadmap ---------- */
+  .road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .road-card { border-radius: var(--radius-16); padding: 24px; border: 1px solid var(--border-on-dark); background: var(--grafite-800); display: flex; flex-direction: column; gap: 12px; }
+  .road-card.now { border-color: var(--terracota); background: var(--grafite-700); }
+  .road-card .stat { font: 700 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; padding: 5px 9px; border-radius: 999px; align-self: flex-start; }
+  .stat-now { background: var(--terracota); color: var(--creme); }
+  .stat-soon { background: var(--grafite-600); color: var(--text-on-dark-muted); }
+  .road-card .ic { width: 44px; height: 44px; border-radius: var(--radius-12); background: rgba(241,236,226,0.06); display: grid; place-items: center; }
+  .road-card .ic svg { width: 22px; height: 22px; color: var(--terracota-300); }
+  .road-card h3 { font: var(--h4); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 0; }
+  .road-card p { font: var(--body-sm); font-size: 13px; color: var(--text-on-dark-muted); margin: 0; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq details { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-12); padding: 4px 4px; box-shadow: var(--shadow-100); }
+  .faq summary { list-style: none; cursor: pointer; padding: 18px 20px; font: 600 15px/1.4 var(--font-body); color: var(--text-strong); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .chev { width: 20px; height: 20px; color: var(--terracota); flex: none; transition: transform var(--dur) var(--ease-out); }
+  .faq details[open] summary .chev { transform: rotate(180deg); }
+  .faq .ans { padding: 0 20px 18px; font: var(--body); color: var(--text-muted); }
+
+  /* ---------- final CTA ---------- */
+  .cta { background: var(--grafite-ink); color: var(--creme); position: relative; overflow: hidden; }
+  .cta-mark { position: absolute; right: -60px; top: 50%; transform: translateY(-50%); height: 230%; opacity: 0.12; pointer-events: none; }
+  .cta-in { position: relative; padding: 80px 0; text-align: center; }
+  .cta h2 { font: var(--h1); font-size: 40px; color: var(--creme); margin: 0 auto 14px; max-width: 640px; }
+  .cta p { font: var(--body-lg); color: var(--text-on-dark-muted); margin: 0 auto 30px; max-width: 480px; }
+  .cta-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* ---------- footer ---------- */
+  .footer { background: var(--creme-100); padding: 64px 0 0; }
+  .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1.1fr; gap: 36px; padding-bottom: 48px; }
+  .footer img.logo { height: 22px; margin-bottom: 16px; }
+  .footer-brand p { font: var(--body-sm); font-size: 13px; color: var(--text-muted); max-width: 230px; margin: 0; }
+  .fcol h4 { font: 600 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin: 0 0 16px; }
+  .fcol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .fcol a { font: var(--body-sm); font-size: 13.5px; color: var(--grafite); }
+  .fcol a:hover { color: var(--terracota); }
+  .fcol li.contact { display: flex; align-items: center; gap: 8px; font: var(--body-sm); font-size: 13.5px; color: var(--grafite); }
+  .fcol li.contact svg { width: 15px; height: 15px; color: var(--cinza-mineral); flex: none; }
+  .footer-bottom { border-top: 1px solid var(--border-strong); padding: 20px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer-bottom .cycle { margin-top: 0; font-size: 12px; }
+  .footer-bottom small { font: var(--caption); color: var(--text-muted); }
+
+  @media (max-width: 980px) {
+    .nav { display: none; }
+    .eco, .terms, .steps, .road, .plans, .footer-grid { grid-template-columns: 1fr 1fr; }
+    .show, .money, .traffic, .dir { grid-template-columns: 1fr; gap: 32px; }
+    .hero-photo { inset: 0 0 0 60%; }
+  }
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+<!-- ======================= HEADER ======================= -->
+
+
+<!-- ======================= HERO ======================= -->
+<section class="hero" id="top" data-screen-label="Hero">
+  <div class="hero-photo"></div>
+  <div class="hero-scrim"></div>
+  <div class="wrap">
+    <div class="hero-in">
+      <span class="kicker"><i data-lucide="zap"></i>Para assessorias e run clubs</span>
+      <h1>Tudo para a sua assessoria.<br><span class="accent">Começando pelo site — de graça.</span></h1>
+      <p>A retake dá à sua assessoria um <strong>site profissional e captação de alunos</strong> sem custo hoje — e está virando a <strong>plataforma completa</strong> de treino, app e gestão. Você cresce junto com a rede.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary btn-lg" href="../tenant-site/onboarding.html">Criar meu site grátis <i data-lucide="arrow-right"></i></a>
+        <a class="btn btn-outline-dark btn-lg" href="#ecossistema">Entender como funciona</a>
+      </div>
+      <div class="hero-meta">
+        <div><i data-lucide="check"></i>Pronto em minutos</div>
+        <div><i data-lucide="check"></i>Sem cartão de crédito</div>
+        <div><i data-lucide="check"></i>Leads 100% seus</div>
+      </div>
+      <div class="cycle"><span class="run">Run.</span><span class="eat">Eat.</span><span class="rec">Recovery.</span><span class="rep">Repeat.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= O QUE É (ECOSSISTEMA) ======================= -->
+<section class="sec" id="ganha" data-screen-label="O que você ganha">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">O que você ganha</span>
+      <h2>Hoje, o site. Em breve, o sistema inteiro.</h2>
+      <p class="lead">A retake já coloca a sua assessoria online e captando alunos. E estamos construindo o resto — treino, app e gestão — para virar a ferramenta do seu dia a dia.</p>
+    </div>
+    <div class="afut">
+      <div class="afut-card now">
+        <span class="k"><i data-lucide="check" style="width:13px;height:13px;"></i>Já disponível hoje</span>
+        <h3>Sua presença na rede</h3>
+        <ul>
+          <li><i data-lucide="check"></i><div><b>Site profissional</b><span>com a sua cara, no ar em minutos — grátis</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Captação de alunos</b><span>formulário e painel de leads — os contatos são seus</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Encontrado por corredores</b><span>apareça para quem procura assessoria na sua cidade</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Cupons das marcas</b><span>seus alunos ganham descontos das marcas parceiras</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Loja própria</b><span>cadastre e venda produtos do clube no site (Apoiador)</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Eventos</b><span>divulgue treinões e provas no seu calendário (Apoiador)</span></div></li>
+        </ul>
+      </div>
+      <div class="afut-card soon">
+        <span class="k"><i data-lucide="sparkles" style="width:13px;height:13px;"></i>Em construção</span>
+        <h3>A plataforma completa</h3>
+        <ul>
+          <li><i data-lucide="activity"></i><div><b>Treino &amp; app do atleta</b><span>periodização, prescrição e treino do dia no celular do aluno</span></div></li>
+          <li><i data-lucide="users"></i><div><b>Gestão do dia a dia</b><span>alunos, equipe, agenda, recursos e financeiro</span></div></li>
+          <li><i data-lucide="store"></i><div><b>Loja com fornecedores</b><span>produtos sem estoque, entregues no Brasil inteiro, com comissão</span></div></li>
+          <li><i data-lucide="graduation-cap"></i><div><b>Produtos digitais</b><span>cursos e planos com vídeos gravados</span></div></li>
+        </ul>
+      </div>
+    </div>
+    <p class="afut-hook">Tudo começa pelo seu site — e ele é grátis. <a href="#planos">Ver os planos →</a></p>
+  </div>
+</section>
+
+<!-- ======================= MOCKUP DO TEMPLATE ======================= -->
+<section class="sec sec-cream" id="template" data-screen-label="Veja o site">
+  <div class="wrap show">
+    <div>
+      <span class="eyebrow-acc">O seu site</span>
+      <h2>Veja como fica.</h2>
+      <p class="lead">Um site completo de assessoria, com a sua identidade — sem você escrever uma linha de código.</p>
+      <div class="show-list">
+        <div class="show-item"><i data-lucide="palette"></i><div><b>A sua cara</b><span>logo, cores e nome do seu clube no template da rede.</span></div></div>
+        <div class="show-item"><i data-lucide="contact"></i><div><b>Capta alunos</b><span>botão de aula experimental e formulário que vira lead no seu painel.</span></div></div>
+        <div class="show-item"><i data-lucide="ticket-percent"></i><div><b>Cupons das marcas</b><span>seus alunos ganham desconto nas marcas parceiras da rede.</span></div></div>
+        <div class="show-item"><i data-lucide="shopping-bag"></i><div><b>Loja própria</b><span>cadastre produtos físicos do clube — camisetas, regatas, acessórios — e venda direto no site.</span></div></div>
+        <div class="show-item"><i data-lucide="calendar-days"></i><div><b>Eventos</b><span>divulgue treinões, provas internas e encontros no calendário da sua página.</span></div></div>
+      </div>
+      <div class="show-soon">
+        <i data-lucide="sparkles"></i>
+        <div>
+          <span class="stag">Em breve</span>
+          <b>Catálogo completo, sem operacional.</b>
+          <span>Escolha produtos de um catálogo pronto e venda no seu site com <strong>entrega no Brasil inteiro</strong> — sem estoque, sem investimento. Você vende e ganha comissão; a retake cuida do resto.</span>
+        </div>
+      </div>
+      <a class="btn btn-primary" href="../tenant-site/index.html" data-preview="../tenant-site/index.html">Ver o site de exemplo <i data-lucide="eye"></i></a>
+    </div>
+    <div>
+      <div class="device" data-screen-label="Mockup notebook">
+        <div class="device-top">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="device-url"><i data-lucide="lock"></i>retake.run/bravorunning</div>
+        </div>
+        <div class="device-screen"><img src="../../assets/landing/template-shot.png" alt="Exemplo de site de assessoria na retake"></div>
+        <div class="device-base"></div>
+      </div>
+      <p class="device-note">Template real da rede, personalizado para a assessoria “Bravo Running”.</p>
+      <div class="show-specs">
+        <div class="show-spec"><i data-lucide="zap"></i><b>No ar em minutos</b><span>self-service</span></div>
+        <div class="show-spec"><i data-lucide="globe"></i><b>Domínio próprio</b><span>seuclube.com.br</span></div>
+        <div class="show-spec"><i data-lucide="smartphone"></i><b>100% no celular</b><span>responsivo</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= COMO FUNCIONA ======================= -->
+<section class="sec sec-dark" id="como" data-screen-label="Como funciona">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">Como começar</span>
+      <h2>No ar em 4 passos.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-top"><span class="step-n">1</span><i class="ic" data-lucide="user-plus"></i></div>
+        <h3>Crie sua conta</h3>
+        <p>Sem cartão. Diga o nome do seu clube e a cidade.</p>
+      </div>
+      <div class="step">
+        <div class="step-top"><span class="step-n">2</span><i class="ic" data-lucide="palette"></i></div>
+        <h3>Escolha o visual</h3>
+        <p>Suba seu logo e escolha entre 6 paletas (clara e escura).</p>
+      </div>
+      <div class="step">
+        <div class="step-top"><span class="step-n">3</span><i class="ic" data-lucide="rocket"></i></div>
+        <h3>Publique</h3>
+        <p>Seu site entra no ar em <b>retake.run/seuclube</b>, na hora.</p>
+      </div>
+      <div class="step">
+        <div class="step-top"><span class="step-n">4</span><i class="ic" data-lucide="contact"></i></div>
+        <h3>Receba alunos</h3>
+        <p>Os contatos do formulário caem no seu painel de leads.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PLANOS ======================= -->
+<section class="sec" id="planos" data-screen-label="Planos">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">Planos para assessorias</span>
+      <h2>Comece grátis. Suba quando fizer sentido.</h2>
+      <p class="lead">Todo plano tem site, captação e painel de leads. O que muda é a sua visibilidade na rede e o quanto o site fica com a sua cara.</p>
+    </div>
+    <div class="bill-toggle" data-screen-label="Ciclo de cobrança">
+      <button class="bt on" type="button" data-cycle="anual">1 ano</button>
+      <button class="bt" type="button" data-cycle="bienal">2 anos <span class="save">-34%</span></button>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Grátis</h3>
+        <p class="who">Para quem está começando e quer marcar presença online sem custo.</p>
+        <div class="price"><span class="val">Grátis</span></div>
+        <div class="plan-sub">para sempre · financiado pelas marcas</div>
+        <div class="plan-list">
+          <div class="plan-li"><i data-lucide="check"></i>Site na rede em <strong>retake.run/seuclube</strong></div>
+          <div class="plan-li"><i data-lucide="check"></i>6 paletas prontas (clara e escura)</div>
+          <div class="plan-li"><i data-lucide="check"></i>Formulário de captação — <strong>leads 100% seus</strong></div>
+          <div class="plan-li"><i data-lucide="check"></i>Painel de leads</div>
+          <div class="plan-li"><i data-lucide="check"></i>Faixa de marcas no site <em>(é o que financia o grátis)</em></div>
+          <div class="plan-li"><i data-lucide="check"></i>Acesso à vitrine de fornecedores</div>
+          <div class="plan-li muted"><i data-lucide="minus"></i>Não aparece na vitrine pública de assessorias</div>
+        </div>
+        <a class="btn btn-outline" href="../tenant-site/onboarding.html">Criar meu site grátis</a>
+      </div>
+
+      <div class="plan">
+        <h3>Apoiador</h3>
+        <p class="who">Para a assessoria que quer ser encontrada e ter o site com a própria marca.</p>
+        <div class="price"><span class="cur">R$</span><span class="val" data-anual="29" data-bienal="19">29</span><span class="per">/mês</span></div>
+        <div class="plan-sub" data-anual="cobrança anual" data-bienal="cobrança a cada 2 anos">cobrança anual</div>
+        <div class="plan-list">
+          <div class="plan-li head"><i data-lucide="plus"></i>Tudo do grátis, e mais:</div>
+          <div class="plan-li"><i data-lucide="check"></i><strong>Aparece na vitrine pública</strong> — onde corredores procuram assessoria</div>
+          <div class="plan-li"><i data-lucide="check"></i><strong>Site white label</strong>: template com a sua identidade, sem cara de “modelo”</div>
+          <div class="plan-li"><i data-lucide="check"></i><strong>Domínio próprio</strong> (seuclube.com.br)</div>
+          <div class="plan-li"><i data-lucide="check"></i>Destaque na vitrine</div>
+          <div class="plan-li"><i data-lucide="check"></i>Até 3 eventos no calendário da comunidade</div>
+          <div class="plan-li"><i data-lucide="check"></i>Painel de métricas</div>
+          <div class="plan-li"><i data-lucide="check"></i>Venda de produtos próprios (entrega ou retirada local)</div>
+        </div>
+        <a class="btn btn-outline" href="#contato">Quero o Apoiador</a>
+      </div>
+
+      <div class="plan plan-hot">
+        <span class="plan-flag">Mais completo</span>
+        <h3>Membro</h3>
+        <p class="who">Para quem quer um site exclusivo, sem propaganda, e voz na comunidade.</p>
+        <div class="price"><span class="cur">R$</span><span class="val" data-anual="59" data-bienal="39">59</span><span class="per">/mês</span></div>
+        <div class="plan-sub" data-anual="cobrança anual" data-bienal="cobrança a cada 2 anos">cobrança anual</div>
+        <div class="plan-list">
+          <div class="plan-li head"><i data-lucide="plus"></i>Tudo do Apoiador, e mais:</div>
+          <div class="plan-li"><i data-lucide="check"></i><strong>Site 100% personalizado</strong>, feito pela retake (fora do template)</div>
+          <div class="plan-li"><i data-lucide="check"></i><strong>Sem marcas no site</strong> — remoção total da faixa de patrocinadores</div>
+          <div class="plan-li"><i data-lucide="check"></i>Até 5 <strong>programas online</strong> divulgados na retake</div>
+          <div class="plan-li"><i data-lucide="check"></i>Voto e opinião nas decisões da rede</div>
+          <div class="plan-li"><i data-lucide="check"></i>Acesso antecipado a novidades</div>
+        </div>
+        <a class="btn" href="#contato">Quero o Membro</a>
+      </div>
+    </div>
+    <p class="plans-note">Os planos pagos são anuais ou bienais. Precisa de mais alunos? Veja o serviço de <a href="trafego-pago.html" style="color: var(--terracota); font-weight: 600;">tráfego pago</a> — separado dos planos.</p>
+  </div>
+</section>
+
+<!-- ======================= PLANO · GRÁTIS (detalhe) ======================= -->
+<section class="sec sec-cream" id="plano-gratis" data-screen-label="Plano Grátis detalhe">
+  <div class="wrap">
+    <div class="pdetail-head">
+      <div>
+        <span class="lbl lbl-free"><i data-lucide="gift" style="width:14px;height:14px;"></i>Grátis</span>
+        <h3>Marque presença sem gastar nada.</h3>
+        <p class="one">Tudo que a sua assessoria precisa para existir online e começar a captar — financiado pelas marcas da rede.</p>
+      </div>
+      <div class="pdetail-price"><b>Grátis</b><span>para sempre</span></div>
+    </div>
+    <div class="pgroups">
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="layout-template"></i></span><h4>Seu site na rede</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Endereço <b>retake.run/seuclube</b></li>
+          <li><i data-lucide="check"></i>6 paletas prontas (clara e escura)</li>
+          <li><i data-lucide="check"></i>Faixa de marcas <em>(é o que paga o grátis)</em></li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="contact"></i></span><h4>Captação</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Formulário de contato no site</li>
+          <li><i data-lucide="check"></i><b>Leads 100% seus</b>, no seu painel</li>
+          <li><i data-lucide="check"></i>Botão de aula experimental</li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="package"></i></span><h4>Rede de fornecedores</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Acesso à vitrine de fornecedores B2B</li>
+          <li><i data-lucide="check"></i>Contato direto para orçamento</li>
+          <li class="soon"><i data-lucide="minus" style="color:var(--cinza-mineral);"></i>Não aparece na vitrine pública</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PLANO · APOIADOR (detalhe) ======================= -->
+<section class="sec" id="plano-apoiador" data-screen-label="Plano Apoiador detalhe">
+  <div class="wrap">
+    <div class="pdetail-head">
+      <div>
+        <span class="lbl lbl-sup"><i data-lucide="star" style="width:14px;height:14px;"></i>Apoiador</span>
+        <h3>Seja encontrado e venda no seu site.</h3>
+        <p class="one">Apareça na vitrine pública, ganhe um site com a sua identidade e comece a vender produtos e divulgar eventos.</p>
+      </div>
+      <div class="pdetail-price"><b>R$ 29</b><span>/mês · anual (R$ 19 no bienal)</span></div>
+    </div>
+    <span class="pcarry"><i data-lucide="corner-down-right"></i>Tudo do grátis, e mais:</span>
+    <div class="pgroups">
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="palette"></i></span><h4>Site &amp; visibilidade</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i><b>Aparece na vitrine pública</b> de assessorias, com destaque</li>
+          <li><i data-lucide="check"></i><b>Site white label</b>: template com a sua cara</li>
+          <li><i data-lucide="check"></i>Domínio próprio (seuclube.com.br)</li>
+          <li><i data-lucide="check"></i>Painel de métricas</li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="shopping-bag"></i></span><h4>Loja &amp; eventos</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i><b>Produtos próprios</b>: camisetas, regatas e acessórios do clube</li>
+          <li><i data-lucide="check"></i>Entrega ou retirada local</li>
+          <li><i data-lucide="check"></i>Até <b>3 eventos</b> no calendário para os seus alunos</li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="badge-percent"></i></span><h4>Condições da rede</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Preços e condições especiais para <b>comprar e revender</b>: uniformes, equipamentos</li>
+          <li><i data-lucide="check"></i>Parcerias com profissionais: nutri, fisio, fotógrafo e mais</li>
+          <li class="soon"><i data-lucide="sparkles"></i>Produtos dos fornecedores na sua loja, <b>sem estoque</b><span class="soon-chip">em breve</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PLANO · MEMBRO (detalhe) ======================= -->
+<section class="sec sec-dark" id="plano-membro" data-screen-label="Plano Membro detalhe">
+  <div class="wrap">
+    <div class="pdetail-head">
+      <div>
+        <span class="lbl lbl-mem"><i data-lucide="crown" style="width:14px;height:14px;"></i>Membro</span>
+        <h3>Site exclusivo, sem propaganda — e voz na rede.</h3>
+        <p class="one">O plano de quem constrói a retake junto: site sob medida, programas digitais e poder de decisão sobre a plataforma.</p>
+      </div>
+      <div class="pdetail-price"><b>R$ 59</b><span>/mês · anual (R$ 39 no bienal)</span></div>
+    </div>
+    <span class="pcarry"><i data-lucide="corner-down-right"></i>Tudo do Apoiador, e mais:</span>
+    <div class="pgroups">
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="sparkles"></i></span><h4>Site sob medida</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i><b>Site 100% personalizado</b>, feito pela retake</li>
+          <li><i data-lucide="check"></i><b>Sem marcas</b> — faixa de patrocinadores removida</li>
+          <li><i data-lucide="check"></i>Eventos ilimitados no calendário</li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="graduation-cap"></i></span><h4>Produtos digitais</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Até <b>5 programas online</b> divulgados na retake</li>
+          <li class="soon"><i data-lucide="video"></i>Crie cursos com <b>vídeos gravados</b><span class="soon-chip">em breve</span></li>
+          <li class="soon"><i data-lucide="sparkles"></i>Venda direta dos programas na plataforma<span class="soon-chip">em breve</span></li>
+        </ul>
+      </div>
+      <div class="pgroup">
+        <div class="gh"><span class="gi"><i data-lucide="vote"></i></span><h4>Voz na plataforma</h4></div>
+        <ul>
+          <li><i data-lucide="check"></i>Os Membros <b>decidem o que entra</b> na plataforma</li>
+          <li><i data-lucide="check"></i>Voto e opinião nas decisões da rede</li>
+          <li><i data-lucide="check"></i>Acesso antecipado a cada novidade</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:32px;">
+      <a class="btn btn-outline-dark" href="plataforma.html">Conheça a plataforma que estamos construindo <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ENTENDA OS TERMOS ======================= -->
+<section class="sec sec-cream" id="termos" data-screen-label="Entenda os termos">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">Sem juridiquês</span>
+      <h2>O que cada coisa significa.</h2>
+      <p class="lead">Alguns termos aparecem nos planos. Aqui vai o que eles querem dizer, em português claro.</p>
+    </div>
+    <div class="terms">
+      <div class="term">
+        <div class="h"><i data-lucide="list"></i><h4>Vitrine pública de assessorias</h4></div>
+        <p>A página onde <strong>qualquer corredor procura uma assessoria na cidade dele</strong> — e encontra a sua, com cidade, contato e link. Quem é grátis não aparece ali; quem é Apoiador ou Membro, sim.</p>
+      </div>
+      <div class="term">
+        <div class="h"><i data-lucide="palette"></i><h4>Site white label</h4></div>
+        <p>Um site com a <strong>sua cara</strong> — suas cores, seu logo, seu nome — montado sobre o template da rede. “White label” = sem a marca de quem fez por baixo.</p>
+      </div>
+      <div class="term">
+        <div class="h"><i data-lucide="panel-top"></i><h4>Faixa de marcas</h4></div>
+        <p>A barra de patrocinadores que aparece no topo do seu site grátis. <strong>É ela que paga a sua conta.</strong> No plano Membro, ela some por completo.</p>
+      </div>
+      <div class="term">
+        <div class="h"><i data-lucide="globe"></i><h4>Domínio próprio</h4></div>
+        <p>Usar <strong>seuclube.com.br</strong> no lugar de retake.run/seuclube. A gente conecta o seu domínio ao site da rede.</p>
+      </div>
+      <div class="term">
+        <div class="h"><i data-lucide="graduation-cap"></i><h4>Programas online</h4></div>
+        <p>Treinos e planos que você <strong>divulga na retake</strong> (ex.: “Plano de 5K em 8 semanas”). No Membro, até 5 deles ganham vitrine na rede.</p>
+      </div>
+      <div class="term">
+        <div class="h"><i data-lucide="inbox"></i><h4>Lead</h4></div>
+        <p>Um <strong>possível aluno</strong> que preencheu o formulário do seu site. Os leads são sempre seus — caem direto no seu painel, em qualquer plano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= DE ONDE VEM O DINHEIRO ======================= -->
+<section class="sec sec-dark" id="modelo" data-screen-label="De onde vem o dinheiro">
+  <div class="wrap money">
+    <div>
+      <span class="eyebrow-acc">Transparência total</span>
+      <h2>Como o grátis se sustenta.</h2>
+      <p class="lead">Não tem pegadinha. O site grátis é pago pelas marcas que querem falar com corredores — e usam a rede inteira de sites para isso.</p>
+      <div class="money-steps" style="margin-top: 28px;">
+        <div class="money-step"><span class="n">1</span><div><b>Marcas patrocinam a rede</b><span>nutrição, vestuário, relógios e serviços pagam para aparecer.</span></div></div>
+        <div class="money-step"><span class="n">2</span><div><b>A logo aparece na faixa de marcas</b><span>no topo dos sites grátis, no estado ou no Brasil inteiro.</span></div></div>
+        <div class="money-step"><span class="n">3</span><div><b>Você ganha o site sem pagar nada</b><span>e seus alunos ainda pegam cupons dessas marcas.</span></div></div>
+        <div class="money-step"><span class="n">4</span><div><b>Quem quer sem marcas, assina o Membro</b><span>a faixa some e o site fica 100% seu.</span></div></div>
+      </div>
+    </div>
+    <div class="money-aside">
+      <h4>O que isso significa pra você</h4>
+      <div class="row"><i data-lucide="gift"></i><span><b>Custo zero</b> para ter um site profissional no ar.</span></div>
+      <div class="row"><i data-lucide="ticket-percent"></i><span><b>Benefício extra:</b> cupons das marcas para os seus alunos.</span></div>
+      <div class="row"><i data-lucide="shield-check"></i><span><b>Seus dados são seus.</b> A retake não vende seus leads.</span></div>
+      <div class="row"><i data-lucide="lock"></i><span><b>Seus alunos são seus.</b> A retake não fica entre você e o aluno, nem compartilha dados entre assessorias.</span></div>
+      <div class="row"><i data-lucide="handshake"></i><span><b>Não competimos com você.</b> Não somos assessoria e não vendemos no seu lugar — só damos a estrutura.</span></div>
+      <div class="row"><i data-lucide="eye-off"></i><span>Quer sem propaganda? O <b>Membro</b> remove a faixa.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= TRÁFEGO PAGO ======================= -->
+<section class="sec sec-dark" id="trafego" data-screen-label="Tráfego pago" style="background: var(--grafite-800);">
+  <div class="wrap traffic">
+    <div>
+      <span class="eyebrow-acc">Serviço à parte</span>
+      <h2>Quer mais alunos, mais rápido?</h2>
+      <p class="lead">Além do site, a retake roda o seu <strong>tráfego pago</strong> — anúncios no Instagram e Google que levam corredores até o seu formulário. É um serviço opcional, separado dos planos, e ajuda a financiar o projeto.</p>
+      <div class="why"><i data-lucide="target"></i>Campanhas de captação prontas para o seu público</div>
+      <div class="why"><i data-lucide="map-pin"></i>Segmentação por cidade e perfil de corredor</div>
+      <div class="why"><i data-lucide="bar-chart-3"></i>Relatório de leads e custo por aluno</div>
+      <a class="btn btn-primary btn-lg" href="trafego-pago.html" style="margin-top: 26px;">Ver pacotes de tráfego <i data-lucide="arrow-right"></i></a>
+    </div>
+    <div class="pkgs">
+      <div class="pkg">
+        <div class="pk-main">
+          <h4>Starter</h4>
+          <p>Para a primeira campanha: setup, criativos e 1 mês de gestão.</p>
+        </div>
+        <div class="pk-price"><b>R$ 490</b><span>setup único</span></div>
+      </div>
+      <div class="pkg hot">
+        <div class="pk-main">
+          <h4>Pro <span class="badge">Recomendado</span></h4>
+          <p>Gestão contínua, otimização semanal e remarketing. Verba de anúncio à parte.</p>
+        </div>
+        <div class="pk-price"><b>R$ 390</b><span>/mês</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= VITRINE ======================= -->
+<section class="sec" id="diretorio" data-screen-label="Vitrine">
+  <div class="wrap dir">
+    <div>
+      <span class="eyebrow-acc">Visibilidade</span>
+      <h2>Seja achado por quem procura.</h2>
+      <p class="lead">Todo mês, corredores entram na retake para achar uma assessoria perto deles. Na vitrine pública, a sua aparece com cidade, modalidades e contato — com selo de destaque para Apoiadores e Membros.</p>
+      <a class="btn btn-outline" href="corredores.html">Ver a vitrine <i data-lucide="arrow-right"></i></a>
+    </div>
+    <div class="dir-grid">
+      <div class="dir-card">
+        <div class="top">
+          <div class="dir-logo" style="background: linear-gradient(135deg, var(--terracota), var(--grafite-ink));">AR</div>
+          <div style="flex:1;"><h4>Acelera Run</h4><span class="city"><i data-lucide="map-pin"></i>Rio de Janeiro · RJ</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="badge badge-member">Membro</span>
+          <div class="meta"><span><i data-lucide="users"></i>1.2k</span></div>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="top">
+          <div class="dir-logo" style="background: linear-gradient(135deg, var(--azul-700), var(--grafite));">PC</div>
+          <div style="flex:1;"><h4>Pace Club</h4><span class="city"><i data-lucide="map-pin"></i>São Paulo · SP</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="badge badge-member">Membro</span>
+          <div class="meta"><span><i data-lucide="users"></i>980</span></div>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="top">
+          <div class="dir-logo" style="background: linear-gradient(135deg, var(--green), var(--grafite-ink));">MB</div>
+          <div style="flex:1;"><h4>Movimento BH</h4><span class="city"><i data-lucide="map-pin"></i>Belo Horizonte · MG</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="badge badge-sup">Apoiador</span>
+          <div class="meta"><span><i data-lucide="users"></i>412</span></div>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="top">
+          <div class="dir-logo" style="background: linear-gradient(135deg, var(--cinza-mineral), var(--grafite));">EM</div>
+          <div style="flex:1;"><h4>Equipe Maré</h4><span class="city"><i data-lucide="map-pin"></i>Niterói · RJ</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="badge badge-sup">Apoiador</span>
+          <div class="meta"><span><i data-lucide="users"></i>180</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= O QUE VEM AÍ ======================= -->
+<section class="sec sec-dark" id="futuro" data-screen-label="O que vem aí">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">O que vem aí</span>
+      <h2>Hoje é o site. Em breve, a plataforma inteira.</h2>
+      <p class="lead">A retake começa pelo site e pela captação. O plano é virar o sistema completo da sua assessoria — treino, app e loja, tudo conectado.</p>
+    </div>
+    <div class="road">
+      <div class="road-card now">
+        <span class="stat stat-now">No ar hoje</span>
+        <div class="ic"><i data-lucide="layout-template"></i></div>
+        <h3>Site &amp; captação</h3>
+        <p>Site na rede, formulário, painel de leads e vitrine pública.</p>
+      </div>
+      <div class="road-card">
+        <span class="stat stat-soon">Em breve</span>
+        <div class="ic"><i data-lucide="activity"></i></div>
+        <h3>Treino &amp; alunos</h3>
+        <p>Periodização, prescrição de treino e gestão de alunos no painel.</p>
+      </div>
+      <div class="road-card">
+        <span class="stat stat-soon">Em breve</span>
+        <div class="ic"><i data-lucide="smartphone"></i></div>
+        <h3>App do atleta</h3>
+        <p>Treino do dia, comunidade e loja no celular dos seus alunos.</p>
+      </div>
+      <div class="road-card">
+        <span class="stat stat-soon">Em breve</span>
+        <div class="ic"><i data-lucide="store"></i></div>
+        <h3>Marketplace</h3>
+        <p>Compra de produtos das marcas e fornecedores, direto na plataforma.</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+      <a class="btn btn-outline-dark" href="plataforma.html">Ver a plataforma completa <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FAQ ======================= -->
+<section class="sec sec-cream" id="faq" data-screen-label="FAQ">
+  <div class="wrap">
+    <div class="sec-head-c">
+      <span class="eyebrow-acc">Perguntas frequentes</span>
+      <h2>Ainda em dúvida?</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>O site grátis é grátis mesmo?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">É. Você não paga nada e não precisa de cartão. O custo é coberto pelas marcas que patrocinam a rede e aparecem na faixa de marcas do seu site.</div>
+      </details>
+      <details>
+        <summary>Qual a diferença para um site comum?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">Além do site, você entra numa rede: aparece para corredores que procuram assessoria, seus alunos pegam cupons das marcas, e tudo já vem com captação de leads pronta. E é de graça para começar.</div>
+      </details>
+      <details>
+        <summary>Os contatos que chegam pelo site são meus?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">Sempre. Todo lead do seu formulário cai no seu painel e pertence a você, em qualquer plano. A retake não vende nem usa seus contatos.</div>
+      </details>
+      <details>
+        <summary>Preciso saber mexer com site ou tecnologia?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">Não. Você cria a conta, sobe o logo, escolhe a paleta e publica. Leva minutos. No plano Membro, a própria retake monta um site exclusivo para você.</div>
+      </details>
+      <details>
+        <summary>O tráfego pago está incluso no plano?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">Não — é um serviço à parte. Os planos cuidam do site e da visibilidade na rede; o tráfego pago é para quem quer acelerar a captação com anúncios. Veja os pacotes na página de tráfego pago.</div>
+      </details>
+      <details>
+        <summary>Posso começar grátis e migrar depois?<i class="chev" data-lucide="chevron-down"></i></summary>
+        <div class="ans">Pode. Você começa no grátis e sobe para Apoiador ou Membro quando quiser, sem refazer nada — seu site e seus leads continuam.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CTA FINAL ======================= -->
+<section class="cta" id="contato" data-screen-label="CTA final">
+  <img class="cta-mark" src="../../assets/logo-mark-cream.png" alt="">
+  <div class="wrap cta-in">
+    <h2>Coloque a sua assessoria na rede hoje.</h2>
+    <p>Crie seu site grátis em minutos ou fale com a equipe para escolher o melhor plano.</p>
+    <div class="cta-ctas">
+      <a class="btn btn-primary btn-lg" href="../tenant-site/onboarding.html">Criar meu site grátis <i data-lucide="arrow-right"></i></a>
+      <a class="btn btn-outline-dark btn-lg" href="#"><i data-lucide="message-circle"></i>Falar no WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FOOTER ======================= -->
+
+
+<!-- ======================= PREVIEW LIGHTBOX ======================= -->
+<div class="lb" id="site-lb" aria-hidden="true">
+  <div class="lb-frame">
+    <div class="lb-bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="lb-url"><i data-lucide="lock"></i>retake.run/bravorunning</div>
+      <a class="lb-open" id="lb-open" href="../tenant-site/index.html" target="_blank" rel="noopener">Abrir em nova aba <i data-lucide="external-link"></i></a>
+      <button class="lb-close" id="lb-close" type="button" aria-label="Fechar"><i data-lucide="x"></i></button>
+    </div>
+    <iframe id="lb-iframe" title="Site de exemplo" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script>lucide.createIcons();
+  (function () {
+    const btns = document.querySelectorAll('.bill-toggle .bt');
+    function setCycle(c) {
+      btns.forEach((b) => b.classList.toggle('on', b.dataset.cycle === c));
+      document.querySelectorAll('.price .val[data-' + c + ']').forEach((el) => { el.textContent = el.getAttribute('data-' + c); });
+      document.querySelectorAll('.plan-sub[data-' + c + ']').forEach((el) => { el.textContent = el.getAttribute('data-' + c); });
+    }
+    btns.forEach((b) => b.addEventListener('click', () => setCycle(b.dataset.cycle)));
+  })();
+
+  (function () {
+    const lb = document.getElementById('site-lb');
+    const frame = document.getElementById('lb-iframe');
+    const openBtn = document.getElementById('lb-open');
+    function open(url) {
+      frame.src = url; openBtn.href = url;
+      lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      setTimeout(() => { frame.src = 'about:blank'; }, 200);
+    }
+    document.querySelectorAll('[data-preview]').forEach((a) => {
+      a.addEventListener('click', (e) => { e.preventDefault(); open(a.getAttribute('data-preview')); });
+    });
+    document.getElementById('lb-close').addEventListener('click', close);
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
+  })();
+</script>
+<script src="_chrome.js"></script>
+</body>
+</html>

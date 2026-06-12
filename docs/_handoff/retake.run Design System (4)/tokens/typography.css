@@ -1,0 +1,47 @@
+/* ============================================================
+   retake.run — Typography tokens
+   Display: Oswald (sub for Druk Condensed) — heavy, condensed,
+            athletic. Used UPPERCASE for headlines, tight tracking.
+   Body:    Hanken Grotesk (sub for Neue Haas Grotesk) — neutral.
+   Mono:    Space Mono — metrics, pace, splits, codes.
+   ============================================================ */
+:root {
+  /* ---- Families ----------------------------------------- */
+  --font-display: 'Oswald', 'Druk Condensed', 'Arial Narrow', sans-serif;
+  --font-body:    'Hanken Grotesk', 'Neue Haas Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:    'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---- Weights ------------------------------------------ */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium:  500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:    700; /* @kind font */
+
+  /* ---- Display scale (Oswald, condensed) ----------------- */
+  /* Pair with: text-transform:uppercase; letter-spacing as noted */
+  --display-1: 700 84px/0.92 var(--font-display);  /* hero poster */
+  --display-2: 700 64px/0.94 var(--font-display);
+  --h1:        700 44px/1.0  var(--font-display);
+  --h2:        600 32px/1.04 var(--font-display);
+  --h3:        600 24px/1.1  var(--font-display);
+  --h4:        600 19px/1.15 var(--font-display);
+
+  /* tracking helpers for display type */
+  --track-display: 0.005em;
+  --track-display-tight: -0.01em;
+  --track-eyebrow: 0.18em;   /* small uppercase labels */
+
+  /* ---- Body scale (Hanken Grotesk) ----------------------- */
+  --body-lg:   400 19px/1.55 var(--font-body);
+  --body:      400 16px/1.6  var(--font-body);
+  --body-sm:   400 14px/1.55 var(--font-body);
+  --caption:   500 12px/1.4  var(--font-body);
+
+  /* ---- Eyebrow / overline -------------------------------- */
+  --eyebrow:   600 12px/1.2 var(--font-body);
+
+  /* ---- Mono --------------------------------------------- */
+  --metric-xl: 700 40px/1.0 var(--font-mono);
+  --metric:    700 24px/1.1 var(--font-mono);
+  --mono-sm:   400 13px/1.4 var(--font-mono);
+}

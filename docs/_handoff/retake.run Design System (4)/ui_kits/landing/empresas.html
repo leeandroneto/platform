@@ -1,0 +1,310 @@
+<!-- @dsCard group="Landing" viewport="1280x940" name="Para Empresas" subtitle="Hub B2B: cotas de entrada + vitrine de fornecedores com sidebar e filtros" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>retake.run — Para empresas</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-page); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- header ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--grafite-ink) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-on-dark); }
+  .header-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .header img { height: 22px; display: block; }
+  .nav { display: flex; gap: 22px; align-items: center; }
+  .nav a { white-space: nowrap; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; transition: opacity var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+  .nav a:hover { opacity: 1; color: var(--terracota-300); }
+  .nav a.on { color: var(--terracota-300); opacity: 1; }
+  .nav .soon-tag { font: 700 8.5px/1 var(--font-body); letter-spacing: 0.12em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: var(--radius-pill); font: 600 13px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent; white-space: nowrap; transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--terracota); color: var(--creme); }
+  .btn-primary:hover { background: var(--terracota-600); color: var(--creme); }
+  .btn-sm { height: 38px; padding: 0 18px; font-size: 12px; }
+  .btn svg { width: 17px; height: 17px; }
+
+  /* ---------- hero strip ---------- */
+  .hero { background: var(--grafite-ink); color: var(--creme); padding: 56px 0 48px; }
+  .eyebrow-acc { font: var(--eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--terracota); }
+  .hero h1 { font: var(--display-2); font-size: 48px; text-transform: uppercase; letter-spacing: var(--track-display); color: var(--creme); margin: 12px 0 14px; }
+  .hero p { font: var(--body-lg); color: var(--text-on-dark-muted); max-width: 600px; margin: 0; }
+
+  /* ---------- layout: sidebar + content ---------- */
+  .layout { display: grid; grid-template-columns: 248px 1fr; gap: 40px; align-items: start; padding: 40px 0 80px; }
+  .side { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 2px; }
+  .side h4 { font: 600 10.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); margin: 18px 0 8px; padding: 0 12px; }
+  .side h4:first-child { margin-top: 0; }
+  .side a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-8); font: 500 13.5px/1.2 var(--font-body); color: var(--text-body); transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+  .side a:hover { background: var(--creme-200); color: var(--text-strong); }
+  .side a.on { background: var(--terracota); color: var(--creme); }
+  .side a svg { width: 16px; height: 16px; flex: none; }
+  .side .cta-side { margin-top: 22px; padding: 16px 14px; background: var(--grafite); border-radius: var(--radius-12); color: var(--creme); }
+  .side .cta-side p { font: var(--body-sm); font-size: 12.5px; color: var(--text-on-dark-muted); margin: 0 0 10px; }
+  .side .cta-side a { display: inline-flex; padding: 0; background: none; color: var(--terracota-300); font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; }
+  .side .cta-side a:hover { color: var(--terracota); background: none; }
+
+  /* ---------- sections ---------- */
+  .cat { margin-bottom: 52px; scroll-margin-top: 92px; }
+  .cat-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+  .cat h2 { font: var(--h2); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+  .cat-head .n { font: var(--mono-sm); color: var(--text-muted); white-space: nowrap; }
+  .cat .desc { font: var(--body-sm); color: var(--text-muted); margin: 0 0 18px; max-width: 560px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  /* assessoria card */
+  .card { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); overflow: hidden; box-shadow: var(--shadow-100); transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-200); }
+  .card-top { height: 76px; display: flex; align-items: center; padding: 0 20px; position: relative; }
+  .card-top .wordmark { font: 700 23px/1 var(--font-display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--creme); }
+  .card-top .wordmark small { font: 600 9px/1 var(--font-body); letter-spacing: 0.28em; display: block; opacity: 0.75; margin-top: 3px; }
+  .card-top .corner { position: absolute; right: 12px; top: 10px; font: 700 9px/1 var(--font-mono); color: rgba(241,236,226,0.9); background: rgba(13,13,12,0.32); padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+  .card-body { padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .loc { display: flex; align-items: center; gap: 7px; font: var(--body-sm); font-size: 13px; color: var(--text-body); }
+  .loc svg { width: 14px; height: 14px; color: var(--terracota); flex: none; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font: 600 10px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.07em; color: var(--grafite); background: var(--creme-200); border-radius: var(--radius-pill); padding: 4px 9px; white-space: nowrap; }
+  .tag.hot { background: var(--terracota-100); color: var(--terracota-600); }
+  .tag.ocean { background: var(--azul-100); color: var(--azul-700); }
+  .card-foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .card-foot a { white-space: nowrap; font: 600 11.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota); display: inline-flex; align-items: center; gap: 5px; }
+  .card-foot a:hover { color: var(--terracota-600); }
+  .card-foot a svg { width: 13px; height: 13px; }
+  .byline { display: inline-flex; align-items: center; gap: 5px; font: var(--caption); font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+  .byline img { height: 11px; }
+  .sup-desc { font: var(--body-sm); font-size: 13px; color: var(--text-muted); margin: 0; }
+
+  /* sponsor highlight */
+  .card.sponsor { border: 2px solid var(--terracota); }
+  .sponsor-flag { position: absolute; left: 12px; bottom: 10px; font: 700 8.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; background: var(--terracota); color: var(--creme); padding: 4px 8px; border-radius: 999px; }
+
+  /* ---------- bottom CTA ---------- */
+  .cta { background: var(--grafite-ink); color: var(--creme); }
+  .cta-in { padding: 52px 0; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .cta h2 { font: var(--h1); font-size: 28px; color: var(--creme); margin: 0 0 8px; }
+  .cta p { font: var(--body-sm); color: var(--text-on-dark-muted); margin: 0; }
+  .cta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-outline-dark { background: transparent; color: var(--creme); border-color: var(--creme); }
+  .btn-outline-dark:hover { background: rgba(241,236,226,0.1); color: var(--creme); }
+  .footer { background: var(--grafite-ink); border-top: 1px solid var(--border-on-dark); padding: 24px 0; }
+  .footer-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer img { height: 18px; }
+  .footer small { font: var(--caption); color: var(--text-on-dark-muted); }
+
+  @media (max-width: 980px) {
+    .nav { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    .side { position: static; flex-direction: row; flex-wrap: wrap; }
+    .side h4 { width: 100%; }
+    .side .cta-side { display: none; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ---------- dropdown nav ---------- */
+  .nav { gap: 4px; }
+  .nav-it { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: none; background: transparent; border-radius: var(--radius-8); cursor: pointer; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .nav-it:hover, .nav-dd:hover .nav-it, .nav-dd:focus-within .nav-it { opacity: 1; color: var(--terracota-300); background: rgba(241,236,226,0.07); }
+  .nav-it.on { color: var(--terracota-300); opacity: 1; }
+  .nav-it svg { width: 13px; height: 13px; }
+  .nav-dd { position: relative; }
+  .nav-dd .dd { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; display: none; z-index: 60; }
+  .nav-dd:hover .dd, .nav-dd:focus-within .dd { display: block; }
+  .dd-in { background: var(--grafite-800); border: 1px solid var(--border-on-dark); border-radius: var(--radius-12); box-shadow: var(--shadow-300); padding: 8px; min-width: 310px; display: flex; flex-direction: column; gap: 2px; }
+  .dd-in a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--radius-8); opacity: 1; }
+  .dd-in a:hover { background: var(--grafite-700); }
+  .dd-in b { font: 600 13.5px/1.3 var(--font-body); color: var(--creme); letter-spacing: 0; text-transform: none; }
+  .dd-in a:hover b { color: var(--terracota-300); }
+  .dd-in span { font: 400 12px/1.4 var(--font-body); color: var(--text-on-dark-muted); letter-spacing: 0; text-transform: none; white-space: normal; }
+  .dd-in h5 { font: 600 9.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.16em; color: var(--cinza-mineral); margin: 8px 12px 4px; }
+  .dd-in h5:first-child { margin-top: 4px; }
+  .side a.sub { padding-left: 38px; font-size: 13px; flex-wrap: wrap; }
+  .soon-mini { margin-left: 6px; font: 700 8px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; background: var(--terracota); color: var(--creme); padding: 3px 6px; border-radius: 999px; white-space: nowrap; }
+  .soon-chip { font: 700 8.5px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; background: var(--terracota); color: var(--creme); padding: 4px 7px; border-radius: 999px; align-self: flex-start; }
+  .chip-f { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid var(--border-strong); background: var(--surface-card); font: 600 12px/1 var(--font-body); color: var(--text-body); cursor: pointer; white-space: nowrap; transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out); }
+  .chip-f:hover { border-color: var(--grafite); }
+  .chip-f.on { background: var(--grafite); border-color: var(--grafite); color: var(--creme); }
+  .front { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .fcard { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 20px; box-shadow: var(--shadow-100); }
+  .fcard h5 { font: 600 11px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin: 0 0 12px; }
+  .fcard ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .fcard li { display: flex; gap: 9px; align-items: flex-start; font: var(--body-sm); font-size: 13.5px; color: var(--text-body); }
+  .fcard li svg { width: 15px; height: 15px; color: var(--terracota); flex: none; margin-top: 2px; }
+  .pricebox { display: flex; align-items: baseline; gap: 8px; margin: 2px 0 10px; }
+  .pricebox b { font: 700 24px/1 var(--font-mono); color: var(--text-strong); }
+  .pricebox span { font: var(--caption); color: var(--text-muted); }
+  .ov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ov { background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--radius-16); padding: 20px; box-shadow: var(--shadow-100); display: flex; flex-direction: column; gap: 8px; transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); cursor: pointer; }
+  .ov:hover { transform: translateY(-3px); box-shadow: var(--shadow-200); }
+  .ov .pub { font: 600 10.5px/1.3 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; color: var(--terracota-600); }
+  .ov b { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); }
+  .ov p { font: var(--body-sm); font-size: 13.5px; color: var(--text-muted); margin: 0; }
+  .ov .pr { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; font: 700 13px/1 var(--font-mono); color: var(--text-strong); }
+  .ov .pr em { font: 600 11px/1 var(--font-body); font-style: normal; text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracota); }
+  @media (max-width: 760px) { .front, .ov-grid { grid-template-columns: 1fr; } }
+  .side a .n { margin-left: auto; font: 700 11px/1 var(--font-mono); color: var(--text-muted); }
+  .side a.on .n { color: rgba(241,236,226,0.8); }
+  .tag.type { background: var(--grafite); color: var(--creme); }
+  .catgroup { margin-bottom: 40px; }
+  .catgroup .cat-head h3 { font: var(--h3); text-transform: uppercase; letter-spacing: var(--track-display); color: var(--text-strong); margin: 0; }
+
+  .header-cta { display: flex; align-items: center; gap: 16px; }
+  .login-link { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.11em; color: var(--creme); opacity: 0.85; white-space: nowrap; transition: opacity 0.15s ease, color 0.15s ease; }
+  .login-link:hover { opacity: 1; color: var(--terracota-300); }
+  .login-link svg { width: 14px; height: 14px; }
+
+</style>
+</head>
+<body>
+
+
+
+<section class="hero" data-screen-label="Hero parceiros">
+  <div class="wrap">
+    <span class="eyebrow-acc">Para empresas</span>
+    <h1>Venda para a rede.</h1>
+    <p>A vitrine das empresas verificadas que atendem as assessorias da rede. Quer aparecer aqui ou patrocinar o movimento? Veja <a href="patrocinio.html" style="color: var(--terracota-300);">como ser um patrocinador</a>.</p>
+  </div>
+</section>
+
+<div class="wrap layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side" id="side" data-screen-label="Sidebar de categorias">
+    <h4>O que você procura</h4>
+    <a href="#" data-cat="" class="on"><i data-lucide="layout-grid"></i>Todas as categorias<span class="n" id="sn-all"></span></a>
+    <a href="#" data-cat="suplementacao" class="sub">Suplementação &amp; nutrição<span class="n" data-n="suplementacao"></span></a>
+    <a href="#" data-cat="vestuario" class="sub">Vestuário &amp; calçados<span class="n" data-n="vestuario"></span></a>
+    <a href="#" data-cat="uniformes" class="sub">Uniformes &amp; personalizados<span class="n" data-n="uniformes"></span></a>
+    <a href="#" data-cat="equipamentos" class="sub">Equipamentos &amp; tecnologia<span class="n" data-n="equipamentos"></span></a>
+    <a href="#" data-cat="tendas" class="sub">Tendas &amp; estruturas<span class="n" data-n="tendas"></span></a>
+    <a href="#" data-cat="eventos" class="sub">Eventos &amp; experiências<span class="n" data-n="eventos"></span></a>
+    <a href="#" data-cat="servicos" class="sub">Serviços<span class="n" data-n="servicos"></span></a>
+    <div class="cta-side">
+      <p>Sua marca no mundo da corrida?</p>
+      <a href="patrocinio.html">Seja um patrocinador →</a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <main>
+    <section class="cat" id="dirview" data-screen-label="Vitrine">
+      <div class="cat-head"><h2>Vitrine de patrocinadores</h2><span class="n" id="dir-count">—</span></div>
+      <p class="desc">Empresas verificadas que atendem as assessorias da rede. Escolha a categoria na lateral e filtre pelo tipo de empresa:</p>
+      <div class="toolbar" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px;">
+        <button class="chip-f on" data-type="" type="button">Todas</button>
+        <button class="chip-f" data-type="industria" type="button">Indústria</button>
+        <button class="chip-f" data-type="distribuidor" type="button">Distribuidor · atacado</button>
+        <button class="chip-f" data-type="marca" type="button">Marca própria</button>
+        <button class="chip-f" data-type="servico" type="button">Prestador de serviço</button>
+        <button class="chip-f" data-type="organizador" type="button">Organizador</button>
+      </div>
+      <div id="dir-groups"></div>
+      <div id="dir-empty" style="display: none; text-align: center; padding: 48px 0; color: var(--text-muted);"><p style="font: var(--body-sm); margin: 0;">Nenhuma empresa com esses filtros.</p></div>
+    </section>
+  </main>
+</div>
+
+<section class="cta" data-screen-label="CTA">
+  <div class="wrap cta-in">
+    <div>
+      <h2>Vende para o mundo da corrida?</h2>
+      <p>Listagem verificada por R$ 99/mês, com aprovação (CNPJ + KYC). Marcas que vendem ao corredor entram pelo patrocínio.</p>
+    </div>
+    <div class="cta-btns">
+      <a class="btn btn-primary" href="patrocinio.html#cadastro">Cadastrar minha empresa <i data-lucide="arrow-right"></i></a>
+      <a class="btn btn-outline-dark" href="patrocinio.html">Ver tipos de parceria</a>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+  const CATS = { suplementacao: 'Suplementação & nutrição', vestuario: 'Vestuário & calçados', uniformes: 'Uniformes & personalizados', equipamentos: 'Equipamentos & tecnologia', tendas: 'Tendas & estruturas', eventos: 'Eventos & experiências', servicos: 'Serviços' };
+  const TYPES = { industria: 'Indústria', distribuidor: 'Distribuidor · atacado', marca: 'Marca própria', servico: 'Prestador de serviço', organizador: 'Organizador' };
+  const S = [
+    { n: 'Pacefuel', s: 'Nutrition', cat: 'suplementacao', type: 'marca', reg: 'nacional', model: 'Dropship', d: 'Gel de carboidrato e isotônico para endurance.', g: ['#1D1D1B', '#C25C2D'], flag: 'Patrocinador B2C' },
+    { n: 'Z2', s: 'Suplementos', cat: 'suplementacao', type: 'marca', reg: 'sudeste', model: 'Dropship', d: 'Linha completa de suplementação para corredores.', g: ['#7FABB5', '#2A2A27'] },
+    { n: 'Kenta', s: 'Recovery', cat: 'suplementacao', type: 'marca', reg: 'nacional', model: 'Dropship', d: 'Proteínas e recovery pós-treino.', g: ['#4E8C5A', '#1D1D1B'] },
+    { n: 'NutriRun', s: 'Atacado', cat: 'suplementacao', type: 'distribuidor', reg: 'nacional', model: 'Atacado', d: 'Géis, isotônicos e sachês em caixa para revenda no clube.', g: ['#D9A23A', '#C25C2D'] },
+    { n: 'Stride', s: 'Wear', cat: 'vestuario', type: 'marca', reg: 'nacional', model: 'Atacado', d: 'Vestuário técnico de corrida — linha completa.', g: ['#0D0D0C', '#56564F'] },
+    { n: 'KMX', s: 'Apparel', cat: 'vestuario', type: 'distribuidor', reg: 'sul · sudeste', model: 'Atacado', d: 'Mix de marcas de vestuário e acessórios para revenda.', g: ['#D96C3A', '#8A8A84'] },
+    { n: 'RunDist', s: 'Distribuidora', cat: 'vestuario', type: 'distribuidor', reg: 'sul · sudeste', model: 'Atacado', d: 'Atacado multimarca: meias, bonés e acessórios de corrida.', g: ['#56564F', '#0D0D0C'] },
+    { n: 'Confecção', s: 'Pace', cat: 'uniformes', type: 'industria', reg: 'nacional', model: 'Sob demanda', d: 'Uniformes personalizados — kits fechados para o time.', g: ['#C25C2D', '#1D1D1B'] },
+    { n: 'Linha10', s: 'Uniformes', cat: 'uniformes', type: 'industria', reg: 'sudeste', model: 'Sob demanda', d: 'Confecção têxtil para clubes: uniformes e camisas de prova.', g: ['#3A3A36', '#7FABB5'] },
+    { n: 'GPSRun', s: 'Tech', cat: 'equipamentos', type: 'distribuidor', reg: 'nacional', model: 'Dropship', d: 'Relógios GPS e sensores de frequência cardíaca.', g: ['#1D1D1B', '#5E8A94'] },
+    { n: 'Audia', s: 'Sport', cat: 'equipamentos', type: 'marca', reg: 'nacional', model: 'Dropship', d: 'Fones open-ear feitos para correr na rua.', g: ['#56564F', '#D96C3A'] },
+    { n: 'IceBrasil', s: 'Recovery', cat: 'equipamentos', type: 'marca', reg: 'nacional', model: 'Atacado', d: 'Banheiras de gelo e equipamentos de crioterapia.', g: ['#7FABB5', '#B4D0D6'], dark: true },
+    { n: 'TrackLab', s: 'Equipamentos', cat: 'equipamentos', type: 'distribuidor', reg: 'sudeste', model: 'Sob orçamento', d: 'Equipamentos de pista e treino para clubes.', g: ['#1D1D1B', '#D96C3A'] },
+    { n: 'Tenda', s: 'Sul', cat: 'tendas', type: 'industria', reg: 'nacional', model: 'Sob demanda', d: 'Tendas 3×3 personalizadas com a marca do clube.', g: ['#8A8A84', '#3A3A36'] },
+    { n: 'ArenaFlex', s: 'Estruturas', cat: 'tendas', type: 'industria', reg: 'sudeste · sul', model: 'Sob demanda', d: 'Pórticos, palcos e estruturas para largadas.', g: ['#D96C3A', '#D9A23A'] },
+    { n: 'Rio Run', s: 'Series', cat: 'eventos', type: 'organizador', reg: 'RJ', model: 'Afiliação', d: 'Circuito de provas de rua — 5k, 10k e 21k na orla.', g: ['#D96C3A', '#0D0D0C'], flag: 'Patrocinador evento' },
+    { n: 'Trilha', s: 'Brasil', cat: 'eventos', type: 'organizador', reg: 'nacional', model: 'Afiliação', d: 'Circuito de trail run com etapas em 8 estados.', g: ['#4E8C5A', '#2A2A27'] },
+    { n: 'Arena', s: 'Lagoa', cat: 'eventos', type: 'servico', reg: 'Rio de Janeiro', model: 'Sob orçamento', d: 'Espaço aberto na Lagoa para largadas e eventos.', g: ['#7FABB5', '#1D1D1B'] },
+    { n: 'Hub', s: 'Orla', cat: 'eventos', type: 'servico', reg: 'São Paulo', model: 'Sob orçamento', d: 'Base de treino com vestiário e guarda-volumes.', g: ['#D9A23A', '#56564F'] },
+    { n: 'Espaço', s: 'Pico', cat: 'eventos', type: 'servico', reg: 'Belo Horizonte', model: 'Sob orçamento', d: 'Salão para palestras, premiações e encontros.', g: ['#3A3A36', '#8A8A84'] },
+    { n: 'RotaRun', s: 'Viagens', cat: 'eventos', type: 'servico', reg: 'nacional', model: 'Sob orçamento', d: 'Pacotes de viagem para maratonas no Brasil e exterior.', g: ['#C25C2D', '#D9A23A'] },
+    { n: 'BusPro', s: 'Fretamento', cat: 'eventos', type: 'servico', reg: 'sudeste · sul', model: 'Sob demanda', d: 'Fretamento de ônibus e vans para dias de prova.', g: ['#2A2A27', '#5E8A94'] },
+    { n: 'Fisio.On', s: 'Recuperação', cat: 'servicos', type: 'servico', reg: 'RJ · SP', model: 'Sob orçamento', d: 'Fisioterapia e recovery para grupos de corrida.', g: ['#7FABB5', '#5E8A94'] },
+    { n: 'FocoFoto', s: 'Esportes', cat: 'servicos', type: 'servico', reg: 'nacional', model: 'Sob orçamento', d: 'Cobertura fotográfica de treinões e provas.', g: ['#0D0D0C', '#8A8A84'] },
+    { n: 'CronoRio', s: 'Cronometragem', cat: 'servicos', type: 'servico', reg: 'sudeste', model: 'Sob orçamento', d: 'Cronometragem com chip para provas e desafios.', g: ['#C25C2D', '#D96C3A'] },
+  ];
+
+  let cat = '', type = '';
+  function card(f) {
+    return `
+    <article class="card${f.flag ? ' sponsor' : ''}">
+      <div class="card-top" style="background: linear-gradient(135deg, ${f.g[0]}, ${f.g[1]});">
+        <span class="corner">${f.reg}</span>
+        <span class="wordmark"${f.dark ? ' style="color: var(--grafite-ink);"' : ''}>${f.n}<small${f.dark ? ' style="opacity:0.6;"' : ''}>${f.s}</small></span>
+        ${f.flag ? '<span class="sponsor-flag">' + f.flag + '</span>' : ''}
+      </div>
+      <div class="card-body">
+        <div class="tags"><span class="tag type">${TYPES[f.type]}</span><span class="tag">${f.model}</span></div>
+        <p class="sup-desc">${f.d}</p>
+        <div class="card-foot"><a href="#">Ver perfil <i data-lucide="arrow-up-right"></i></a></div>
+      </div>
+    </article>`;
+  }
+  function render() {
+    const rows = S.filter((f) => (!cat || f.cat === cat) && (!type || f.type === type));
+    document.getElementById('dir-groups').innerHTML = Object.keys(CATS)
+      .filter((c) => !cat || c === cat)
+      .map((c) => {
+        const r = rows.filter((f) => f.cat === c);
+        if (!r.length) return '';
+        return '<div class="catgroup"><div class="cat-head"><h3>' + CATS[c] + '</h3><span class="n">' + r.length + (r.length === 1 ? ' empresa' : ' empresas') + '</span></div><div class="grid">' + r.map(card).join('') + '</div></div>';
+      }).join('');
+    document.getElementById('dir-count').textContent = rows.length + ' de ' + S.length + ' empresas';
+    document.getElementById('dir-empty').style.display = rows.length ? 'none' : 'block';
+    lucide.createIcons();
+  }
+  /* sidebar: categoria */
+  const sideLinks = [...document.querySelectorAll('.side a[data-cat]')];
+  sideLinks.forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    cat = a.dataset.cat;
+    sideLinks.forEach((x) => x.classList.toggle('on', x === a));
+    render();
+  }));
+  /* chips: tipo de empresa */
+  document.querySelectorAll('.chip-f').forEach((c) => c.addEventListener('click', () => {
+    type = c.dataset.type;
+    document.querySelectorAll('.chip-f').forEach((x) => x.classList.toggle('on', x === c));
+    render();
+  }));
+  /* contadores da sidebar */
+  document.getElementById('sn-all').textContent = S.length;
+  document.querySelectorAll('.side a .n[data-n]').forEach((el) => {
+    el.textContent = S.filter((f) => f.cat === el.dataset.n).length;
+  });
+  render();
+  lucide.createIcons();
+</script>
+<script src="_chrome.js"></script>
+</body>
+</html>
