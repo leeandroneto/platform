@@ -3,3 +3,4 @@
 - [Princípio cravado — Zero exposição client-side](feedback_zero_client_exposure.md) — service role nunca client · mutações via Server Actions · 'server-only' em lib/data · JWT minimal
 - [shadcn-canonical + extensões opt-in retake](feedback_tokens_shadcn_canonical.md) — vocab shadcn-canonical · valores apontam pros tokens retake · shadcn primitives recoloram automático
 - [Composição em banco — vibe-coding-ready](feedback_composition_in_db.md) — page_versions.content jsonb · IA edita via tools registry SSOT + approval gate
+- [Framework JSONB vs normalized — passar sempre antes de criar tabela/coluna](feedback_jsonb_normalized_decision_framework.md) — forma rígida + query freq = normalized · forma variável + runtime editing = JSONB · cravado pelo owner após quase erro em composição de página

@@ -27,16 +27,21 @@ Detalhes completos em `docs/_handoff/` (4 docs + Design System completo).
 
 ## Onde fica cada coisa
 
-| Info                   | Arquivo canônico                                                    |
-| ---------------------- | ------------------------------------------------------------------- |
-| Handoff (SSOT produto) | `docs/_handoff/README.md` + 3 docs + DS folder (intocável)          |
-| ADR fundadora          | `docs/adr/0001-foundation.md`                                       |
-| Blueprint produto      | `docs/blueprint/00-projeto.md`                                      |
-| Plano execução         | `docs/plans/foundation.md`                                          |
-| Memória cravada        | `~/.claude/projects/.../memory/project_retake_decisoes_cravadas.md` |
-| Migrations docs        | `docs/migrations/NNNN_*.md`                                         |
+| Info                                  | Arquivo canônico                                                    | Audience                                          |
+| ------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------- |
+| **Visão geral pro fundador** (humano) | `FOUNDER.md` raiz                                                   | **Humano — não autocarregar.** Read JIT se pedido |
+| Handoff (SSOT produto)                | `docs/_handoff/README.md` + 3 docs + DS folder (intocável)          | Claude + Humano                                   |
+| ADR fundadora                         | `docs/adr/0001-foundation.md`                                       | Claude + Humano                                   |
+| Blueprint produto                     | `docs/blueprint/00-projeto.md`                                      | Claude + Humano                                   |
+| Schema completo previsto              | `docs/blueprint/01-schema-completo.md`                              | Claude + Humano                                   |
+| DBML formal (visualize dbdiagram.io)  | `schema.dbml` raiz                                                  | Humano                                            |
+| Plano execução                        | `docs/plans/foundation.md`                                          | Claude                                            |
+| Memória cravada                       | `~/.claude/projects/.../memory/project_retake_decisoes_cravadas.md` | Claude (auto)                                     |
+| Migrations docs                       | `docs/migrations/NNNN_*.md`                                         | Claude                                            |
 
 **Hierarquia de conflito:** Handoff > ADR-0001 > CLAUDE.md > Plano ativo > Memory > Session.
+
+**FOUNDER.md é doc humano** — NÃO autocarregar (consome contexto + risco de staleness). Só Read quando o owner pedir visão geral. Hook `enforce-founder-md-update.sh` avisa quando ADR-0001/foundation.md/schema mudam pra atualizar FOUNDER.md junto.
 
 **Rules path-loaded** (`.claude/rules/*.md`):
 
@@ -45,6 +50,7 @@ Detalhes completos em `docs/_handoff/` (4 docs + Design System completo).
 - `state-management` — RHF pra forms, Zustand pra editors, nunca sincronizar
 - `naming` — vocab retake corrida + camada staff/equipe
 - `design-tokens` — shadcn-canonical + extensões opt-in retake
+- `jsonb-vs-normalized` — **framework cravado pra TODA decisão de tabela/coluna nova**
 - `i18n` — 3 locales dia 0 (pt-BR/en/es)
 - `contrast` — APCA Lc ≥ 60
 - `shadcn-zone` — `components/ui/*` quarentenada, canal único `npx shadcn add`

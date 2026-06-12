@@ -39,17 +39,13 @@
     "SessionStart": [
       {
         "matcher": "*",
-        "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/load-context.sh" }
-        ]
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/load-context.sh" }]
       }
     ],
     "UserPromptSubmit": [
       {
         "matcher": "*",
-        "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/vocab-warn.sh" }
-        ]
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/vocab-warn.sh" }]
       }
     ],
     "PreToolUse": [
@@ -75,6 +71,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/enforce-server-only-data-layer.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/enforce-founder-md-update.sh"
           }
         ]
       }

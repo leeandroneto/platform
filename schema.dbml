@@ -1,0 +1,926 @@
+// retake.run — Schema completo DBML
+// Visualize: https://dbdiagram.io/ (cole conteúdo) ou `npx -y @softwaretechnik/dbml-renderer -i schema.dbml -o schema.svg`
+// Última atualização: 2026-06-12 · Synced from ADR-0001 v1.0
+// Status: 10 tabelas feitas em S0. Resto previsto S4-S7+JIT.
+
+Project retake_run {
+  database_type: 'PostgreSQL'
+  Note: '''
+    retake.run — plataforma vertical de corrida (endurance) no Brasil.
+    Schema único public.*. RLS por tenant_id é a fronteira de segurança.
+    Framework JSONB vs normalized cravado em .claude/rules/jsonb-vs-normalized.md
+  '''
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IDENTIDADE & MULTI-TENANT (✅ S0 — Party Model 3 níveis)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table parties {
+  id uuid [pk, default: `gen_random_uuid()`]
+  kind enum_party_kind [not null]
+  auth_user_id uuid [ref: > auth_users.id, null]
+  display_name text [not null]
+  legal_name text
+  document text
+  country char(2) [not null, default: 'BR']
+  preferred_currency char(3) [not null, default: 'BRL']
+  contacts jsonb [not null, default: '{}']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  archived_at timestamptz
+
+  Note: 'Pessoa OR organização (1 login = 1 party).'
+}
+
+Table party_roles {
+  id uuid [pk]
+  party_id uuid [ref: > parties.id, not null]
+  role_type enum_party_role_type [not null]
+  scope_kind enum_scope_kind [not null]
+  scope_id uuid
+  begin_date date [not null, default: `CURRENT_DATE`]
+  end_date date
+  status enum_party_role_status [not null, default: 'pending']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'Papel que party exerce no escopo. Mesma pessoa pode ter N party_roles ao longo do tempo.'
+}
+
+Table party_relationships {
+  id uuid [pk]
+  party_a_id uuid [ref: > parties.id, not null]
+  party_b_id uuid [ref: > parties.id, not null]
+  kind enum_party_relationship_kind [not null]
+  terms jsonb [not null, default: '{}', note: 'JSONB: commission_pct (parceiro interno) vs monthly_rent (locação) vs referral_pct (encaminhamento). Forma varia por kind.']
+  status enum_party_role_status [not null, default: 'active']
+  platform_fee_cents int
+  begin_date date [not null]
+  end_date date
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table tenants {
+  id uuid [pk]
+  party_id uuid [unique, ref: > parties.id, not null]
+  slug text [unique, not null, note: 'retake.run/{slug}']
+  display_label text [note: '"assessoria" / "run club" / "coach autônomo" — livre']
+  city text
+  state char(2)
+  status enum_tenant_status [not null, default: 'active']
+  theme_tokens jsonb [not null, default: '{}', note: 'JSONB: snapshot rápido dos tokens pro SSR. Forma varia por tenant.']
+  settings jsonb [not null, default: '{}', note: 'JSONB: configurações livres.']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  archived_at timestamptz
+}
+
+Table profiles {
+  id uuid [pk]
+  party_id uuid [ref: > parties.id, not null]
+  auth_user_id uuid [ref: > auth_users.id]
+  full_name text [not null]
+  avatar_url text
+  locale text [not null, default: 'pt-BR']
+  a11y_prefs jsonb [not null, default: '{}', note: 'JSONB: reduce-motion, font-scale, contrast.']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table groups {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  name text [not null]
+  description text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'Turmas/níveis pra data scope. Coach só vê seu grupo.'
+}
+
+Table memberships {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  party_id uuid [ref: > parties.id, not null]
+  role enum_membership_role [not null]
+  position_label text [note: 'Display livre: "Recepcionista Sênior", "Coach Adjunto"']
+  permissions jsonb [not null, default: '{}', note: 'JSONB: override fino opcional.']
+  group_id uuid [ref: > groups.id]
+  status enum_membership_status [not null, default: 'active']
+  invited_at timestamptz
+  joined_at timestamptz [not null]
+  is_public_visible boolean [not null, default: false]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  indexes {
+    (tenant_id, party_id, role) [unique]
+  }
+}
+
+Table domains {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  mode enum_domain_mode [not null, default: 'path']
+  value text [not null]
+  status enum_domain_status [not null, default: 'pending']
+  verified_at timestamptz
+  dns jsonb [not null, default: '{}', note: 'JSONB: DNS records varia por provedor (CNAME apex/subdomain).']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table slug_blocklist {
+  slug text [pk]
+  reason text
+  created_at timestamptz [not null]
+
+  Note: 'Slugs reservados (admin, app, retake, etc).'
+}
+
+Table audit_log {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  actor_party_id uuid [ref: > parties.id]
+  actor_kind text [not null, default: 'user', note: 'user | ai | system']
+  action text [not null]
+  resource_type text [not null]
+  resource_id uuid
+  payload jsonb [not null, default: '{}', note: 'JSONB: payload arbitrário do que mudou. Forma varia por action.']
+  created_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SITE PÚBLICO + CONTEÚDO DO TENANT (⏳ S4)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table tenant_themes {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null, unique]
+  current_version_id uuid [ref: > tenant_theme_versions.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'S4. Ponteiro pra versão ativa do tema.'
+}
+
+Table tenant_theme_versions {
+  id uuid [pk]
+  tenant_theme_id uuid [ref: > tenant_themes.id, not null]
+  version_number int [not null]
+  tokens jsonb [not null, note: 'JSONB: input do user/IA (primary, mode, font_pair, density, radius_axis). Forma varia.']
+  derived jsonb [not null, default: '{}', note: 'JSONB: cache de secondary/tertiary/surfaces calculados por deriveTokens() Edge.']
+  contrast_report jsonb [not null, default: '{}', note: 'JSONB: APCA Lc por par.']
+  created_by uuid [ref: > parties.id]
+  created_at timestamptz [not null]
+
+  Note: 'S4. Versão imutável (trigger anti-UPDATE/DELETE).'
+}
+
+Table pages {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  slug text [not null]
+  status enum_page_status [not null, default: 'draft']
+  current_version_id uuid [ref: > page_versions.id]
+  seo jsonb [not null, default: '{}', note: 'JSONB: meta tags, og, schema.org.']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table page_versions {
+  id uuid [pk]
+  page_id uuid [ref: > pages.id, not null]
+  version_number int [not null]
+  content jsonb [not null, note: 'JSONB CRÍTICO: { style_preset, blocks[]{kind,variant,visible,sort,props_override}, slots{} }. Composição vibe-coding-ready dia 1.']
+  created_at timestamptz [not null]
+
+  Note: 'S4. Versão imutável. IA edita via tools.'
+}
+
+Table coaches {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  party_id uuid [ref: > parties.id]
+  display_name text [not null]
+  bio text
+  photo_url text
+  cref text
+  is_public_visible boolean [not null, default: true]
+  sort int [not null, default: 0]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'S4. Normalized — query frequente pra site público.'
+}
+
+Table plans_offered {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  name text [not null]
+  description text
+  price_cents int
+  recurrence enum_plan_recurrence
+  features jsonb [not null, default: '[]', note: 'JSONB: array de strings (features livres).']
+  is_public_visible boolean [not null, default: true]
+  sort int [not null, default: 0]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'S4. Planos que o TENANT vende (NÃO confundir com plans da plataforma).'
+}
+
+Table services {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  kind enum_service_kind [not null]
+  name text [not null]
+  description text
+  default_price_cents int
+  default_commission_pct numeric(5,2)
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: 'S4. training_presencial/online/assessment/consultation/massage_sports/physio_sports/nutrition_plan/race_support'
+}
+
+Table testimonials {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  author_name text [not null]
+  author_photo_url text
+  body text [not null]
+  is_public_visible boolean [not null, default: true]
+  sort int [not null, default: 0]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table gallery {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  url text [not null]
+  caption text
+  sort int [not null, default: 0]
+  is_public_visible boolean [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table tenant_locations {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  mode enum_location_mode [not null, note: 'presencial | online | hibrido']
+  city text
+  state char(2)
+  address text
+  resource_id uuid
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+
+  Note: 'S4. Usado por captação form pra dropdown.'
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CAPTAÇÃO + CRM (⏳ S4-S5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table leads {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  name text [not null]
+  email text
+  phone text
+  objective enum_lead_objective
+  experience enum_lead_experience
+  location_preference jsonb [note: 'JSONB: location_id OR mode + city escolhidos no form']
+  custom_answers jsonb [not null, default: '{}', note: 'JSONB: respostas das custom_questions (forma varia por tenant).']
+  source text [note: 'site | indicação | meta-leads | outros']
+  status enum_lead_status [not null, default: 'new', note: 'new | contacted | visit_scheduled | converted | lost']
+  notes text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table form_submission_outbox {
+  id uuid [pk]
+  lead_id uuid [ref: > leads.id]
+  payload jsonb [not null, note: 'JSONB: dados pro fan-out (régua, webhook, etc).']
+  status enum_outbox_status [not null, default: 'pending']
+  processed_at timestamptz
+  created_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMUNICAÇÃO (⏳ S5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table communication_templates {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  kind enum_communication_kind [not null, note: 'welcome | follow_up | renewal | dunning | etc']
+  subject text [not null]
+  body text [not null, note: 'React Email JSX como text']
+  locale text [not null, default: 'pt-BR']
+  version int [not null, default: 1]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table communication_log {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  recipient_party_id uuid [ref: > parties.id]
+  recipient_email text
+  kind enum_communication_kind [not null]
+  template_id uuid [ref: > communication_templates.id]
+  status enum_communication_status [not null]
+  sent_at timestamptz
+  opened_at timestamptz
+  payload jsonb [not null, default: '{}', note: 'JSONB: payload do email enviado.']
+  created_at timestamptz [not null]
+}
+
+Table communication_rules {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  trigger enum_communication_trigger [not null, note: 'lead.created | lead.no_response_72h | subscription.payment_failed | etc']
+  template_id uuid [ref: > communication_templates.id, not null]
+  delay_minutes int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EVENTOS & PROVAS (⏳ S5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table events {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, note: 'NULL se evento externo (Iguana Run etc)']
+  name text [not null]
+  type enum_event_type [not null]
+  date date [not null]
+  city text
+  state char(2)
+  distances text[]
+  price_from_cents int
+  external_signup_url text
+  source enum_event_source [not null]
+  status enum_event_status [not null, default: 'queue']
+  verified boolean [not null, default: false]
+  organizer_party_id uuid [ref: > parties.id]
+  dedup_of uuid [ref: > events.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table event_lots {
+  id uuid [pk]
+  event_id uuid [ref: > events.id, not null]
+  name text [not null]
+  distance text
+  price_cents int [not null]
+  cap int
+  sold int [not null, default: 0]
+  window jsonb [not null, default: '{}', note: 'JSONB: janela de venda (begin/end varia por lote).']
+  created_at timestamptz [not null]
+}
+
+Table event_moderation {
+  id uuid [pk]
+  event_id uuid [ref: > events.id, not null]
+  reports int [not null, default: 0]
+  dupe_of uuid [ref: > events.id]
+  domain_ok boolean
+  cnpj_ok boolean
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IA (⏳ S4 — Multi-agent + tools registry + approval gate)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table chats {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  party_id uuid [ref: > parties.id, not null]
+  agent_kind enum_agent_kind [not null, note: 'general dia 1, +N JIT (site_editor, report, suggestion, etc)']
+  scope_id uuid [note: 'aponta pro recurso editado (page_id, athlete_id, etc)']
+  title text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table messages {
+  id uuid [pk]
+  chat_id uuid [ref: > chats.id, not null]
+  role enum_message_role [not null, note: 'user | assistant | tool']
+  payload jsonb [not null, note: 'JSONB: forma varia por kind (text, multimodal, tool_call, tool_result).']
+  created_at timestamptz [not null]
+}
+
+Table ai_tools {
+  id uuid [pk]
+  name text [unique, not null]
+  agent_kinds text[] [not null, note: 'Quais agent_kinds podem chamar essa tool']
+  schema jsonb [not null, note: 'JSONB: Zod schema serializado (input/output).']
+  description text
+  requires_approval boolean [not null, default: false]
+  risk_level enum_risk_level [not null, default: 'low']
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+
+  Note: 'Registry SSOT. IA só pode chamar tool registrada aqui.'
+}
+
+Table engine_plans {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  chat_id uuid [ref: > chats.id]
+  plan jsonb [not null, note: 'JSONB: estrutura do plan proposto pela IA (mutações pendentes).']
+  status enum_engine_plan_status [not null, default: 'pending']
+  approved_by uuid [ref: > parties.id]
+  approved_at timestamptz
+  applied_at timestamptz
+  created_at timestamptz [not null]
+
+  Note: 'Approval gate genérico. IA propõe → user aprova → aplica.'
+}
+
+Table pipeline_runs {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  engine_plan_id uuid [ref: > engine_plans.id]
+  state jsonb [not null, default: '{}']
+  current_stage enum_pipeline_stage
+  started_at timestamptz [not null]
+  finished_at timestamptz
+}
+
+Table ai_prompts {
+  id uuid [pk]
+  name text [unique, not null]
+  description text
+  current_version_id uuid [ref: > ai_prompt_versions.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table ai_prompt_versions {
+  id uuid [pk]
+  prompt_id uuid [ref: > ai_prompts.id, not null]
+  version_number int [not null]
+  body text [not null]
+  metadata jsonb [not null, default: '{}']
+  created_at timestamptz [not null]
+
+  Note: 'Imutável.'
+}
+
+Table ai_generations {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  prompt_version_id uuid [ref: > ai_prompt_versions.id]
+  model text [not null]
+  params jsonb [not null, default: '{}']
+  result jsonb
+  tokens_used int
+  cost_cents int
+  created_at timestamptz [not null]
+}
+
+Table ai_usage_monthly {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  period_start date [not null]
+  tokens_used int [not null, default: 0]
+  cost_cents int [not null, default: 0]
+  reset_at date [not null]
+
+  indexes {
+    (tenant_id, period_start) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PLANOS & BILLING — 3 AUDIENCES (⏳ S6)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table plans {
+  id uuid [pk]
+  audience enum_plan_audience [not null, note: 'tenant | sponsor | supplier']
+  code text [unique, not null, note: 'free | apoiador | membro | sponsor_estadual | sponsor_nacional | b2b_vitrine | etc']
+  name text [not null]
+  description text
+  sort int [not null, default: 0]
+  is_public boolean [not null, default: true]
+  contract enum_plan_contract [not null, default: 'none', note: 'none | monthly | annual | biennial']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table prices {
+  id uuid [pk]
+  plan_id uuid [ref: > plans.id, not null]
+  recurrence enum_price_recurrence [not null]
+  amount_cents int [note: 'NULL se meta.quote_required = true']
+  currency char(3) [not null, default: 'BRL']
+  effective_from date [not null]
+  effective_to date
+  meta jsonb [not null, default: '{}', note: 'JSONB: per_state, quote_required, etc.']
+}
+
+Table features {
+  key text [pk]
+  label text [not null]
+  kind enum_feature_kind [not null, note: 'boolean | quota | enum']
+  description text
+}
+
+Table plan_features {
+  id uuid [pk]
+  plan_id uuid [ref: > plans.id, not null]
+  feature_key text [ref: > features.key, not null]
+  value jsonb [not null, note: 'JSONB: limit/flag (forma varia por feature.kind).']
+
+  indexes {
+    (plan_id, feature_key) [unique]
+  }
+}
+
+Table subscriptions {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  party_id uuid [ref: > parties.id, note: 'Pra sponsor/supplier']
+  plan_id uuid [ref: > plans.id, not null]
+  price_id uuid [ref: > prices.id, not null]
+  status enum_subscription_status [not null]
+  current_period_end timestamptz
+  gateway enum_gateway [note: 'asaas | pagarme | stone | efi']
+  gateway_ref text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table feature_usage {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  feature_key text [ref: > features.key, not null]
+  period_start date [not null]
+  used int [not null, default: 0]
+  "limit" int [not null]
+  resets_at date [not null]
+
+  indexes {
+    (tenant_id, feature_key, period_start) [unique]
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SPONSORS / SUPPLIERS / CUPONS (⏳ S6 + JIT)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table sponsorships {
+  id uuid [pk]
+  party_id uuid [ref: > parties.id, not null, note: 'A marca']
+  tier enum_sponsor_tier [not null]
+  scope_states text[] [note: 'UFs cobertos pela cota']
+  status enum_party_role_status [not null, default: 'pending']
+  subscription_id uuid [ref: > subscriptions.id]
+  assets jsonb [not null, default: '{}', note: 'JSONB: logo/banner/cores. Forma varia.']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table brand_placements {
+  id uuid [pk]
+  sponsorship_id uuid [ref: > sponsorships.id, not null]
+  position int [not null]
+  fixed boolean [not null, default: false]
+  surface enum_placement_surface [not null, note: 'marquee | brand_page | feed']
+  state_scope char(2)
+  impressions bigint [not null, default: 0]
+  clicks bigint [not null, default: 0]
+  created_at timestamptz [not null]
+}
+
+Table suppliers {
+  id uuid [pk]
+  party_id uuid [ref: > parties.id, not null, unique]
+  categories text[] [not null]
+  verified boolean [not null, default: false]
+  profile jsonb [not null, default: '{}']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table coupons {
+  id uuid [pk]
+  code text [unique, not null]
+  owner enum_coupon_owner [not null, note: 'retake | sponsor']
+  sponsor_id uuid [ref: > sponsorships.id]
+  discount jsonb [not null, note: 'JSONB: percent OR fixed_amount + conditions.']
+  affiliate_program enum_affiliate_program [note: 'awin | rakuten | direct']
+  commission jsonb [not null, default: '{}', note: 'JSONB: % e termos do programa.']
+  status enum_coupon_status [not null, default: 'pending']
+  created_at timestamptz [not null]
+}
+
+Table coupon_redemptions {
+  id uuid [pk]
+  coupon_id uuid [ref: > coupons.id, not null]
+  party_id uuid [ref: > parties.id]
+  utm jsonb [not null, default: '{}']
+  postback jsonb [not null, default: '{}']
+  created_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RECURSOS FÍSICOS + PARCERIAS + COMISSÕES (🔮 JIT — Trinks-style)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table resources {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  kind enum_resource_kind [not null, note: 'location | room | space | equipment']
+  name text [not null]
+  capacity int
+  address jsonb [not null, default: '{}']
+  ownership enum_ownership [not null, default: 'owned']
+  partner_party_id uuid [ref: > parties.id]
+  monthly_cost_cents int
+  bookable boolean [not null, default: false]
+  status enum_resource_status [not null, default: 'active']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table service_providers {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  service_id uuid [ref: > services.id, not null]
+  provider_party_id uuid [ref: > parties.id, not null]
+  commission_pct numeric(5,2)
+  commission_fixed_cents int
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+}
+
+Table commission_rules {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  scope text
+  percent numeric(5,2)
+  amount_cents int
+  waterfall jsonb [not null, default: '[]', note: 'JSONB: cascade rules.']
+  created_at timestamptz [not null]
+}
+
+Table commission_ledger {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  provider_party_id uuid [ref: > parties.id, not null]
+  amount_cents int [not null]
+  status enum_commission_status [not null, default: 'pending']
+  source_order_id uuid
+  created_at timestamptz [not null]
+  paid_at timestamptz
+}
+
+Table resource_bookings {
+  id uuid [pk]
+  resource_id uuid [ref: > resources.id, not null]
+  athlete_id uuid
+  slot timestamptz [not null]
+  status enum_booking_status [not null, default: 'confirmed']
+  created_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ROADMAP PÚBLICO + VOTO + CHANGELOG (🔮 JIT — build in public)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table roadmap_items {
+  id uuid [pk]
+  title text [not null]
+  description text
+  horizon enum_horizon [not null, note: 'now | next | later']
+  theme text
+  status enum_roadmap_status [not null, default: 'idea']
+  public boolean [not null, default: true]
+  sort int [not null, default: 0]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table feature_votes {
+  id uuid [pk]
+  roadmap_item_id uuid [ref: > roadmap_items.id, not null]
+  party_id uuid [ref: > parties.id, not null]
+  weight int [not null, default: 1, note: 'Varia por plano: Apoiador 1, Membro 3']
+  created_at timestamptz [not null]
+
+  indexes {
+    (roadmap_item_id, party_id) [unique]
+  }
+}
+
+Table changelog_entries {
+  id uuid [pk]
+  title text [not null]
+  body text [not null]
+  type enum_changelog_type [not null, note: 'novo | melhoria | em_breve']
+  published_at timestamptz [not null]
+  by_community boolean [not null, default: false]
+  roadmap_item_id uuid [ref: > roadmap_items.id]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NÚCLEO DE TREINO (🔮 FASE 2+ — O FOSSO)
+// ─────────────────────────────────────────────────────────────────────────────
+
+Table athletes {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  profile_id uuid [ref: > profiles.id, not null]
+  status enum_athlete_status [not null]
+  level enum_athlete_level
+  group_id uuid [ref: > groups.id]
+  objective text
+  joined_at timestamptz [not null]
+}
+
+Table anamnese {
+  id uuid [pk]
+  athlete_id uuid [ref: > athletes.id, not null, unique]
+  health jsonb [not null, default: '{}', note: 'JSONB: lesões, restrições, medicamentos. Forma varia por atleta.']
+  running_history jsonb [not null, default: '{}', note: 'JSONB: PRs, histórico de provas, lesões passadas.']
+  updated_at timestamptz [not null]
+}
+
+Table assessments {
+  id uuid [pk]
+  athlete_id uuid [ref: > athletes.id, not null]
+  kind text [not null, note: 'VO2 | FC | peso | teste_pace | etc']
+  value jsonb [not null, note: 'JSONB: forma varia por kind.']
+  measured_at timestamptz [not null]
+}
+
+Table athlete_thresholds {
+  id uuid [pk]
+  athlete_id uuid [ref: > athletes.id, not null]
+  pace_threshold interval
+  hr_threshold int
+  zones jsonb [not null, default: '{}', note: 'JSONB: zonas calculadas do threshold.']
+  source enum_threshold_source [not null]
+  measured_at timestamptz [not null]
+}
+
+Table macrocycles {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, not null]
+  athlete_id uuid [ref: > athletes.id]
+  goal text
+  start_date date [not null]
+  end_date date [not null]
+  target_event_id uuid [ref: > events.id]
+}
+
+Table mesocycles {
+  id uuid [pk]
+  macrocycle_id uuid [ref: > macrocycles.id, not null]
+  focus enum_mesocycle_focus [not null, note: 'base | build | peak | transition']
+  weeks int [not null]
+  target_load jsonb [not null, default: '{}']
+}
+
+Table microcycles {
+  id uuid [pk]
+  mesocycle_id uuid [ref: > mesocycles.id, not null]
+  week_start date [not null]
+  target_load jsonb [not null, default: '{}']
+}
+
+Table sessions {
+  id uuid [pk]
+  microcycle_id uuid [ref: > microcycles.id, not null]
+  date date [not null]
+  title text
+  modality enum_modality [not null, default: 'run']
+  status enum_session_status [not null]
+}
+
+Table training_day_items {
+  id uuid [pk]
+  session_id uuid [ref: > sessions.id, not null]
+  library_item_id uuid
+  inline jsonb [note: 'JSONB: alternativa a library_item_id.']
+  sort int [not null]
+  target jsonb [not null, note: 'JSONB: pace | hr | power | rpe — alvo varia.']
+  kind enum_segment_kind [not null, note: 'warmup | work | recovery | cooldown']
+}
+
+Table workout_executions {
+  id uuid [pk]
+  training_day_item_id uuid [ref: > training_day_items.id]
+  athlete_id uuid [ref: > athletes.id, not null]
+  executed jsonb [not null, note: 'JSONB: pace/dist/hr/rpe realizados. Forma varia.']
+  compliance enum_compliance [not null, note: 'green | yellow | red']
+  source enum_execution_source [not null]
+  created_at timestamptz [not null]
+}
+
+Table wearable_connections {
+  id uuid [pk]
+  athlete_id uuid [ref: > athletes.id, not null]
+  provider enum_wearable_provider [not null]
+  tokens jsonb [not null, note: 'JSONB cifrado: oauth tokens.']
+  status enum_wearable_status [not null, default: 'active']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table wearable_activities {
+  id uuid [pk]
+  wearable_connection_id uuid [ref: > wearable_connections.id, not null]
+  external_id text [not null]
+  raw jsonb [not null, note: 'JSONB: payload bruto do provider.']
+  processed boolean [not null, default: false]
+  created_at timestamptz [not null]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────────────────────
+
+Enum enum_party_kind { person organization }
+Enum enum_party_role_type { tenant supplier_industry supplier_distributor supplier_manufacturer supplier_nutrition_brand service_provider event_organizer sponsor_platform sponsor_tenant sponsor_event }
+Enum enum_scope_kind { platform tenant event }
+Enum enum_party_role_status { pending active suspended ended }
+Enum enum_party_relationship_kind { brokered_by_platform sponsorship b2b_supply external_partner internal_partner space_rental referral }
+Enum enum_tenant_status { active idle suspended archived }
+Enum enum_membership_role { owner coach finance reception marketing athlete lead }
+Enum enum_membership_status { invited active suspended left }
+Enum enum_domain_mode { path subdomain cname }
+Enum enum_domain_status { pending verifying active error }
+Enum enum_page_status { draft published }
+Enum enum_service_kind { training_presencial training_online assessment_physical assessment_biomechanic consultation massage_sports physio_sports nutrition_plan race_support other }
+Enum enum_plan_recurrence { monthly quarterly annual biennial one_time none }
+Enum enum_price_recurrence { monthly quarterly annual biennial one_time }
+Enum enum_location_mode { presencial online hibrido }
+Enum enum_lead_objective { iniciante intermediario avancado prova_especifica retorno emagrecimento outro }
+Enum enum_lead_experience { nunca_correu_ate_5km_5_a_10km_10_a_21km mais_de_21km maratona }
+Enum enum_lead_status { new contacted visit_scheduled converted lost }
+Enum enum_outbox_status { pending processing processed failed }
+Enum enum_communication_kind { welcome follow_up renewal_reminder dunning churn_prevention payment_failed trial_ending other }
+Enum enum_communication_status { queued sent delivered opened bounced failed }
+Enum enum_communication_trigger { lead_created lead_no_response_72h subscription_payment_failed subscription_upcoming_renewal tenant_welcomed athlete_inactive other }
+Enum enum_event_type { rua trail revezamento treinao clinica viagem }
+Enum enum_event_source { managed imported suggested }
+Enum enum_event_status { queue published archived }
+Enum enum_agent_kind { general site_editor report_writer suggestion onboarding athlete_assistant }
+Enum enum_message_role { user assistant tool system }
+Enum enum_risk_level { low medium high critical }
+Enum enum_engine_plan_status { pending approved rejected applied error }
+Enum enum_pipeline_stage { plan generate verify persist done error }
+Enum enum_plan_audience { tenant sponsor supplier }
+Enum enum_plan_contract { none monthly annual biennial }
+Enum enum_feature_kind { boolean quota enum_kind }
+Enum enum_subscription_status { trialing active past_due canceled paused }
+Enum enum_gateway { asaas pagarme stone efi }
+Enum enum_sponsor_tier { estadual nacional oficial }
+Enum enum_placement_surface { marquee brand_page feed }
+Enum enum_coupon_owner { retake sponsor }
+Enum enum_affiliate_program { awin rakuten direct }
+Enum enum_coupon_status { pending approved live archived }
+Enum enum_resource_kind { location room space equipment }
+Enum enum_ownership { owned rented partner }
+Enum enum_resource_status { active inactive maintenance }
+Enum enum_commission_status { pending paid voided }
+Enum enum_booking_status { confirmed cancelled completed no_show }
+Enum enum_horizon { now next later }
+Enum enum_roadmap_status { idea planned in_progress shipped }
+Enum enum_changelog_type { novo melhoria em_breve }
+Enum enum_athlete_status { active paused canceled overdue }
+Enum enum_athlete_level { beginner intermediate advanced elite }
+Enum enum_threshold_source { test manual wearable }
+Enum enum_mesocycle_focus { base build peak transition }
+Enum enum_modality { run swim bike triathlon }
+Enum enum_session_status { planned executed skipped }
+Enum enum_segment_kind { warmup work recovery cooldown }
+Enum enum_compliance { green yellow red }
+Enum enum_execution_source { manual wearable }
+Enum enum_wearable_provider { garmin strava polar coros apple }
+Enum enum_wearable_status { active expired revoked }
+
+Table auth_users {
+  id uuid [pk]
+  email text
+  Note: 'Supabase managed. Aqui só pra FK reference no diagrama.'
+}
